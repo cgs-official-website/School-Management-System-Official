@@ -1,0 +1,196 @@
+import React, { useEffect, useState } from 'react';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { LuUsers as Users, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuMessageSquare as MessageSquare, LuLock as Lock, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuBuilding2 as Building2, LuCalendarDays, LuBookOpen, LuCalendarOff, LuTrendingUp, LuFolderDown, LuCalendarClock } from 'react-icons/lu';
+import { logoutUser } from '../firebase/auth';
+import { useAuth } from '../context/AuthContext';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import TopNavbar from '../components/TopNavbar';
+import useSchoolBranding from '../hooks/useSchoolBranding';
+
+export default function TeacherDashboard() {
+  const { userProfile } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [loading, setLoading] = useState(true);
+  const [school, setSchool] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Apply dynamic title and favicon
+  useSchoolBranding(school);
+
+  // Fallback check to ensure role is correct
+  useEffect(() => {
+    if (userProfile && userProfile.role !== 'teacher') {
+      navigate('/');
+    } else if (userProfile?.schoolId) {
+      // Fetch school info for branding/name
+      getDoc(doc(db, "schools", userProfile.schoolId)).then(snap => {
+        if (snap.exists()) setSchool(snap.data());
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
+    }
+  }, [userProfile, navigate]);
+
+  // Close sidebar on route change for mobile
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
+
+  const handleLogout = async () => {
+    await logoutUser();
+    navigate('/login');
+  };
+
+  const navItems = [
+    { name: 'Class Roster', path: '/teacher', icon: Users, exact: true },
+    { name: 'Noticeboard', path: '/teacher/notices', icon: Bell },
+    { name: 'Calendar', path: '/teacher/calendar', icon: Calendar },
+    { name: 'Timetable', path: '/teacher/timetable', icon: LuCalendarDays },
+    { name: 'Lesson Plans', path: '/teacher/lesson-plans', icon: LuBookOpen },
+    { name: 'Resources', path: '/teacher/resources', icon: LuFolderDown },
+    { name: 'Attendance', path: '/teacher/attendance', icon: CheckSquare },
+    { name: 'Homework', path: '/teacher/homework', icon: FileText },
+    { name: 'Performance', path: '/teacher/performance', icon: LuTrendingUp },
+    { name: 'PTM Scheduler', path: '/teacher/ptm', icon: LuCalendarClock },
+    { name: 'Grades & Exams', path: '/teacher/grades', icon: GraduationCap },
+    { name: 'Messages', path: '/teacher/chat', icon: MessageSquare },
+    { name: 'Leave Application', path: '/teacher/leave', icon: LuCalendarOff },
+  ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex justify-center items-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  // Waiting for assignment state
+  if (!userProfile?.assignedClassId) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-xl border border-slate-200 text-center relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-2 bg-amber-500"></div>
+          
+          <div className="w-20 h-20 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock size={40} />
+          </div>
+          
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Awaiting Assignment</h1>
+          <p className="text-slate-600 mb-8">
+            Your account has been created, but the School Admin has not yet assigned you to a class. Please contact your administrator.
+          </p>
+
+          <button 
+            onClick={handleLogout}
+            className="w-full py-3 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
+          >
+            <LogOut size={18} /> Logout
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-screen bg-[#f4f7fe] font-sans overflow-hidden p-4 gap-4">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed inset-y-4 left-4 z-50 w-64 bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-[120%]'}
+      `}>
+        <div className="px-6 pb-6 pt-8 flex justify-between items-start">
+
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center p-1 shrink-0">
+              <img src="/logo.png" alt="Zuna" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
+              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z<span className="text-primary-500">.</span></div>
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">Zuna<span className="text-primary-500">.</span></h2>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Teacher Portal</p>
+            </div>
+          </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600 p-1">
+            <X size={24} />
+          </button>
+        </div>
+
+        <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+          <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-4">Menu</p>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.name}
+              to={item.path}
+              end={item.exact}
+              className={({ isActive }) =>
+                `relative flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 font-semibold text-sm ${
+                  isActive 
+                    ? 'bg-primary-50 text-primary-900 shadow-md shadow-slate-900/20' 
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                }`
+              }
+              >
+                {({ isActive }) => (
+                  <>
+                    {isActive && (
+                      <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-500 rounded-r-md"></div>
+                    )}
+                    <item.icon size={20} className="shrink-0" />
+                    <span>{item.name}</span>
+                  </>
+                )}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="p-4 shrink-0 mt-auto">
+          <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-slate-100">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold shrink-0">
+                {userProfile?.name ? userProfile.name.substring(0, 2).toUpperCase() : userProfile?.email?.substring(0, 2).toUpperCase() || 'TE'}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-slate-900 truncate">{userProfile?.name || userProfile?.email?.split('@')[0]}</p>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">{userProfile?.role}</p>
+              </div>
+            </div>
+            <button 
+              onClick={handleLogout}
+              className="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-xl transition-colors shrink-0"
+              title="Logout"
+            >
+              <LogOut size={20} />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content Area Wrapper */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-4 relative z-10">
+        <TopNavbar 
+          schoolName={school?.name || 'Teacher Portal'} 
+          schoolLogo={school?.branding?.logoUrl}
+          toggleSidebar={() => setIsSidebarOpen(true)} 
+          navItems={navItems}
+        />
+        
+        {/* Dashboard Content */}
+        <main className="flex-1 overflow-y-auto custom-scrollbar">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}

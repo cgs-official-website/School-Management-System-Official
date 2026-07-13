@@ -1,0 +1,34 @@
+School Management System - Requirements
+
+Data Migration option
+Chat option(Only for Reading)
+Progress Report Template Design
+Attendance
+Announcement both WhatsApp and SaaS
+Daily Homework and assignment
+Employee Records in Excel & PDF
+LMS & Tracking in later(Upcoming)
+Inventory Management(library, Stocks, Infrastructure)
+Lead Management
+Weekly report for the Students homework and assignment records
+Homework status automatic according to status evaluation report from the excel sheet
+13. Integrate calendar
+14. Canteen integration Like the student forgot the breakfast means the parents can update (like our emergency leave option in the HRMS)
+15. notifications should be perfect
+
+Data Count - 300 Students + 50 Teachers
+
+INITIAL:
+Actually the workflow is the landing page the school can purchase there should be a freezing page should be get display until the superadmin(product owner) gives the approval and after that approval the purchased(admin) get display the dashboard screen and the admin can set an environment for their school and in the dashboard there should be option like generate link when the admin click that there should be two links display one is for teachers register and another is for parents register if the user register through the link means in the DB it should store like the Firebase DB design is like School name -> teachers(teachers data) -> parents(parents data) and the students also be like the workflow will be the admin they can create a class and admit the student and assign a staff means the particular student data only get show to that teacher only and the teacher can chat to those students parent only the parent login should be depend on the student admission number only all make it in React.js, tailwind.css and firebase 
+
+MODULE BASED VIEW:
+and the superadmin can set the modules for the admin as per the user purchased plan for example of the user purchase the demo plan means in the super admin can view all the purchasing details for the admin and select the modules and give the approval then the purchased admin only view those permitted modules only make it like that work flow and add a new module like API integration in that show the Google Map API key for transport tracking and cloudinary key for set the cloudinary and make it working like that these API input fields also depends on the modules selection only if the cloudinary module is selected and the Google Map is not selected means it should not get visible make it like that
+
+DESIGN:
+make the design should be user Friendly the normal human also can easy usable and the functional wise it should be perfect and the load balancing should be perfect then the all screens, modules, components, text should be responsive for all screens and the animations should be attractive and futuristics make it possible
+
+VERIFICATION:
+the verification should be based on the Indian law the school should be register based on the Indian law those attachment media files should be uploaded and it should preview and download in the superadmin can verify and give the approval so make it possible
+
+CLOUD DESIGN
+The cloud should be like designed as the separate separate folders like first folder for example should be like the school name then the sub folder is teachers folder name in that sub folder the teacher name in that the teacher attachments should be there like that only student parent folder the sub folder the student inside that the student data attached should be there like that only should be get store make it possible

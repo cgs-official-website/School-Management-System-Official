@@ -1,0 +1,220 @@
+import React, { useState, useEffect } from 'react';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import format from 'date-fns/format';
+import parse from 'date-fns/parse';
+import startOfWeek from 'date-fns/startOfWeek';
+import getDay from 'date-fns/getDay';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { useAuth } from '../context/AuthContext';
+import { getSubCollection, addSubDocument } from '../firebase/firestore';
+import toast from 'react-hot-toast';
+import { LuPlus as Plus, LuX as X, LuCalendarDays as CalendarIcon } from 'react-icons/lu';
+
+import enUS from 'date-fns/locale/en-US';
+import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+
+const locales = {
+  'en-US': enUS,
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
+
+export default function AcademicCalendar({ isAdmin }) {
+  const { userProfile } = useAuth();
+  const schoolId = userProfile?.schoolId;
+
+  const [events, setEvents] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [newEvent, setNewEvent] = useState({ title: '', start: '', end: '', type: 'event' });
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    if (schoolId) {
+      fetchEvents();
+    }
+  }, [schoolId]);
+
+  const fetchEvents = async () => {
+    try {
+      const data = await getSubCollection(schoolId, 'calendar');
+      const formattedEvents = data.map(ev => ({
+        ...ev,
+        start: new Date(ev.start),
+        end: new Date(ev.end)
+      }));
+      setEvents(formattedEvents);
+    } catch (error) {
+      console.error("Error fetching calendar events:", error);
+    }
+  };
+
+  const handleAddEvent = async (e) => {
+    e.preventDefault();
+    if (!isAdmin) return;
+    
+    try {
+      const eventData = {
+        title: newEvent.title,
+        start: new Date(newEvent.start).toISOString(),
+        end: new Date(newEvent.end).toISOString(),
+        type: newEvent.type
+      };
+      
+      await addSubDocument(schoolId, 'calendar', eventData);
+      toast.success("Event added to calendar!");
+      setShowModal(false);
+      fetchEvents();
+    } catch (error) {
+      console.error("Error adding event:", error);
+      toast.error("Failed to add event.");
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 overflow-hidden flex flex-col h-[700px]">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <CalendarIcon className="text-primary-600" />
+          Academic Calendar
+        </h2>
+        {isAdmin && (
+          <button 
+            onClick={() => setShowModal(true)}
+            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm"
+          >
+            <Plus size={16} /> Add Event
+          </button>
+        )}
+      </div>
+
+      <div className="flex-1">
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          date={currentDate}
+          onNavigate={(newDate) => setCurrentDate(newDate)}
+          style={{ height: '100%' }}
+          components={{
+            toolbar: (toolbar) => {
+              const goToBack = () => {
+                const newDate = new Date(currentDate);
+                newDate.setMonth(newDate.getMonth() - 1);
+                setCurrentDate(newDate);
+              };
+              const goToNext = () => {
+                const newDate = new Date(currentDate);
+                newDate.setMonth(newDate.getMonth() + 1);
+                setCurrentDate(newDate);
+              };
+              const goToCurrent = () => {
+                setCurrentDate(new Date());
+              };
+
+              return (
+                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                  <div className="flex items-center gap-4">
+                    <button onClick={goToBack} className="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors shadow-sm"><LuChevronLeft size={20} /></button>
+                    <span className="text-2xl font-black text-slate-900 min-w-[180px] text-center">{toolbar.label}</span>
+                    <button onClick={goToNext} className="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors shadow-sm"><LuChevronRight size={20} /></button>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-2 mr-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-primary-500"></div> Event</span>
+                      <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div> Holiday</span>
+                      <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500"></div> Exam</span>
+                    </div>
+                    <button onClick={goToCurrent} className="px-5 py-2.5 bg-primary-50 text-primary-700 font-bold rounded-xl hover:bg-primary-100 transition-colors">Today</button>
+                  </div>
+                </div>
+              );
+            }
+          }}
+          eventPropGetter={(event) => {
+            let backgroundColor = '#c99bc1'; // primary
+            if (event.type === 'holiday') backgroundColor = '#ef4444'; // red
+            if (event.type === 'exam') backgroundColor = '#f59e0b'; // amber
+            return { style: { backgroundColor, borderRadius: '8px', border: 'none', color: '#fff' } };
+          }}
+        />
+      </div>
+
+      {showModal && isAdmin && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-xl font-bold text-slate-900">Add New Event</h3>
+              <button onClick={() => setShowModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleAddEvent} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Event Title</label>
+                <input 
+                  type="text" required
+                  value={newEvent.title} onChange={e => setNewEvent({...newEvent, title: e.target.value})}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Start Date</label>
+                  <input 
+                    type="date" required
+                    value={newEvent.start} onChange={e => setNewEvent({...newEvent, start: e.target.value})}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">End Date</label>
+                  <input 
+                    type="date" required
+                    value={newEvent.end} onChange={e => setNewEvent({...newEvent, end: e.target.value})}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Event Type</label>
+                <select 
+                  value={newEvent.type} onChange={e => setNewEvent({...newEvent, type: e.target.value})}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="event">General Event</option>
+                  <option value="holiday">Holiday</option>
+                  <option value="exam">Examination</option>
+                </select>
+              </div>
+
+              <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+                <button 
+                  type="button" onClick={() => setShowModal(false)}
+                  className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors"
+                >
+                  Save Event
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
