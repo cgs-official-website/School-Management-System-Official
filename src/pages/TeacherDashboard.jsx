@@ -119,7 +119,7 @@ export default function TeacherDashboard() {
             </div>
             <div className="min-w-0">
               <h2 className="text-xl font-black text-slate-900 leading-tight truncate">Zuna<span className="text-primary-500">.</span></h2>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Teacher Portal</p>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">Teacher Portal</p>
             </div>
           </div>
           <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600 p-1">
@@ -163,7 +163,7 @@ export default function TeacherDashboard() {
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-slate-900 truncate">{userProfile?.name || userProfile?.email?.split('@')[0]}</p>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">{userProfile?.role}</p>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">{userProfile?.role}</p>
               </div>
             </div>
             <button 

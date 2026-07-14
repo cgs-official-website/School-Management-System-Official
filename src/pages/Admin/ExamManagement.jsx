@@ -458,7 +458,7 @@ export default function ExamManagement() {
                                   {/* Grading Scale */}
                                   {reportTemplate.footer.gradingScaleText && (
                                     <div className="border-t border-slate-300 pt-4 text-center">
-                                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Grading Scale</span>
+                                      <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1">Grading Scale</span>
                                       <p className="text-xs text-slate-600 font-medium">
                                         {reportTemplate.footer.gradingScaleText}
                                       </p>

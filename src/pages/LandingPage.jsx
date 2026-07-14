@@ -267,7 +267,7 @@ export default function LandingPage() {
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
           >
-            <div className="w-[1px] h-12 bg-gradient-to-b from-primary-400 to-transparent mx-auto"></div>
+            <div className="w-px h-12 bg-gradient-to-b from-primary-400 to-transparent mx-auto"></div>
           </motion.div>
         </section>
 
@@ -325,7 +325,7 @@ export default function LandingPage() {
             {plans.length === 0 ? (
               <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 {[1,2,3].map(i => (
-                  <div key={i} className="h-[500px] bg-[#1a1625]/50 animate-pulse rounded-[40px] border border-primary-900/30"></div>
+                  <div key={i} className="h-96 lg:h-[500px] bg-[#1a1625]/50 animate-pulse rounded-[40px] border border-primary-900/30"></div>
                 ))}
               </div>
             ) : (

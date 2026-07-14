@@ -106,7 +106,7 @@ export default function TeacherRegistration() {
       <div className="hidden lg:flex lg:w-[60%] h-full relative flex-col justify-center items-center bg-white z-20">
         
         {/* Wavy edge sticking out to the right */}
-        <div className="absolute top-0 -right-[98px] h-full w-[100px] overflow-hidden pointer-events-none">
+        <div className="absolute top-0 -right-[98px] h-full w-24 overflow-hidden pointer-events-none">
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="h-full w-full text-white fill-current">
             <path d="M0,0 C80,25 20,50 80,75 C100,85 40,100 0,100 Z" />
           </svg>

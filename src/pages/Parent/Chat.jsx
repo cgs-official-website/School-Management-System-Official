@@ -127,7 +127,7 @@ export default function ParentChat() {
                       : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm'
                   }`}>
                     <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-                    <span className={`text-[10px] mt-2 block ${isMe ? 'text-primary-200' : 'text-slate-400'}`}>
+                    <span className={`text-xs mt-2 block ${isMe ? 'text-primary-200' : 'text-slate-400'}`}>
                       {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>

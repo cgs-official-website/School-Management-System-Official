@@ -389,7 +389,7 @@ export default function ReportTemplateBuilder({ onBack }) {
                 {/* Grading Scale */}
                 {template.footer.gradingScaleText && (
                   <div className="border-t border-slate-300 pt-4 text-center">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Grading Scale</span>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1">Grading Scale</span>
                     <p className="text-xs text-slate-600 font-medium">
                       {template.footer.gradingScaleText}
                     </p>

@@ -53,7 +53,7 @@ export default function RolePermissions() {
                         <LuShieldCheck className="text-blue-500" size={18} title="System Default Role" />
                       )}
                     </div>
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${role.type === 'System Default' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${role.type === 'System Default' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}`}>
                       {role.type}
                     </span>
                   </div>

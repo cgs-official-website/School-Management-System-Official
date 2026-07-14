@@ -147,7 +147,7 @@ export default function ClassManagement() {
             <button 
               type="submit" 
               disabled={saving}
-              className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50 transition-colors h-[46px]"
+              className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50 transition-colors h-12"
             >
               {saving ? 'Saving...' : 'Save Class'}
             </button>

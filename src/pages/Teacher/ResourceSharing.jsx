@@ -83,10 +83,10 @@ export default function ResourceSharing() {
                 </div>
                 
                 <div className="flex gap-2 mb-6">
-                  <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
+                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
                     {resource.class}
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-primary-50 text-primary-600">
+                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-primary-50 text-primary-600">
                     {resource.subject}
                   </span>
                 </div>

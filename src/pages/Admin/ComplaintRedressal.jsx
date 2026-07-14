@@ -4,18 +4,7 @@ import { LuCircleAlert, LuCircleCheck } from 'react-icons/lu';
 import ConfirmModal from '../../components/ConfirmModal';
 
 export default function ComplaintRedressal() {
-  const [complaints, setComplaints] = useState([
-    { id: 1, raisedBy: 'Parent (John Doe)', subject: 'Bus timing issue on Route 4', date: '2026-07-10', status: 'Open' },
-    { id: 2, raisedBy: 'Student (Alice)', subject: 'Library cooling not working', date: '2026-07-09', status: 'In Progress' },
-    { id: 3, raisedBy: 'Teacher (Mr. Smith)', subject: 'Projector missing in Room 102', date: '2026-07-08', status: 'Resolved' },
-    { id: 4, raisedBy: 'Parent (Jane Doe)', subject: 'Cafeteria food quality', date: '2026-07-11', status: 'Open' },
-    { id: 5, raisedBy: 'Student (Bob)', subject: 'Locker won\'t open', date: '2026-07-11', status: 'Resolved' },
-    { id: 6, raisedBy: 'Staff (Janitor)', subject: 'Plumbing issue in north wing', date: '2026-07-12', status: 'In Progress' },
-    { id: 7, raisedBy: 'Teacher (Mrs. Davis)', subject: 'Whiteboard markers empty', date: '2026-07-12', status: 'Resolved' },
-    { id: 8, raisedBy: 'Parent (Tom M.)', subject: 'Sports day schedule conflict', date: '2026-07-13', status: 'Open' },
-    { id: 9, raisedBy: 'Student (Charlie)', subject: 'Lost textbook inquiry', date: '2026-07-13', status: 'In Progress' },
-    { id: 10, raisedBy: 'Teacher (Mr. Brown)', subject: 'AC noise in Room 205', date: '2026-07-13', status: 'Open' },
-  ]);
+  const [complaints, setComplaints] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [confirmModalState, setConfirmModalState] = useState({ isOpen: false, idToDelete: null });
   const [formData, setFormData] = useState({ raisedBy: '', subject: '', date: new Date().toISOString().split('T')[0], status: 'Open', description: '' });
@@ -72,7 +61,7 @@ export default function ComplaintRedressal() {
         </div>
         <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
-            <LuCheckCircle size={24} />
+            <LuCircleCheck size={24} />
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Resolved</p>

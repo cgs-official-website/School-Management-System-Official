@@ -137,7 +137,7 @@ export default function PerformanceTracking() {
                     </span>
                   </td>
                   <td className="p-4 pr-6 text-right flex justify-end">
-                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${getStatusColor(student.status)}`}>
+                    <span className={`px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${getStatusColor(student.status)}`}>
                       {student.status}
                     </span>
                   </td>

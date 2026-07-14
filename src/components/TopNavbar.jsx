@@ -155,12 +155,12 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
 
         {/* User Profile */}
         <div className="flex items-center gap-3 pl-1 min-w-0 shrink-0">
-          <div className="hidden md:flex flex-col text-right min-w-0 max-w-[150px] lg:max-w-[250px] overflow-hidden group">
+          <div className="hidden md:flex flex-col text-right min-w-0 max-w-xs lg:max-w-sm overflow-hidden group">
             <p className="text-sm font-bold text-slate-900 truncate">
               {userProfile?.name || userProfile?.email?.split('@')[0] || 'User'}
             </p>
             <div className="overflow-hidden whitespace-nowrap">
-              <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider inline-block animate-marquee hover-pause pr-8">
+              <p className="text-xs text-slate-500 font-medium uppercase tracking-wider inline-block animate-marquee hover-pause pr-8">
                 {schoolName || userProfile?.role || 'Portal'}
               </p>
             </div>

@@ -6,9 +6,9 @@ import startOfWeek from 'date-fns/startOfWeek';
 import getDay from 'date-fns/getDay';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useAuth } from '../context/AuthContext';
-import { getSubCollection, addSubDocument } from '../firebase/firestore';
+import { getSubCollection, addSubDocument, updateSubDocument, deleteSubDocument } from '../firebase/firestore';
 import toast from 'react-hot-toast';
-import { LuPlus as Plus, LuX as X, LuCalendarDays as CalendarIcon } from 'react-icons/lu';
+import { LuPlus as Plus, LuX as X, LuCalendarDays as CalendarIcon, LuTrash2 as Trash2 } from 'react-icons/lu';
 
 import enUS from 'date-fns/locale/en-US';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
@@ -31,6 +31,7 @@ export default function AcademicCalendar({ isAdmin }) {
 
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [newEvent, setNewEvent] = useState({ title: '', start: '', end: '', type: 'event' });
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -66,14 +67,57 @@ export default function AcademicCalendar({ isAdmin }) {
         type: newEvent.type
       };
       
-      await addSubDocument(schoolId, 'calendar', eventData);
-      toast.success("Event added to calendar!");
+      if (selectedEvent) {
+        await updateSubDocument(schoolId, 'calendar', selectedEvent.id, eventData);
+        toast.success("Event updated successfully!");
+      } else {
+        await addSubDocument(schoolId, 'calendar', eventData);
+        toast.success("Event added to calendar!");
+      }
+      
       setShowModal(false);
+      setSelectedEvent(null);
+      setNewEvent({ title: '', start: '', end: '', type: 'event' });
       fetchEvents();
     } catch (error) {
-      console.error("Error adding event:", error);
-      toast.error("Failed to add event.");
+      console.error("Error saving event:", error);
+      toast.error("Failed to save event.");
     }
+  };
+
+  const handleDeleteEvent = async () => {
+    if (!selectedEvent || !isAdmin) return;
+    if (window.confirm("Are you sure you want to delete this event?")) {
+      try {
+        await deleteSubDocument(schoolId, 'calendar', selectedEvent.id);
+        toast.success("Event deleted!");
+        setShowModal(false);
+        setSelectedEvent(null);
+        setNewEvent({ title: '', start: '', end: '', type: 'event' });
+        fetchEvents();
+      } catch (error) {
+        console.error("Error deleting event:", error);
+        toast.error("Failed to delete event.");
+      }
+    }
+  };
+
+  const handleSelectEvent = (event) => {
+    if (!isAdmin) return;
+    setSelectedEvent(event);
+    setNewEvent({
+      title: event.title,
+      start: format(new Date(event.start), "yyyy-MM-dd"),
+      end: format(new Date(event.end), "yyyy-MM-dd"),
+      type: event.type
+    });
+    setShowModal(true);
+  };
+
+  const openNewEventModal = () => {
+    setSelectedEvent(null);
+    setNewEvent({ title: '', start: '', end: '', type: 'event' });
+    setShowModal(true);
   };
 
   return (
@@ -85,7 +129,7 @@ export default function AcademicCalendar({ isAdmin }) {
         </h2>
         {isAdmin && (
           <button 
-            onClick={() => setShowModal(true)}
+            onClick={openNewEventModal}
             className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm"
           >
             <Plus size={16} /> Add Event
@@ -101,6 +145,7 @@ export default function AcademicCalendar({ isAdmin }) {
           endAccessor="end"
           date={currentDate}
           onNavigate={(newDate) => setCurrentDate(newDate)}
+          onSelectEvent={handleSelectEvent}
           style={{ height: '100%' }}
           components={{
             toolbar: (toolbar) => {
@@ -150,7 +195,7 @@ export default function AcademicCalendar({ isAdmin }) {
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="text-xl font-bold text-slate-900">Add New Event</h3>
+              <h3 className="text-xl font-bold text-slate-900">{selectedEvent ? 'Edit Event' : 'Add New Event'}</h3>
               <button onClick={() => setShowModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
                 <X size={20} />
               </button>
@@ -198,6 +243,14 @@ export default function AcademicCalendar({ isAdmin }) {
               </div>
 
               <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+                {selectedEvent && (
+                  <button 
+                    type="button" onClick={handleDeleteEvent}
+                    className="px-5 py-2.5 text-red-600 font-medium hover:bg-red-50 flex items-center gap-2 rounded-xl transition-colors mr-auto"
+                  >
+                    <Trash2 size={18} /> Delete
+                  </button>
+                )}
                 <button 
                   type="button" onClick={() => setShowModal(false)}
                   className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"

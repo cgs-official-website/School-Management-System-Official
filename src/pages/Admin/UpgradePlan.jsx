@@ -88,7 +88,7 @@ export default function UpgradePlan() {
               className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${billingCycle === 'yearly' ? 'text-slate-900 shadow-sm bg-white' : 'text-slate-500 hover:text-slate-700'}`}
             >
               Yearly billing
-              <span className="absolute -top-3 -right-3 bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full border border-green-200">Save 20%</span>
+              <span className="absolute -top-3 -right-3 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full border border-green-200">Save 20%</span>
             </button>
           </div>
         </div>

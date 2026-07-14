@@ -206,9 +206,9 @@ export default function SchoolRegistration() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center relative overflow-x-hidden px-4 py-12">
       
-      {/* Subtle Background Ambiance */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary-200 rounded-full blur-[150px] opacity-40 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary-300 rounded-full blur-[150px] opacity-30 pointer-events-none"></div>
+      {/* Decorative background blobs */}
+      <div className="absolute top-0 right-0 w-96 h-96 lg:w-[500px] lg:h-[500px] bg-primary-200 rounded-full blur-[150px] opacity-40 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 lg:w-[500px] lg:h-[500px] bg-primary-300 rounded-full blur-[150px] opacity-30 pointer-events-none"></div>
 
       <div className="w-full max-w-2xl relative z-10">
         

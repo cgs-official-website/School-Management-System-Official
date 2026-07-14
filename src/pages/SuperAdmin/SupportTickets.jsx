@@ -79,7 +79,7 @@ export default function SupportTickets() {
                   <div className="flex items-center gap-3 mb-2">
                     <span className="text-sm font-black text-slate-400 group-hover:text-primary-500 transition-colors">{ticket.id}</span>
                     {getStatusBadge(ticket.status)}
-                    <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-md border ${getPriorityColor(ticket.priority)}`}>
+                    <span className={`px-2 py-0.5 text-xs font-bold uppercase tracking-wider rounded-md border ${getPriorityColor(ticket.priority)}`}>
                       {ticket.priority} priority
                     </span>
                   </div>

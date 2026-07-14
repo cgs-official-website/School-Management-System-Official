@@ -77,7 +77,7 @@ export default function LessonPlans() {
               <div key={plan.id} className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-primary-300 hover:shadow-md transition-all group flex flex-col">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 mb-2 inline-block">
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 mb-2 inline-block">
                       {plan.class}
                     </span>
                     <h3 className="text-lg font-bold text-slate-900 leading-tight">{plan.topic}</h3>
