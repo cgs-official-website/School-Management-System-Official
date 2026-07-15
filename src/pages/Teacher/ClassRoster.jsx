@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentsByClass } from '../../firebase/firestore';
-import { getDoc, doc } from 'firebase/firestore';
+import { subscribeToStudentsByClass } from '../../firebase/firestore';
+import { getDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuUsers as Users, LuSearch as Search, LuGraduationCap as GraduationCap, LuMail as Mail, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
 
@@ -16,31 +16,28 @@ export default function ClassRoster() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    if (schoolId && classId) {
-      fetchData();
-    }
-  }, [schoolId, classId]);
+    if (!schoolId || !classId) return;
 
-  const fetchData = async () => {
     setLoading(true);
-    try {
-      // Fetch Class details
-      const classDoc = await getDoc(doc(db, `schools/${schoolId}/classes`, classId));
-      if (classDoc.exists()) {
-        setClassDetails({ id: classDoc.id, ...classDoc.data() });
-      }
+    let classUnsub, studentsUnsub;
 
-      // Fetch Students
-      const studentsData = await getStudentsByClass(schoolId, classId);
-      // Sort alphabetically by first name
+    classUnsub = onSnapshot(doc(db, `schools/${schoolId}/classes`, classId), (docSnap) => {
+      if (docSnap.exists()) {
+        setClassDetails({ id: docSnap.id, ...docSnap.data() });
+      }
+    });
+
+    studentsUnsub = subscribeToStudentsByClass(schoolId, classId, (studentsData) => {
       studentsData.sort((a, b) => a.firstName.localeCompare(b.firstName));
       setStudents(studentsData);
-    } catch (error) {
-      console.error("Error fetching roster data:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => {
+      if (classUnsub) classUnsub();
+      if (studentsUnsub) studentsUnsub();
+    };
+  }, [schoolId, classId]);
 
   const filteredStudents = students.filter(student => {
     const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();

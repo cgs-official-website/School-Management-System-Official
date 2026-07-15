@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllSchools, updateSchoolStatus } from '../../firebase/firestore';
+import { subscribeToAllSchools, updateSchoolStatus } from '../../firebase/firestore';
 import { LuBuilding2 as Building2, LuSearch as Search, LuCircleCheck as CheckCircle2, LuCircleAlert as AlertCircle, LuBan as Ban, LuMail as Mail, LuPhone as Phone, LuCalendar as Calendar, LuSettings as Settings, LuX as X, LuShieldCheck as ShieldCheck, LuExternalLink as ExternalLink, LuFileText as FileText, LuDownload as Download } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -48,17 +48,12 @@ export default function TenantManagement() {
   const [confirmModalState, setConfirmModalState] = useState({ isOpen: false, schoolId: null });
 
   useEffect(() => {
-    fetchSchools();
-  }, []);
-
-  const fetchSchools = async () => {
     setLoading(true);
-    try {
-      const data = await getAllSchools();
+    const unsub = subscribeToAllSchools((data) => {
       setSchools(data.length > 0 ? data : mockSchools);
-      
+      setLoading(false);
+
       // AUTO-HEAL: Fix any disconnected admins (created before the LandingPage fix)
-      // Since SuperAdmin has full DB access, this will successfully patch broken user documents
       data.forEach(async (school) => {
         if (school.adminId) {
           try {
@@ -76,14 +71,10 @@ export default function TenantManagement() {
           }
         }
       });
+    });
 
-    } catch (error) {
-      console.error("Failed to fetch schools:", error);
-      toast.error("Failed to load tenants");
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => unsub();
+  }, []);
 
   const openApprovalModal = (school) => {
     setSelectedSchool(school);

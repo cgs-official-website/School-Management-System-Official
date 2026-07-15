@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, createFeeStructure, getInvoices, markInvoicePaid } from '../../firebase/firestore';
+import { getSubCollection, createFeeStructure, getInvoices, markInvoicePaid, subscribeToSubCollection, subscribeToInvoices } from '../../firebase/firestore';
 import { LuCreditCard as CreditCard, LuPlus as Plus, LuCircleCheck as CheckCircle2, LuSearch as Search, LuX as X, LuReceipt as Receipt, LuIndianRupee as DollarSign, LuTrendingUp as TrendingUp, LuTriangleAlert as AlertTriangle } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
@@ -29,35 +29,31 @@ export default function FeeManagement() {
   });
 
   useEffect(() => {
-    if (schoolId) {
-      fetchData();
-    }
-  }, [schoolId]);
+    if (!schoolId) return;
 
-  const fetchData = async () => {
     setLoading(true);
-    try {
-      const [classesData, studentsData, invoicesData] = await Promise.all([
-        getSubCollection(schoolId, 'classes'),
-        getSubCollection(schoolId, 'students'),
-        getInvoices(schoolId)
-      ]);
+    let classesUnsub, studentsUnsub, invoicesUnsub;
 
-      setClasses(classesData);
-      
-      // Build student map for quick lookup
+    classesUnsub = subscribeToSubCollection(schoolId, 'classes', setClasses);
+
+    studentsUnsub = subscribeToSubCollection(schoolId, 'students', (studentsData) => {
       const studentMap = {};
       studentsData.forEach(s => studentMap[s.id] = s);
       setStudents(studentMap);
-      
+    });
+
+    invoicesUnsub = subscribeToInvoices(schoolId, (invoicesData) => {
       setInvoices(invoicesData);
       calculateStats(invoicesData);
-    } catch (error) {
-      console.error("Error fetching fee data:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => {
+      if (classesUnsub) classesUnsub();
+      if (studentsUnsub) studentsUnsub();
+      if (invoicesUnsub) invoicesUnsub();
+    };
+  }, [schoolId]);
 
   const calculateStats = (invoicesData) => {
     let expected = 0, collected = 0, outstanding = 0;
@@ -79,10 +75,7 @@ export default function FeeManagement() {
 
     try {
       await createFeeStructure(schoolId, newFee);
-      // Re-fetch invoices to include the newly generated ones
-      const updatedInvoices = await getInvoices(schoolId);
-      setInvoices(updatedInvoices);
-      calculateStats(updatedInvoices);
+      // Re-fetch invoices handled by listener
       
       setShowCreateModal(false);
       setNewFee({ name: '', amount: '', dueDate: new Date().toISOString().split('T')[0], classId: '' });
@@ -97,7 +90,7 @@ export default function FeeManagement() {
   const handleMarkPaid = async (invoiceId) => {
     try {
       await markInvoicePaid(schoolId, invoiceId);
-      // Optimistically update local state
+      // Optimistically update local state - Handled by real-time listener
       const updatedInvoices = invoices.map(inv => 
         inv.id === invoiceId ? { ...inv, status: 'Paid', paidAt: new Date().toISOString() } : inv
       );

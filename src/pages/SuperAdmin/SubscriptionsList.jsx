@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getSchools, getPlans } from '../../firebase/firestore';
+import { subscribeToAllSchools, subscribeToPlans } from '../../firebase/firestore';
 import { Link } from 'react-router-dom';
 import { LuCreditCard as CreditCard, LuArrowUpRight as ArrowUpRight, LuTrendingUp as TrendingUp, LuCircleAlert as AlertCircle, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
 
@@ -9,24 +9,23 @@ export default function SubscriptionsList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
     setLoading(true);
-    try {
-      const [schoolsData, plansData] = await Promise.all([
-        getSchools(),
-        getPlans()
-      ]);
+    let schoolsUnsub, plansUnsub;
+
+    schoolsUnsub = subscribeToAllSchools((schoolsData) => {
       setSchools(schoolsData);
-      setPlans(plansData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    plansUnsub = subscribeToPlans((plansData) => {
+      setPlans(plansData);
+    });
+
+    return () => {
+      if (schoolsUnsub) schoolsUnsub();
+      if (plansUnsub) plansUnsub();
+    };
+  }, []);
 
   // Calculate MRR (Monthly Recurring Revenue)
   const calculateMRR = () => {

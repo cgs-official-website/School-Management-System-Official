@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { getNotices } from '../firebase/firestore';
+import { subscribeToNotices } from '../firebase/firestore';
 import { LuBell as Bell, LuTriangleAlert as AlertTriangle, LuUsers as Users, LuGraduationCap as GraduationCap } from 'react-icons/lu';
 
 export default function NoticeFeed({ audienceRole }) {
@@ -11,22 +11,16 @@ export default function NoticeFeed({ audienceRole }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (schoolId) {
-      fetchNotices();
-    }
-  }, [schoolId, audienceRole]);
+    if (!schoolId) return;
 
-  const fetchNotices = async () => {
     setLoading(true);
-    try {
-      const data = await getNotices(schoolId, audienceRole);
+    const unsub = subscribeToNotices(schoolId, audienceRole, (data) => {
       setNotices(data);
-    } catch (error) {
-      console.error("Error fetching notices:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsub();
+  }, [schoolId, audienceRole]);
 
   if (loading) {
     return (

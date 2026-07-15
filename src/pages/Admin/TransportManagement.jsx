@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, createTransportRoute, getTransportRoutes, assignStudentToRoute } from '../../firebase/firestore';
+import { getSubCollection, createTransportRoute, getTransportRoutes, assignStudentToRoute, subscribeToSubCollection, subscribeToTransportRoutes } from '../../firebase/firestore';
 import { LuBus as Bus, LuPlus as Plus, LuX as X, LuUsers as Users, LuPhone as Phone, LuNavigation as Navigation, LuTriangleAlert as AlertTriangle, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
@@ -30,26 +30,25 @@ export default function TransportManagement() {
   const [assigning, setAssigning] = useState(false);
 
   useEffect(() => {
-    if (schoolId) {
-      fetchData();
-    }
-  }, [schoolId]);
+    if (!schoolId) return;
 
-  const fetchData = async () => {
     setLoading(true);
-    try {
-      const [routesData, studentsData] = await Promise.all([
-        getTransportRoutes(schoolId),
-        getSubCollection(schoolId, 'students')
-      ]);
+    let routesUnsub, studentsUnsub;
+
+    routesUnsub = subscribeToTransportRoutes(schoolId, (routesData) => {
       setRoutes(routesData);
-      setStudents(studentsData);
-    } catch (error) {
-      console.error("Error fetching transport data:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    studentsUnsub = subscribeToSubCollection(schoolId, 'students', (studentsData) => {
+      setStudents(studentsData);
+    });
+
+    return () => {
+      if (routesUnsub) routesUnsub();
+      if (studentsUnsub) studentsUnsub();
+    };
+  }, [schoolId]);
 
   const handleCreateRoute = async (e) => {
     e.preventDefault();
@@ -61,9 +60,7 @@ export default function TransportManagement() {
         ...newRoute,
         capacity: Number(newRoute.capacity)
       });
-      // Refresh
-      const routesData = await getTransportRoutes(schoolId);
-      setRoutes(routesData);
+      // Refresh handled by listener
       
       setShowCreateModal(false);
       setNewRoute({ name: '', vehicleNumber: '', driverName: '', driverPhone: '', capacity: '' });
@@ -91,13 +88,7 @@ export default function TransportManagement() {
     setAssigning(true);
     try {
       await assignStudentToRoute(schoolId, activeRouteId, selectedStudentId);
-      // Refresh to update capacities
-      const [routesData, studentsData] = await Promise.all([
-        getTransportRoutes(schoolId),
-        getSubCollection(schoolId, 'students')
-      ]);
-      setRoutes(routesData);
-      setStudents(studentsData);
+      // Refresh handled by listener
       
       setShowAssignModal(false);
       setSelectedStudentId('');

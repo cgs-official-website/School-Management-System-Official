@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSchool, updateSchoolStatus } from '../../firebase/firestore';
+import { updateSchoolStatus } from '../../firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import { LuArrowLeft as ArrowLeft, LuBuilding2 as Building2, LuMapPin as MapPin, LuMail as Mail, LuPhone as Phone, LuCalendar as Calendar, LuCircleUser as UserCircle, LuCircleCheck as CheckCircle2, LuCircleAlert as AlertCircle, LuBan as Ban, LuUsers as Users, LuActivity as Activity, LuHardDrive as HardDrive } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
@@ -14,19 +16,20 @@ export default function TenantDetails() {
   const [confirmModalState, setConfirmModalState] = useState({ isOpen: false, newStatus: null });
 
   useEffect(() => {
-    fetchSchoolDetails();
-  }, [id]);
-
-  const fetchSchoolDetails = async () => {
-    try {
-      const data = await getSchool(id);
-      setSchool(data);
-    } catch (error) {
-      console.error("Error fetching school:", error);
-    } finally {
+    if (!id) return;
+    
+    setLoading(true);
+    const unsub = onSnapshot(doc(db, "schools", id), (docSnap) => {
+      if (docSnap.exists()) {
+        setSchool({ id: docSnap.id, ...docSnap.data() });
+      } else {
+        setSchool(null);
+      }
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsub();
+  }, [id]);
 
   const handleStatusChangeClick = (newStatus) => {
     setConfirmModalState({ isOpen: true, newStatus });
@@ -39,7 +42,7 @@ export default function TenantDetails() {
     setUpdating(true);
     try {
       await updateSchoolStatus(id, newStatus);
-      setSchool({ ...school, status: newStatus });
+      // setSchool handled by real-time listener
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("Failed to update status.");

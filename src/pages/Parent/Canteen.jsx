@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, addSubDocument } from '../../firebase/firestore';
+import { addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
 import toast from 'react-hot-toast';
 import { LuCoffee as Coffee, LuUtensils as Utensils, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
 
@@ -14,21 +14,19 @@ export default function Canteen() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (schoolId && studentId) {
-      fetchRequests();
-    }
-  }, [schoolId, studentId]);
-
-  const fetchRequests = async () => {
-    try {
-      const allReqs = await getSubCollection(schoolId, 'canteen_requests');
-      setRequests(allReqs.filter(r => r.studentId === studentId));
-    } catch (error) {
-      console.error("Error fetching canteen requests:", error);
-    } finally {
+    if (!schoolId || !studentId) {
       setLoading(false);
+      return;
     }
-  };
+
+    setLoading(true);
+    const unsub = subscribeToSubCollection(schoolId, 'canteen_requests', (allReqs) => {
+      setRequests(allReqs.filter(r => r.studentId === studentId));
+      setLoading(false);
+    });
+
+    return () => unsub();
+  }, [schoolId, studentId]);
 
   const handleRequestMeal = async (mealType) => {
     setSubmitting(true);
@@ -41,7 +39,7 @@ export default function Canteen() {
         status: 'Pending'
       });
       toast.success(`${mealType} requested successfully!`);
-      fetchRequests();
+      // fetchRequests(); - Handled by real-time listener
     } catch (error) {
       console.error("Error requesting meal:", error);
       toast.error("Failed to request meal.");

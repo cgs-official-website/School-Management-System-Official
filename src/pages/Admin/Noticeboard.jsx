@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { createNotice, getNotices, deleteNotice } from '../../firebase/firestore';
+import { createNotice, getNotices, deleteNotice, subscribeToNotices } from '../../firebase/firestore';
 import { LuBell as Bell, LuPlus as Plus, LuX as X, LuTrash2 as Trash2, LuMegaphone as Megaphone, LuUsers as Users, LuGraduationCap as GraduationCap, LuTriangleAlert as AlertTriangle, LuCircleCheck as CheckCircle2, LuSend as Send } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
@@ -38,22 +38,16 @@ export default function Noticeboard() {
   });
 
   useEffect(() => {
-    if (schoolId) {
-      fetchNotices();
-    }
-  }, [schoolId]);
+    if (!schoolId) return;
 
-  const fetchNotices = async () => {
     setLoading(true);
-    try {
-      const data = await getNotices(schoolId);
+    const unsubscribe = subscribeToNotices(schoolId, null, (data) => {
       setNotices(data.length > 0 ? data : mockNotices);
-    } catch (error) {
-      console.error("Error fetching notices:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsubscribe();
+  }, [schoolId]);
 
   const handleCreateNotice = async (e) => {
     e.preventDefault();
@@ -64,8 +58,7 @@ export default function Noticeboard() {
         authorId: currentUser.uid,
         authorName: userProfile.firstName + ' ' + userProfile.lastName
       });
-      const updatedNotices = await getNotices(schoolId);
-      setNotices(updatedNotices);
+      // Listener handles state update
       if (newNotice.sendWhatsApp) {
         // Simulate WhatsApp API integration
         console.log(`[WhatsApp API] Broadcasting to ${newNotice.audience}: ${newNotice.title}`);
@@ -91,7 +84,7 @@ export default function Noticeboard() {
     if (!noticeId) return;
     try {
       await deleteNotice(schoolId, noticeId);
-      setNotices(notices.filter(n => n.id !== noticeId));
+      // Listener handles state update
     } catch (error) {
       toast.error("Failed to delete notice.");
     } finally {

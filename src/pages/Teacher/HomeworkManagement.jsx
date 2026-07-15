@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, addSubDocument } from '../../firebase/firestore';
+import { getSubCollection, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
 import { LuPlus as Plus, LuUpload as Upload, LuFileText as FileText, LuSearch as Search, LuX as X, LuCircleCheck as CheckCircle } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -28,26 +28,25 @@ export default function HomeworkManagement() {
   const [excelFile, setExcelFile] = useState(null);
 
   useEffect(() => {
-    if (schoolId) {
-      loadData();
-    }
-  }, [schoolId]);
+    if (!schoolId) return;
 
-  const loadData = async () => {
-    try {
-      const classesData = await getSubCollection(schoolId, 'classes');
-      setClasses(classesData);
+    setLoading(true);
+    let classesUnsub, hwUnsub;
 
-      const hwData = await getSubCollection(schoolId, 'homeworks');
-      // Sort by newest first
-      setHomeworks(hwData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to load homework data");
-    } finally {
+    classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      setClasses(data);
+    });
+
+    hwUnsub = subscribeToSubCollection(schoolId, 'homeworks', (data) => {
+      setHomeworks(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       setLoading(false);
-    }
-  };
+    });
+
+    return () => {
+      if (classesUnsub) classesUnsub();
+      if (hwUnsub) hwUnsub();
+    };
+  }, [schoolId]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -62,7 +61,7 @@ export default function HomeworkManagement() {
       toast.success("Homework assigned successfully!");
       setShowCreateModal(false);
       setNewHomework({ title: '', description: '', classId: '', dueDate: '' });
-      loadData();
+      // loadData(); - handled by real-time listener
     } catch (err) {
       console.error(err);
       toast.error("Failed to create homework");

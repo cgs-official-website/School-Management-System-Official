@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { 
+import {
   getBooks, 
   addBook, 
   getIssuedBooks, 
   issueBook, 
   returnBook, 
-  getSubCollection 
+  getSubCollection,
+  subscribeToBooks,
+  subscribeToIssuedBooks,
+  subscribeToSubCollection
 } from '../../firebase/firestore';
 import { LuBook as Book, LuPlus as Plus, LuX as X, LuSearch as Search, LuCircleCheck as CheckCircle2, LuCircleAlert as AlertCircle, LuLibrary as Library, LuUndo2 as Undo2, LuUsers as Users } from 'react-icons/lu';
 import toast from 'react-hot-toast';
@@ -68,28 +71,30 @@ export default function LibraryManagement() {
   });
 
   useEffect(() => {
-    if (schoolId) {
-      fetchData();
-    }
-  }, [schoolId]);
+    if (!schoolId) return;
 
-  const fetchData = async () => {
     setLoading(true);
-    try {
-      const [b, ib, s] = await Promise.all([
-        getBooks(schoolId),
-        getIssuedBooks(schoolId),
-        getSubCollection(schoolId, 'users')
-      ]);
-      setBooks(b.length > 0 ? b : mockBooks);
-      setIssuedBooks(ib);
-      setStudents(s.length > 0 ? s : mockStudents);
-    } catch (error) {
-      console.error("Error fetching library data:", error);
-    } finally {
+    let booksUnsub, issuedBooksUnsub, studentsUnsub;
+
+    booksUnsub = subscribeToBooks(schoolId, (data) => {
+      setBooks(data.length > 0 ? data : mockBooks);
       setLoading(false);
-    }
-  };
+    });
+
+    issuedBooksUnsub = subscribeToIssuedBooks(schoolId, (data) => {
+      setIssuedBooks(data);
+    });
+
+    studentsUnsub = subscribeToSubCollection(schoolId, 'users', (data) => {
+      setStudents(data.length > 0 ? data : mockStudents);
+    });
+
+    return () => {
+      if (booksUnsub) booksUnsub();
+      if (issuedBooksUnsub) issuedBooksUnsub();
+      if (studentsUnsub) studentsUnsub();
+    };
+  }, [schoolId]);
 
   const handleAddBook = async (e) => {
     e.preventDefault();
@@ -99,8 +104,7 @@ export default function LibraryManagement() {
         ...newBook,
         totalQuantity: Number(newBook.totalQuantity)
       });
-      const updatedBooks = await getBooks(schoolId);
-      setBooks(updatedBooks);
+      // Listner handles updates
       setShowAddModal(false);
       setNewBook({ title: '', author: '', isbn: '', category: '', totalQuantity: 1 });
     } catch (error) {
@@ -124,13 +128,7 @@ export default function LibraryManagement() {
     setIssuingBook(true);
     try {
       await issueBook(schoolId, issueData.bookId, issueData.studentId, new Date(issueData.dueDate).toISOString());
-      // Refresh
-      const [updatedBooks, updatedIssues] = await Promise.all([
-        getBooks(schoolId),
-        getIssuedBooks(schoolId)
-      ]);
-      setBooks(updatedBooks);
-      setIssuedBooks(updatedIssues);
+      // Listener handles updates
       setShowIssueModal(false);
       setIssueData({ bookId: '', studentId: '', dueDate: '' });
       setActiveTab('issued');
@@ -150,13 +148,7 @@ export default function LibraryManagement() {
     if (!issueId || !bookId) return;
     try {
       await returnBook(schoolId, issueId, bookId);
-      // Refresh
-      const [updatedBooks, updatedIssues] = await Promise.all([
-        getBooks(schoolId),
-        getIssuedBooks(schoolId)
-      ]);
-      setBooks(updatedBooks);
-      setIssuedBooks(updatedIssues);
+      // Listener handles updates
     } catch (error) {
       toast.error("Failed to return book");
     } finally {

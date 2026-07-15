@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentsByClass, getAttendance, saveAttendance } from '../../firebase/firestore';
+import { getStudentsByClass, getAttendance, saveAttendance, subscribeToStudentsByClass, subscribeToAttendance } from '../../firebase/firestore';
 import { getDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle, LuSave as Save, LuUsers as Users } from 'react-icons/lu';
@@ -23,35 +23,25 @@ export default function Attendance() {
   const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
-    if (schoolId && classId) {
-      fetchClassAndStudents();
-    }
+    if (!schoolId || !classId) return;
+    
+    getDoc(doc(db, `schools/${schoolId}/classes`, classId)).then(classDoc => {
+      if (classDoc.exists()) setClassDetails({ id: classDoc.id, ...classDoc.data() });
+    });
+
+    const unsubStudents = subscribeToStudentsByClass(schoolId, classId, (studentsData) => {
+      studentsData.sort((a, b) => a.firstName.localeCompare(b.firstName));
+      setStudents(studentsData);
+    });
+
+    return () => unsubStudents();
   }, [schoolId, classId]);
 
   useEffect(() => {
-    if (students.length > 0) {
-      fetchAttendanceForDate();
-    }
-  }, [selectedDate, students]);
-
-  const fetchClassAndStudents = async () => {
-    try {
-      const classDoc = await getDoc(doc(db, `schools/${schoolId}/classes`, classId));
-      if (classDoc.exists()) setClassDetails({ id: classDoc.id, ...classDoc.data() });
-
-      const studentsData = await getStudentsByClass(schoolId, classId);
-      studentsData.sort((a, b) => a.firstName.localeCompare(b.firstName));
-      setStudents(studentsData);
-    } catch (error) {
-      console.error("Error fetching students:", error);
-    }
-  };
-
-  const fetchAttendanceForDate = async () => {
+    if (students.length === 0) return;
+    
     setLoading(true);
-    try {
-      const existingRecord = await getAttendance(schoolId, classId, selectedDate);
-      
+    const unsub = subscribeToAttendance(schoolId, classId, selectedDate, (existingRecord) => {
       const newRecords = {};
       if (existingRecord && existingRecord.records) {
         // Load existing statuses
@@ -65,12 +55,11 @@ export default function Attendance() {
         });
       }
       setAttendanceRecords(newRecords);
-    } catch (error) {
-      console.error("Error fetching attendance:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsub();
+  }, [selectedDate, students, schoolId, classId]);
 
   const handleStatusChange = (studentId, status) => {
     setAttendanceRecords(prev => ({

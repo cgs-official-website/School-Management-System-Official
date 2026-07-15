@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getPlans, createPlan, updatePlan, deletePlan } from '../../firebase/firestore';
+import { subscribeToPlans, createPlan, updatePlan, deletePlan } from '../../firebase/firestore';
 import { LuPlus as Plus, LuPen as Edit2, LuTrash2 as Trash2, LuCircleCheck as CheckCircle2, LuSave as Save, LuX as X } from 'react-icons/lu';
 import ConfirmModal from '../../components/ConfirmModal';
 
@@ -24,21 +24,14 @@ export default function PlanManagement() {
   const [featureInput, setFeatureInput] = useState('');
 
   useEffect(() => {
-    fetchPlans();
-  }, []);
-
-  const fetchPlans = async () => {
     setLoading(true);
-    try {
-      const data = await getPlans();
-      // If no plans exist, we might want to prompt to create default plans
+    const unsub = subscribeToPlans((data) => {
       setPlans(data);
-    } catch (error) {
-      console.error("Error fetching plans:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsub();
+  }, []);
 
   const handleCreateDefaults = async () => {
     const defaults = [
@@ -70,7 +63,7 @@ export default function PlanManagement() {
       for (const p of defaults) {
         await createPlan(p);
       }
-      await fetchPlans();
+      // fetchPlans() handled by real-time listener
     } catch (err) {
       console.error(err);
     }
@@ -105,7 +98,6 @@ export default function PlanManagement() {
       } else {
         await createPlan(currentPlan);
       }
-      await fetchPlans();
       closeEditor();
     } catch (error) {
       console.error("Error saving plan:", error);
@@ -125,7 +117,7 @@ export default function PlanManagement() {
     setLoading(true);
     try {
       await deletePlan(id);
-      await fetchPlans();
+      // await fetchPlans(); handled by listener
     } catch (error) {
       console.error("Error deleting plan:", error);
     } finally {

@@ -5,7 +5,10 @@ import {
   getAssessmentsByClass, 
   createAssessment, 
   updateAssessmentGrades,
-  getExams
+  getExams,
+  subscribeToStudentsByClass,
+  subscribeToAssessmentsByClass,
+  subscribeToExams
 } from '../../firebase/firestore';
 import { LuPlus as Plus, LuFileText as FileText, LuCircleCheck as CheckCircle2, LuSave as Save, LuX as X, LuBookOpen as BookOpen, LuGraduationCap as GraduationCap, LuPrinter as Printer } from 'react-icons/lu';
 import toast from 'react-hot-toast';
@@ -39,33 +42,45 @@ export default function Grades() {
   });
 
   useEffect(() => {
-    if (schoolId && classId) {
-      fetchData();
-    }
-  }, [schoolId, classId]);
+    if (!schoolId || !classId) return;
 
-  const fetchData = async () => {
     setLoading(true);
-    try {
-      const [studentsData, assessmentsData, examsData] = await Promise.all([
-        getStudentsByClass(schoolId, classId),
-        getAssessmentsByClass(schoolId, classId),
-        getExams(schoolId)
-      ]);
+    let studentsUnsub, assessmentsUnsub, examsUnsub;
+
+    studentsUnsub = subscribeToStudentsByClass(schoolId, classId, (studentsData) => {
       studentsData.sort((a, b) => a.firstName.localeCompare(b.firstName));
       setStudents(studentsData);
+    });
+
+    assessmentsUnsub = subscribeToAssessmentsByClass(schoolId, classId, (assessmentsData) => {
       setAssessments(assessmentsData);
-      setExams(examsData);
       
+      // If we haven't selected an assessment yet, and there's data, select the first one
       if (assessmentsData.length > 0) {
-        handleSelectAssessment(assessmentsData[0], studentsData);
+        // Need to wait for students state, or just use the current one.
+        // The safest way is to just let the activeAssessment be set via handleSelectAssessment.
+        // This is a bit tricky with split states, but setting loading false here is good.
       }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
       setLoading(false);
+    });
+
+    examsUnsub = subscribeToExams(schoolId, (examsData) => {
+      setExams(examsData);
+    });
+
+    return () => {
+      if (studentsUnsub) studentsUnsub();
+      if (assessmentsUnsub) assessmentsUnsub();
+      if (examsUnsub) examsUnsub();
+    };
+  }, [schoolId, classId]);
+
+  // Handle auto-selecting the first assessment when data is ready
+  useEffect(() => {
+    if (!activeAssessment && assessments.length > 0 && students.length > 0) {
+      handleSelectAssessment(assessments[0], students);
     }
-  };
+  }, [assessments, students, activeAssessment]);
 
   const handleSelectAssessment = (assessment, studentList = students) => {
     setActiveAssessment(assessment);
@@ -94,7 +109,7 @@ export default function Grades() {
       const newId = await createAssessment(schoolId, assessmentData);
       const createdAssessment = { id: newId, ...assessmentData };
       
-      setAssessments([createdAssessment, ...assessments]);
+      // setAssessments handled by listener
       setShowCreateModal(false);
       setNewAssessment({ title: '', date: new Date().toISOString().split('T')[0], totalMarks: 100 });
       
@@ -136,12 +151,7 @@ export default function Grades() {
       await updateAssessmentGrades(schoolId, activeAssessment.id, cleanedGrades);
       
       // Update local state to reflect saved grades
-      const updatedAssessments = assessments.map(a => 
-        a.id === activeAssessment.id ? { ...a, grades: cleanedGrades } : a
-      );
-      setAssessments(updatedAssessments);
-      setActiveAssessment({ ...activeAssessment, grades: cleanedGrades });
-      
+      // assessments listener handles state updates
       setSuccessMsg('Grades saved successfully!');
       setTimeout(() => setSuccessMsg(''), 3000);
     } catch (error) {

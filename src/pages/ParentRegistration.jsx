@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../firebase/auth';
 import { addSubDocument } from '../firebase/firestore';
 import { db } from '../firebase/config';
@@ -86,144 +86,143 @@ export default function ParentRegistration() {
   };
 
   return (
-    <div className="h-screen flex w-full font-sans bg-white overflow-hidden">
-      {/* Left Side */}
-      <div className="hidden lg:flex lg:w-[60%] h-full relative flex-col justify-center items-center bg-white z-20">
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[90vh] max-h-[800px] min-h-[600px] border border-slate-100">
         
-        {/* Wavy edge sticking out to the right */}
-        <div className="absolute top-0 -right-[98px] h-full w-24 overflow-hidden pointer-events-none">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="h-full w-full text-white fill-current">
-            <path d="M0,0 C80,25 20,50 80,75 C100,85 40,100 0,100 Z" />
-          </svg>
-        </div>
-
-        {/* Abstract Green Blob shapes */}
-        <div className="absolute w-[80%] h-[80%] max-w-[600px] max-h-[600px] bg-primary-300 opacity-30 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%] -z-10 animate-[spin_60s_linear_infinite]"></div>
-        <div className="absolute w-[70%] h-[70%] max-w-[500px] max-h-[500px] bg-primary-200 opacity-20 rounded-[60%_40%_30%_70%_/_60%_30%_70%_40%] -z-10 animate-[spin_40s_linear_infinite_reverse]"></div>
-        
-        {/* Illustration Placeholder */}
-        <div className="relative z-10 p-8 flex justify-center items-center">
-           <img 
-             src="/school_illustration.png" 
-             alt="Registration Illustration" 
-             className="max-w-md xl:max-w-lg drop-shadow-2xl mix-blend-multiply animate-float" 
-             onError={(e) => { e.target.style.display = 'none' }} 
-           />
-           <div className="absolute inset-0 flex justify-center items-center -z-10">
-              <div className="w-64 h-64 border-[20px] border-primary-300/20 rounded-full"></div>
-              <div className="absolute w-48 h-48 border-[10px] border-primary-400/20 rounded-lg rotate-45"></div>
-           </div>
-        </div>
-      </div>
-
-      {/* Right Side - Form */}
-      <div className="w-full lg:w-[40%] h-full overflow-y-auto custom-scrollbar bg-slate-900 flex flex-col justify-center items-center py-12 px-4 sm:px-6 relative z-30">
-        
-        {loading ? (
-          <div className="flex flex-col items-center justify-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary-500 border-t-transparent mb-4"></div>
-            <p className="text-slate-400">Loading form...</p>
+        {/* Left Gradient Panel */}
+        <div className="w-full md:w-1/2 p-4 hidden md:flex flex-col relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary-500 via-indigo-600 to-cyan-400 rounded-2xl m-4 z-0">
+             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-white/20 blur-[60px] rounded-full mix-blend-screen animate-pulse pointer-events-none"></div>
+             <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-300/30 blur-[80px] rounded-full mix-blend-screen animate-[pulse_4s_ease-in-out_infinite_reverse] pointer-events-none"></div>
           </div>
-        ) : (
-          <div className="w-full max-w-sm px-8 flex flex-col items-center">
-            {/* School Branding */}
-            {school && (
-              <div className="flex flex-col items-center mb-8 bg-white/5 p-6 rounded-2xl border border-white/10 w-full">
-                {school.branding?.logoUrl ? (
-                  <img src={school.branding.logoUrl} alt="School Logo" className="h-16 w-auto mb-3 object-contain" />
-                ) : (
-                  <div className="h-16 w-16 bg-white/10 rounded-full flex items-center justify-center mb-3">
-                    <LuBuilding2 size={32} className="text-white/50" />
+          
+          <div className="relative z-10 flex flex-col h-full justify-between p-8 text-white">
+            <Link to="/" className="inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-white/50 rounded-lg w-max">
+              <img src="/logo.png" alt="Zuna Logo" className="w-auto h-10 object-contain drop-shadow-sm filter brightness-0 invert" />
+            </Link>
+
+            <div className="mt-auto">
+              <p className="text-sm font-medium text-white/80 mb-2">Parent Registration</p>
+              <h1 className="text-3xl lg:text-4xl font-bold leading-tight">
+                Get access to your personal hub for clarity and productivity
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Form Panel */}
+        <div className="w-full md:w-1/2 p-6 sm:p-8 lg:p-12 flex flex-col bg-white relative overflow-y-auto overflow-x-hidden custom-scrollbar">
+          
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary-500 border-t-transparent mb-4"></div>
+              <p className="text-slate-500 font-medium">Loading form...</p>
+            </div>
+          ) : (
+            <div className="flex flex-col">
+              {/* Mobile Logo & School Branding */}
+              <div className="flex items-center justify-between mb-8">
+                {school && (
+                  <div className="flex items-center gap-3">
+                    {school.branding?.logoUrl ? (
+                      <img src={school.branding.logoUrl} alt="School Logo" className="h-10 w-auto object-contain" />
+                    ) : (
+                      <div className="h-10 w-10 bg-primary-50 rounded-lg flex items-center justify-center text-primary-600">
+                        <LuBuilding2 size={20} />
+                      </div>
+                    )}
+                    <div>
+                      <h2 className="text-lg font-bold text-slate-900 leading-tight">{school.schoolName || school.name}</h2>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Parent</p>
+                    </div>
                   </div>
                 )}
-                <h2 className="text-xl font-bold text-white text-center">{school.schoolName || school.name}</h2>
-                <p className="text-xs text-slate-400 uppercase tracking-widest mt-1">Parent Registration</p>
+                <div className="md:hidden">
+                  <Link to="/">
+                    <img src="/logo.png" alt="Zuna Logo" className="w-auto h-8 object-contain" />
+                  </Link>
+                </div>
               </div>
-            )}
 
-            <form className="w-full space-y-5" onSubmit={handleRegister}>
-              <div>
-                <label className="block text-sm text-white/90 mb-1 ml-2 font-medium">
-                  Your Full Name
-                </label>
-                <div className="relative flex items-center">
-                  <div className="absolute left-4 text-white/70">
-                    <UserIcon size={18} />
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">Create an account</h2>
+                <p className="text-sm text-slate-500">Access your tasks, notes, and projects anytime, anywhere - and keep everything flowing in one place.</p>
+              </div>
+
+              {error && (
+                <div className="w-full mb-6 p-3 bg-red-50 text-red-600 text-sm font-medium rounded-lg border border-red-100">
+                  {error}
+                </div>
+              )}
+
+              <form className="w-full space-y-5" onSubmit={handleRegister}>
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="block text-sm font-bold text-slate-700">Full Name</label>
+                    <input
+                      name="name"
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      placeholder="John Doe"
+                    />
                   </div>
-                  <input
-                    name="name"
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/10 text-white placeholder-white/40 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-400 transition-all shadow-inner"
-                    placeholder=""
-                  />
-                </div>
-              </div>
 
-              <div>
-                <label className="block text-sm text-white/90 mb-1 ml-2 font-medium">
-                  Student Admission Number
-                </label>
-                <div className="relative flex items-center">
-                  <div className="absolute left-4 text-white/70">
-                    <HashIcon size={18} />
+                  <div className="space-y-1">
+                    <label className="block text-sm font-bold text-slate-700">Student Admission No.</label>
+                    <input
+                      name="admissionNumber"
+                      type="text"
+                      required
+                      value={formData.admissionNumber}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      placeholder="ADM12345"
+                    />
                   </div>
-                  <input
-                    name="admissionNumber"
-                    type="text"
-                    required
-                    value={formData.admissionNumber}
-                    onChange={handleChange}
-                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/10 text-white placeholder-white/40 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-400 transition-all shadow-inner uppercase"
-                    placeholder=""
-                  />
-                </div>
-              </div>
 
-              <div>
-                <label className="block text-sm text-white/90 mb-1 ml-2 font-medium">
-                  Create Password
-                </label>
-                <div className="relative flex items-center">
-                  <div className="absolute left-4 text-white/70">
-                    <LockIcon size={18} />
+                  <div className="space-y-1">
+                    <label className="block text-sm font-bold text-slate-700">Password</label>
+                    <input
+                      name="password"
+                      type="password"
+                      required
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      placeholder="••••••••"
+                    />
                   </div>
-                  <input
-                    name="password"
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/10 text-white placeholder-white/40 border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary-400 transition-all shadow-inner"
-                    placeholder=""
-                  />
                 </div>
-              </div>
 
-              <div className="pt-4 border-t border-white/10">
-                <div className="bg-white p-4 rounded-2xl">
-                  <Captcha ref={captchaRef} onChange={setCaptchaValid} />
+                <div className="pt-2">
+                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <Captcha ref={captchaRef} onChange={setCaptchaValid} />
+                  </div>
                 </div>
-              </div>
 
-              <div className="pt-4 flex justify-center">
-                <button
-                  type="submit"
-                  disabled={isRegistering}
-                  className="w-full flex justify-center items-center py-3.5 px-4 rounded-xl shadow-lg text-sm font-bold text-white bg-primary-600 hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-white/50 transition-all uppercase tracking-widest disabled:opacity-50"
-                >
-                  {isRegistering ? (
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                  ) : (
-                    'CREATE ACCOUNT'
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    disabled={isRegistering}
+                    className="w-full flex justify-center items-center py-3.5 px-4 rounded-lg shadow-md text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isRegistering ? (
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                        <span>Creating...</span>
+                      </div>
+                    ) : (
+                      'Get Started'
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

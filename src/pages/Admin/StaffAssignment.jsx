@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, updateSubDocument, addSubDocument } from '../../firebase/firestore';
+import { getSubCollection, updateSubDocument, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
 import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -37,30 +37,30 @@ export default function StaffAssignment() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    if (schoolId) {
-      fetchData();
-    }
-  }, [schoolId]);
+    if (!schoolId) return;
 
-  const fetchData = async () => {
     setLoading(true);
-    try {
-      const [staffData, classesData, schoolSnap] = await Promise.all([
-        getSubCollection(schoolId, 'teachers'),
-        getSubCollection(schoolId, 'classes'),
-        getDoc(doc(db, 'schools', schoolId))
-      ]);
-      setStaff(staffData);
-      setClasses(classesData);
-      if (schoolSnap.exists()) {
-        setSchoolName(schoolSnap.data().schoolName || 'School');
-      }
-    } catch (error) {
-      console.error("Error fetching staff data:", error);
-    } finally {
+    let teachersUnsub, classesUnsub;
+
+    // Fetch school name once
+    getDoc(doc(db, 'schools', schoolId)).then(snap => {
+      if (snap.exists()) setSchoolName(snap.data().schoolName || 'School');
+    });
+
+    teachersUnsub = subscribeToSubCollection(schoolId, 'teachers', (data) => {
+      setStaff(data);
       setLoading(false);
-    }
-  };
+    });
+
+    classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      setClasses(data);
+    });
+
+    return () => {
+      if (teachersUnsub) teachersUnsub();
+      if (classesUnsub) classesUnsub();
+    };
+  }, [schoolId]);
 
   const openAssignModal = (staffMember) => {
     setSelectedStaff(staffMember);
@@ -81,7 +81,7 @@ export default function StaffAssignment() {
         assignedClassId: selectedClassId
       });
       setAssignModalOpen(false);
-      fetchData(); // Refresh to show new assignment
+      // Refresh handled by listener
     } catch (error) {
       console.error("Error updating assignment:", error);
       toast.error("Failed to assign class.");
@@ -125,7 +125,7 @@ export default function StaffAssignment() {
           toast.success(`Successfully imported ${successCount} staff members!`);
           setUploadModalOpen(false);
           setUploadFile(null);
-          fetchData();
+          // Refresh handled by listener
         };
         reader.readAsBinaryString(uploadFile);
       } catch (err) {

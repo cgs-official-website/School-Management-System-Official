@@ -5,7 +5,7 @@ import { LuCheck as Check, LuShieldCheck as ShieldCheck, LuArrowRight as ArrowRi
 import { FiLoader as Loader } from 'react-icons/fi';
 import { createSchool, getPlans, generateSchoolId } from '../firebase/firestore';
 import { registerUser } from '../firebase/auth';
-import { doc, collection } from 'firebase/firestore';
+import { doc, collection, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
 export default function SchoolRegistration() {
@@ -141,15 +141,21 @@ export default function SchoolRegistration() {
       let regCertUrl = 'https://via.placeholder.com/150?text=RegCert';
       let panUrl = 'https://via.placeholder.com/150?text=PAN';
 
-      const newSchoolId = await generateSchoolId();
-
-      // 1. Create Auth User
+      // 1. Create Auth User first so we are authenticated
       const user = await registerUser(formData.email, formData.password, 'admin', { 
         name: formData.adminName,
-        schoolId: newSchoolId 
+        schoolId: '' 
       });
       
-      // 2. Create School Document with status 'pending'
+      // 2. Now generate the school ID (authenticated)
+      const newSchoolId = await generateSchoolId();
+      
+      // 3. Update the user profile with the generated school ID
+      await updateDoc(doc(db, "users", user.uid), {
+        schoolId: newSchoolId
+      });
+
+      // 4. Create School Document with status 'pending'
       await createSchool({
         name: formData.schoolName,
         schoolName: formData.schoolName,

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { 
+import {
   getExams, 
   createExam, 
   getSubCollection, 
   getStudentsByClass,
   getExamAssessments,
-  getTemplate
+  getTemplate,
+  subscribeToExams,
+  subscribeToSubCollection
 } from '../../firebase/firestore';
 import { LuFileText as FileText, LuPlus as Plus, LuX as X, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuFileChartColumn as FileBarChart, LuLoaderCircle as Loader2, LuPrinter as Printer, LuPalette as Palette } from 'react-icons/lu';
 import toast from 'react-hot-toast';
@@ -35,28 +37,30 @@ export default function ExamManagement() {
   const [reportTemplate, setReportTemplate] = useState(null);
 
   useEffect(() => {
-    if (schoolId) {
-      fetchInitialData();
-    }
-  }, [schoolId]);
+    if (!schoolId) return;
 
-  const fetchInitialData = async () => {
     setLoading(true);
-    try {
-      const [examsData, classesData, templateData] = await Promise.all([
-        getExams(schoolId),
-        getSubCollection(schoolId, 'classes'),
-        getTemplate(schoolId, 'report_card')
-      ]);
-      setExams(examsData);
-      setClasses(classesData);
+    let examsUnsub, classesUnsub;
+
+    // Fetch template once statically
+    getTemplate(schoolId, 'report_card').then(templateData => {
       setReportTemplate(templateData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
+    });
+
+    examsUnsub = subscribeToExams(schoolId, (data) => {
+      setExams(data);
       setLoading(false);
-    }
-  };
+    });
+
+    classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      setClasses(data);
+    });
+
+    return () => {
+      if (examsUnsub) examsUnsub();
+      if (classesUnsub) classesUnsub();
+    };
+  }, [schoolId]);
 
   const handleCreateExam = async (e) => {
     e.preventDefault();
@@ -66,8 +70,7 @@ export default function ExamManagement() {
         ...newExam,
         status: 'active'
       });
-      const updatedExams = await getExams(schoolId);
-      setExams(updatedExams);
+      // Listener handles updates
       setShowCreateModal(false);
       setNewExam({ name: '', startDate: '', endDate: '' });
     } catch (error) {

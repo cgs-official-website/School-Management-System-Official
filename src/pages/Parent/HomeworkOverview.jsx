@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection } from '../../firebase/firestore';
+import { subscribeToSubCollection } from '../../firebase/firestore';
 import { LuFileText as FileText, LuClock as Clock, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
@@ -15,28 +15,22 @@ export default function HomeworkOverview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (schoolId && classId) {
-      loadHomework();
-    } else {
+    if (!schoolId || !classId) {
       setLoading(false);
+      return;
     }
-  }, [schoolId, classId]);
 
-  const loadHomework = async () => {
-    try {
-      const hwData = await getSubCollection(schoolId, 'homeworks');
+    setLoading(true);
+    const unsub = subscribeToSubCollection(schoolId, 'homeworks', (hwData) => {
       // Filter by the student's class
       const classHw = hwData.filter(hw => hw.classId === classId);
-      
       // Sort by due date (closest first)
       setHomeworks(classHw.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)));
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to load homework.");
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsub();
+  }, [schoolId, classId]);
 
   if (loading) {
     return (

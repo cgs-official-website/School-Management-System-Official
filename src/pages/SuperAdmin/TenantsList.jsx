@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getSchools } from '../../firebase/firestore';
+import { subscribeToAllSchools } from '../../firebase/firestore';
 import { Link } from 'react-router-dom';
 import { LuBuilding2 as Building2, LuSearch as Search, LuFilter as Filter, LuEllipsisVertical as MoreVertical, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuClock as Clock, LuCircleAlert as AlertCircle } from 'react-icons/lu';
 
@@ -10,20 +10,16 @@ export default function TenantsList() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetchSchools();
-  }, [filterStatus]);
-
-  const fetchSchools = async () => {
     setLoading(true);
-    try {
-      const data = await getSchools(filterStatus === 'all' ? null : filterStatus);
-      setSchools(data);
-    } catch (error) {
-      console.error("Error fetching schools:", error);
-    } finally {
+    const unsub = subscribeToAllSchools((data) => {
+      // Apply status filter locally since subscription gets all schools
+      const filteredData = filterStatus === 'all' ? data : data.filter(s => s.status === filterStatus);
+      setSchools(filteredData);
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsub();
+  }, [filterStatus]);
 
   const getStatusBadge = (status) => {
     switch (status) {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { getAttendanceForClass, getAssessmentsByClass } from '../../firebase/firestore';
+import { subscribeToAttendanceForClass, subscribeToAssessmentsByClass } from '../../firebase/firestore';
 import { LuCircleUser as UserCircle, LuCalendar as Calendar, LuGraduationCap as GraduationCap, LuCircleCheck as CheckCircle2, LuTrendingUp as TrendingUp, LuTriangleAlert as AlertTriangle } from 'react-icons/lu';
 
 export default function StudentOverview() {
@@ -18,29 +18,23 @@ export default function StudentOverview() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (schoolId && studentId && classId) {
-      fetchStudentData();
-    }
-  }, [schoolId, studentId, classId]);
+    if (!schoolId || !studentId || !classId) return;
 
-  const fetchStudentData = async () => {
     setLoading(true);
-    try {
-      // 1. Fetch Student & Class Profile
-      const [studentSnap, classSnap] = await Promise.all([
-        getDoc(doc(db, `schools/${schoolId}/students`, studentId)),
-        getDoc(doc(db, `schools/${schoolId}/classes`, classId))
-      ]);
-      
-      if (studentSnap.exists()) setStudent({ id: studentSnap.id, ...studentSnap.data() });
-      if (classSnap.exists()) setClassDetails({ id: classSnap.id, ...classSnap.data() });
+    let studentUnsub, classUnsub, attendanceUnsub, assessmentsUnsub;
 
-      // 2. Fetch Attendance
-      const attendanceDocs = await getAttendanceForClass(schoolId, classId);
+    studentUnsub = onSnapshot(doc(db, `schools/${schoolId}/students`, studentId), (docSnap) => {
+      if (docSnap.exists()) setStudent({ id: docSnap.id, ...docSnap.data() });
+    });
+
+    classUnsub = onSnapshot(doc(db, `schools/${schoolId}/classes`, classId), (docSnap) => {
+      if (docSnap.exists()) setClassDetails({ id: docSnap.id, ...docSnap.data() });
+    });
+
+    attendanceUnsub = subscribeToAttendanceForClass(schoolId, classId, (attendanceDocs) => {
       let present = 0, absent = 0, late = 0, total = 0;
-      
-      attendanceDocs.forEach(doc => {
-        const record = doc.records?.[studentId];
+      attendanceDocs.forEach(docData => {
+        const record = docData.records?.[studentId];
         if (record) {
           total++;
           if (record === 'Present') present++;
@@ -49,20 +43,21 @@ export default function StudentOverview() {
         }
       });
       setAttendanceStats({ total, present, absent, late });
+    });
 
-      // 3. Fetch Grades
-      const assessmentsData = await getAssessmentsByClass(schoolId, classId);
-      
-      // Filter out assessments where the student hasn't been graded yet
+    assessmentsUnsub = subscribeToAssessmentsByClass(schoolId, classId, (assessmentsData) => {
       const gradedAssessments = assessmentsData.filter(a => a.grades && a.grades[studentId] !== undefined);
       setAssessments(gradedAssessments);
-
-    } catch (error) {
-      console.error("Error fetching student overview:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => {
+      if (studentUnsub) studentUnsub();
+      if (classUnsub) classUnsub();
+      if (attendanceUnsub) attendanceUnsub();
+      if (assessmentsUnsub) assessmentsUnsub();
+    };
+  }, [schoolId, studentId, classId]);
 
   if (loading) {
     return (

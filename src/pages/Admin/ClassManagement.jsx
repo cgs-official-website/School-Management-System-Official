@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, addSubDocument } from '../../firebase/firestore';
+import { getSubCollection, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuBookOpen as BookOpen, LuPlus as Plus, LuTrash2 as Trash2, LuUsers as Users } from 'react-icons/lu';
@@ -35,25 +35,21 @@ export default function ClassManagement() {
   const [confirmModalState, setConfirmModalState] = useState({ isOpen: false, classId: null });
 
   useEffect(() => {
-    if (schoolId) fetchClasses();
-  }, [schoolId]);
-
-  const fetchClasses = async () => {
+    if (!schoolId) return;
+    
     setLoading(true);
-    try {
-      const data = await getSubCollection(schoolId, 'classes');
+    const unsubscribe = subscribeToSubCollection(schoolId, 'classes', (data) => {
       // Sort alphabetically
       data.sort((a, b) => {
         if(a.name === b.name) return a.section.localeCompare(b.section);
         return a.name.localeCompare(b.name);
       });
       setClasses(data.length > 0 ? data : mockClasses);
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsubscribe();
+  }, [schoolId]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -68,7 +64,7 @@ export default function ClassManagement() {
       });
       setFormData({ name: '', section: '' });
       setShowForm(false);
-      fetchClasses();
+      // No need to call fetchClasses() as the listener will handle UI update
     } catch (error) {
       console.error("Error creating class:", error);
     } finally {
@@ -86,7 +82,7 @@ export default function ClassManagement() {
     
     try {
       await deleteDoc(doc(db, `schools/${schoolId}/classes`, classId));
-      fetchClasses();
+      // fetchClasses(); - Handled by real-time listener
     } catch (error) {
       console.error("Error deleting class:", error);
       toast.error("Failed to delete class.");

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, Search, Bell, RefreshCw, ChevronRight, X } from 'lucide-react';
+import { Menu, Search, Bell, RefreshCw, ChevronRight, X, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { subscribeToNotices } from '../firebase/firestore';
 
 export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navItems = [] }) {
   const { userProfile } = useAuth();
@@ -11,16 +12,31 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
+  const [notices, setNotices] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notifRef = useRef(null);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!userProfile?.schoolId) return;
+    const unsub = subscribeToNotices(userProfile.schoolId, userProfile.role, (data) => {
+      setNotices(data);
+    });
+    return () => unsub();
+  }, [userProfile?.schoolId, userProfile?.role]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -146,10 +162,65 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
           <RefreshCw size={20} />
         </button>
         
-        <button className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors relative shrink-0" title="Notifications">
-          <Bell size={20} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-        </button>
+        <div className="relative shrink-0" ref={notifRef}>
+          <button 
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors relative" 
+            title="Notifications"
+          >
+            <Bell size={20} />
+            {notices.length > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+            )}
+          </button>
+          
+          {showNotifications && (
+            <div className="absolute top-full right-[-2rem] sm:right-0 mt-2 w-[300px] sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50 flex flex-col animate-fade-in-up">
+              <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <h3 className="font-semibold text-slate-900">Notifications</h3>
+                <span className="text-xs font-medium bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">{notices.length} new</span>
+              </div>
+              <div className="max-h-[28rem] overflow-y-auto custom-scrollbar">
+                {notices.length === 0 ? (
+                  <div className="p-8 text-center text-slate-500">
+                    <Bell size={32} className="mx-auto mb-3 text-slate-300" />
+                    <p className="text-sm font-medium">No new notifications</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-slate-100">
+                    {notices.map((notice) => (
+                      <div key={notice.id} className={`p-4 hover:bg-slate-50 transition-colors ${notice.priority === 'high' ? 'bg-red-50/30' : ''}`}>
+                        <div className="flex gap-3">
+                          <div className={`shrink-0 mt-1 ${notice.priority === 'high' ? 'text-red-500' : 'text-primary-500'}`}>
+                            {notice.priority === 'high' ? <AlertTriangle size={16} /> : <Bell size={16} />}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-slate-900 line-clamp-1">{notice.title}</p>
+                            <p className="text-xs text-slate-500 mt-1 line-clamp-2">{notice.message}</p>
+                            <p className="text-[10px] text-slate-400 mt-2 font-medium">
+                              {new Date(notice.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="p-3 border-t border-slate-100 text-center bg-slate-50/50">
+                <button 
+                  onClick={() => {
+                    setShowNotifications(false);
+                    navigate(`/${userProfile.role === 'superadmin' ? 'superadmin' : userProfile.role}/noticeboard`);
+                  }} 
+                  className="text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors"
+                >
+                  View All Notices
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="hidden sm:block h-6 w-px bg-slate-200 mx-1 shrink-0"></div>
 

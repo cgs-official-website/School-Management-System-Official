@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, getNotices } from '../../firebase/firestore';
+import { getSubCollection, getNotices, subscribeToSubCollection, subscribeToNotices } from '../../firebase/firestore';
 import { 
   LuUsers as Users, 
   LuGraduationCap as GraduationCap, 
@@ -8,7 +8,12 @@ import {
   LuBell as Bell,
   LuTrendingUp as TrendingUp,
   LuWallet as Wallet,
-  LuCalendarDays as Calendar
+  LuCalendarDays as Calendar,
+  LuZap as Zap,
+  LuBriefcase as Briefcase,
+  LuUser as User,
+  LuCheck as Check,
+  LuCopy as Copy
 } from 'react-icons/lu';
 
 export default function AdminOverview() {
@@ -25,35 +30,60 @@ export default function AdminOverview() {
   const [recentNotices, setRecentNotices] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [isInviteDropdownOpen, setIsInviteDropdownOpen] = useState(false);
+  const [copiedRole, setCopiedRole] = useState(null);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsInviteDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleCopyLink = (role) => {
+    const link = `${window.location.origin}/register/${role}/${schoolId}`;
+    navigator.clipboard.writeText(link);
+    setCopiedRole(role);
+    setTimeout(() => {
+      setCopiedRole(null);
+      setIsInviteDropdownOpen(false);
+    }, 2000);
+  };
+
   useEffect(() => {
     if (!schoolId) return;
 
-    const fetchDashboardData = async () => {
-      try {
-        const [studentsData, staffData, classesData, noticesData] = await Promise.all([
-          getSubCollection(schoolId, 'students'),
-          getSubCollection(schoolId, 'teachers'),
-          getSubCollection(schoolId, 'classes'),
-          getNotices(schoolId)
-        ]);
+    setLoading(true);
+    let studentsUnsub, staffUnsub, classesUnsub, noticesUnsub;
 
-        setStats({
-          students: studentsData.length,
-          staff: staffData.length,
-          classes: classesData.length,
-          notices: noticesData.length
-        });
+    studentsUnsub = subscribeToSubCollection(schoolId, 'students', (data) => {
+      setStats(prev => ({ ...prev, students: data.length }));
+    });
 
-        // Get 3 most recent notices
-        setRecentNotices(noticesData.slice(0, 3));
-      } catch (error) {
-        console.error("Error fetching dashboard stats:", error);
-      } finally {
-        setLoading(false);
-      }
+    staffUnsub = subscribeToSubCollection(schoolId, 'teachers', (data) => {
+      setStats(prev => ({ ...prev, staff: data.length }));
+    });
+
+    classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      setStats(prev => ({ ...prev, classes: data.length }));
+    });
+
+    noticesUnsub = subscribeToNotices(schoolId, null, (data) => {
+      setStats(prev => ({ ...prev, notices: data.length }));
+      setRecentNotices(data.slice(0, 3));
+      setLoading(false); // Stop loading after notices load
+    });
+
+    return () => {
+      if (studentsUnsub) studentsUnsub();
+      if (staffUnsub) staffUnsub();
+      if (classesUnsub) classesUnsub();
+      if (noticesUnsub) noticesUnsub();
     };
-
-    fetchDashboardData();
   }, [schoolId]);
 
   if (loading) {
@@ -98,16 +128,49 @@ export default function AdminOverview() {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="space-y-6 animate-fade-in-up">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Dashboard Overview</h1>
             <p className="text-sm text-slate-500 mt-1">Welcome back, here's what's happening at your school today.</p>
           </div>
-          <div className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 shadow-sm border border-slate-200">
-            <Calendar className="h-5 w-5 text-slate-400" />
-            <span className="text-sm font-medium text-slate-700">
-              {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-            </span>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative" ref={dropdownRef}>
+              <button 
+                onClick={() => setIsInviteDropdownOpen(!isInviteDropdownOpen)}
+                className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl shadow-sm font-semibold transition-all active:scale-[0.98]"
+              >
+                <Zap size={18} />
+                Generate Invite Links
+              </button>
+              
+              {isInviteDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-100 p-2 z-50">
+                  <div className="flex flex-col space-y-1">
+                    <button onClick={() => handleCopyLink('teacher')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-cyan-600 rounded-lg transition-colors group">
+                      <div className="flex items-center gap-3">
+                        <Users size={18} className="text-cyan-600 group-hover:scale-110 transition-transform" />
+                        Teacher Link
+                      </div>
+                      {copiedRole === 'teacher' ? <Check size={16} className="text-primary-500" /> : <Copy size={16} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                    </button>
+                    <button onClick={() => handleCopyLink('parent')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-amber-600 rounded-lg transition-colors group">
+                      <div className="flex items-center gap-3">
+                        <User size={18} className="text-amber-600 group-hover:scale-110 transition-transform" />
+                        Parent Link
+                      </div>
+                      {copiedRole === 'parent' ? <Check size={16} className="text-primary-500" /> : <Copy size={16} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="hidden sm:flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 shadow-sm border border-slate-200">
+              <Calendar className="h-5 w-5 text-slate-400" />
+              <span className="text-sm font-medium text-slate-700">
+                {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+              </span>
+            </div>
           </div>
         </div>
 

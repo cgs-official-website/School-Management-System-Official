@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSchool, getPlans } from '../../firebase/firestore';
+import { subscribeToPlans } from '../../firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import { Link, useNavigate } from 'react-router-dom';
 import { LuCreditCard as CreditCard, LuZap as Zap, LuCircleCheck as CheckCircle2, LuCircleAlert as AlertCircle, LuFileText as FileText, LuDownload as Download } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
@@ -22,26 +24,38 @@ export default function BillingDashboard() {
   ];
 
   useEffect(() => {
-    if (schoolId) fetchData();
-  }, [schoolId]);
+    if (!schoolId) return;
 
-  const fetchData = async () => {
     setLoading(true);
-    try {
-      const schoolData = await getSchool(schoolId);
-      setSchool(schoolData);
-      
-      const allPlans = await getPlans();
-      if (schoolData?.planId) {
-        const p = allPlans.find(plan => plan.id === schoolData.planId);
+    let plansUnsub, schoolUnsub;
+
+    let allPlans = [];
+
+    plansUnsub = subscribeToPlans((data) => {
+      allPlans = data;
+      updateCurrentPlan();
+    });
+
+    schoolUnsub = onSnapshot(doc(db, 'schools', schoolId), (docSnap) => {
+      if (docSnap.exists()) {
+        setSchool(docSnap.data());
+        updateCurrentPlan(docSnap.data().planId);
+      }
+      setLoading(false);
+    });
+
+    const updateCurrentPlan = (planId = school?.planId) => {
+      if (planId && allPlans.length > 0) {
+        const p = allPlans.find(plan => plan.id === planId);
         setCurrentPlan(p);
       }
-    } catch (error) {
-      console.error("Error fetching billing data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    return () => {
+      if (plansUnsub) plansUnsub();
+      if (schoolUnsub) schoolUnsub();
+    };
+  }, [schoolId]);
 
   if (loading) {
     return (

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, getTimetable, saveTimetable } from '../../firebase/firestore';
+import { getSubCollection, saveTimetable, subscribeToSubCollection } from '../../firebase/firestore';
 import { LuCalendar as Calendar, LuPlus as Plus, LuX as X, LuClock as Clock, LuBookOpen as BookOpen, LuUser as User, LuTrash2 as Trash2 } from 'react-icons/lu';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
 
@@ -34,49 +36,38 @@ export default function TimetableManagement() {
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
   useEffect(() => {
-    if (schoolId) {
-      fetchClasses();
-    }
+    if (!schoolId) return;
+    setLoading(true);
+    const unsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      setClasses(data);
+      setLoading(false);
+    });
+    return () => unsub();
   }, [schoolId]);
 
   useEffect(() => {
     if (schoolId && selectedClassId) {
-      fetchTimetable();
+      setLoading(true);
+      const unsub = onSnapshot(doc(db, `schools/${schoolId}/timetables`, selectedClassId), (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setSchedule({
+            Monday: data.Monday || [],
+            Tuesday: data.Tuesday || [],
+            Wednesday: data.Wednesday || [],
+            Thursday: data.Thursday || [],
+            Friday: data.Friday || []
+          });
+        } else {
+          setSchedule({ Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] });
+        }
+        setLoading(false);
+      });
+      return () => unsub();
     } else {
-      // Reset if no class selected
       setSchedule({ Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] });
     }
   }, [schoolId, selectedClassId]);
-
-  const fetchClasses = async () => {
-    try {
-      const classesData = await getSubCollection(schoolId, 'classes');
-      setClasses(classesData);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-      setLoading(false);
-    }
-  };
-
-  const fetchTimetable = async () => {
-    setLoading(true);
-    try {
-      const data = await getTimetable(schoolId, selectedClassId);
-      // Merge with default empty days to ensure structure exists
-      setSchedule({
-        Monday: data.Monday || [],
-        Tuesday: data.Tuesday || [],
-        Wednesday: data.Wednesday || [],
-        Thursday: data.Thursday || [],
-        Friday: data.Friday || []
-      });
-    } catch (error) {
-      console.error("Error fetching timetable:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddSlot = (e) => {
     e.preventDefault();

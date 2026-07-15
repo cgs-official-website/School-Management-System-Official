@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, addSubDocument, updateSubDocument } from '../../firebase/firestore';
+import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
 import { getDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -44,30 +44,29 @@ export default function StudentManagement() {
   const [classFilter, setClassFilter] = useState('all');
 
   useEffect(() => {
-    if (schoolId) {
-      fetchData();
-    }
-  }, [schoolId]);
+    if (!schoolId) return;
 
-  const fetchData = async () => {
     setLoading(true);
-    try {
-      const [studentsData, classesData, schoolSnap] = await Promise.all([
-        getSubCollection(schoolId, 'students'),
-        getSubCollection(schoolId, 'classes'),
-        getDoc(doc(db, 'schools', schoolId))
-      ]);
-      setStudents(studentsData);
-      setClasses(classesData);
-      if (schoolSnap.exists()) {
-        setSchoolName(schoolSnap.data().schoolName || 'School');
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
+    
+    // Fetch School Name statically once
+    getDoc(doc(db, 'schools', schoolId)).then(snap => {
+      if (snap.exists()) setSchoolName(snap.data().schoolName || 'School');
+    });
+
+    const unsubStudents = subscribeToSubCollection(schoolId, 'students', (data) => {
+      setStudents(data);
       setLoading(false);
-    }
-  };
+    });
+
+    const unsubClasses = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      setClasses(data);
+    });
+
+    return () => {
+      unsubStudents();
+      unsubClasses();
+    };
+  }, [schoolId]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -82,7 +81,7 @@ export default function StudentManagement() {
         firstName: '', lastName: '', admissionNumber: '', classId: '', parentEmail: '', dob: '', gender: 'Male', status: 'Active'
       });
       setShowForm(false);
-      fetchData(); // Refresh list
+      // fetchData(); - Refresh handled by real-time listener
     } catch (error) {
       console.error("Error creating student:", error);
       toast.error("Failed to admit student.");
@@ -133,7 +132,7 @@ export default function StudentManagement() {
           toast.success(`Successfully imported ${successCount} students!`);
           setUploadModalOpen(false);
           setUploadFile(null);
-          fetchData();
+          // fetchData(); - Refresh handled by real-time listener
         };
         reader.readAsBinaryString(uploadFile);
       } catch (err) {

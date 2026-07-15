@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllSchools } from '../../firebase/firestore';
+import { subscribeToAllSchools } from '../../firebase/firestore';
 import { LuBuilding2 as Building2, LuTrendingUp as TrendingUp, LuCircleAlert as AlertCircle, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
 import { Link } from 'react-router-dom';
 
@@ -42,9 +42,7 @@ export default function Overview() {
       const { default: toast } = await import('react-hot-toast');
       toast.success("Demo Schools Generated!");
       
-      // Reload stats
-      const data = await getAllSchools();
-      setSchools(data);
+      // Reload stats - Handled by real-time listener
     } catch (err) {
       console.error(err);
       toast.error("Error seeding data");
@@ -54,17 +52,13 @@ export default function Overview() {
   };
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const data = await getAllSchools();
-        setSchools(data);
-      } catch (error) {
-        console.error("Error fetching global stats:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStats();
+    setLoading(true);
+    const unsub = subscribeToAllSchools((data) => {
+      setSchools(data);
+      setLoading(false);
+    });
+
+    return () => unsub();
   }, []);
 
   if (loading) {

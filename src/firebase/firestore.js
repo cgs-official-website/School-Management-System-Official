@@ -152,20 +152,7 @@ export const createSchool = async (schoolData, schoolId = null) => {
   }
 };
 
-export const getAllSchools = async () => {
-  try {
-    const q = query(collection(db, "schools"), orderBy("createdAt", "desc"));
-    const querySnapshot = await getDocs(q);
-    const schools = [];
-    querySnapshot.forEach((doc) => {
-      schools.push({ id: doc.id, ...doc.data() });
-    });
-    return schools;
-  } catch (error) {
-    console.error("Error fetching all schools:", error);
-    throw error;
-  }
-};
+
 
 export const updateSchoolStatus = async (schoolId, newStatus, permittedModules = []) => {
   try {
@@ -255,12 +242,24 @@ export const addSubDocument = async (schoolId, subCollection, data) => {
   }
 };
 
-export const updateSubDocument = async (schoolId, subCollection, docId, data) => {
+export const updateSubDocument = async (schoolId, collectionName, docId, data) => {
   try {
-    const docRef = doc(db, `schools/${schoolId}/${subCollection}`, docId);
-    await updateDoc(docRef, data);
+    const docRef = doc(db, `schools/${schoolId}/${collectionName}`, docId);
+    await updateDoc(docRef, {
+      ...data,
+      updatedAt: new Date().toISOString()
+    });
   } catch (error) {
-    console.error(`Error updating ${subCollection}:`, error);
+    console.error(`Error updating ${collectionName}:`, error);
+    throw error;
+  }
+};
+
+export const deleteSubDocument = async (schoolId, collectionName, docId) => {
+  try {
+    await deleteDoc(doc(db, `schools/${schoolId}/${collectionName}`, docId));
+  } catch (error) {
+    console.error(`Error deleting ${collectionName}:`, error);
     throw error;
   }
 };
@@ -311,23 +310,36 @@ export const getAttendance = async (schoolId, classId, dateString) => {
   }
 };
 
+export const subscribeToAttendance = (schoolId, classId, date, callback) => {
+  const docRef = doc(db, `schools/${schoolId}/attendance`, `${classId}_${date}`);
+  return onSnapshot(docRef, (snap) => {
+    if (snap.exists()) {
+      callback({ id: snap.id, ...snap.data() });
+    } else {
+      callback(null);
+    }
+  }, (error) => {
+    console.error("Error subscribing to attendance:", error);
+  });
+};
+
+
+
 export const getAttendanceForClass = async (schoolId, classId) => {
   try {
     const q = query(
       collection(db, `schools/${schoolId}/attendance`),
       where("classId", "==", classId)
     );
-    const querySnapshot = await getDocs(q);
-    const records = [];
-    querySnapshot.forEach((doc) => {
-      records.push({ id: doc.id, ...doc.data() });
-    });
-    return records;
+    const snap = await getDocs(q);
+    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   } catch (error) {
-    console.error("Error getting all attendance:", error);
+    console.error("Error getting class attendance:", error);
     throw error;
   }
 };
+
+
 
 export const saveAttendance = async (schoolId, classId, dateString, teacherId, records) => {
   try {
@@ -838,3 +850,183 @@ export const getTemplate = async (schoolId, templateType) => {
     throw error;
   }
 };
+
+// --- REAL-TIME SUBSCRIPTION FUNCTIONS ---
+// These functions use onSnapshot for real-time updates
+
+export const subscribeToSubCollection = (schoolId, subCollection, callback) => {
+  const q = collection(db, `schools/${schoolId}/${subCollection}`);
+  return onSnapshot(q, (snapshot) => {
+    const data = [];
+    snapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() });
+    });
+    callback(data);
+  }, (error) => {
+    console.error(`Error subscribing to ${subCollection}:`, error);
+  });
+};
+
+export const subscribeToStudentsByClass = (schoolId, classId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/students`),
+    where("classId", "==", classId)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const data = [];
+    snapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() });
+    });
+    callback(data);
+  }, (error) => {
+    console.error("Error subscribing to students by class:", error);
+  });
+};
+
+export const subscribeToAssessmentsByClass = (schoolId, classId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/assessments`),
+    where("classId", "==", classId)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const data = [];
+    snapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() });
+    });
+    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    callback(data);
+  });
+};
+
+export const subscribeToAttendanceForClass = (schoolId, classId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/attendance`),
+    where("classId", "==", classId)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const records = [];
+    snapshot.forEach((doc) => {
+      records.push({ id: doc.id, ...doc.data() });
+    });
+    callback(records);
+  });
+};
+
+export const subscribeToAllSchools = (callback) => {
+  const q = query(collection(db, "schools"), orderBy("createdAt", "desc"));
+  return onSnapshot(q, (snapshot) => {
+    const schools = [];
+    snapshot.forEach((doc) => {
+      schools.push({ id: doc.id, ...doc.data() });
+    });
+    callback(schools);
+  });
+};
+
+export const subscribeToPlans = (callback) => {
+  return onSnapshot(collection(db, "plans"), (snapshot) => {
+    const plans = [];
+    snapshot.forEach((doc) => {
+      plans.push({ id: doc.id, ...doc.data() });
+    });
+    callback(plans);
+  });
+};
+
+export const subscribeToTransportRoutes = (schoolId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/transportRoutes`),
+    orderBy("name", "asc")
+  );
+  return onSnapshot(q, (snapshot) => {
+    const routes = [];
+    snapshot.forEach((doc) => {
+      routes.push({ id: doc.id, ...doc.data() });
+    });
+    callback(routes);
+  });
+};
+
+export const subscribeToBooks = (schoolId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/books`),
+    orderBy("title", "asc")
+  );
+  return onSnapshot(q, (snapshot) => {
+    const books = [];
+    snapshot.forEach((doc) => {
+      books.push({ id: doc.id, ...doc.data() });
+    });
+    callback(books);
+  });
+};
+
+export const subscribeToIssuedBooks = (schoolId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/issuedBooks`),
+    orderBy("issuedAt", "desc")
+  );
+  return onSnapshot(q, (snapshot) => {
+    const issues = [];
+    snapshot.forEach((doc) => {
+      issues.push({ id: doc.id, ...doc.data() });
+    });
+    callback(issues);
+  });
+};
+
+export const subscribeToExams = (schoolId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/exams`),
+    orderBy("startDate", "desc")
+  );
+  return onSnapshot(q, (snapshot) => {
+    const exams = [];
+    snapshot.forEach((doc) => {
+      exams.push({ id: doc.id, ...doc.data() });
+    });
+    callback(exams);
+  });
+};
+
+export const subscribeToExamAssessments = (schoolId, classId, examId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/assessments`),
+    where("classId", "==", classId),
+    where("examId", "==", examId)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const assessments = [];
+    snapshot.forEach((doc) => {
+      assessments.push({ id: doc.id, ...doc.data() });
+    });
+    callback(assessments);
+  });
+};
+
+export const subscribeToNotices = (schoolId, targetAudience, callback) => {
+  let q = collection(db, `schools/${schoolId}/notices`);
+  if (targetAudience) {
+    q = query(q, where("audience", "in", [targetAudience, 'all']));
+  }
+  return onSnapshot(q, (snapshot) => {
+    let notices = [];
+    snapshot.forEach((doc) => {
+      notices.push({ id: doc.id, ...doc.data() });
+    });
+    notices.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    callback(notices);
+  });
+};
+
+export const subscribeToInvoices = (schoolId, callback) => {
+  const q = query(collection(db, `schools/${schoolId}/invoices`), orderBy("createdAt", "desc"));
+  return onSnapshot(q, (snapshot) => {
+    const invoices = [];
+    snapshot.forEach((doc) => {
+      invoices.push({ id: doc.id, ...doc.data() });
+    });
+    callback(invoices);
+  });
+};
+
