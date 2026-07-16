@@ -59,6 +59,8 @@ const ComplaintRedressal = lazy(() => import('./pages/Admin/ComplaintRedressal')
 const AlumniManagement = lazy(() => import('./pages/Admin/AlumniManagement'));
 const DocumentManagement = lazy(() => import('./pages/Admin/DocumentManagement'));
 const MultiBranchManagement = lazy(() => import('./pages/Admin/MultiBranchManagement'));
+const FormBuilder = lazy(() => import('./pages/Admin/FormBuilder'));
+const SubjectManagement = lazy(() => import('./pages/Admin/SubjectManagement'));
 
 // Teacher
 const TeacherRegistration = lazy(() => import('./pages/TeacherRegistration'));
@@ -171,6 +173,8 @@ function App() {
             >
               <Route index element={<AdminOverview />} />
               <Route path="setup" element={<EnvironmentSetup />} />
+              <Route path="form-builder" element={<FormBuilder />} />
+              <Route path="subjects" element={<SubjectManagement />} />
               <Route path="classes" element={<ClassManagement />} />
               <Route path="students" element={<StudentManagement />} />
               <Route path="staff" element={<StaffAssignment />} />

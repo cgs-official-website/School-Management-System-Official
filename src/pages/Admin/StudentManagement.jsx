@@ -32,6 +32,8 @@ export default function StudentManagement() {
     gender: 'Male',
     status: 'Active'
   });
+  const [customData, setCustomData] = useState({});
+  const [formSchema, setFormSchema] = useState([]);
 
   // Upload Modal State
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -66,6 +68,18 @@ export default function StudentManagement() {
       setClasses(data);
     });
 
+    const fetchSchema = async () => {
+      try {
+        const snap = await getDoc(doc(db, `schools/${schoolId}/formSchemas/student_admission`));
+        if (snap.exists()) {
+          setFormSchema(snap.data().fields || []);
+        }
+      } catch (err) {
+        console.error("Error fetching schema:", err);
+      }
+    };
+    fetchSchema();
+
     return () => {
       unsubStudents();
       unsubClasses();
@@ -78,12 +92,14 @@ export default function StudentManagement() {
     try {
       await addSubDocument(schoolId, 'students', {
         ...formData,
+        customData,
         createdAt: new Date().toISOString()
       });
       
       setFormData({
         firstName: '', lastName: '', admissionNumber: '', classId: '', parentEmail: '', dob: '', gender: 'Male', status: 'Active'
       });
+      setCustomData({});
       setShowForm(false);
       // fetchData(); - Refresh handled by real-time listener
     } catch (error) {
@@ -313,6 +329,56 @@ export default function StudentManagement() {
                 </select>
               </div>
             </div>
+
+            {formSchema.length > 0 && (
+              <div className="pt-6 mt-6 border-t border-slate-100">
+                <h3 className="text-lg font-bold text-slate-900 mb-4">Additional Details</h3>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {formSchema.map(field => (
+                    <div key={field.id}>
+                      {field.type !== 'checkbox' && (
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">
+                          {field.label} {field.required && <span className="text-red-500">*</span>}
+                        </label>
+                      )}
+                      
+                      {field.type === 'select' ? (
+                        <select
+                          required={field.required}
+                          value={customData[field.id] || ''}
+                          onChange={e => setCustomData({...customData, [field.id]: e.target.value})}
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                        >
+                          <option value="">Select...</option>
+                          {field.options && field.options.split(',').map(opt => (
+                            <option key={opt.trim()} value={opt.trim()}>{opt.trim()}</option>
+                          ))}
+                        </select>
+                      ) : field.type === 'checkbox' ? (
+                        <label className="flex items-center gap-3 mt-1 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            required={field.required}
+                            checked={customData[field.id] || false}
+                            onChange={e => setCustomData({...customData, [field.id]: e.target.checked})}
+                            className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          <span className="text-sm font-semibold text-slate-700">{field.label} {field.required && <span className="text-red-500">*</span>}</span>
+                        </label>
+                      ) : (
+                        <input
+                          type={field.type}
+                          required={field.required}
+                          value={customData[field.id] || ''}
+                          onChange={e => setCustomData({...customData, [field.id]: e.target.value})}
+                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="pt-4 border-t border-slate-100 flex justify-end gap-3">
               <button 
@@ -574,6 +640,21 @@ export default function StudentManagement() {
                       : 'N/A'}
                   </p>
                 </div>
+
+                {/* Render Custom Fields in View Modal */}
+                {formSchema.length > 0 && selectedStudentToView.customData && formSchema.map(field => {
+                  let val = selectedStudentToView.customData[field.id];
+                  if (field.type === 'checkbox') val = val ? 'Yes' : 'No';
+                  
+                  return (
+                    <div key={`view_${field.id}`}>
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{field.label}</label>
+                      <p className="text-slate-900 font-medium">
+                        {val || 'N/A'}
+                      </p>
+                    </div>
+                  )
+                })}
               </div>
             </div>
 

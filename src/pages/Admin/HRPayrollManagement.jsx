@@ -1,45 +1,111 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, X, Search, Filter, Edit, Trash2, Download } from 'lucide-react';
 import { LuBriefcase, LuCircleDollarSign } from 'react-icons/lu';
 import ConfirmModal from '../../components/ConfirmModal';
+import { useAuth } from '../../context/AuthContext';
+import { subscribeToSubCollection, addSubDocument, updateSubDocument, deleteSubDocument } from '../../firebase/firestore';
+import toast from 'react-hot-toast';
 
 export default function HRPayrollManagement() {
-  const [payrolls, setPayrolls] = useState([
-    { id: 1, name: 'John Doe', role: 'Mathematics Teacher', baseSalary: 5000, deductions: 200, status: 'Paid' },
-    { id: 2, name: 'Jane Smith', role: 'Science Teacher', baseSalary: 5200, deductions: 150, status: 'Pending' },
-    { id: 3, name: 'Mark Wilson', role: 'Janitor', baseSalary: 2500, deductions: 0, status: 'Paid' },
-    { id: 4, name: 'Emily Davis', role: 'English Teacher', baseSalary: 4800, deductions: 100, status: 'Paid' },
-    { id: 5, name: 'Robert Brown', role: 'Principal', baseSalary: 8000, deductions: 500, status: 'Paid' },
-    { id: 6, name: 'Sarah Miller', role: 'Librarian', baseSalary: 3500, deductions: 50, status: 'Pending' },
-    { id: 7, name: 'James Taylor', role: 'History Teacher', baseSalary: 4900, deductions: 100, status: 'Paid' },
-    { id: 8, name: 'Lisa Anderson', role: 'Nurse', baseSalary: 4000, deductions: 0, status: 'Paid' },
-    { id: 9, name: 'William Thomas', role: 'Security Guard', baseSalary: 2800, deductions: 0, status: 'Pending' },
-    { id: 10, name: 'Mary Jackson', role: 'Art Teacher', baseSalary: 4600, deductions: 120, status: 'Paid' },
-  ]);
+  const { userProfile } = useAuth();
+  const schoolId = userProfile?.schoolId;
+
+  const [payrolls, setPayrolls] = useState([]);
+  const [teachers, setTeachers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [showModal, setShowModal] = useState(false);
   const [confirmModalState, setConfirmModalState] = useState({ isOpen: false, idToDelete: null });
-  const [formData, setFormData] = useState({ name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending' });
+  const [formData, setFormData] = useState({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0 });
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    if (formData.id) {
-      setPayrolls(payrolls.map(p => p.id === formData.id ? formData : p));
+  useEffect(() => {
+    if (!schoolId) return;
+    
+    const unsubTeachers = subscribeToSubCollection(schoolId, 'teachers', (data) => {
+      setTeachers(data);
+    });
+
+    const unsubPayroll = subscribeToSubCollection(schoolId, 'payroll', (data) => {
+      setPayrolls(data);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubTeachers();
+      unsubPayroll();
+    };
+  }, [schoolId]);
+
+  const calculatePF = (salary) => {
+    // April 2026 Rules: 12% of Basic, capped at ₹15,000 basic (i.e. max ₹1800)
+    const pfCeiling = 15000;
+    const applicableSalary = Math.min(salary, pfCeiling);
+    return Math.round(applicableSalary * 0.12);
+  };
+
+  const handleTeacherSelect = (teacherId) => {
+    const selected = teachers.find(t => t.id === teacherId);
+    if (selected) {
+      const name = selected.name || `${selected.firstName || ''} ${selected.lastName || ''}`.trim();
+      const role = selected.role || 'Staff'; 
+      setFormData(prev => ({ ...prev, teacherId, name, role }));
     } else {
-      setPayrolls([...payrolls, { ...formData, id: Date.now() }]);
+      setFormData(prev => ({ ...prev, teacherId: '', name: '', role: '' }));
     }
-    setShowModal(false);
-    setFormData({ name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending' });
+  };
+
+  const handleSalaryChange = (val) => {
+    const salary = parseFloat(val) || 0;
+    const pf = calculatePF(salary);
+    setFormData(prev => ({ 
+      ...prev, 
+      baseSalary: salary, 
+      deductions: pf,
+      pfCalculated: pf
+    }));
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    if (!formData.teacherId) {
+      toast.error("Please select a staff member");
+      return;
+    }
+
+    try {
+      if (formData.id) {
+        await updateSubDocument(schoolId, 'payroll', formData.id, formData);
+        toast.success("Payroll updated successfully");
+      } else {
+        await addSubDocument(schoolId, 'payroll', {
+          ...formData,
+          month: new Date().toLocaleString('default', { month: 'long', year: 'numeric' }),
+          createdAt: new Date().toISOString()
+        });
+        toast.success("Payroll record added");
+      }
+      setShowModal(false);
+      setFormData({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0 });
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save payroll record");
+    }
   };
 
   const handleDeleteClick = (id) => {
     setConfirmModalState({ isOpen: true, idToDelete: id });
   };
 
-  const executeDelete = () => {
+  const executeDelete = async () => {
     const id = confirmModalState.idToDelete;
     if (!id) return;
-    setPayrolls(payrolls.filter(p => p.id !== id));
+    try {
+      await deleteSubDocument(schoolId, 'payroll', id);
+      toast.success("Record deleted");
+    } catch (err) {
+      toast.error("Failed to delete record");
+    }
     setConfirmModalState({ isOpen: false, idToDelete: null });
   };
 
@@ -57,7 +123,7 @@ export default function HRPayrollManagement() {
             <Download size={20} /> Export Report
           </button>
           <button 
-            onClick={() => { setFormData({ name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending' }); setShowModal(true); }}
+            onClick={() => { setFormData({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0 }); setShowModal(true); }}
             className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-xl hover:bg-primary-700 transition-all font-medium shadow-sm"
           >
             <Plus size={20} /> Add Record
@@ -171,12 +237,22 @@ export default function HRPayrollManagement() {
               <div className="p-6 space-y-5">
                 <div className="grid grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Staff Name</label>
-                    <input 
-                      type="text" required
-                      value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
-                    />
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Staff Member</label>
+                    <select
+                      required
+                      value={formData.teacherId}
+                      onChange={e => handleTeacherSelect(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      disabled={!!formData.id}
+                    >
+                      <option value="">Select Staff...</option>
+                      {teachers.map(t => {
+                        const displayName = t.name || `${t.firstName || ''} ${t.lastName || ''}`.trim();
+                        return (
+                          <option key={t.id} value={t.id}>{displayName || 'Unnamed Staff'}</option>
+                        );
+                      })}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-1">Role / Position</label>
@@ -193,17 +269,20 @@ export default function HRPayrollManagement() {
                     <label className="block text-sm font-semibold text-slate-700 mb-1">Base Salary (₹)</label>
                     <input 
                       type="number" required min="0"
-                      value={formData.baseSalary} onChange={e => setFormData({...formData, baseSalary: parseFloat(e.target.value)})}
+                      value={formData.baseSalary} onChange={e => handleSalaryChange(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Deductions (₹)</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Total Deductions (₹)</label>
                     <input 
                       type="number" required min="0"
-                      value={formData.deductions} onChange={e => setFormData({...formData, deductions: parseFloat(e.target.value)})}
+                      value={formData.deductions} onChange={e => setFormData({...formData, deductions: parseFloat(e.target.value) || 0})}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
                     />
+                    <p className="text-xs text-slate-500 mt-1">
+                      Includes 12% PF (₹{formData.pfCalculated || 0}). Edit if needed.
+                    </p>
                   </div>
                 </div>
 

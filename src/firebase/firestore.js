@@ -854,7 +854,7 @@ export const getTemplate = async (schoolId, templateType) => {
 // --- REAL-TIME SUBSCRIPTION FUNCTIONS ---
 // These functions use onSnapshot for real-time updates
 
-export const subscribeToSubCollection = (schoolId, subCollection, callback) => {
+export const subscribeToSubCollection = (schoolId, subCollection, callback, onError) => {
   const q = collection(db, `schools/${schoolId}/${subCollection}`);
   return onSnapshot(q, (snapshot) => {
     const data = [];
@@ -864,6 +864,7 @@ export const subscribeToSubCollection = (schoolId, subCollection, callback) => {
     callback(data);
   }, (error) => {
     console.error(`Error subscribing to ${subCollection}:`, error);
+    if (onError) onError(error);
   });
 };
 

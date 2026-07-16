@@ -1,36 +1,140 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LuCalendarDays, LuClock, LuMapPin, LuBookOpen } from 'react-icons/lu';
+import { useAuth } from '../../context/AuthContext';
+import { subscribeToSubCollection } from '../../firebase/firestore';
 
 export default function TeacherTimetable() {
-  const [currentWeek, setCurrentWeek] = useState('Oct 16 - Oct 20, 2026');
+  const { userProfile } = useAuth();
+  const schoolId = userProfile?.schoolId;
 
-  // Hardcoded schedule for demo
-  const schedule = {
-    'Monday': [
-      { id: 1, time: '08:00 AM - 09:00 AM', subject: 'Mathematics', class: 'Grade 10-A', room: 'Room 204' },
-      { id: 2, time: '09:00 AM - 10:00 AM', subject: 'Physics', class: 'Grade 11-B', room: 'Lab 1' },
-      { id: 3, time: '11:00 AM - 12:00 PM', subject: 'Mathematics', class: 'Grade 12-A', room: 'Room 305' },
-    ],
-    'Tuesday': [
-      { id: 4, time: '08:00 AM - 09:00 AM', subject: 'Physics', class: 'Grade 11-A', room: 'Lab 1' },
-      { id: 5, time: '10:00 AM - 11:00 AM', subject: 'Mathematics', class: 'Grade 10-B', room: 'Room 205' },
-      { id: 6, time: '01:00 PM - 02:00 PM', subject: 'Calculus', class: 'Grade 12-B', room: 'Room 306' },
-    ],
-    'Wednesday': [
-      { id: 7, time: '09:00 AM - 10:00 AM', subject: 'Mathematics', class: 'Grade 10-A', room: 'Room 204' },
-      { id: 8, time: '11:00 AM - 12:00 PM', subject: 'Physics', class: 'Grade 11-B', room: 'Lab 1' },
-    ],
-    'Thursday': [
-      { id: 9, time: '08:00 AM - 09:00 AM', subject: 'Calculus', class: 'Grade 12-A', room: 'Room 305' },
-      { id: 10, time: '01:00 PM - 02:30 PM', subject: 'Physics Lab', class: 'Grade 11-A', room: 'Lab 1' },
-    ],
-    'Friday': [
-      { id: 11, time: '10:00 AM - 11:00 AM', subject: 'Mathematics', class: 'Grade 10-B', room: 'Room 205' },
-      { id: 12, time: '11:00 AM - 12:00 PM', subject: 'Calculus', class: 'Grade 12-B', room: 'Room 306' },
-    ]
-  };
+  const [currentWeek, setCurrentWeek] = useState('This Week');
+  const [viewType, setViewType] = useState('subject'); // 'subject' or 'class'
+  const [isClassTeacher, setIsClassTeacher] = useState(false);
+  const [classTimetable, setClassTimetable] = useState({
+    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+  });
+  const [subjectTimetable, setSubjectTimetable] = useState({
+    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+  });
+  const [schedule, setSchedule] = useState({
+    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+  });
+  const [loading, setLoading] = useState(true);
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+  useEffect(() => {
+    if (!schoolId || !userProfile?.uid) return;
+
+    let teachersUnsub, classesUnsub, timetablesUnsub;
+
+    // We need to fetch teachers to find the current teacher's ID
+    teachersUnsub = subscribeToSubCollection(schoolId, 'teachers', (teachersData) => {
+      const currentTeacher = teachersData.find(t => t.userId === userProfile.uid || t.email === userProfile.email);
+      const teacherId = currentTeacher?.id;
+
+      if (!teacherId) {
+        setLoading(false);
+        return;
+      }
+
+      // Fetch classes for class names
+      classesUnsub = subscribeToSubCollection(schoolId, 'classes', (classesData) => {
+        const classMap = {};
+        classesData.forEach(c => {
+          classMap[c.id] = `${c.name} - Section ${c.section}`;
+        });
+
+        // Fetch timetables
+        timetablesUnsub = subscribeToSubCollection(schoolId, 'timetables', (timetablesData) => {
+          const newSubjectSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
+          let newClassSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
+
+          let hasClass = false;
+
+          // timetablesData is an array of documents where id is the classId
+          timetablesData.forEach(classTimetable => {
+            const classId = classTimetable.id;
+            const className = classMap[classId] || 'Unknown Class';
+            const scheduleData = classTimetable.schedule || {};
+            
+            // Check if this is the teacher's assigned class
+            if (currentTeacher?.assignedClassId === classId) {
+              hasClass = true;
+              days.forEach(day => {
+                const daySlots = scheduleData[day] || [];
+                daySlots.forEach(slot => {
+                  newClassSchedule[day].push({
+                    id: slot.id + classId,
+                    time: `${slot.startTime} - ${slot.endTime}`,
+                    startTime: slot.startTime,
+                    subject: slot.subject,
+                    class: className,
+                    room: `Room (Auto)`,
+                    teacher: slot.teacher || 'Unassigned'
+                  });
+                });
+              });
+            }
+
+            days.forEach(day => {
+              const daySlots = scheduleData[day] || [];
+              daySlots.forEach(slot => {
+                // If slot has a teacherId, match it. Fallback: match by teacher name if no ID is stored yet.
+                const matchesId = slot.teacherId === teacherId;
+                const matchesName = !slot.teacherId && currentTeacher && slot.teacher === (currentTeacher.name || `${currentTeacher.firstName} ${currentTeacher.lastName}`);
+                
+                if (matchesId || matchesName) {
+                  newSubjectSchedule[day].push({
+                    id: slot.id + classId, // Make unique
+                    time: `${slot.startTime} - ${slot.endTime}`,
+                    startTime: slot.startTime, // For sorting
+                    subject: slot.subject,
+                    class: className,
+                    room: `Room (Auto)` // Room management is not implemented in slots yet
+                  });
+                }
+              });
+            });
+          });
+
+          // Sort slots by time for each day
+          days.forEach(day => {
+            newSubjectSchedule[day].sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+            newClassSchedule[day].sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+          });
+
+          setIsClassTeacher(hasClass);
+          setSubjectTimetable(newSubjectSchedule);
+          setClassTimetable(newClassSchedule);
+          setSchedule(viewType === 'class' && hasClass ? newClassSchedule : newSubjectSchedule);
+          setLoading(false);
+        });
+      });
+    });
+
+    return () => {
+      if (teachersUnsub) teachersUnsub();
+      if (classesUnsub) classesUnsub();
+      if (timetablesUnsub) timetablesUnsub();
+    };
+  }, [schoolId, userProfile]);
+
+  useEffect(() => {
+    if (viewType === 'class' && isClassTeacher) {
+      setSchedule(classTimetable);
+    } else {
+      setSchedule(subjectTimetable);
+    }
+  }, [viewType, subjectTimetable, classTimetable, isClassTeacher]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[80vh]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto h-full flex flex-col">
@@ -41,8 +145,20 @@ export default function TeacherTimetable() {
           </h1>
           <p className="text-slate-500 mt-1">View your weekly class schedule and teaching periods.</p>
         </div>
-        <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 font-bold text-slate-700 shadow-sm">
-          {currentWeek}
+        <div className="flex gap-3">
+          {isClassTeacher && (
+            <select
+              value={viewType}
+              onChange={(e) => setViewType(e.target.value)}
+              className="px-4 py-2 bg-white rounded-xl border border-slate-200 text-slate-700 font-bold shadow-sm focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="subject">My Subject Timetable</option>
+              <option value="class">My Class Timetable</option>
+            </select>
+          )}
+          <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 font-bold text-slate-700 shadow-sm">
+            {currentWeek}
+          </div>
         </div>
       </div>
 
@@ -64,6 +180,9 @@ export default function TeacherTimetable() {
                       </div>
                       <h4 className="text-base font-bold text-slate-900 mb-1">{period.subject}</h4>
                       <p className="text-sm font-semibold text-slate-600 mb-3">{period.class}</p>
+                      {viewType === 'class' && period.teacher && (
+                        <p className="text-xs font-semibold text-slate-500 mb-3">Teacher: {period.teacher}</p>
+                      )}
                       
                       <div className="flex items-center justify-between text-xs font-semibold text-slate-500 pt-3 border-t border-slate-100">
                         <span className="flex items-center gap-1"><LuMapPin size={12} /> {period.room}</span>

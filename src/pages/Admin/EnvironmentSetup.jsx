@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSchool, updateSchool } from '../../firebase/firestore';
-import { LuSave as Save, LuBuilding2 as Building2, LuMapPin as MapPin, LuPhone as Phone, LuGlobe as Globe, LuImage as ImageIcon, LuPalette as Palette, LuCalendar as Calendar, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/config';
+import { LuSave as Save, LuBuilding2 as Building2, LuMapPin as MapPin, LuPhone as Phone, LuGlobe as Globe, LuImage as ImageIcon, LuPalette as Palette, LuCalendar as Calendar, LuCircleCheck as CheckCircle2, LuSettings as Settings } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
 export default function EnvironmentSetup() {
@@ -26,6 +28,8 @@ export default function EnvironmentSetup() {
       termType: 'Semester'
     }
   });
+  const [customData, setCustomData] = useState({});
+  const [formSchema, setFormSchema] = useState([]);
 
   useEffect(() => {
     if (schoolId) fetchSchoolData();
@@ -43,6 +47,15 @@ export default function EnvironmentSetup() {
           branding: data.branding || { logoUrl: '', primaryColor: '#f59e0b' },
           academicConfig: data.academicConfig || { currentYear: '2026-2027', termType: 'Semester' }
         });
+        if (data.customData) {
+          setCustomData(data.customData);
+        }
+      }
+
+      // Fetch Schema
+      const schemaSnap = await getDoc(doc(db, `schools/${schoolId}/formSchemas/environment_setup`));
+      if (schemaSnap.exists()) {
+        setFormSchema(schemaSnap.data().fields || []);
       }
     } catch (error) {
       console.error("Error fetching school:", error);
@@ -55,7 +68,10 @@ export default function EnvironmentSetup() {
     setSaving(true);
     setSuccessMsg('');
     try {
-      await updateSchool(schoolId, formData);
+      await updateSchool(schoolId, {
+        ...formData,
+        customData
+      });
       setSuccessMsg('Environment settings saved successfully!');
       
       // Update local profile context if branding changed
@@ -267,6 +283,60 @@ export default function EnvironmentSetup() {
             </div>
           </div>
         </section>
+
+        {/* Custom Form Builder Settings */}
+        {formSchema.length > 0 && (
+          <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
+              <Settings className="text-primary-600" size={24} />
+              <h2 className="text-xl font-bold text-slate-900">Additional Settings</h2>
+            </div>
+            <div className="p-8 grid md:grid-cols-2 gap-6">
+              {formSchema.map(field => (
+                <div key={field.id} className={field.type === 'checkbox' ? 'col-span-2' : ''}>
+                  {field.type !== 'checkbox' && (
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">
+                      {field.label} {field.required && <span className="text-red-500">*</span>}
+                    </label>
+                  )}
+                  
+                  {field.type === 'select' ? (
+                    <select
+                      required={field.required}
+                      value={customData[field.id] || ''}
+                      onChange={e => setCustomData({...customData, [field.id]: e.target.value})}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white transition-all"
+                    >
+                      <option value="">Select...</option>
+                      {field.options && field.options.split(',').map(opt => (
+                        <option key={opt.trim()} value={opt.trim()}>{opt.trim()}</option>
+                      ))}
+                    </select>
+                  ) : field.type === 'checkbox' ? (
+                    <label className="flex items-center gap-3 mt-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        required={field.required}
+                        checked={customData[field.id] || false}
+                        onChange={e => setCustomData({...customData, [field.id]: e.target.checked})}
+                        className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                      />
+                      <span className="text-sm font-semibold text-slate-700">{field.label} {field.required && <span className="text-red-500">*</span>}</span>
+                    </label>
+                  ) : (
+                    <input
+                      type={field.type}
+                      required={field.required}
+                      value={customData[field.id] || ''}
+                      onChange={e => setCustomData({...customData, [field.id]: e.target.value})}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 transition-all"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
       </div>
     </div>

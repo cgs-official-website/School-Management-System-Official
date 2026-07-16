@@ -16,7 +16,11 @@ export default function ClassRoster() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    if (!schoolId || !classId) return;
+    if (!schoolId) return;
+    if (!classId) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     let classUnsub, studentsUnsub;
@@ -49,6 +53,18 @@ export default function ClassRoster() {
     return (
       <div className="flex justify-center items-center h-[80vh]">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (!classId) {
+    return (
+      <div className="p-8 text-center mt-20">
+        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Users size={32} className="text-slate-400" />
+        </div>
+        <p className="text-xl font-bold text-slate-900 mb-2">Not a Class Teacher</p>
+        <p className="text-slate-500">You must be assigned as a primary Class Teacher to view the class roster.</p>
       </div>
     );
   }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
+import { getSubCollection, addSubDocument, subscribeToSubCollection, updateSubDocument } from '../../firebase/firestore';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuBookOpen as BookOpen, LuPlus as Plus, LuTrash2 as Trash2, LuUsers as Users } from 'react-icons/lu';
@@ -32,6 +32,7 @@ export default function ClassManagement() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: '', section: '' });
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [confirmModalState, setConfirmModalState] = useState({ isOpen: false, classId: null });
 
   useEffect(() => {
@@ -57,19 +58,36 @@ export default function ClassManagement() {
 
     setSaving(true);
     try {
-      await addSubDocument(schoolId, 'classes', {
-        name: formData.name.trim(),
-        section: formData.section.trim().toUpperCase(),
-        createdAt: new Date().toISOString()
-      });
+      if (editingId) {
+        await updateSubDocument(schoolId, 'classes', editingId, {
+          name: formData.name.trim(),
+          section: formData.section.trim().toUpperCase(),
+        });
+        toast.success("Class updated successfully");
+      } else {
+        await addSubDocument(schoolId, 'classes', {
+          name: formData.name.trim(),
+          section: formData.section.trim().toUpperCase(),
+          createdAt: new Date().toISOString()
+        });
+        toast.success("Class created successfully");
+      }
       setFormData({ name: '', section: '' });
       setShowForm(false);
-      // No need to call fetchClasses() as the listener will handle UI update
+      setEditingId(null);
     } catch (error) {
-      console.error("Error creating class:", error);
+      console.error("Error saving class:", error);
+      toast.error("Failed to save class");
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleEditClick = (cls) => {
+    setEditingId(cls.id);
+    setFormData({ name: cls.name, section: cls.section });
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDeleteClick = (classId) => {
@@ -107,7 +125,13 @@ export default function ClassManagement() {
           <p className="text-slate-500 mt-1">Define the academic structure of your institution.</p>
         </div>
         <button 
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => { 
+            setShowForm(!showForm); 
+            if (showForm) { 
+              setEditingId(null); 
+              setFormData({name: '', section: ''}); 
+            } 
+          }}
           className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
         >
           {showForm ? 'Cancel' : <><Plus size={18} /> Create New Class</>}
@@ -116,7 +140,7 @@ export default function ClassManagement() {
 
       {showForm && (
         <div className="mb-8 p-6 bg-white rounded-2xl border border-slate-200 shadow-sm animate-fade-in-down">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">Add New Class</h3>
+          <h3 className="text-lg font-bold text-slate-900 mb-4">{editingId ? 'Edit Class' : 'Add New Class'}</h3>
           <form onSubmit={handleCreate} className="flex flex-col md:flex-row gap-4 items-end">
             <div className="flex-1">
               <label className="block text-sm font-semibold text-slate-700 mb-1">Class/Grade Name</label>
@@ -145,7 +169,7 @@ export default function ClassManagement() {
               disabled={saving}
               className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50 transition-colors h-12"
             >
-              {saving ? 'Saving...' : 'Save Class'}
+              {saving ? 'Saving...' : (editingId ? 'Update Class' : 'Save Class')}
             </button>
           </form>
         </div>
@@ -168,10 +192,14 @@ export default function ClassManagement() {
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {classes.map((cls) => (
-            <div key={cls.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow relative group">
+            <div 
+              key={cls.id} 
+              onClick={() => handleEditClick(cls)}
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow relative group cursor-pointer"
+            >
               <button 
-                onClick={() => handleDeleteClick(cls.id)}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                onClick={(e) => { e.stopPropagation(); handleDeleteClick(cls.id); }}
+                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 z-10"
                 title="Delete Class"
               >
                 <Trash2 size={18} />

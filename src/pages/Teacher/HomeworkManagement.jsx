@@ -11,17 +11,23 @@ export default function HomeworkManagement() {
   const schoolId = userProfile?.schoolId;
 
   const [classes, setClasses] = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [homeworks, setHomeworks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showExcelModal, setShowExcelModal] = useState(false);
+  const [showTrackingModal, setShowTrackingModal] = useState(false);
+  const [selectedHomework, setSelectedHomework] = useState(null);
+  const [classStudents, setClassStudents] = useState([]);
+  const [submissions, setSubmissions] = useState([]); // Submissions for selected homework
   const [creating, setCreating] = useState(false);
 
   const [newHomework, setNewHomework] = useState({
     title: '',
     description: '',
     classId: '',
+    subject: '',
     dueDate: '',
   });
 
@@ -31,22 +37,41 @@ export default function HomeworkManagement() {
     if (!schoolId) return;
 
     setLoading(true);
-    let classesUnsub, hwUnsub;
+    let classesUnsub, hwUnsub, subjectsUnsub;
 
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
       setClasses(data);
     });
 
+    subjectsUnsub = subscribeToSubCollection(schoolId, 'subjects', (data) => {
+      setSubjects(data);
+    });
+
     hwUnsub = subscribeToSubCollection(schoolId, 'homeworks', (data) => {
-      setHomeworks(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+      // Filter homeworks assigned by this teacher
+      setHomeworks(data.filter(hw => hw.teacherId === userProfile.uid).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       setLoading(false);
     });
 
     return () => {
       if (classesUnsub) classesUnsub();
+      if (subjectsUnsub) subjectsUnsub();
       if (hwUnsub) hwUnsub();
     };
-  }, [schoolId]);
+  }, [schoolId, userProfile]);
+
+  const openTracking = (hw) => {
+    setSelectedHomework(hw);
+    setShowTrackingModal(true);
+    // Fetch students in this class
+    getSubCollection(schoolId, 'students').then(allStudents => {
+      setClassStudents(allStudents.filter(s => s.classId === hw.classId));
+    });
+    // Listen to submissions
+    return subscribeToSubCollection(`${schoolId}/homeworks/${hw.id}/submissions`, (subs) => {
+      setSubmissions(subs);
+    });
+  };
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -55,12 +80,14 @@ export default function HomeworkManagement() {
       await addSubDocument(schoolId, 'homeworks', {
         ...newHomework,
         teacherId: userProfile.uid,
+        teacherName: userProfile.name || 'Teacher',
         createdAt: new Date().toISOString(),
+        assignedDate: new Date().toISOString().split('T')[0],
         status: 'Active'
       });
       toast.success("Homework assigned successfully!");
       setShowCreateModal(false);
-      setNewHomework({ title: '', description: '', classId: '', dueDate: '' });
+      setNewHomework({ title: '', description: '', classId: '', subject: '', dueDate: '' });
       // loadData(); - handled by real-time listener
     } catch (err) {
       console.error(err);
@@ -152,14 +179,18 @@ export default function HomeworkManagement() {
           homeworks.map(hw => {
             const cls = classes.find(c => c.id === hw.classId);
             return (
-              <div key={hw.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+              <div 
+                key={hw.id} 
+                onClick={() => openTracking(hw)}
+                className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group cursor-pointer"
+              >
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                   <FileText size={64} className="text-primary-600 transform rotate-12" />
                 </div>
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
                     <span className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-bold">
-                      {cls ? cls.name : 'Unknown Class'}
+                      {cls ? cls.name : 'Unknown Class'} • {hw.subject}
                     </span>
                     <span className="text-xs font-semibold text-slate-400">
                       Due: {new Date(hw.dueDate).toLocaleDateString()}
@@ -172,6 +203,7 @@ export default function HomeworkManagement() {
                     <span className="text-sm font-medium text-emerald-600 flex items-center gap-1">
                       <CheckCircle size={16} /> Active
                     </span>
+                    <span className="text-xs font-bold text-primary-600 group-hover:underline">View Tracking &rarr;</span>
                   </div>
                 </div>
               </div>
@@ -226,6 +258,20 @@ export default function HomeworkManagement() {
                     <option value="">Select Class</option>
                     {classes.map(c => (
                       <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Subject</label>
+                  <select 
+                    required
+                    value={newHomework.subject}
+                    onChange={e => setNewHomework({...newHomework, subject: e.target.value})}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  >
+                    <option value="">Select Subject</option>
+                    {subjects.map(s => (
+                      <option key={s.id} value={s.name}>{s.name}</option>
                     ))}
                   </select>
                 </div>
@@ -311,6 +357,53 @@ export default function HomeworkManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Tracking Modal */}
+      {showTrackingModal && selectedHomework && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50">
+          <div className="bg-white rounded-3xl w-full max-w-3xl flex flex-col max-h-[90vh] overflow-hidden shadow-2xl animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">{selectedHomework.title}</h2>
+                <p className="text-sm font-semibold text-slate-500">Student Progress Tracking</p>
+              </div>
+              <button onClick={() => setShowTrackingModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X size={24} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+              {classStudents.length === 0 ? (
+                <p className="text-center text-slate-500 italic">No students found in this class.</p>
+              ) : (
+                <div className="space-y-3">
+                  {classStudents.map(student => {
+                    const submission = submissions.find(s => s.id === student.id);
+                    const status = submission?.status || 'Not Started';
+                    const lastUpdated = submission?.lastUpdated ? new Date(submission.lastUpdated).toLocaleString() : 'N/A';
+                    
+                    let statusColor = "bg-slate-100 text-slate-600";
+                    if (status === 'In Progress') statusColor = "bg-amber-100 text-amber-700";
+                    if (status === 'Completed') statusColor = "bg-blue-100 text-blue-700";
+                    if (status === 'Submitted') statusColor = "bg-emerald-100 text-emerald-700";
+
+                    return (
+                      <div key={student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-200 rounded-2xl hover:border-primary-300 transition-colors gap-4">
+                        <div>
+                          <p className="font-bold text-slate-900">{student.firstName} {student.lastName}</p>
+                          <p className="text-xs font-semibold text-slate-500">ADM: {student.admissionNumber} | Last Updated: {lastUpdated}</p>
+                        </div>
+                        <div className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap ${statusColor}`}>
+                          {status}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

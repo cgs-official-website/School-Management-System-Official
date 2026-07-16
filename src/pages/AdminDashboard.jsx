@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LuBookOpen as BookOpen, LuUsers as Users, LuLogOut as LogOut, LuLayoutDashboard as LayoutDashboard, LuLink as LinkIcon, LuSettings as Settings, LuCreditCard as CreditCard, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuBus as Bus, LuLibrary as Library, LuFileText as FileText, LuBell as Bell, LuKey as Key, LuMenu as Menu, LuX as X, LuBuilding2 as Building2, LuCheck as CheckSquare, LuHouse as Home, LuPackage as PackageIcon, LuBriefcase as Briefcase, LuChartBar as BarChart2, LuHeartPulse as HeartPulse, LuCircleAlert as AlertCircle, LuFiles as Files } from 'react-icons/lu';
+import { LuBookOpen as BookOpen, LuUsers as Users, LuLogOut as LogOut, LuLayoutDashboard as LayoutDashboard, LuLink as LinkIcon, LuSettings as Settings, LuCreditCard as CreditCard, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuBus as Bus, LuLibrary as Library, LuFileText as FileText, LuBell as Bell, LuKey as Key, LuMenu as Menu, LuX as X, LuBuilding2 as Building2, LuCheck as CheckSquare, LuHouse as Home, LuPackage as PackageIcon, LuBriefcase as Briefcase, LuChartBar as BarChart2, LuHeartPulse as HeartPulse, LuCircleAlert as AlertCircle, LuFiles as Files, LuChevronDown as ChevronDown, LuChevronRight as ChevronRight } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
 import { useAuth } from '../context/AuthContext';
 import { getDoc, doc } from 'firebase/firestore';
@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [schoolData, setSchoolData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState(['Classes & Sections']); // Default expand if needed
 
   // Apply dynamic title and favicon
   useSchoolBranding(schoolData);
@@ -74,7 +75,15 @@ export default function AdminDashboard() {
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
     { name: 'Noticeboard', path: '/admin/notices', icon: Bell, moduleKey: 'noticeboard' },
     { name: 'Environment Setup', path: '/admin/setup', icon: Settings },
-    { name: 'Classes & Sections', path: '/admin/classes', icon: BookOpen, moduleKey: 'classes' },
+    { 
+      name: 'Classes & Sections', 
+      path: '/admin/classes', 
+      icon: BookOpen,
+      subItems: [
+        { name: 'Class List', path: '/admin/classes', icon: BookOpen },
+        { name: 'Subject Management', path: '/admin/subjects', icon: BookOpen }
+      ]
+    },
     { name: 'Student Directory', path: '/admin/students', icon: Users },
     { name: 'Staff Management', path: '/admin/staff', icon: GraduationCap },
     { name: 'HR & Payroll', path: '/admin/hr-payroll', icon: Briefcase, moduleKey: 'hr-payroll' },
@@ -96,6 +105,7 @@ export default function AdminDashboard() {
     { name: 'API Integrations', path: '/admin/api', icon: Key },
     { name: 'Registration Links', path: '/admin/links', icon: LinkIcon },
     { name: 'Billing & Plan', path: '/admin/billing', icon: CreditCard },
+    { name: 'Settings', path: '/admin/form-builder', icon: Settings },
   ];
 
   const permittedModules = schoolData.permittedModules || [];
@@ -136,30 +146,82 @@ export default function AdminDashboard() {
         </div>
           
           <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto custom-scrollbar">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.name}
-                to={item.path}
-                end={item.exact}
-              className={({ isActive }) =>
-                `relative flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 font-semibold text-sm ${
-                  isActive 
-                    ? 'bg-primary-50 text-primary-900 shadow-md shadow-slate-900/20' 
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                }`
-              }
-              >
-                {({ isActive }) => (
-                  <>
-                    {isActive && (
-                      <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-500 rounded-r-md"></div>
-                    )}
-                    <item.icon size={20} className="shrink-0" />
-                    <span>{item.name}</span>
-                  </>
-                )}
-              </NavLink>
-            ))}
+            {navItems.map((item) => {
+              const hasSubItems = item.subItems && item.subItems.length > 0;
+              const isExpanded = expandedMenus.includes(item.name);
+
+              const toggleMenu = () => {
+                if (hasSubItems) {
+                  setExpandedMenus(prev => 
+                    prev.includes(item.name) 
+                      ? prev.filter(name => name !== item.name)
+                      : [...prev, item.name]
+                  );
+                }
+              };
+
+              return (
+                <div key={item.name} className="space-y-1">
+                  <NavLink
+                    to={item.path}
+                    end={item.exact}
+                    onClick={hasSubItems ? toggleMenu : undefined}
+                    className={({ isActive }) => {
+                      const childActive = hasSubItems && item.subItems.some(sub => location.pathname === sub.path);
+                      const active = isActive || childActive;
+                      return `relative flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-200 font-semibold text-sm ${
+                        active 
+                          ? 'bg-primary-50 text-primary-900 shadow-md shadow-slate-900/20' 
+                          : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                      }`
+                    }}
+                  >
+                    {({ isActive }) => {
+                      const childActive = hasSubItems && item.subItems.some(sub => location.pathname === sub.path);
+                      const active = isActive || childActive;
+                      return (
+                        <>
+                          {active && (
+                            <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-primary-500 rounded-r-md"></div>
+                          )}
+                          <div className="flex items-center gap-3">
+                            <item.icon size={20} className="shrink-0" />
+                            <span>{item.name}</span>
+                          </div>
+                          {hasSubItems && (
+                            <div className="text-slate-400">
+                              {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                            </div>
+                          )}
+                        </>
+                      );
+                    }}
+                  </NavLink>
+                  
+                  {/* Sub Items */}
+                  {hasSubItems && isExpanded && (
+                    <div className="pl-11 pr-2 py-1 space-y-1 relative before:absolute before:left-6 before:top-0 before:bottom-2 before:w-[2px] before:bg-slate-100 before:rounded-full">
+                      {item.subItems.map(sub => (
+                        <NavLink
+                          key={sub.name}
+                          to={sub.path}
+                          className={({ isActive }) => 
+                            `flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors relative whitespace-nowrap ${
+                              isActive
+                                ? 'text-primary-700 bg-primary-50/50 before:absolute before:-left-5 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:rounded-full before:bg-primary-500'
+                                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                            }`
+                          }
+                        >
+                          {sub.icon && <sub.icon size={16} className="shrink-0" />}
+                          {sub.name}
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </nav>
         <div className="p-4 shrink-0 mt-auto">
           <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-slate-100">

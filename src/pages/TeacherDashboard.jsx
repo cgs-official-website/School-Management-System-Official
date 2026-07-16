@@ -68,32 +68,7 @@ export default function TeacherDashboard() {
     );
   }
 
-  // Waiting for assignment state
-  if (!userProfile?.assignedClassId) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-xl border border-slate-200 text-center relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-2 bg-amber-500"></div>
-          
-          <div className="w-20 h-20 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Lock size={40} />
-          </div>
-          
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Awaiting Assignment</h1>
-          <p className="text-slate-600 mb-8">
-            Your account has been created, but the School Admin has not yet assigned you to a class. Please contact your administrator.
-          </p>
-
-          <button 
-            onClick={handleLogout}
-            className="w-full py-3 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold transition-colors flex items-center justify-center gap-2"
-          >
-            <LogOut size={18} /> Logout
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // Removed strict Awaiting Assignment block so Subject Teachers can access their Timetable and other modules.
 
   return (
     <div className="flex h-screen bg-[#f4f7fe] font-sans overflow-hidden p-4 gap-4">
