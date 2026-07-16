@@ -74,25 +74,25 @@ export default function AdminDashboard() {
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
     { name: 'Noticeboard', path: '/admin/notices', icon: Bell, moduleKey: 'noticeboard' },
     { name: 'Environment Setup', path: '/admin/setup', icon: Settings },
-    { name: 'Classes & Sections', path: '/admin/classes', icon: BookOpen },
+    { name: 'Classes & Sections', path: '/admin/classes', icon: BookOpen, moduleKey: 'classes' },
     { name: 'Student Directory', path: '/admin/students', icon: Users },
     { name: 'Staff Management', path: '/admin/staff', icon: GraduationCap },
-    { name: 'HR & Payroll', path: '/admin/hr-payroll', icon: Briefcase },
-    { name: 'Attendance', path: '/admin/attendance', icon: CheckSquare },
+    { name: 'HR & Payroll', path: '/admin/hr-payroll', icon: Briefcase, moduleKey: 'hr-payroll' },
+    { name: 'Attendance', path: '/admin/attendance', icon: CheckSquare, moduleKey: 'attendance' },
     { name: 'Timetables', path: '/admin/timetables', icon: Calendar, moduleKey: 'timetables' },
-    { name: 'Calendar', path: '/admin/calendar', icon: Calendar },
+    { name: 'Calendar', path: '/admin/calendar', icon: Calendar, moduleKey: 'calendar' },
     { name: 'Exams & Results', path: '/admin/exams', icon: FileText, moduleKey: 'exams' },
-    { name: 'Fees & Payments', path: '/admin/fees', icon: CreditCard },
+    { name: 'Fees & Payments', path: '/admin/fees', icon: CreditCard, moduleKey: 'fees' },
     { name: 'Transport', path: '/admin/transport', icon: Bus, moduleKey: 'transport' },
-    { name: 'Hostel', path: '/admin/hostel', icon: Home },
+    { name: 'Hostel', path: '/admin/hostel', icon: Home, moduleKey: 'hostel' },
     { name: 'Library', path: '/admin/library', icon: Library, moduleKey: 'library' },
-    { name: 'Inventory & Assets', path: '/admin/inventory', icon: PackageIcon },
-    { name: 'Health & Medical', path: '/admin/health', icon: HeartPulse },
-    { name: 'Complaint Redressal', path: '/admin/complaints', icon: AlertCircle },
-    { name: 'Alumni Management', path: '/admin/alumni', icon: GraduationCap },
-    { name: 'Document Management', path: '/admin/documents', icon: Files },
-    { name: 'Multi-Branch', path: '/admin/branches', icon: Building2 },
-    { name: 'Reports & Analytics', path: '/admin/reports', icon: BarChart2 },
+    { name: 'Inventory & Assets', path: '/admin/inventory', icon: PackageIcon, moduleKey: 'inventory' },
+    { name: 'Health & Medical', path: '/admin/health', icon: HeartPulse, moduleKey: 'health' },
+    { name: 'Complaint Redressal', path: '/admin/complaints', icon: AlertCircle, moduleKey: 'complaints' },
+    { name: 'Alumni Management', path: '/admin/alumni', icon: GraduationCap, moduleKey: 'alumni' },
+    { name: 'Document Management', path: '/admin/documents', icon: Files, moduleKey: 'documents' },
+    { name: 'Multi-Branch', path: '/admin/branches', icon: Building2, moduleKey: 'branches' },
+    { name: 'Reports & Analytics', path: '/admin/reports', icon: BarChart2, moduleKey: 'reports' },
     { name: 'API Integrations', path: '/admin/api', icon: Key },
     { name: 'Registration Links', path: '/admin/links', icon: LinkIcon },
     { name: 'Billing & Plan', path: '/admin/billing', icon: CreditCard },
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
       </aside>
 
       {/* Main Content Area Wrapper */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-4 relative z-10">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-4 relative">
         <TopNavbar 
           schoolName={schoolData?.schoolName || 'Admin Portal'} 
           schoolLogo={schoolData?.branding?.logoUrl}

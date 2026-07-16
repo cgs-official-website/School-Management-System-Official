@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LuClipboardList, LuSearch, LuFilter, LuCalendar, LuDownload, LuUser } from 'react-icons/lu';
+import toast from 'react-hot-toast';
 
 export default function AuditLogs() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const logs = [
     { id: 'LOG-8912', action: 'Plan Upgrade', user: 'Admin (Greenwood)', details: 'Upgraded to Enterprise Plan', date: '2026-07-11T14:30:00Z', ip: '192.168.1.45', type: 'billing' },
@@ -12,11 +15,56 @@ export default function AuditLogs() {
     { id: 'LOG-8908', action: 'Settings Changed', user: 'Admin (Oakridge)', details: 'Updated grading scale to 10-point GPA', date: '2026-07-08T11:20:00Z', ip: '172.16.0.4', type: 'system' },
   ];
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   const filteredLogs = logs.filter(l => 
     l.action.toLowerCase().includes(searchTerm.toLowerCase()) || 
     l.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
     l.details.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedLogs = filteredLogs.slice(startIndex, startIndex + itemsPerPage);
+
+  const handleExportCSV = () => {
+    if (filteredLogs.length === 0) {
+      toast.error("No logs to export");
+      return;
+    }
+
+    const headers = ["Timestamp", "Action Event", "User/Initiator", "Details", "IP Address", "Type"];
+    const rows = filteredLogs.map(log => [
+      new Date(log.date).toLocaleString(),
+      log.action,
+      log.user,
+      log.details,
+      log.ip,
+      log.type
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(","))
+    ].join("\n");
+
+    try {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `audit_logs_${new Date().toISOString().slice(0, 10)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("CSV exported successfully");
+    } catch (err) {
+      toast.error("Failed to export CSV");
+    }
+  };
 
   const getTypeColor = (type) => {
     switch(type) {
@@ -29,7 +77,7 @@ export default function AuditLogs() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto h-full flex flex-col">
+    <div className="p-8 max-w-7xl mx-auto flex flex-col">
       <div className="mb-8 shrink-0 flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
@@ -37,14 +85,17 @@ export default function AuditLogs() {
           </h1>
           <p className="text-slate-500 mt-1">Track all critical actions, security events, and configuration changes.</p>
         </div>
-        <button className="px-4 py-2 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
+        <button 
+          onClick={handleExportCSV}
+          className="px-4 py-2 bg-primary-600 text-white hover:bg-primary-700 font-bold rounded-xl shadow-sm transition-colors flex items-center gap-2"
+        >
           <LuDownload size={18} /> Export CSV
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-wrap gap-4 shrink-0">
-          <div className="relative flex-1 min-w-[250px] max-w-md">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden mb-6">
+        <div className="p-6 border-b border-slate-100 bg-slate-50/50 grid grid-cols-1 sm:grid-cols-4 gap-4 shrink-0">
+          <div className="relative w-full sm:col-span-2">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input 
               type="text"
@@ -54,10 +105,10 @@ export default function AuditLogs() {
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
             />
           </div>
-          <button className="px-4 py-2.5 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
+          <button className="w-full justify-center px-4 py-2.5 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
             <LuFilter size={18} /> Event Type
           </button>
-          <button className="px-4 py-2.5 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
+          <button className="w-full justify-center px-4 py-2.5 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
             <LuCalendar size={18} /> Date Range
           </button>
         </div>
@@ -74,7 +125,7 @@ export default function AuditLogs() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredLogs.map((log) => (
+              {paginatedLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="p-4 text-sm text-slate-500 whitespace-nowrap">
                     {new Date(log.date).toLocaleString()}
@@ -106,6 +157,51 @@ export default function AuditLogs() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-slate-500 font-medium">
+              Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
+              <span className="font-semibold text-slate-900">
+                {Math.min(startIndex + itemsPerPage, filteredLogs.length)}
+              </span>{' '}
+              of <span className="font-semibold text-slate-900">{filteredLogs.length}</span> audit logs
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }).map((_, idx) => {
+                const pageNum = idx + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                      currentPage === pageNum
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

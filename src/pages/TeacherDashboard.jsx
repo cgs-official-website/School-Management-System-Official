@@ -178,7 +178,7 @@ export default function TeacherDashboard() {
       </aside>
 
       {/* Main Content Area Wrapper */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-4 relative z-10">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-4 relative">
         <TopNavbar 
           schoolName={school?.name || 'Teacher Portal'} 
           schoolLogo={school?.branding?.logoUrl}

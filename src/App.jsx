@@ -29,7 +29,6 @@ const PlanManagement = lazy(() => import('./pages/SuperAdmin/PlanManagement'));
 const LicenseUsage = lazy(() => import('./pages/SuperAdmin/LicenseUsage'));
 const SupportTickets = lazy(() => import('./pages/SuperAdmin/SupportTickets'));
 const AuditLogs = lazy(() => import('./pages/SuperAdmin/AuditLogs'));
-const RolePermissions = lazy(() => import('./pages/SuperAdmin/RolePermissions'));
 
 // School Admin
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
@@ -158,7 +157,6 @@ function App() {
               <Route path="license-usage" element={<LicenseUsage />} />
               <Route path="support-tickets" element={<SupportTickets />} />
               <Route path="audit-logs" element={<AuditLogs />} />
-              <Route path="roles" element={<RolePermissions />} />
             </Route>
 
             {/* School Admin Routes */}

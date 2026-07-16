@@ -21,7 +21,6 @@ This document outlines all the panels and their respective modules available in 
 - **Audit Logs**: Track global actions and changes.
 - **Notification Broadcast**: Send global alerts to all tenants.
 - **Feature Flags**: Toggle beta features globally.
-- **Role Permissions**: Manage super admin roles.
 - **Branding Settings**: Global white-labeling configurations.
 - **License Usage**: Monitor global resource consumption.
 

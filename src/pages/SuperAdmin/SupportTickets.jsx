@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LuLifeBuoy, LuSearch, LuFilter, LuMessageSquare, LuCircleCheck, LuClock } from 'react-icons/lu';
 
 export default function SupportTickets() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const tickets = [
     { id: 'TKT-001', school: 'Greenwood High', subject: 'Billing issue with new plan', status: 'open', priority: 'high', date: '2026-07-10T09:30:00Z', messages: 3 },
@@ -12,11 +14,19 @@ export default function SupportTickets() {
     { id: 'TKT-004', school: 'Lakeside Public School', subject: 'Request for API keys', status: 'resolved', priority: 'low', date: '2026-07-05T11:00:00Z', messages: 5 },
   ];
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
+
   const filteredTickets = tickets.filter(t => {
     const matchesSearch = t.school.toLowerCase().includes(searchTerm.toLowerCase()) || t.subject.toLowerCase().includes(searchTerm.toLowerCase()) || t.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || t.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  const totalPages = Math.ceil(filteredTickets.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedTickets = filteredTickets.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusBadge = (status) => {
     switch(status) {
@@ -37,7 +47,7 @@ export default function SupportTickets() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto h-full flex flex-col">
+    <div className="p-8 max-w-7xl mx-auto flex flex-col">
       <div className="mb-8 shrink-0 flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
@@ -47,7 +57,7 @@ export default function SupportTickets() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden mb-6">
         <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
@@ -71,9 +81,9 @@ export default function SupportTickets() {
           </select>
         </div>
 
-        <div className="flex-1 overflow-auto p-6">
+        <div className="overflow-auto p-6 flex-1">
           <div className="space-y-4">
-            {filteredTickets.map(ticket => (
+            {paginatedTickets.map(ticket => (
               <div key={ticket.id} className="flex flex-col sm:flex-row gap-4 p-5 rounded-2xl border border-slate-200 hover:border-primary-300 hover:shadow-md transition-all cursor-pointer bg-white group">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -105,6 +115,51 @@ export default function SupportTickets() {
             )}
           </div>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-slate-500 font-medium">
+              Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
+              <span className="font-semibold text-slate-900">
+                {Math.min(startIndex + itemsPerPage, filteredTickets.length)}
+              </span>{' '}
+              of <span className="font-semibold text-slate-900">{filteredTickets.length}</span> tickets
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }).map((_, idx) => {
+                const pageNum = idx + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                      currentPage === pageNum
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

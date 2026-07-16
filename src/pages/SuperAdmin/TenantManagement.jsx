@@ -25,7 +25,20 @@ const AVAILABLE_MODULES = [
   { id: 'library', label: 'Library Management' },
   { id: 'exams', label: 'Examinations & Report Cards' },
   { id: 'noticeboard', label: 'Noticeboard & Announcements' },
-  { id: 'media', label: 'Media & Cloudinary Integration' }
+  { id: 'media', label: 'Media & Cloudinary Integration' },
+  { id: 'classes', label: 'Classes & Sections' },
+  { id: 'hr-payroll', label: 'HR & Payroll Management' },
+  { id: 'attendance', label: 'Attendance Management' },
+  { id: 'calendar', label: 'Academic Calendar' },
+  { id: 'fees', label: 'Fees & Payments' },
+  { id: 'hostel', label: 'Hostel Management' },
+  { id: 'inventory', label: 'Inventory & Assets' },
+  { id: 'health', label: 'Health & Medical Records' },
+  { id: 'complaints', label: 'Complaint Redressal' },
+  { id: 'alumni', label: 'Alumni Management' },
+  { id: 'documents', label: 'Document Management' },
+  { id: 'branches', label: 'Multi-Branch Management' },
+  { id: 'reports', label: 'Reports & Analytics' }
 ];
 
 export default function TenantManagement() {
@@ -46,6 +59,12 @@ export default function TenantManagement() {
   const [previewDoc, setPreviewDoc] = useState(null); // { url, title }
   const [modalAction, setModalAction] = useState('approve'); // 'approve' | 'edit'
   const [confirmModalState, setConfirmModalState] = useState({ isOpen: false, schoolId: null });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
 
   useEffect(() => {
     setLoading(true);
@@ -137,6 +156,10 @@ export default function TenantManagement() {
     return matchesSearch && matchesStatus;
   });
 
+  const totalPages = Math.ceil(filteredSchools.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedSchools = filteredSchools.slice(startIndex, startIndex + itemsPerPage);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -146,7 +169,7 @@ export default function TenantManagement() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24 h-[calc(100vh-2rem)] flex flex-col">
+    <div className="p-8 max-w-7xl mx-auto pb-24 flex flex-col">
       <div className="flex justify-between items-end mb-8 shrink-0">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Tenant Management</h1>
@@ -184,7 +207,7 @@ export default function TenantManagement() {
       </div>
 
       {/* Data Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex-1 overflow-hidden flex flex-col">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden mb-6">
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -207,7 +230,7 @@ export default function TenantManagement() {
                   </td>
                 </tr>
               ) : (
-                filteredSchools.map((school) => (
+                paginatedSchools.map((school) => (
                   <tr key={school.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-4">
                       <div className="flex items-center gap-3">
@@ -303,11 +326,56 @@ export default function TenantManagement() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-slate-500 font-medium">
+              Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
+              <span className="font-semibold text-slate-900">
+                {Math.min(startIndex + itemsPerPage, filteredSchools.length)}
+              </span>{' '}
+              of <span className="font-semibold text-slate-900">{filteredSchools.length}</span> schools
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }).map((_, idx) => {
+                const pageNum = idx + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                      currentPage === pageNum
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Permissions Modal */}
       {showModal && selectedSchool && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-start justify-center z-50 p-4 sm:p-6 overflow-y-auto pt-10 md:pt-20">
           <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">

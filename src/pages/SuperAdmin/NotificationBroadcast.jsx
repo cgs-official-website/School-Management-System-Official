@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LuRadio, LuSend, LuHistory, LuUsers, LuClock } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
@@ -9,11 +9,21 @@ export default function NotificationBroadcast() {
   const [targetAudience, setTargetAudience] = useState('all_admins');
   const [priority, setPriority] = useState('normal');
   const [sending, setSending] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const [history, setHistory] = useState([
     { id: 1, title: 'Scheduled Maintenance', date: '2026-07-10T10:00:00Z', target: 'All Admins', status: 'Sent' },
     { id: 2, title: 'New Feature Release: AI Grading', date: '2026-07-01T14:30:00Z', target: 'All Users', status: 'Sent' }
   ]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab]);
+
+  const totalPages = Math.ceil(history.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedHistory = history.slice(startIndex, startIndex + itemsPerPage);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -149,7 +159,7 @@ export default function NotificationBroadcast() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {history.map((item) => (
+                    {paginatedHistory.map((item) => (
                       <tr key={item.id} className="hover:bg-slate-50/50">
                         <td className="p-4 font-bold text-slate-900">{item.title}</td>
                         <td className="p-4 text-slate-600 capitalize">{item.target}</td>
@@ -167,6 +177,51 @@ export default function NotificationBroadcast() {
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="mt-4 px-6 py-4 border border-slate-200 rounded-2xl bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <span className="text-sm text-slate-500 font-medium">
+                    Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
+                    <span className="font-semibold text-slate-900">
+                      {Math.min(startIndex + itemsPerPage, history.length)}
+                    </span>{' '}
+                    of <span className="font-semibold text-slate-900">{history.length}</span> broadcast records
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                      className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      Previous
+                    </button>
+                    {Array.from({ length: totalPages }).map((_, idx) => {
+                      const pageNum = idx + 1;
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                            currentPage === pageNum
+                              ? 'bg-primary-600 text-white shadow-sm'
+                              : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                      className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

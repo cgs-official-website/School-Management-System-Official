@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LuKey, LuSearch, LuTriangleAlert, LuCircleCheck, LuTrendingUp } from 'react-icons/lu';
 
 export default function LicenseUsage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const schools = [
     { id: 1, name: 'Greenwood High', plan: 'Enterprise', students: { current: 1850, limit: 2000 }, teachers: { current: 145, limit: 150 }, status: 'healthy' },
@@ -11,7 +13,15 @@ export default function LicenseUsage() {
     { id: 4, name: 'Lakeside Public School', plan: 'Pro', students: { current: 340, limit: 500 }, teachers: { current: 28, limit: 50 }, status: 'healthy' },
   ];
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   const filteredSchools = schools.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  const totalPages = Math.ceil(filteredSchools.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedSchools = filteredSchools.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusBadge = (status) => {
     switch(status) {
@@ -39,7 +49,7 @@ export default function LicenseUsage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto h-full flex flex-col">
+    <div className="p-8 max-w-7xl mx-auto flex flex-col">
       <div className="mb-8 shrink-0 flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
@@ -79,7 +89,7 @@ export default function LicenseUsage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden mb-6">
         <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
@@ -105,7 +115,7 @@ export default function LicenseUsage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredSchools.map((school) => (
+              {paginatedSchools.map((school) => (
                 <tr key={school.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="p-4 font-bold text-slate-900">{school.name}</td>
                   <td className="p-4">
@@ -125,6 +135,51 @@ export default function LicenseUsage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-slate-500 font-medium">
+              Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
+              <span className="font-semibold text-slate-900">
+                {Math.min(startIndex + itemsPerPage, filteredSchools.length)}
+              </span>{' '}
+              of <span className="font-semibold text-slate-900">{filteredSchools.length}</span> schools
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }).map((_, idx) => {
+                const pageNum = idx + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                      currentPage === pageNum
+                        ? 'bg-primary-600 text-white shadow-sm'
+                        : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
