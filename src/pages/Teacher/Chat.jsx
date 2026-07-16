@@ -41,8 +41,13 @@ export default function TeacherChat() {
         setMessages([]); // clear old messages
         
         // 1. Check if parent is registered
-        const parentDoc = await checkParentRegistration(schoolId, activeStudent.id);
-        setLinkedParentId(parentDoc ? parentDoc.id : null);
+        try {
+          const parentDoc = await checkParentRegistration(schoolId, activeStudent.id);
+          setLinkedParentId(parentDoc ? parentDoc.id : null);
+        } catch (error) {
+          console.error("Permission error checking parent registration:", error);
+          setLinkedParentId(null);
+        }
 
         // 2. Subscribe to messages
         unsubscribe = subscribeToMessages(schoolId, activeStudent.id, (newMessages) => {

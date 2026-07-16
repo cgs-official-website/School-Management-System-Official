@@ -5,7 +5,7 @@ import { getDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X } from 'react-icons/lu';
+import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -38,6 +38,10 @@ export default function StudentManagement() {
   const [selectedStudentForUpload, setSelectedStudentForUpload] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  // View Modal State
+  const [viewStudentModalOpen, setViewStudentModalOpen] = useState(false);
+  const [selectedStudentToView, setSelectedStudentToView] = useState(null);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -409,6 +413,16 @@ export default function StudentManagement() {
                       <td className="p-4 pr-6 text-right">
                         <div className="flex justify-end gap-2">
                           <button 
+                            onClick={() => {
+                              setSelectedStudentToView(student);
+                              setViewStudentModalOpen(true);
+                            }}
+                            className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            title="View Details"
+                          >
+                            <Eye size={18} />
+                          </button>
+                          <button 
                             onClick={() => openUploadModal(student)}
                             className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                             title="Upload Document"
@@ -487,6 +501,88 @@ export default function StudentManagement() {
                 className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
               >
                 {uploading ? 'Uploading...' : 'Upload File'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Student Details Modal */}
+      {viewStudentModalOpen && selectedStudentToView && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
+          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <GraduationCap className="text-indigo-600" />
+                Student Details
+              </h2>
+              <button onClick={() => setViewStudentModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+                <div className="w-16 h-16 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-2xl">
+                  {selectedStudentToView.firstName.charAt(0)}{selectedStudentToView.lastName.charAt(0)}
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">
+                    {selectedStudentToView.firstName} {selectedStudentToView.lastName}
+                  </h3>
+                  <p className="text-sm font-medium text-slate-500">Admission No: <span className="text-slate-800 font-mono">{selectedStudentToView.admissionNumber}</span></p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Class & Section</label>
+                  <p className="text-slate-900 font-medium">
+                    {getClassName(selectedStudentToView.classId)}
+                  </p>
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {selectedStudentToView.status || 'Active'}
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date of Birth</label>
+                  <p className="text-slate-900 font-medium">
+                    {selectedStudentToView.dob ? new Date(selectedStudentToView.dob).toLocaleDateString() : 'N/A'}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gender</label>
+                  <p className="text-slate-900 font-medium">{selectedStudentToView.gender || 'N/A'}</p>
+                </div>
+                
+                <div className="col-span-2">
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Parent Email</label>
+                  <p className="text-slate-900 font-medium">{selectedStudentToView.parentEmail || 'N/A'}</p>
+                </div>
+
+                <div className="col-span-2">
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Enrolled Date</label>
+                  <p className="text-slate-900 font-medium">
+                    {selectedStudentToView.createdAt 
+                      ? new Date(selectedStudentToView.createdAt).toLocaleDateString()
+                      : 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <button 
+                onClick={() => setViewStudentModalOpen(false)}
+                className="px-6 py-2 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+              >
+                Close
               </button>
             </div>
           </div>

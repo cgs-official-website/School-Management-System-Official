@@ -5,7 +5,7 @@ import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet } from 'react-icons/lu';
+import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -32,6 +32,21 @@ export default function StaffAssignment() {
   const [selectedStaffForUpload, setSelectedStaffForUpload] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  // Add Staff Modal State
+  const [addStaffModalOpen, setAddStaffModalOpen] = useState(false);
+  const [newStaff, setNewStaff] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    role: 'teacher',
+    assignedClassId: ''
+  });
+  const [addingStaff, setAddingStaff] = useState(false);
+
+  // View Modal State
+  const [viewStaffModalOpen, setViewStaffModalOpen] = useState(false);
+  const [selectedStaffToView, setSelectedStaffToView] = useState(null);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -165,6 +180,34 @@ export default function StaffAssignment() {
     }
   };
 
+  const handleAddStaff = async () => {
+    if (!newStaff.firstName || !newStaff.lastName || !newStaff.email) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    setAddingStaff(true);
+    try {
+      await addSubDocument(schoolId, 'teachers', {
+        firstName: newStaff.firstName,
+        lastName: newStaff.lastName,
+        name: `${newStaff.firstName} ${newStaff.lastName}`,
+        email: newStaff.email,
+        role: newStaff.role,
+        assignedClassId: newStaff.assignedClassId,
+        status: 'Active',
+        createdAt: new Date().toISOString()
+      });
+      toast.success("Staff member added successfully!");
+      setAddStaffModalOpen(false);
+      setNewStaff({ firstName: '', lastName: '', email: '', role: 'teacher', assignedClassId: '' });
+    } catch (error) {
+      console.error("Error adding staff:", error);
+      toast.error("Failed to add staff member.");
+    } finally {
+      setAddingStaff(false);
+    }
+  };
+
   const getClassName = (classId) => {
     if (!classId) return 'Unassigned';
     const cls = classes.find(c => c.id === classId);
@@ -255,6 +298,12 @@ export default function StaffAssignment() {
             className="px-4 py-2 bg-rose-50 text-rose-700 rounded-xl font-medium hover:bg-rose-100 shadow-sm flex items-center gap-2 transition-colors border border-rose-200"
           >
             <FileText size={18} /> Export PDF
+          </button>
+          <button 
+            onClick={() => setAddStaffModalOpen(true)}
+            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
+          >
+            <UserPlus size={18} /> Add Staff
           </button>
           <button 
             onClick={() => {
@@ -350,6 +399,16 @@ export default function StaffAssignment() {
                       </td>
                       <td className="p-4 pr-6 text-right">
                         <div className="flex justify-end gap-2">
+                          <button 
+                            onClick={() => {
+                              setSelectedStaffToView(member);
+                              setViewStaffModalOpen(true);
+                            }}
+                            className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            title="View Details"
+                          >
+                            <Eye size={18} />
+                          </button>
                           <button 
                             onClick={() => openUploadModal(member)}
                             className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
@@ -491,6 +550,174 @@ export default function StaffAssignment() {
                 className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
               >
                 {uploading ? 'Uploading...' : 'Upload File'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Staff Modal */}
+      {addStaffModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
+          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <UserPlus className="text-indigo-600" />
+                Add Staff Member
+              </h2>
+              <button onClick={() => setAddStaffModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 flex-1 overflow-y-auto custom-scrollbar space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">First Name *</label>
+                  <input 
+                    type="text" 
+                    value={newStaff.firstName}
+                    onChange={(e) => setNewStaff({...newStaff, firstName: e.target.value})}
+                    placeholder="e.g. John"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Last Name *</label>
+                  <input 
+                    type="text" 
+                    value={newStaff.lastName}
+                    onChange={(e) => setNewStaff({...newStaff, lastName: e.target.value})}
+                    placeholder="e.g. Doe"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Email Address *</label>
+                <input 
+                  type="email" 
+                  value={newStaff.email}
+                  onChange={(e) => setNewStaff({...newStaff, email: e.target.value})}
+                  placeholder="john.doe@example.com"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Role</label>
+                  <select 
+                    value={newStaff.role}
+                    onChange={(e) => setNewStaff({...newStaff, role: e.target.value})}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  >
+                    <option value="teacher">Teacher</option>
+                    <option value="librarian">Librarian</option>
+                    <option value="accountant">Accountant</option>
+                    <option value="warden">Warden</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Assign Class (Optional)</label>
+                  <select 
+                    value={newStaff.assignedClassId}
+                    onChange={(e) => setNewStaff({...newStaff, assignedClassId: e.target.value})}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  >
+                    <option value="">-- Unassigned --</option>
+                    {classes.map(c => (
+                      <option key={c.id} value={c.id}>{c.name} - Section {c.section}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+              <button 
+                onClick={() => setAddStaffModalOpen(false)}
+                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleAddStaff}
+                disabled={addingStaff}
+                className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
+              >
+                {addingStaff ? 'Adding...' : 'Add Staff Member'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Staff Details Modal */}
+      {viewStaffModalOpen && selectedStaffToView && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
+          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Users className="text-indigo-600" />
+                Staff Details
+              </h2>
+              <button onClick={() => setViewStaffModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+                <div className="w-16 h-16 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-2xl">
+                  {(selectedStaffToView.name || `${selectedStaffToView.firstName} ${selectedStaffToView.lastName}`).charAt(0)}
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">
+                    {selectedStaffToView.name || `${selectedStaffToView.firstName} ${selectedStaffToView.lastName}`}
+                  </h3>
+                  <p className="text-sm font-medium text-indigo-600 capitalize">{selectedStaffToView.role || 'Teacher'}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Email Address</label>
+                  <p className="text-slate-900 font-medium">{selectedStaffToView.email || 'N/A'}</p>
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Assigned Class</label>
+                  <p className="text-slate-900 font-medium">
+                    {selectedStaffToView.assignedClassId 
+                      ? getClassName(selectedStaffToView.assignedClassId) 
+                      : <span className="text-slate-500 italic">Unassigned</span>}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {selectedStaffToView.status || 'Active'}
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Joined Date</label>
+                  <p className="text-slate-900 font-medium">
+                    {selectedStaffToView.createdAt 
+                      ? new Date(selectedStaffToView.createdAt).toLocaleDateString()
+                      : 'N/A'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <button 
+                onClick={() => setViewStaffModalOpen(false)}
+                className="px-6 py-2 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+              >
+                Close
               </button>
             </div>
           </div>
