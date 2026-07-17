@@ -109,6 +109,9 @@ export default function AdminDashboard() {
   const navItems = allNavItems.filter(item => {
     if (!item.moduleKey) return true;
     
+    // Inventory module bypass check for College panels
+    if (item.moduleKey === 'inventory' && schoolData.schoolType === 'College') return true;
+    
     // Core modules bypass school subscription check
     const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api'];
     if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
