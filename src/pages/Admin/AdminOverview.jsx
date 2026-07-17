@@ -20,6 +20,11 @@ export default function AdminOverview() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
 
+  const hasModule = (moduleKey) => {
+    if (userProfile?.role === 'superadmin') return true;
+    return userProfile?.permittedModules?.includes(moduleKey) ?? true;
+  };
+
   const [stats, setStats] = useState({
     students: 0,
     staff: 0,
@@ -237,33 +242,59 @@ export default function AdminOverview() {
           <p className="mt-1 text-sm text-slate-300">All modules running smoothly</p>
           
           <div className="mt-8 space-y-4">
-            <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Wallet className="h-5 w-5 text-amber-400" />
-                  <span className="font-medium">Fee Collection</span>
+            {hasModule('fees') && (
+              <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Wallet className="h-5 w-5 text-amber-400" />
+                    <span className="font-medium">Fee Collection</span>
+                  </div>
+                  <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-medium text-emerald-300">Active</span>
                 </div>
-                <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-medium text-emerald-300">Active</span>
+                <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
+                  <div className="h-1.5 w-[75%] rounded-full bg-amber-400"></div>
+                </div>
+                <div className="mt-2 text-right text-xs text-slate-300">75% Collected</div>
               </div>
-              <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
-                <div className="h-1.5 w-[75%] rounded-full bg-amber-400"></div>
-              </div>
-              <div className="mt-2 text-right text-xs text-slate-300">75% Collected</div>
-            </div>
+            )}
 
-            <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Calendar className="h-5 w-5 text-blue-400" />
-                  <span className="font-medium">Academic Term</span>
+            {hasModule('calendar') && (
+              <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Calendar className="h-5 w-5 text-blue-400" />
+                    <span className="font-medium">Academic Term</span>
+                  </div>
+                  <span className="text-xs font-medium text-slate-300">Term 1</span>
                 </div>
-                <span className="text-xs font-medium text-slate-300">Term 1</span>
+                <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
+                  <div className="h-1.5 w-[40%] rounded-full bg-blue-400"></div>
+                </div>
+                <div className="mt-2 text-right text-xs text-slate-300">Week 6 of 15</div>
               </div>
-              <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
-                <div className="h-1.5 w-[40%] rounded-full bg-blue-400"></div>
+            )}
+
+            {hasModule('hr-payroll') && (
+              <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Briefcase className="h-5 w-5 text-purple-400" />
+                    <span className="font-medium">HR & Payroll</span>
+                  </div>
+                  <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-medium text-emerald-300">Active</span>
+                </div>
+                <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
+                  <div className="h-1.5 w-[100%] rounded-full bg-purple-400"></div>
+                </div>
+                <div className="mt-2 text-right text-xs text-slate-300">Payroll Processed</div>
               </div>
-              <div className="mt-2 text-right text-xs text-slate-300">Week 6 of 15</div>
-            </div>
+            )}
+
+            {!hasModule('fees') && !hasModule('calendar') && !hasModule('hr-payroll') && (
+              <div className="text-center text-sm text-slate-400 py-6">
+                No system status widgets available for your active modules.
+              </div>
+            )}
           </div>
 
           <div className="mt-8 pt-6 border-t border-white/10">

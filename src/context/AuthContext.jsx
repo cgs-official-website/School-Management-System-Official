@@ -50,28 +50,8 @@ export const AuthProvider = ({ children }) => {
           console.error("Error fetching profile", error);
         }
       } else {
-        if (import.meta.env.DEV) {
-          setCurrentUser({
-            uid: "dev-admin-uid",
-            email: "admin@zuna.com"
-          });
-          setUserProfile({
-            uid: "dev-admin-uid",
-            email: "admin@zuna.com",
-            role: "admin",
-            schoolId: "dev-school-id",
-            schoolName: "Dev Academy",
-            permittedModules: [
-              "noticeboard", "classes", "timetables", "calendar", "exams", 
-              "fees", "transport", "hostel", "library", "inventory", 
-              "health", "complaints", "alumni", "documents", "branches", 
-              "reports", "hr-payroll"
-            ]
-          });
-        } else {
-          setCurrentUser(null);
-          setUserProfile(null);
-        }
+        setCurrentUser(null);
+        setUserProfile(null);
       }
       setLoading(false);
     });

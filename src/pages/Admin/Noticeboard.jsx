@@ -42,7 +42,7 @@ export default function Noticeboard() {
 
     setLoading(true);
     const unsubscribe = subscribeToNotices(schoolId, null, (data) => {
-      setNotices(data.length > 0 ? data : mockNotices);
+      setNotices(data);
       setLoading(false);
     });
 

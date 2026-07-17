@@ -77,6 +77,7 @@ export default function AdminDashboard() {
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
     { name: 'Noticeboard', path: '/admin/notices', icon: Bell, moduleKey: 'noticeboard' },
     { name: 'Environment Setup', path: '/admin/setup', icon: Settings },
+    { name: 'Staff Directory', path: '/admin/staff', icon: GraduationCap, moduleKey: 'staff' },
     { 
       name: 'Classes & Sections', 
       path: '/admin/classes', 
@@ -89,7 +90,6 @@ export default function AdminDashboard() {
     },
     { name: 'Student Directory', path: '/admin/students', icon: Users, moduleKey: 'students' },
     { name: 'Attendance', path: '/admin/attendance', icon: CheckSquare, moduleKey: 'attendance' },
-    { name: 'Staff Management', path: '/admin/staff', icon: GraduationCap, moduleKey: 'staff' },
     { name: 'HR & Payroll', path: '/admin/hr-payroll', icon: Briefcase, moduleKey: 'hr-payroll' },
     { name: 'Timetables', path: '/admin/timetables', icon: Calendar, moduleKey: 'timetables' },
     { name: 'Calendar', path: '/admin/calendar', icon: Calendar, moduleKey: 'calendar' },

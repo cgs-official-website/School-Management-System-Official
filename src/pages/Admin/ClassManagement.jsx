@@ -56,7 +56,7 @@ export default function ClassManagement() {
         }
         return nameCompare;
       });
-      setClasses(data.length > 0 ? data : mockClasses);
+      setClasses(data);
       classesLoaded = true;
       checkLoading();
     });

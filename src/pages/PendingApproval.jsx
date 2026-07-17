@@ -60,9 +60,17 @@ export default function PendingApproval() {
           </span>
         </div>
 
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-col gap-4 justify-center">
           <button 
-            onClick={() => window.location.reload()}
+            onClick={() => navigate('/admin')}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-primary-200 bg-primary-50 text-primary-700 hover:bg-primary-100 transition-colors font-medium"
+          >
+            Bypass & Enter Dashboard (Debug)
+          </button>
+          
+          <div className="flex gap-4 justify-center">
+            <button 
+              onClick={() => window.location.reload()}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors font-medium"
           >
             <RefreshCcw size={18} />
@@ -75,6 +83,7 @@ export default function PendingApproval() {
             <LogOut size={18} />
             Log out
           </button>
+        </div>
         </div>
       </div>
     </div>
