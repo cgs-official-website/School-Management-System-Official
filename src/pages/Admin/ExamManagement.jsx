@@ -62,6 +62,24 @@ export default function ExamManagement() {
     };
   }, [schoolId]);
 
+  useEffect(() => {
+    if (selectedClassId && classes.length > 0) {
+      const classExists = classes.some(c => c.id === selectedClassId);
+      if (!classExists) {
+        setSelectedClassId('');
+      }
+    }
+  }, [classes, selectedClassId]);
+
+  useEffect(() => {
+    if (selectedExamId && exams.length > 0) {
+      const examExists = exams.some(e => e.id === selectedExamId);
+      if (!examExists) {
+        setSelectedExamId('');
+      }
+    }
+  }, [exams, selectedExamId]);
+
   const handleCreateExam = async (e) => {
     e.preventDefault();
     setCreating(true);
@@ -227,10 +245,10 @@ export default function ExamManagement() {
                   <select 
                     value={selectedExamId}
                     onChange={(e) => setSelectedExamId(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200! bg-white! text-black! focus:ring-2 focus:ring-primary-500"
                   >
-                    <option value="">-- Choose Exam --</option>
-                    {exams.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                    <option value="" className="text-black bg-white">-- Choose Exam --</option>
+                    {exams.map(e => <option key={e.id} value={e.id} className="text-black bg-white">{e.name}</option>)}
                   </select>
                 </div>
                 <div className="flex-1 w-full">
@@ -238,10 +256,10 @@ export default function ExamManagement() {
                   <select 
                     value={selectedClassId}
                     onChange={(e) => setSelectedClassId(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200! bg-white! text-black! focus:ring-2 focus:ring-primary-500"
                   >
-                    <option value="">-- Choose Class --</option>
-                    {classes.map(c => <option key={c.id} value={c.id}>{c.className}</option>)}
+                    <option value="" className="text-black bg-white">-- Choose Class --</option>
+                    {classes.map(c => <option key={c.id} value={c.id} className="text-black bg-white">{c.name} - Section {c.section}</option>)}
                   </select>
                 </div>
                 <button 
