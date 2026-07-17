@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, updateSubDocument, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
 import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye } from 'react-icons/lu';
+import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -41,7 +41,8 @@ export default function StaffAssignment() {
     lastName: '',
     email: '',
     role: 'teacher',
-    assignedClassId: ''
+    assignedClassId: '',
+    staff_type: 'teaching'
   });
   const [addingStaff, setAddingStaff] = useState(false);
 
@@ -55,6 +56,9 @@ export default function StaffAssignment() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [staffTypeFilter, setStaffTypeFilter] = useState('all');
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const filterDropdownRef = useRef(null);
 
   useEffect(() => {
     if (!schoolId) return;
@@ -88,6 +92,19 @@ export default function StaffAssignment() {
       if (classesUnsub) classesUnsub();
     };
   }, [schoolId]);
+
+  // Click outside to close filter dropdown
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target)) {
+        setIsFilterDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const openAssignModal = (staffMember) => {
     setSelectedStaff(staffMember);
@@ -215,12 +232,13 @@ export default function StaffAssignment() {
         email: newStaff.email,
         role: newStaff.role,
         assignedClassId: newStaff.assignedClassId,
+        staff_type: newStaff.staff_type || 'teaching',
         status: 'Active',
         createdAt: new Date().toISOString()
       });
       toast.success("Staff member added successfully!");
       setAddStaffModalOpen(false);
-      setNewStaff({ firstName: '', lastName: '', email: '', role: 'teacher', assignedClassId: '' });
+      setNewStaff({ firstName: '', lastName: '', email: '', role: 'teacher', assignedClassId: '', staff_type: 'teaching' });
     } catch (error) {
       console.error("Error adding staff:", error);
       toast.error("Failed to add staff member.");
@@ -295,7 +313,14 @@ export default function StaffAssignment() {
     const matchesRole = roleFilter === 'all' || (member.role || 'teacher') === roleFilter;
     const matchesStatus = statusFilter === 'all' || (member.status || 'Active') === statusFilter;
     
-    return matchesSearch && matchesRole && matchesStatus;
+    if (!(matchesSearch && matchesRole && matchesStatus)) return false;
+
+    if (staffTypeFilter === 'teaching') {
+      return member.staff_type === 'teaching';
+    } else if (staffTypeFilter === 'non-teaching') {
+      return member.staff_type === 'non-teaching' || !member.staff_type;
+    }
+    return true;
   });
 
   // Metrics
@@ -310,7 +335,7 @@ export default function StaffAssignment() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, roleFilter, statusFilter, rowsPerPage]);
+  }, [searchQuery, roleFilter, statusFilter, staffTypeFilter, rowsPerPage]);
 
   if (loading) {
     return (
@@ -340,12 +365,81 @@ export default function StaffAssignment() {
           >
             <FileText size={18} /> Export PDF
           </button>
-          <button 
-            onClick={() => setAddStaffModalOpen(true)}
-            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
-          >
-            <UserPlus size={18} /> Add Staff
-          </button>
+          <div className="relative">
+            <button 
+              onClick={() => setAddStaffModalOpen(true)}
+              className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
+            >
+              <UserPlus size={18} /> Add Staff
+            </button>
+
+            {/* Filter icon and dropdown directly below Add Staff button */}
+            <div className="absolute right-0 top-full mt-3 z-30" ref={filterDropdownRef}>
+              <button 
+                onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+                className={`p-2.5 rounded-xl border shadow-sm transition-all flex items-center justify-center relative
+                  ${staffTypeFilter !== 'all' 
+                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+                title="Filter Staff by Type"
+              >
+                <Filter size={18} />
+                {staffTypeFilter !== 'all' && (
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-white" />
+                )}
+              </button>
+
+              {isFilterDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 p-2 z-50 animate-fade-in-up">
+                  <div className="flex flex-col space-y-1">
+                    <button 
+                      onClick={() => {
+                        setStaffTypeFilter('all');
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between
+                        ${staffTypeFilter === 'all' 
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold' 
+                          : 'text-slate-700 hover:bg-slate-50'
+                        }`}
+                    >
+                      <span>All Staff</span>
+                      {staffTypeFilter === 'all' && <CheckCircle2 size={16} className="text-indigo-600" />}
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setStaffTypeFilter('teaching');
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between
+                        ${staffTypeFilter === 'teaching' 
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold' 
+                          : 'text-slate-700 hover:bg-slate-50'
+                        }`}
+                    >
+                      <span>Teaching Staff</span>
+                      {staffTypeFilter === 'teaching' && <CheckCircle2 size={16} className="text-indigo-600" />}
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setStaffTypeFilter('non-teaching');
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between
+                        ${staffTypeFilter === 'non-teaching' 
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold' 
+                          : 'text-slate-700 hover:bg-slate-50'
+                        }`}
+                    >
+                      <span>Non-Teaching Staff</span>
+                      {staffTypeFilter === 'non-teaching' && <CheckCircle2 size={16} className="text-indigo-600" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
           <button 
             onClick={() => {
               setUploadFile(null);
@@ -786,6 +880,17 @@ export default function StaffAssignment() {
                   </select>
                 </div>
               </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Staff Type *</label>
+                <select 
+                  value={newStaff.staff_type}
+                  onChange={(e) => setNewStaff({...newStaff, staff_type: e.target.value})}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                >
+                  <option value="teaching">Teaching Staff</option>
+                  <option value="non-teaching">Non-Teaching Staff</option>
+                </select>
+              </div>
             </div>
 
             <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
@@ -846,6 +951,13 @@ export default function StaffAssignment() {
                     {selectedStaffToView.assignedClassId 
                       ? getClassName(selectedStaffToView.assignedClassId) 
                       : <span className="text-slate-500 italic">Unassigned</span>}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Staff Type</label>
+                  <p className="text-slate-900 font-medium capitalize">
+                    {selectedStaffToView.staff_type === 'teaching' ? 'Teaching Staff' : 'Non-Teaching Staff'}
                   </p>
                 </div>
 

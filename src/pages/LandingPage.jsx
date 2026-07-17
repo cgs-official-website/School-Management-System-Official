@@ -157,7 +157,7 @@ export default function LandingPage() {
               Log in
             </button>
             <button 
-              onClick={() => scrollToSection('pricing')}
+              onClick={() => navigate('/register')}
               className="px-6 py-2.5 bg-gradient-to-r from-[#6B4A73] to-primary-400 text-white font-bold rounded-full hover:scale-105 hover:shadow-[0_0_20px_rgba(229,189,223,0.4)] transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#12101A] focus:ring-primary-400"
             >
               Get Started
@@ -183,7 +183,10 @@ export default function LandingPage() {
           <button onClick={() => scrollToSection('contact')} className="text-2xl font-bold text-[#A8A0AC] hover:text-white">Contact</button>
           <button onClick={() => navigate('/login')} className="text-2xl font-bold text-[#A8A0AC] hover:text-white mt-4">Log in</button>
           <button 
-            onClick={() => scrollToSection('pricing')}
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              navigate('/register');
+            }}
             className="px-8 py-4 bg-gradient-to-r from-[#6B4A73] to-primary-400 text-white font-bold rounded-full text-xl shadow-[0_0_20px_rgba(229,189,223,0.4)]"
           >
             Get Started
@@ -247,7 +250,7 @@ export default function LandingPage() {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               <button 
-                onClick={() => scrollToSection('pricing')}
+                onClick={() => navigate('/register')}
                 className="px-8 py-4 bg-gradient-to-r from-[#6B4A73] to-primary-400 text-white font-bold text-lg rounded-full hover:scale-105 hover:shadow-[0_0_40px_rgba(229,189,223,0.4)] transition-all duration-300 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#12101A] focus:ring-primary-400"
               >
                 Get Started <ChevronRight size={20} />
@@ -526,6 +529,7 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
     </div>
   );
 }

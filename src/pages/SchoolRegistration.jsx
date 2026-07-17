@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { LuCheck as Check, LuShieldCheck as ShieldCheck, LuArrowRight as ArrowRight, LuArrowLeft as ArrowLeft, LuBuilding2, LuUser, LuCreditCard, LuFileText } from 'react-icons/lu';
+import { LuCheck as Check, LuShieldCheck as ShieldCheck, LuArrowRight as ArrowRight, LuArrowLeft as ArrowLeft, LuBuilding2, LuUser, LuCreditCard, LuFileText, LuCalculator } from 'react-icons/lu';
 import { FiLoader as Loader } from 'react-icons/fi';
 import { createSchool, getPlans, generateSchoolId } from '../firebase/firestore';
 import { registerUser } from '../firebase/auth';
@@ -17,6 +17,7 @@ export default function SchoolRegistration() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [calculatorError, setCalculatorError] = useState('');
   
   // Plans data
   const [plans, setPlans] = useState([]);
@@ -27,7 +28,9 @@ export default function SchoolRegistration() {
     schoolName: '',
     schoolType: 'School',
     location: '',
-    studentCount: '',
+    studentCount: '0-500',
+    userCount: 100,
+    billingCycle: 'monthly',
     adminName: '',
     email: '',
     phone: '',
@@ -118,10 +121,11 @@ export default function SchoolRegistration() {
   };
 
   const handleNext = () => {
-    if (step === 1 && !validateStep1()) return;
-    if (step === 2 && !validateStep2()) return;
+    if (step === 1 && isCalculatorInvalid) return;
+    if (step === 2 && !validateStep1()) return;
+    if (step === 3 && !validateStep2()) return;
     setError(null);
-    setStep(prev => Math.min(prev + 1, 3));
+    setStep(prev => Math.min(prev + 1, 4));
   };
 
   const handleBack = () => {
@@ -169,6 +173,9 @@ export default function SchoolRegistration() {
         phone: formData.phone,
         location: formData.location,
         plan: selectedPlanDetails?.id || 'free',
+        billingCycle: formData.billingCycle,
+        calculatedUserCount: numUsers,
+        calculatedTotalAmount: totalAmount,
         verificationDetails: {
           udise: formData.udise,
           boardAffiliation: formData.boardAffiliation,
@@ -204,10 +211,29 @@ export default function SchoolRegistration() {
   const strength = getPasswordStrength(formData.password);
 
   const steps = [
-    { num: 1, title: 'School Info', icon: LuBuilding2 },
-    { num: 2, title: 'Admin Account', icon: LuUser },
-    { num: 3, title: 'Confirmation', icon: LuCreditCard }
+    { num: 1, title: 'Calculator', icon: LuCalculator },
+    { num: 2, title: 'School Info', icon: LuBuilding2 },
+    { num: 3, title: 'Admin Account', icon: LuUser },
+    { num: 4, title: 'Confirmation', icon: LuCreditCard }
   ];
+
+  // Pricing calculations
+  const pricePerUserPerMonth = 12;
+  const yearlyDiscountRate = 0.10; // 10%
+  const numUsers = parseInt(formData.userCount, 10) || 0;
+  const isCalculatorInvalid = numUsers <= 0 || calculatorError !== '';
+
+  const monthlyPrice = numUsers * pricePerUserPerMonth;
+  const yearlyPriceWithoutDiscount = numUsers * pricePerUserPerMonth * 12;
+  const yearlyDiscount = yearlyPriceWithoutDiscount * yearlyDiscountRate;
+  const yearlyPrice = yearlyPriceWithoutDiscount - yearlyDiscount;
+
+  const totalAmount = formData.billingCycle === 'monthly' ? monthlyPrice : yearlyPrice;
+  const pricePeriod = formData.billingCycle === 'monthly' ? 'month' : 'year';
+
+  const formatIndianCurrency = (amount) => {
+    return '₹' + Math.round(amount).toLocaleString('en-IN');
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center relative overflow-x-hidden px-4 py-12">
@@ -232,7 +258,7 @@ export default function SchoolRegistration() {
             <motion.div 
               className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-primary-600 to-primary-500 rounded-full -z-10"
               initial={{ width: '0%' }}
-              animate={{ width: `${((step - 1) / 2) * 100}%` }}
+              animate={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
             />
             {steps.map((s) => (
@@ -267,14 +293,164 @@ export default function SchoolRegistration() {
             >
               <h2 className="text-3xl font-black mb-2 text-slate-900">{steps[step-1].title}</h2>
               <p className="text-slate-500 mb-8">
-                {step === 1 && "Tell us about your institution to get started."}
-                {step === 2 && "Create the primary owner account for this workspace."}
-                {step === 3 && "Review your selected plan and accept our terms."}
+                {step === 1 && "Calculate your pricing based on the expected number of users."}
+                {step === 2 && "Tell us about your institution to get started."}
+                {step === 3 && "Create the primary owner account for this workspace."}
+                {step === 4 && "Review your selected plan and accept our terms."}
               </p>
 
               <div className="space-y-6">
-                {/* --- STEP 1: School Info --- */}
+                {/* --- STEP 1: Pricing Calculator --- */}
                 {step === 1 && (
+                  <>
+                    {/* Billing Cycle Toggle */}
+                    <div className="flex justify-center mb-6">
+                      <div className="bg-slate-100 border border-slate-200 p-1.5 rounded-full flex gap-1 relative">
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, billingCycle: 'monthly' })}
+                          className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+                            formData.billingCycle === 'monthly'
+                              ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-md'
+                              : 'text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          Monthly
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, billingCycle: 'yearly' })}
+                          className={`px-6 py-2 rounded-full text-sm font-bold flex items-center gap-1.5 transition-all duration-300 ${
+                            formData.billingCycle === 'yearly'
+                              ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-md'
+                              : 'text-slate-500 hover:text-slate-800'
+                          }`}
+                        >
+                          Yearly
+                          <span className="text-[10px] bg-primary-500 text-white px-2 py-0.5 rounded-full font-extrabold uppercase">
+                            Save 10%
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Input Section */}
+                    <div className="mb-6">
+                      <label htmlFor="user-count-input" className="block text-sm font-bold text-slate-700 mb-2">
+                        Number of Users (Students + Staff) *
+                      </label>
+                      <div className="relative flex items-center">
+                        <div className="absolute left-4 text-slate-400 pointer-events-none">
+                          <LuCalculator size={20} />
+                        </div>
+                        <input
+                          id="user-count-input"
+                          type="number"
+                          min="1"
+                          step="1"
+                          value={formData.userCount}
+                          onKeyDown={(e) => {
+                            if (e.key === '.' || e.key === '-' || e.key === '+' || e.key === 'e') {
+                              e.preventDefault();
+                            }
+                          }}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (val === '') {
+                              setFormData({ ...formData, userCount: '' });
+                              setCalculatorError('Please enter the number of users.');
+                              return;
+                            }
+                            const num = parseInt(val, 10);
+                            if (isNaN(num)) {
+                              setCalculatorError('Please enter a valid number.');
+                              setFormData({ ...formData, userCount: val });
+                              return;
+                            }
+                            if (num <= 0) {
+                              setCalculatorError('Number of users must be at least 1.');
+                              setFormData({ ...formData, userCount: num });
+                              return;
+                            }
+                            setCalculatorError('');
+                            
+                            // Automatically map userCount to studentCount range
+                            let range = '';
+                            if (num <= 500) range = '0-500';
+                            else if (num <= 1000) range = '501-1000';
+                            else if (num <= 5000) range = '1001-5000';
+                            else range = '5000+';
+
+                            setFormData({ ...formData, userCount: num, studentCount: range });
+                          }}
+                          placeholder="e.g. 500"
+                          className={`w-full pl-12 pr-4 py-4 rounded-xl bg-white border ${
+                            calculatorError ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-primary-500'
+                          } focus:ring-2 focus:border-transparent transition-all outline-none text-xl font-bold text-slate-900 placeholder-slate-300`}
+                        />
+                      </div>
+                      {calculatorError && (
+                        <p className="text-red-500 text-xs font-semibold mt-2 flex items-center gap-1">
+                          <span>●</span> {calculatorError}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Output Display Area */}
+                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 relative overflow-hidden mb-2">
+                      <div className="space-y-3.5 mb-5 text-sm text-slate-500">
+                        <div className="flex justify-between items-center">
+                          <span>Number of Users:</span>
+                          <span className="font-bold text-slate-800">
+                            {isCalculatorInvalid ? '-' : numUsers.toLocaleString('en-IN')}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span>Base Rate:</span>
+                          <span className="font-bold text-slate-800">₹12 / user / month</span>
+                        </div>
+                        {formData.billingCycle === 'yearly' && !isCalculatorInvalid && (
+                          <div className="flex justify-between items-center text-primary-600">
+                            <span>Yearly Discount (10%):</span>
+                            <span>- {formatIndianCurrency(yearlyDiscount)} / year</span>
+                          </div>
+                        )}
+                        <div className="border-t border-slate-200 pt-3.5 flex justify-between items-end">
+                          <span className="font-bold text-slate-800">Total Amount:</span>
+                          <div className="text-right">
+                            <span className="block text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-500">
+                              {isCalculatorInvalid ? '₹0' : formatIndianCurrency(totalAmount)}
+                            </span>
+                            <span className="text-xs text-slate-500 font-bold">
+                              / {pricePeriod}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Discount Callout Banner */}
+                      {!isCalculatorInvalid && (
+                        <div className="bg-white border border-slate-200 rounded-xl p-3 flex items-start gap-2 text-xs text-slate-500">
+                          <div className="mt-0.5 text-primary-500 flex-shrink-0"><Check size={14} strokeWidth={3} /></div>
+                          <div>
+                            {formData.billingCycle === 'monthly' ? (
+                              <p>
+                                Switch to <button type="button" onClick={() => setFormData({ ...formData, billingCycle: 'yearly' })} className="text-primary-600 hover:underline font-bold focus:outline-none">Yearly Billing</button> to save {formatIndianCurrency(yearlyDiscount)} annually!
+                              </p>
+                            ) : (
+                              <p>
+                                Equivalent to <strong className="text-primary-600">{formatIndianCurrency(yearlyPrice / 12)}</strong> per month. You are saving <strong className="text-primary-600">{formatIndianCurrency(yearlyDiscount)}</strong> per year!
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {/* --- STEP 2: School Info --- */}
+                {step === 2 && (
                   <>
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="relative group">
@@ -327,8 +503,8 @@ export default function SchoolRegistration() {
                   </>
                 )}
 
-                {/* --- STEP 2: Admin Info --- */}
-                {step === 2 && (
+                {/* --- STEP 3: Admin Info --- */}
+                {step === 3 && (
                   <>
                     <div className="relative group">
                       <input type="text" id="adminName" name="adminName" value={formData.adminName} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Admin Name" />
@@ -369,24 +545,27 @@ export default function SchoolRegistration() {
                   </>
                 )}
 
-                {/* --- STEP 3: Plan & Confirmation --- */}
-                {step === 3 && (
+                {/* --- STEP 4: Plan & Confirmation --- */}
+                {step === 4 && (
                   <div className="space-y-8">
                     <div className="bg-gradient-to-tr from-primary-50 to-white border border-primary-200 rounded-2xl p-6 relative overflow-hidden">
                       <div className="absolute -right-4 -top-4 text-primary-200/50">
                         <LuCreditCard size={120} />
                       </div>
                       <div className="relative z-10">
-                        <h4 className="text-primary-600 font-bold uppercase tracking-wider text-sm mb-1">Selected Plan</h4>
+                        <h4 className="text-primary-600 font-bold uppercase tracking-wider text-sm mb-1">Subscription Details</h4>
                         <div className="flex items-end gap-4 mb-4">
-                          <h3 className="text-3xl font-black text-slate-900">{selectedPlanDetails?.name || 'Loading...'}</h3>
+                          <h3 className="text-3xl font-black text-slate-900">{numUsers} Users</h3>
                           <div className="text-slate-500 font-medium pb-1">
-                            <span className="text-xl text-slate-900">₹{selectedPlanDetails?.priceMonthly || '0'}</span> / mo
+                            <span className="text-xl text-slate-900">{formatIndianCurrency(totalAmount)}</span> / {pricePeriod}
                           </div>
                         </div>
                         <ul className="space-y-2 text-sm text-slate-600">
-                          <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Up to {selectedPlanDetails?.limits?.maxStudents || '0'} Students</li>
-                          <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Up to {selectedPlanDetails?.limits?.maxStaff || '0'} Staff</li>
+                          <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Calculated price based on ₹12 / user / month</li>
+                          <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Billing Cycle: {formData.billingCycle === 'monthly' ? 'Monthly' : 'Yearly (10% Discount applied)'}</li>
+                          {selectedPlanDetails && (
+                            <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Base Tier: {selectedPlanDetails.name}</li>
+                          )}
                         </ul>
                       </div>
                     </div>
@@ -432,10 +611,11 @@ export default function SchoolRegistration() {
               <div></div> // Spacer
             )}
 
-            {step < 3 ? (
+            {step < 4 ? (
               <button 
+                disabled={step === 1 && isCalculatorInvalid}
                 onClick={handleNext}
-                className="px-8 py-3 bg-slate-50 border border-slate-200 text-primary-600 font-bold rounded-xl hover:bg-slate-100 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-8 py-3 bg-slate-50 border border-slate-200 text-primary-600 font-bold rounded-xl hover:bg-slate-100 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next Step <ArrowRight size={18} />
               </button>

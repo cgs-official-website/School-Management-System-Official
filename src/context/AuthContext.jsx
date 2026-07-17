@@ -17,13 +17,32 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // If auth is mocked (no config), just set loading false
     if (!auth || !auth.onAuthStateChanged) {
+      if (import.meta.env.DEV) {
+        setCurrentUser({
+          uid: "dev-admin-uid",
+          email: "admin@zuna.com"
+        });
+        setUserProfile({
+          uid: "dev-admin-uid",
+          email: "admin@zuna.com",
+          role: "admin",
+          schoolId: "dev-school-id",
+          schoolName: "Dev Academy",
+          permittedModules: [
+            "noticeboard", "classes", "timetables", "calendar", "exams", 
+            "fees", "transport", "hostel", "library", "inventory", 
+            "health", "complaints", "alumni", "documents", "branches", 
+            "reports", "hr-payroll"
+          ]
+        });
+      }
       setLoading(false);
       return;
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user);
       if (user) {
+        setCurrentUser(user);
         try {
           const profile = await getUserProfile(user.uid);
           setUserProfile(profile);
@@ -31,7 +50,28 @@ export const AuthProvider = ({ children }) => {
           console.error("Error fetching profile", error);
         }
       } else {
-        setUserProfile(null);
+        if (import.meta.env.DEV) {
+          setCurrentUser({
+            uid: "dev-admin-uid",
+            email: "admin@zuna.com"
+          });
+          setUserProfile({
+            uid: "dev-admin-uid",
+            email: "admin@zuna.com",
+            role: "admin",
+            schoolId: "dev-school-id",
+            schoolName: "Dev Academy",
+            permittedModules: [
+              "noticeboard", "classes", "timetables", "calendar", "exams", 
+              "fees", "transport", "hostel", "library", "inventory", 
+              "health", "complaints", "alumni", "documents", "branches", 
+              "reports", "hr-payroll"
+            ]
+          });
+        } else {
+          setCurrentUser(null);
+          setUserProfile(null);
+        }
       }
       setLoading(false);
     });
