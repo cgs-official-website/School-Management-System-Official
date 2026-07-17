@@ -49,6 +49,8 @@ const BillingDashboard = lazy(() => import('./pages/Admin/BillingDashboard'));
 const UpgradePlan = lazy(() => import('./pages/Admin/UpgradePlan'));
 const AdminCalendar = lazy(() => import('./pages/Admin/Calendar'));
 const AdminOverview = lazy(() => import('./pages/Admin/AdminOverview'));
+const InventoryManagement = lazy(() => import('./pages/Admin/InventoryManagement'));
+const InventoryAuditLogs = lazy(() => import('./pages/Admin/InventoryAuditLogs'));
 const HRPayrollManagement = lazy(() => import('./pages/Admin/HRPayrollManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/Admin/ReportsAnalytics'));
 const FormBuilder = lazy(() => import('./pages/Admin/FormBuilder'));
@@ -184,6 +186,8 @@ function App() {
               <Route path="billing" element={<BillingDashboard />} />
               <Route path="upgrade" element={<UpgradePlan />} />
               <Route path="calendar" element={<AdminCalendar />} />
+              <Route path="inventory" element={<InventoryManagement />} />
+              <Route path="inventory/audit-logs" element={<InventoryAuditLogs />} />
               <Route path="hr-payroll" element={<HRPayrollManagement />} />
               <Route path="reports" element={<ReportsAnalytics />} />
               <Route path="roles" element={<RolesPermissions />} />

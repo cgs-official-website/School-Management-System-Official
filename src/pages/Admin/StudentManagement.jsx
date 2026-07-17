@@ -13,6 +13,7 @@ import * as XLSX from 'xlsx';
 export default function StudentManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || userProfile?.role?.toLowerCase() === 'staff';
 
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -41,6 +42,11 @@ export default function StudentManagement() {
   // View Modal State
   const [viewStudentModalOpen, setViewStudentModalOpen] = useState(false);
   const [selectedStudentToView, setSelectedStudentToView] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editStudentData, setEditStudentData] = useState(null);
+  const [editCustomData, setEditCustomData] = useState({});
+  const [editErrors, setEditErrors] = useState({});
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
 
   // Assign Modal State
   const [assignModalOpen, setAssignModalOpen] = useState(false);
@@ -310,6 +316,296 @@ export default function StudentManagement() {
       toast.error("Failed to assign class");
     } finally {
       setAssigning(false);
+    }
+  };
+
+  // Handle field change in Edit Mode
+  const handleEditFieldChange = (field, value) => {
+    setEditStudentData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle fee fields change and calculate total dynamically in Edit Mode
+  const handleEditFeeChange = (field, value) => {
+    const updated = { ...editStudentData, [field]: value };
+    const tuition = Number(updated.tuitionFee || 0);
+    const hostel = Number(updated.hostelFee || 0);
+    const book = Number(updated.bookFee || 0);
+    const other = Number(updated.otherFee || 0);
+    updated.totalFee = (tuition + hostel + book + other).toString();
+    setEditStudentData(updated);
+  };
+
+  // Check if any fields have been modified in Edit Mode
+  const isStudentFormDirty = () => {
+    if (!editStudentData) return false;
+    const fieldsToCompare = [
+      'firstName', 'lastName', 'middleName', 'admissionNumber', 'dob', 'gender',
+      'bloodGroup', 'nationality', 'religion', 'motherTongue', 'aadharNumber',
+      'studentPhone', 'studentEmail', 'classId', 'rollNumber', 'admissionDate', 'status',
+      'parentName', 'parentPhone', 'parentOccupation', 'parentEmail',
+      'motherName', 'motherPhone', 'motherOccupation', 'motherEmail',
+      'guardianName', 'guardianPhone', 'guardianRelationship',
+      'addressLine1', 'addressLine2', 'city', 'district', 'state', 'country', 'pincode',
+      'previousSchool', 'identificationMarks', 'medicalInfo', 'transportDetails', 'hostelDetails',
+      'tuitionFee', 'hostelFee', 'bookFee', 'otherFee', 'totalFee'
+    ];
+    for (const f of fieldsToCompare) {
+      const v1 = (selectedStudentToView[f] || '').toString().trim();
+      const v2 = (editStudentData[f] || '').toString().trim();
+      if (v1 !== v2) return true;
+    }
+    if (formSchema.length > 0) {
+      for (const field of formSchema) {
+        const v1 = (selectedStudentToView.customData?.[field.id] || '').toString().trim();
+        const v2 = (editCustomData[field.id] || '').toString().trim();
+        if (v1 !== v2) return true;
+      }
+    }
+    return false;
+  };
+
+  // Close or Cancel handler
+  const handleModalCloseOrCancel = () => {
+    if (isEditMode && isStudentFormDirty()) {
+      setShowDiscardConfirm(true);
+    } else {
+      setViewStudentModalOpen(false);
+      setIsEditMode(false);
+    }
+  };
+
+  // Listen to Escape key globally when view modal is open
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && viewStudentModalOpen) {
+        if (isEditMode && isStudentFormDirty()) {
+          setShowDiscardConfirm(true);
+        } else {
+          setViewStudentModalOpen(false);
+          setIsEditMode(false);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [viewStudentModalOpen, isEditMode, editStudentData, editCustomData, selectedStudentToView]);
+
+  // Log audit helper
+  const logStudentAudit = async (studentId, studentName, actionPerformed, modifiedFields) => {
+    if (!schoolId) return;
+    try {
+      await addSubDocument(schoolId, 'student_audit_logs', {
+        studentId,
+        studentName,
+        userName: userProfile?.name || userProfile?.email || 'Unknown User',
+        userRole: userProfile?.role || 'Staff',
+        timestamp: new Date().toISOString(),
+        actionPerformed,
+        modifiedFields
+      });
+    } catch (e) {
+      console.error("Failed to write student audit log:", e);
+    }
+  };
+
+  // Validate fields in edit student form
+  const validateEditStudent = () => {
+    const errors = {};
+    if (!editStudentData.firstName?.trim()) errors.firstName = "First name is required";
+    if (!editStudentData.lastName?.trim()) errors.lastName = "Last name is required";
+    
+    if (!editStudentData.admissionNumber?.trim()) {
+      errors.admissionNumber = "Admission number is required";
+    } else {
+      const isDuplicate = students.some(
+        s => s.id !== selectedStudentToView.id && s.admissionNumber?.toLowerCase() === editStudentData.admissionNumber.trim().toLowerCase()
+      );
+      if (isDuplicate) {
+        errors.admissionNumber = "Admission number must be unique";
+      }
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (editStudentData.studentEmail?.trim() && !emailRegex.test(editStudentData.studentEmail)) {
+      errors.studentEmail = "Invalid email format";
+    }
+    if (editStudentData.parentEmail?.trim() && !emailRegex.test(editStudentData.parentEmail)) {
+      errors.parentEmail = "Invalid email format";
+    }
+    if (editStudentData.motherEmail?.trim() && !emailRegex.test(editStudentData.motherEmail)) {
+      errors.motherEmail = "Invalid email format";
+    }
+
+    const phoneRegex = /^\d{10}$/;
+    if (editStudentData.studentPhone?.trim() && !phoneRegex.test(editStudentData.studentPhone)) {
+      errors.studentPhone = "Mobile number must be 10 digits";
+    }
+    if (editStudentData.parentPhone?.trim() && !phoneRegex.test(editStudentData.parentPhone)) {
+      errors.parentPhone = "Mobile number must be 10 digits";
+    }
+    if (editStudentData.motherPhone?.trim() && !phoneRegex.test(editStudentData.motherPhone)) {
+      errors.motherPhone = "Mobile number must be 10 digits";
+    }
+    if (editStudentData.guardianPhone?.trim() && !phoneRegex.test(editStudentData.guardianPhone)) {
+      errors.guardianPhone = "Mobile number must be 10 digits";
+    }
+
+    if (editStudentData.aadharNumber?.trim() && !/^\d{12}$/.test(editStudentData.aadharNumber)) {
+      errors.aadharNumber = "Aadhaar number must be 12 digits";
+    }
+
+    if (editStudentData.dob && new Date(editStudentData.dob) > new Date()) {
+      errors.dob = "Date of Birth cannot be in the future";
+    }
+
+    if (editStudentData.rollNumber?.trim() && editStudentData.classId) {
+      const isRollDuplicate = students.some(
+        s => s.id !== selectedStudentToView.id &&
+             s.classId === editStudentData.classId &&
+             s.rollNumber?.toLowerCase() === editStudentData.rollNumber.trim().toLowerCase()
+      );
+      if (isRollDuplicate) {
+        errors.rollNumber = "Roll Number already exists in this class";
+      }
+    }
+
+    setEditErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Save changes
+  const handleSaveStudentEdit = async () => {
+    if (!validateEditStudent()) {
+      toast.error("Please resolve the validation errors.");
+      return;
+    }
+
+    try {
+      const cleanedData = {};
+      const fieldsToSave = [
+        'firstName', 'lastName', 'middleName', 'admissionNumber', 'dob', 'gender',
+        'bloodGroup', 'nationality', 'religion', 'motherTongue', 'aadharNumber',
+        'studentPhone', 'studentEmail', 'classId', 'rollNumber', 'admissionDate', 'status',
+        'parentName', 'parentPhone', 'parentOccupation', 'parentEmail',
+        'motherName', 'motherPhone', 'motherOccupation', 'motherEmail',
+        'guardianName', 'guardianPhone', 'guardianRelationship',
+        'addressLine1', 'addressLine2', 'city', 'district', 'state', 'country', 'pincode',
+        'previousSchool', 'identificationMarks', 'medicalInfo', 'transportDetails', 'hostelDetails',
+        'tuitionFee', 'hostelFee', 'bookFee', 'otherFee', 'totalFee'
+      ];
+      for (const f of fieldsToSave) {
+        cleanedData[f] = (editStudentData[f] || '').toString().trim();
+      }
+
+      if (cleanedData.dob) {
+        const birthDate = new Date(cleanedData.dob);
+        const today = new Date();
+        let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          calculatedAge--;
+        }
+        cleanedData.age = calculatedAge.toString();
+      }
+
+      const modifiedFields = [];
+      const userFriendlyLabels = {
+        firstName: 'First Name',
+        lastName: 'Last Name',
+        middleName: 'Middle Name',
+        admissionNumber: 'Admission Number',
+        dob: 'Date of Birth',
+        gender: 'Gender',
+        bloodGroup: 'Blood Group',
+        nationality: 'Nationality',
+        religion: 'Religion',
+        motherTongue: 'Mother Tongue',
+        aadharNumber: 'Aadhaar Number',
+        studentPhone: 'Student Phone',
+        studentEmail: 'Student Email',
+        classId: 'Class ID',
+        rollNumber: 'Roll Number',
+        admissionDate: 'Admission Date',
+        status: 'Status',
+        parentName: "Father's Name",
+        parentPhone: "Father's Phone",
+        parentOccupation: "Father's Occupation",
+        parentEmail: "Father's Email",
+        motherName: "Mother's Name",
+        motherPhone: "Mother's Phone",
+        motherOccupation: "Mother's Occupation",
+        motherEmail: "Mother's Email",
+        guardianName: 'Guardian Name',
+        guardianPhone: 'Guardian Phone',
+        guardianRelationship: 'Guardian Relationship',
+        addressLine1: 'Address Line 1',
+        addressLine2: 'Address Line 2',
+        city: 'City',
+        district: 'District',
+        state: 'State',
+        country: 'Country',
+        pincode: 'Pincode',
+        previousSchool: 'Previous School',
+        identificationMarks: 'Identification Marks',
+        medicalInfo: 'Medical Information',
+        transportDetails: 'Transport Details',
+        hostelDetails: 'Hostel Details',
+        tuitionFee: 'Tuition Fee',
+        hostelFee: 'Hostel Fee',
+        bookFee: 'Book Fee',
+        otherFee: 'Other Fee',
+        totalFee: 'Total Fee'
+      };
+
+      for (const f of fieldsToSave) {
+        const v1 = (selectedStudentToView[f] || '').toString().trim();
+        const v2 = cleanedData[f];
+        if (v1 !== v2) {
+          modifiedFields.push({
+            fieldName: userFriendlyLabels[f] || f,
+            previousValue: v1 || 'N/A',
+            updatedValue: v2 || 'N/A'
+          });
+        }
+      }
+
+      if (formSchema.length > 0) {
+        for (const field of formSchema) {
+          const v1 = (selectedStudentToView.customData?.[field.id] || '').toString().trim();
+          const v2 = (editCustomData[field.id] || '').toString().trim();
+          if (v1 !== v2) {
+            modifiedFields.push({
+              fieldName: field.label,
+              previousValue: v1 || 'N/A',
+              updatedValue: v2 || 'N/A'
+            });
+          }
+        }
+      }
+
+      const updateData = {
+        ...cleanedData,
+        customData: editCustomData,
+        lastUpdatedBy: userProfile?.name || userProfile?.email || 'Unknown User',
+        lastUpdatedAt: new Date().toISOString()
+      };
+
+      await updateSubDocument(schoolId, 'students', selectedStudentToView.id, updateData);
+
+      const studentName = `${cleanedData.firstName} ${cleanedData.lastName}`;
+      await logStudentAudit(selectedStudentToView.id, studentName, 'Student Updated', modifiedFields);
+
+      toast.success("Student details updated successfully.");
+      
+      const updatedStudentObj = {
+        ...selectedStudentToView,
+        ...updateData
+      };
+      setSelectedStudentToView(updatedStudentObj);
+      setIsEditMode(false);
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to save changes.");
     }
   };
 
@@ -732,6 +1028,11 @@ export default function StudentManagement() {
                           <button 
                             onClick={() => {
                               setSelectedStudentToView(student);
+                              setIsEditMode(false);
+                              setEditStudentData(null);
+                              setEditCustomData({});
+                              setEditErrors({});
+                              setShowDiscardConfirm(false);
                               setViewStudentModalOpen(true);
                             }}
                             className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
@@ -858,190 +1159,907 @@ export default function StudentManagement() {
 
       {viewStudentModalOpen && selectedStudentToView && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <GraduationCap className="text-indigo-600" />
-                Student Details
+                {isEditMode ? 'Edit Student Details' : 'Student Details'}
               </h2>
-              <button onClick={() => setViewStudentModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={handleModalCloseOrCancel} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
-                <div className="w-16 h-16 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-2xl">
-                  {selectedStudentToView.firstName.charAt(0)}{selectedStudentToView.lastName.charAt(0)}
+                <div className="w-16 h-16 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-2xl shrink-0">
+                  {selectedStudentToView.firstName?.charAt(0) || ''}{selectedStudentToView.lastName?.charAt(0) || ''}
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900">
-                    {selectedStudentToView.firstName} {selectedStudentToView.lastName}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-xl font-bold text-slate-900 truncate">
+                    {selectedStudentToView.firstName} {selectedStudentToView.middleName ? `${selectedStudentToView.middleName} ` : ''}{selectedStudentToView.lastName}
                   </h3>
-                  <p className="text-sm font-medium text-slate-500">Admission No: <span className="text-slate-800 font-mono">{selectedStudentToView.admissionNumber}</span></p>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Class & Section</label>
-                    <p className="text-slate-900 font-medium">{getClassName(selectedStudentToView.classId)}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                      {selectedStudentToView.status || 'Active'}
+                  <p className="text-sm font-medium text-slate-500">
+                    Admission No:{' '}
+                    <span className="text-slate-800 font-mono font-bold">
+                      {selectedStudentToView.admissionNumber}
                     </span>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date of Birth</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.dob ? new Date(selectedStudentToView.dob).toLocaleDateString() : 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Age</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.age || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gender</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.gender || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Blood Group</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.bloodGroup || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nationality</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.nationality || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Religion</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.religion || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mother Tongue</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.motherTongue || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Aadhar Number</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.aadharNumber || 'N/A'}</p>
-                  </div>
+                  </p>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div className="col-span-2">
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Home Address</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.homeAddress || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Parent Name</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.parentName || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Parent Email</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.parentEmail || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Parent Phone</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.parentPhone || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Parent Occupation</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.parentOccupation || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Emergency Contact</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.emergencyContact || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Annual Income</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.annualIncome || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Sibling (Same School)</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.siblingName || 'N/A'}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Previous School</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.previousSchool || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Previous Records</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.previousRecords || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subjects Chosen</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.subjectsChosen || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Bus Route</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.busRoute || 'N/A'}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tuition Fee</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.tuitionFee ? `₹${selectedStudentToView.tuitionFee}` : 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hostel Fee</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.hostelFee ? `₹${selectedStudentToView.hostelFee}` : 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Book Fee</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.bookFee ? `₹${selectedStudentToView.bookFee}` : 'N/A'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Other Fee</label>
-                    <p className="text-slate-900 font-medium">{selectedStudentToView.otherFee ? `₹${selectedStudentToView.otherFee}` : 'N/A'}</p>
-                  </div>
-                  <div className="col-span-2 pt-2 border-t border-slate-200">
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Fee</label>
-                    <p className="text-primary-700 font-black text-lg">{selectedStudentToView.totalFee ? `₹${selectedStudentToView.totalFee}` : 'N/A'}</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div className="col-span-2">
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Enrolled Date</label>
-                    <p className="text-slate-900 font-medium">
-                      {selectedStudentToView.createdAt 
-                        ? new Date(selectedStudentToView.createdAt).toLocaleDateString()
-                        : 'N/A'}
-                    </p>
-                  </div>
-
-                {formSchema.length > 0 && selectedStudentToView.customData && formSchema.map(field => {
-                  let val = selectedStudentToView.customData[field.id];
-                  if (field.type === 'checkbox') val = val ? 'Yes' : 'No';
-                  
-                  return (
-                    <div key={`view_${field.id}`}>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{field.label}</label>
-                      <p className="text-slate-900 font-medium">
-                        {val || 'N/A'}
-                      </p>
-                    </div>
-                  )
-                })}
               </div>
-            </div>
-          </div>
 
-          <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
-              <button 
-                onClick={() => setViewStudentModalOpen(false)}
-                className="px-6 py-2 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors"
-              >
-                Close
-              </button>
+              {!isEditMode ? (
+                /* VIEW MODE */
+                <div className="space-y-6">
+                  {/* Personal Information */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Personal Information</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">First Name</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.firstName || '—'}</p>
+                      </div>
+                      {selectedStudentToView.middleName && (
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Middle Name</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.middleName}</p>
+                        </div>
+                      )}
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Last Name</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.lastName || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date of Birth</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.dob ? new Date(selectedStudentToView.dob).toLocaleDateString() : '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Age</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.age || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gender</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.gender || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Blood Group</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.bloodGroup || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nationality</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.nationality || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Religion</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.religion || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mother Tongue</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.motherTongue || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Aadhaar Number</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.aadharNumber || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Student Phone</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.studentPhone || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Student Email</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.studentEmail || '—'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Academic Information */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Academic Information</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Class & Section</label>
+                        <p className="text-slate-950 font-semibold">{getClassName(selectedStudentToView.classId)}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Roll Number</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.rollNumber || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Admission Date</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.admissionDate ? new Date(selectedStudentToView.admissionDate).toLocaleDateString() : '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
+                        <div>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                            selectedStudentToView.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
+                            {selectedStudentToView.status || 'Active'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Parent / Guardian Information */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Parent / Guardian Information</h4>
+                    <div className="space-y-4">
+                      {/* Father info */}
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-3 border-b border-slate-200/50">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Father's Name</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.parentName || '—'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Father's Phone</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.parentPhone || '—'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Father's Email</label>
+                          <p className="text-slate-950 font-semibold truncate">{selectedStudentToView.parentEmail || '—'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Occupation</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.parentOccupation || '—'}</p>
+                        </div>
+                      </div>
+                      {/* Mother info */}
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-3 border-b border-slate-200/50">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mother's Name</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.motherName || '—'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mother's Phone</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.motherPhone || '—'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mother's Email</label>
+                          <p className="text-slate-950 font-semibold truncate">{selectedStudentToView.motherEmail || '—'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Occupation</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.motherOccupation || '—'}</p>
+                        </div>
+                      </div>
+                      {/* Guardian info */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Guardian Name</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.guardianName || '—'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Guardian Phone</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.guardianPhone || '—'}</p>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Relationship</label>
+                          <p className="text-slate-950 font-semibold">{selectedStudentToView.guardianRelationship || '—'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Address Information */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Address Information</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="col-span-1 sm:col-span-3">
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Address Line 1</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.addressLine1 || selectedStudentToView.homeAddress || '—'}</p>
+                      </div>
+                      <div className="col-span-1 sm:col-span-3">
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Address Line 2</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.addressLine2 || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">City</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.city || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">District</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.district || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">State</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.state || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Country</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.country || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Pincode</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.pincode || '—'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Other Details */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Other Details</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Previous School</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.previousSchool || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Identification Marks</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.identificationMarks || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Transport Details</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.transportDetails || selectedStudentToView.busRoute || '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hostel Details</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.hostelDetails || '—'}</p>
+                      </div>
+                      <div className="col-span-1 sm:col-span-2">
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Medical Information</label>
+                        <p className="text-slate-950 font-semibold whitespace-pre-line">{selectedStudentToView.medicalInfo || '—'}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fee Configuration */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Fee Configuration</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tuition Fee</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.tuitionFee ? `₹${selectedStudentToView.tuitionFee}` : '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hostel Fee</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.hostelFee ? `₹${selectedStudentToView.hostelFee}` : '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Book Fee</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.bookFee ? `₹${selectedStudentToView.bookFee}` : '—'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Other Fee</label>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.otherFee ? `₹${selectedStudentToView.otherFee}` : '—'}</p>
+                      </div>
+                      <div className="col-span-2 sm:col-span-4 pt-2 border-t border-slate-200/60 flex justify-between items-center">
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Fee</span>
+                        <span className="text-primary-700 font-black text-lg">{selectedStudentToView.totalFee ? `₹${selectedStudentToView.totalFee}` : '—'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Schema / Custom Fields */}
+                  {formSchema.length > 0 && selectedStudentToView.customData && (
+                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
+                      <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Additional Details</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {formSchema.map(field => {
+                          let val = selectedStudentToView.customData[field.id];
+                          if (field.type === 'checkbox') val = val ? 'Yes' : 'No';
+                          return (
+                            <div key={`view_${field.id}`}>
+                              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{field.label}</label>
+                              <p className="text-slate-950 font-semibold">{val || '—'}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* System & Metadata Information */}
+                  <div className="bg-slate-100/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-500 space-y-1">
+                    <p>Student ID: <span className="font-mono font-semibold text-slate-700">{selectedStudentToView.id}</span></p>
+                    <p>Created Date: <span className="font-semibold text-slate-700">{selectedStudentToView.createdAt ? new Date(selectedStudentToView.createdAt).toLocaleString() : 'N/A'}</span></p>
+                    {selectedStudentToView.createdBy && <p>Created By: <span className="font-semibold text-slate-700">{selectedStudentToView.createdBy}</span></p>}
+                    {selectedStudentToView.lastUpdatedAt && <p>Last Updated Date: <span className="font-semibold text-slate-700">{new Date(selectedStudentToView.lastUpdatedAt).toLocaleString()}</span></p>}
+                    {selectedStudentToView.lastUpdatedBy && <p>Last Updated By: <span className="font-semibold text-slate-700">{selectedStudentToView.lastUpdatedBy}</span></p>}
+                  </div>
+                </div>
+              ) : (
+                /* EDIT MODE */
+                <div className="space-y-6 animate-fade-in">
+                  {/* Personal Information Edit */}
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Personal Information</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">First Name *</label>
+                        <input
+                          type="text"
+                          value={editStudentData.firstName || ''}
+                          onChange={e => handleEditFieldChange('firstName', e.target.value)}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.firstName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        />
+                        {editErrors.firstName && <span className="text-red-500 text-xs mt-1 block">{editErrors.firstName}</span>}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Middle Name</label>
+                        <input
+                          type="text"
+                          value={editStudentData.middleName || ''}
+                          onChange={e => handleEditFieldChange('middleName', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Last Name *</label>
+                        <input
+                          type="text"
+                          value={editStudentData.lastName || ''}
+                          onChange={e => handleEditFieldChange('lastName', e.target.value)}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        />
+                        {editErrors.lastName && <span className="text-red-500 text-xs mt-1 block">{editErrors.lastName}</span>}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Admission Number *</label>
+                        <input
+                          type="text"
+                          value={editStudentData.admissionNumber || ''}
+                          onChange={e => handleEditFieldChange('admissionNumber', e.target.value)}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.admissionNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        />
+                        {editErrors.admissionNumber && <span className="text-red-500 text-xs mt-1 block">{editErrors.admissionNumber}</span>}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Date of Birth</label>
+                        <input
+                          type="date"
+                          value={editStudentData.dob || ''}
+                          onChange={e => handleEditFieldChange('dob', e.target.value)}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.dob ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        />
+                        {editErrors.dob && <span className="text-red-500 text-xs mt-1 block">{editErrors.dob}</span>}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Gender</label>
+                        <select
+                          value={editStudentData.gender || 'Male'}
+                          onChange={e => handleEditFieldChange('gender', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Blood Group</label>
+                        <input
+                          type="text"
+                          value={editStudentData.bloodGroup || ''}
+                          onChange={e => handleEditFieldChange('bloodGroup', e.target.value)}
+                          placeholder="e.g. O+, A-"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nationality</label>
+                        <input
+                          type="text"
+                          value={editStudentData.nationality || ''}
+                          onChange={e => handleEditFieldChange('nationality', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Religion</label>
+                        <input
+                          type="text"
+                          value={editStudentData.religion || ''}
+                          onChange={e => handleEditFieldChange('religion', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mother Tongue</label>
+                        <input
+                          type="text"
+                          value={editStudentData.motherTongue || ''}
+                          onChange={e => handleEditFieldChange('motherTongue', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Aadhaar Number</label>
+                        <input
+                          type="text"
+                          value={editStudentData.aadharNumber || ''}
+                          onChange={e => handleEditFieldChange('aadharNumber', e.target.value)}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.aadharNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        />
+                        {editErrors.aadharNumber && <span className="text-red-500 text-xs mt-1 block">{editErrors.aadharNumber}</span>}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Student Phone</label>
+                        <input
+                          type="text"
+                          value={editStudentData.studentPhone || ''}
+                          onChange={e => handleEditFieldChange('studentPhone', e.target.value)}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.studentPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        />
+                        {editErrors.studentPhone && <span className="text-red-500 text-xs mt-1 block">{editErrors.studentPhone}</span>}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Student Email</label>
+                        <input
+                          type="email"
+                          value={editStudentData.studentEmail || ''}
+                          onChange={e => handleEditFieldChange('studentEmail', e.target.value)}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.studentEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        />
+                        {editErrors.studentEmail && <span className="text-red-500 text-xs mt-1 block">{editErrors.studentEmail}</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Academic Information Edit */}
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Academic Information</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Class & Section</label>
+                        <select
+                          value={editStudentData.classId || ''}
+                          onChange={e => handleEditFieldChange('classId', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="">-- Unassigned --</option>
+                          {classes.map(c => (
+                            <option key={c.id} value={c.id}>{c.name} - {c.section}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Roll Number</label>
+                        <input
+                          type="text"
+                          value={editStudentData.rollNumber || ''}
+                          onChange={e => handleEditFieldChange('rollNumber', e.target.value)}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.rollNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        />
+                        {editErrors.rollNumber && <span className="text-red-500 text-xs mt-1 block">{editErrors.rollNumber}</span>}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Admission Date</label>
+                        <input
+                          type="date"
+                          value={editStudentData.admissionDate || ''}
+                          onChange={e => handleEditFieldChange('admissionDate', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Student Status</label>
+                        <select
+                          value={editStudentData.status || 'Active'}
+                          onChange={e => handleEditFieldChange('status', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        >
+                          <option value="Active">Active</option>
+                          <option value="Inactive">Inactive</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Parent / Guardian Information Edit */}
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Parent / Guardian Information</h4>
+                    <div className="space-y-4">
+                      {/* Father details */}
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-3 border-b border-slate-200/50">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Father's Name</label>
+                          <input
+                            type="text"
+                            value={editStudentData.parentName || ''}
+                            onChange={e => handleEditFieldChange('parentName', e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Father's Phone</label>
+                          <input
+                            type="text"
+                            value={editStudentData.parentPhone || ''}
+                            onChange={e => handleEditFieldChange('parentPhone', e.target.value)}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.parentPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          />
+                          {editErrors.parentPhone && <span className="text-red-500 text-xs mt-1 block">{editErrors.parentPhone}</span>}
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Father's Email</label>
+                          <input
+                            type="email"
+                            value={editStudentData.parentEmail || ''}
+                            onChange={e => handleEditFieldChange('parentEmail', e.target.value)}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.parentEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          />
+                          {editErrors.parentEmail && <span className="text-red-500 text-xs mt-1 block">{editErrors.parentEmail}</span>}
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Occupation</label>
+                          <input
+                            type="text"
+                            value={editStudentData.parentOccupation || ''}
+                            onChange={e => handleEditFieldChange('parentOccupation', e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Mother details */}
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-3 border-b border-slate-200/50">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mother's Name</label>
+                          <input
+                            type="text"
+                            value={editStudentData.motherName || ''}
+                            onChange={e => handleEditFieldChange('motherName', e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mother's Phone</label>
+                          <input
+                            type="text"
+                            value={editStudentData.motherPhone || ''}
+                            onChange={e => handleEditFieldChange('motherPhone', e.target.value)}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.motherPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          />
+                          {editErrors.motherPhone && <span className="text-red-500 text-xs mt-1 block">{editErrors.motherPhone}</span>}
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mother's Email</label>
+                          <input
+                            type="email"
+                            value={editStudentData.motherEmail || ''}
+                            onChange={e => handleEditFieldChange('motherEmail', e.target.value)}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.motherEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          />
+                          {editErrors.motherEmail && <span className="text-red-500 text-xs mt-1 block">{editErrors.motherEmail}</span>}
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Occupation</label>
+                          <input
+                            type="text"
+                            value={editStudentData.motherOccupation || ''}
+                            onChange={e => handleEditFieldChange('motherOccupation', e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Guardian details */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Guardian Name</label>
+                          <input
+                            type="text"
+                            value={editStudentData.guardianName || ''}
+                            onChange={e => handleEditFieldChange('guardianName', e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Guardian Phone</label>
+                          <input
+                            type="text"
+                            value={editStudentData.guardianPhone || ''}
+                            onChange={e => handleEditFieldChange('guardianPhone', e.target.value)}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.guardianPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          />
+                          {editErrors.guardianPhone && <span className="text-red-500 text-xs mt-1 block">{editErrors.guardianPhone}</span>}
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Relationship</label>
+                          <input
+                            type="text"
+                            value={editStudentData.guardianRelationship || ''}
+                            onChange={e => handleEditFieldChange('guardianRelationship', e.target.value)}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Address Information Edit */}
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Address Information</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="col-span-1 sm:col-span-3">
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Address Line 1</label>
+                        <input
+                          type="text"
+                          value={editStudentData.addressLine1 || editStudentData.homeAddress || ''}
+                          onChange={e => handleEditFieldChange('addressLine1', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div className="col-span-1 sm:col-span-3">
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Address Line 2</label>
+                        <input
+                          type="text"
+                          value={editStudentData.addressLine2 || ''}
+                          onChange={e => handleEditFieldChange('addressLine2', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">City</label>
+                        <input
+                          type="text"
+                          value={editStudentData.city || ''}
+                          onChange={e => handleEditFieldChange('city', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">District</label>
+                        <input
+                          type="text"
+                          value={editStudentData.district || ''}
+                          onChange={e => handleEditFieldChange('district', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">State</label>
+                        <input
+                          type="text"
+                          value={editStudentData.state || ''}
+                          onChange={e => handleEditFieldChange('state', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Country</label>
+                        <input
+                          type="text"
+                          value={editStudentData.country || ''}
+                          onChange={e => handleEditFieldChange('country', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Pincode</label>
+                        <input
+                          type="text"
+                          value={editStudentData.pincode || ''}
+                          onChange={e => handleEditFieldChange('pincode', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Other Details Edit */}
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
+                    <h4 className="text-sm font-extrabold text-slate-700 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Other Details</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Previous School</label>
+                        <input
+                          type="text"
+                          value={editStudentData.previousSchool || ''}
+                          onChange={e => handleEditFieldChange('previousSchool', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Identification Marks</label>
+                        <input
+                          type="text"
+                          value={editStudentData.identificationMarks || ''}
+                          onChange={e => handleEditFieldChange('identificationMarks', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Transport Details</label>
+                        <input
+                          type="text"
+                          value={editStudentData.transportDetails || editStudentData.busRoute || ''}
+                          onChange={e => handleEditFieldChange('transportDetails', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Hostel Details</label>
+                        <input
+                          type="text"
+                          value={editStudentData.hostelDetails || ''}
+                          onChange={e => handleEditFieldChange('hostelDetails', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div className="col-span-1 sm:col-span-2">
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Medical Information</label>
+                        <textarea
+                          rows={3}
+                          value={editStudentData.medicalInfo || ''}
+                          onChange={e => handleEditFieldChange('medicalInfo', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fee Configuration Edit */}
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
+                    <h4 className="text-sm font-extrabold text-slate-700 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Fee Configuration</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Tuition Fee</label>
+                        <input
+                          type="number"
+                          value={editStudentData.tuitionFee || ''}
+                          onChange={e => handleEditFeeChange('tuitionFee', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Hostel Fee</label>
+                        <input
+                          type="number"
+                          value={editStudentData.hostelFee || ''}
+                          onChange={e => handleEditFeeChange('hostelFee', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Book Fee</label>
+                        <input
+                          type="number"
+                          value={editStudentData.bookFee || ''}
+                          onChange={e => handleEditFeeChange('bookFee', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Other Fee</label>
+                        <input
+                          type="number"
+                          value={editStudentData.otherFee || ''}
+                          onChange={e => handleEditFeeChange('otherFee', e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                        />
+                      </div>
+                      <div className="col-span-2 sm:col-span-4 pt-2 border-t border-slate-200 flex justify-between items-center bg-primary-50/50 p-3 rounded-xl">
+                        <span className="text-xs font-bold text-primary-800 uppercase tracking-wider">Total Fee</span>
+                        <span className="text-primary-700 font-black text-lg">₹{editStudentData.totalFee || '0'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Schema / Custom Fields Edit */}
+                  {formSchema.length > 0 && (
+                    <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
+                      <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Additional Details</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {formSchema.map(field => (
+                          <div key={`edit_${field.id}`}>
+                            {field.type !== 'checkbox' && (
+                              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                {field.label} {field.required && <span className="text-red-500">*</span>}
+                              </label>
+                            )}
+                            
+                            {field.type === 'select' ? (
+                              <select
+                                required={field.required}
+                                value={editCustomData[field.id] || ''}
+                                onChange={e => setEditCustomData({ ...editCustomData, [field.id]: e.target.value })}
+                                className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                              >
+                                <option value="">Select...</option>
+                                {field.options && field.options.split(',').map(opt => (
+                                  <option key={opt.trim()} value={opt.trim()}>{opt.trim()}</option>
+                                ))}
+                              </select>
+                            ) : field.type === 'checkbox' ? (
+                              <label className="flex items-center gap-3 mt-2 cursor-pointer select-none">
+                                <input
+                                  type="checkbox"
+                                  required={field.required}
+                                  checked={editCustomData[field.id] || false}
+                                  onChange={e => setEditCustomData({ ...editCustomData, [field.id]: e.target.checked })}
+                                  className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                                />
+                                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">{field.label} {field.required && <span className="text-red-500">*</span>}</span>
+                              </label>
+                            ) : (
+                              <input
+                                type={field.type}
+                                required={field.required}
+                                value={editCustomData[field.id] || ''}
+                                onChange={e => setEditCustomData({ ...editCustomData, [field.id]: e.target.value })}
+                                className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                              />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Read-Only System Metadata Section in Edit Mode */}
+                  <div className="bg-slate-100/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-400 space-y-1 select-none">
+                    <p>Student ID: <span className="font-mono font-semibold">{selectedStudentToView.id}</span> (Read-only)</p>
+                    <p>Created Date: <span>{selectedStudentToView.createdAt ? new Date(selectedStudentToView.createdAt).toLocaleString() : 'N/A'}</span> (Read-only)</p>
+                    {selectedStudentToView.createdBy && <p>Created By: <span>{selectedStudentToView.createdBy}</span> (Read-only)</p>}
+                    {selectedStudentToView.lastUpdatedAt && <p>Last Updated Date: <span>{new Date(selectedStudentToView.lastUpdatedAt).toLocaleString()}</span> (Read-only)</p>}
+                    {selectedStudentToView.lastUpdatedBy && <p>Last Updated By: <span>{selectedStudentToView.lastUpdatedBy}</span> (Read-only)</p>}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+              {isEditMode ? (
+                <>
+                  <button 
+                    onClick={handleModalCloseOrCancel}
+                    className="px-6 py-2.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handleSaveStudentEdit}
+                    className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors shadow-sm"
+                  >
+                    Save
+                  </button>
+                </>
+              ) : (
+                <>
+                  {hasEditPermission && (
+                    <button 
+                      onClick={() => {
+                        setEditStudentData({ ...selectedStudentToView });
+                        setEditCustomData({ ...selectedStudentToView.customData });
+                        setEditErrors({});
+                        setIsEditMode(true);
+                      }}
+                      className="px-6 py-2 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors shadow-sm"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <button 
+                    onClick={handleModalCloseOrCancel}
+                    className="px-6 py-2 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                  >
+                    Close
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
+      )}
+
+      {/* Discard Unsaved Changes Warning Modal */}
+      {showDiscardConfirm && (
+        <ConfirmModal 
+          isOpen={showDiscardConfirm}
+          onClose={() => setShowDiscardConfirm(false)}
+          onConfirm={() => {
+            setShowDiscardConfirm(false);
+            setIsEditMode(false);
+            setViewStudentModalOpen(false);
+          }}
+          title="Unsaved Changes"
+          message="You have unsaved changes. Are you sure you want to discard them?"
+          confirmText="Discard Changes"
+          cancelText="Continue Editing"
+          type="danger"
+        />
       )}
 
       {assignModalOpen && selectedStudentForAssign && (
