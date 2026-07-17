@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, Search, Bell, RefreshCw, ChevronRight, X, AlertTriangle } from 'lucide-react';
+import { Menu, Search, Bell, RefreshCw, ChevronRight, X, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { subscribeToNotices } from '../firebase/firestore';
@@ -68,17 +68,23 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
     <header className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-[4.5rem] shrink-0 flex items-center justify-between px-4 lg:px-8 z-30 relative min-w-0">
       
       {/* Left section: Mobile menu & Logo (if needed) */}
-      <div className="flex items-center gap-4 flex-1 min-w-0">
+      <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+        <button 
+          onClick={() => navigate(-1)}
+          className="p-2 -ml-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex items-center gap-1 transition-colors"
+          title="Go Back"
+        >
+          <ArrowLeft size={20} />
+        </button>
+
         {toggleSidebar && (
           <button 
             onClick={toggleSidebar}
-            className="lg:hidden p-2 -ml-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100"
+            className="lg:hidden p-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100"
           >
             <Menu size={24} />
           </button>
         )}
-
-
         
         {/* Search Bar */}
         <form onSubmit={handleSearch} className="relative hidden md:block flex-1 max-w-xl mr-4 min-w-0" ref={dropdownRef}>

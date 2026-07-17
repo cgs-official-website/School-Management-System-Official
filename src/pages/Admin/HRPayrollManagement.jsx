@@ -73,6 +73,15 @@ export default function HRPayrollManagement() {
       return;
     }
 
+    const currentMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+    if (!formData.id) {
+      const isDuplicate = payrolls.some(p => p.teacherId === formData.teacherId && p.month === currentMonth);
+      if (isDuplicate) {
+        toast.error(`Payroll for this staff member already exists for ${currentMonth}.`);
+        return;
+      }
+    }
+
     try {
       if (formData.id) {
         await updateSubDocument(schoolId, 'payroll', formData.id, formData);

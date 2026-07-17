@@ -48,10 +48,13 @@ export default function ClassManagement() {
     };
 
     const unsubscribeClasses = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      // Sort alphabetically
+      // Sort naturally (Grade 2 before Grade 10)
       data.sort((a, b) => {
-        if(a.name === b.name) return a.section.localeCompare(b.section);
-        return a.name.localeCompare(b.name);
+        const nameCompare = a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+        if (nameCompare === 0) {
+          return a.section.localeCompare(b.section, undefined, { numeric: true, sensitivity: 'base' });
+        }
+        return nameCompare;
       });
       setClasses(data.length > 0 ? data : mockClasses);
       classesLoaded = true;
@@ -83,6 +86,20 @@ export default function ClassManagement() {
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.section.trim()) return;
+
+    const normalizedName = formData.name.trim();
+    const normalizedSection = formData.section.trim().toUpperCase();
+
+    const isDuplicate = classes.some(
+      c => c.name.toLowerCase() === normalizedName.toLowerCase() && 
+           c.section.toLowerCase() === normalizedSection.toLowerCase() &&
+           c.id !== editingId
+    );
+
+    if (isDuplicate) {
+      toast.error(`Class ${normalizedName} - ${normalizedSection} already exists.`);
+      return;
+    }
 
     setSaving(true);
     try {

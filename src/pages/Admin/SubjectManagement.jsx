@@ -71,6 +71,17 @@ export default function SubjectManagement() {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!formData.name) return;
+    const isDuplicate = subjects.some(s => 
+      s.id !== editingId && (
+        s.name?.toLowerCase() === formData.name.trim().toLowerCase() ||
+        (formData.code?.trim() && s.code?.toLowerCase() === formData.code.trim().toLowerCase())
+      )
+    );
+
+    if (isDuplicate) {
+      toast.error(`A subject with this Name or Code already exists.`);
+      return;
+    }
     
     setSaving(true);
     try {

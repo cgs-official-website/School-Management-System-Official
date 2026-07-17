@@ -41,8 +41,7 @@ export default function StaffAssignment() {
     lastName: '',
     email: '',
     role: 'teacher',
-    assignedClassId: '',
-    subjectClassIds: []
+    assignedClassId: ''
   });
   const [addingStaff, setAddingStaff] = useState(false);
 
@@ -50,8 +49,12 @@ export default function StaffAssignment() {
   const [viewStaffModalOpen, setViewStaffModalOpen] = useState(false);
   const [selectedStaffToView, setSelectedStaffToView] = useState(null);
 
-  // Filters
+  // Filters & Pagination
   const [searchQuery, setSearchQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     if (!schoolId) return;
@@ -70,6 +73,13 @@ export default function StaffAssignment() {
     });
 
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      data.sort((a, b) => {
+        const nameCompare = (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' });
+        if (nameCompare === 0) {
+          return (a.section || '').localeCompare(b.section || '', undefined, { numeric: true, sensitivity: 'base' });
+        }
+        return nameCompare;
+      });
       setClasses(data);
     });
 
@@ -115,6 +125,8 @@ export default function StaffAssignment() {
 
     if (!selectedStaffForUpload) {
       // BULK IMPORT LOGIC
+      setUploadModalOpen(false);
+      const loadingToastId = toast.loading("Processing bulk import...");
       try {
         const reader = new FileReader();
         reader.onload = async (evt) => {
@@ -135,7 +147,6 @@ export default function StaffAssignment() {
                 email: row['Email'],
                 role: row['Role'] || 'teacher',
                 assignedClassId: row['Assigned Class ID'] || '',
-                subjectClassIds: [],
                 status: 'Active',
                 createdAt: new Date().toISOString()
               });
@@ -150,8 +161,7 @@ export default function StaffAssignment() {
         reader.readAsBinaryString(uploadFile);
       } catch (err) {
         console.error(err);
-        toast.error("Failed to process Excel file");
-      } finally {
+        toast.error("Failed to process Excel file", { id: loadingToastId });
         setUploading(false);
       }
       return;
@@ -190,22 +200,27 @@ export default function StaffAssignment() {
       toast.error("Please fill in all required fields.");
       return;
     }
+
+    const isDuplicate = staff.some(s => s.email?.toLowerCase() === newStaff.email.trim().toLowerCase());
+    if (isDuplicate) {
+      toast.error(`Staff member with email ${newStaff.email} already exists.`);
+      return;
+    }
+
     setAddingStaff(true);
     try {
       await addSubDocument(schoolId, 'teachers', {
-        firstName: newStaff.firstName,
-        lastName: newStaff.lastName,
+        ...newStaff,
         name: `${newStaff.firstName} ${newStaff.lastName}`,
         email: newStaff.email,
         role: newStaff.role,
         assignedClassId: newStaff.assignedClassId,
-        subjectClassIds: newStaff.subjectClassIds,
         status: 'Active',
         createdAt: new Date().toISOString()
       });
       toast.success("Staff member added successfully!");
       setAddStaffModalOpen(false);
-      setNewStaff({ firstName: '', lastName: '', email: '', role: 'teacher', assignedClassId: '', subjectClassIds: [] });
+      setNewStaff({ firstName: '', lastName: '', email: '', role: 'teacher', assignedClassId: '' });
     } catch (error) {
       console.error("Error adding staff:", error);
       toast.error("Failed to add staff member.");
@@ -275,9 +290,27 @@ export default function StaffAssignment() {
 
   const filteredStaff = staff.filter(member => {
     const name = member.name || `${member.firstName} ${member.lastName}`;
-    return name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase()) || 
            (member.email && member.email.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesRole = roleFilter === 'all' || (member.role || 'teacher') === roleFilter;
+    const matchesStatus = statusFilter === 'all' || (member.status || 'Active') === statusFilter;
+    
+    return matchesSearch && matchesRole && matchesStatus;
   });
+
+  // Metrics
+  const totalStaff = staff.length;
+  const activeStaff = staff.filter(s => (s.status || 'Active') === 'Active').length;
+  const teachingStaff = staff.filter(s => (s.role || 'teacher') === 'teacher').length;
+  const nonTeachingStaff = totalStaff - teachingStaff;
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredStaff.length / rowsPerPage) || 1;
+  const paginatedStaff = filteredStaff.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, roleFilter, statusFilter, rowsPerPage]);
 
   if (loading) {
     return (
@@ -326,22 +359,70 @@ export default function StaffAssignment() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
+        {/* Metrics Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 bg-slate-50/30">
+          <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+            <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Users size={20} /></div>
+            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Staff</p><p className="text-xl font-bold text-slate-900">{totalStaff}</p></div>
+          </div>
+          <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><CheckCircle2 size={20} /></div>
+            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active</p><p className="text-xl font-bold text-slate-900">{activeStaff}</p></div>
+          </div>
+          <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><UserPlus size={20} /></div>
+            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Teachers</p><p className="text-xl font-bold text-slate-900">{teachingStaff}</p></div>
+          </div>
+          <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+            <div className="p-3 bg-pink-50 text-pink-600 rounded-xl"><UserPlus size={20} /></div>
+            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Non-Teaching</p><p className="text-xl font-bold text-slate-900">{nonTeachingStaff}</p></div>
+          </div>
+        </div>
+
         {/* Toolbar */}
-        <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
-          <div className="relative flex-1 max-w-md">
+        <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-white">
+          <div className="relative flex-1 min-w-[250px] max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
               placeholder="Search staff by name or email..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
             />
           </div>
-          <div className="flex items-center gap-3 text-sm text-slate-500">
-            <Users size={18} />
-            <span>Total Staff: {staff.length}</span>
+          <div className="flex flex-wrap items-center gap-3">
+            <select 
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="all">All Roles</option>
+              <option value="teacher">Teachers</option>
+              <option value="librarian">Librarians</option>
+              <option value="accountant">Accountants</option>
+              <option value="warden">Wardens</option>
+            </select>
+            <select 
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="all">All Status</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+            <div className="h-6 w-px bg-slate-200 hidden sm:block mx-1"></div>
+            <select 
+              value={rowsPerPage}
+              onChange={(e) => setRowsPerPage(Number(e.target.value))}
+              className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option value={10}>10 rows</option>
+              <option value={20}>20 rows</option>
+              <option value={50}>50 rows</option>
+            </select>
           </div>
         </div>
 
@@ -358,7 +439,7 @@ export default function StaffAssignment() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
-              {filteredStaff.length === 0 ? (
+              {paginatedStaff.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="p-12 text-center text-slate-500">
                     <ShieldCheck size={48} className="mx-auto mb-4 text-slate-300" />
@@ -367,18 +448,18 @@ export default function StaffAssignment() {
                   </td>
                 </tr>
               ) : (
-                filteredStaff.map((member) => {
+                paginatedStaff.map((member) => {
                   const name = member.name || `${member.firstName} ${member.lastName}`;
                   const isAssigned = !!member.assignedClassId;
 
                   return (
                     <tr key={member.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="p-4 pl-6">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 shrink-0 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
                             {name.charAt(0)}
                           </div>
-                          <div className="font-semibold text-slate-900">
+                          <div className="font-semibold text-slate-900 leading-snug">
                             {name}
                           </div>
                         </div>
@@ -451,6 +532,34 @@ export default function StaffAssignment() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50 rounded-b-3xl">
+            <span className="text-sm text-slate-500">
+              Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, filteredStaff.length)} of {filteredStaff.length} entries
+            </span>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+              >
+                Previous
+              </button>
+              <div className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-slate-700">
+                Page {currentPage} of {totalPages}
+              </div>
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Assignment Modal */}
@@ -557,7 +666,7 @@ export default function StaffAssignment() {
                 </p>
               ) : (
                 <p className="text-sm text-slate-600 mb-4">
-                  Upload an Excel or CSV file to bulk import staff. Ensure it has columns: First Name, Last Name, Email.
+                  Upload an Excel or CSV file to bulk import staff. Ensure it has columns: Full Name, Email Address.
                 </p>
               )}
 
@@ -664,40 +773,17 @@ export default function StaffAssignment() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Class Teacher For</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Assign Class (Optional)</label>
                   <select 
                     value={newStaff.assignedClassId}
                     onChange={(e) => setNewStaff({...newStaff, assignedClassId: e.target.value})}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                   >
-                    <option value="">-- None --</option>
+                    <option value="">-- Unassigned --</option>
                     {classes.map(c => (
                       <option key={c.id} value={c.id}>{c.name} - Section {c.section}</option>
                     ))}
                   </select>
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Subject Teacher For</label>
-                  <div className="w-full p-3 rounded-xl border border-slate-200 bg-white flex flex-col sm:grid sm:grid-cols-2 gap-2 max-h-32 overflow-y-auto custom-scrollbar">
-                    {classes.map(c => (
-                      <label key={`add-subj-${c.id}`} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1 rounded">
-                        <input 
-                          type="checkbox" 
-                          checked={newStaff.subjectClassIds.includes(c.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setNewStaff({...newStaff, subjectClassIds: [...newStaff.subjectClassIds, c.id]});
-                            } else {
-                              setNewStaff({...newStaff, subjectClassIds: newStaff.subjectClassIds.filter(id => id !== c.id)});
-                            }
-                          }}
-                          className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
-                        />
-                        <span className="text-sm font-medium text-slate-700 truncate">{c.name} - Section {c.section}</span>
-                      </label>
-                    ))}
-                    {classes.length === 0 && <span className="text-sm text-slate-500 italic p-1">No classes available</span>}
-                  </div>
                 </div>
               </div>
             </div>
@@ -755,27 +841,12 @@ export default function StaffAssignment() {
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Class Teacher Of</label>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Assigned Class</label>
                   <p className="text-slate-900 font-medium">
                     {selectedStaffToView.assignedClassId 
                       ? getClassName(selectedStaffToView.assignedClassId) 
                       : <span className="text-slate-500 italic">Unassigned</span>}
                   </p>
-                </div>
-                
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subject Teacher Of</label>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {selectedStaffToView.subjectClassIds?.length > 0 ? (
-                      selectedStaffToView.subjectClassIds.map(id => (
-                        <span key={id} className="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-md border border-indigo-100">
-                          {getClassName(id)}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-slate-500 italic">No subject classes</span>
-                    )}
-                  </div>
                 </div>
 
                 <div>
