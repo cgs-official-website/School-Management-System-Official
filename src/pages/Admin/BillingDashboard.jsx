@@ -105,7 +105,7 @@ export default function BillingDashboard() {
               </div>
               <div className="text-right">
                 <div className="text-4xl font-extrabold text-slate-900 mb-2">
-                  ${currentPlan ? currentPlan.priceMonthly : 0}<span className="text-lg text-slate-500 font-medium">/mo</span>
+                  ₹{currentPlan ? currentPlan.priceMonthly : 0}<span className="text-lg text-slate-500 font-medium">/mo</span>
                 </div>
                 <button 
                   onClick={() => navigate('/admin/upgrade')}
@@ -212,7 +212,7 @@ export default function BillingDashboard() {
               </div>
             </div>
             <p className="text-xs text-slate-500 mt-4 leading-relaxed">
-              This card will be automatically charged ${currentPlan ? currentPlan.priceMonthly : 0} on the 1st of every month.
+              This card will be automatically charged ₹{currentPlan ? currentPlan.priceMonthly : 0} on the 1st of every month.
             </p>
           </div>
 

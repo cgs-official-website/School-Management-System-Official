@@ -494,7 +494,7 @@ export const createFeeStructure = async (schoolId, feeData) => {
     });
 
     await batch.commit();
-    return feeRef.id;
+    return { feeId: feeRef.id, invoiceCount: students.length };
   } catch (error) {
     console.error("Error creating fee structure & invoices:", error);
     throw error;

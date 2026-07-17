@@ -74,8 +74,14 @@ export default function FeeManagement() {
     setCreating(true);
 
     try {
-      await createFeeStructure(schoolId, newFee);
+      const result = await createFeeStructure(schoolId, newFee);
       // Re-fetch invoices handled by listener
+      
+      if (result && result.invoiceCount === 0) {
+        toast.error("Fee assigned, but NO invoices were generated because there are no active students in this class!", { duration: 5000 });
+      } else {
+        toast.success(`Fee assigned successfully! Generated ${result.invoiceCount} invoices.`);
+      }
       
       setShowCreateModal(false);
       setNewFee({ name: '', amount: '', dueDate: new Date().toISOString().split('T')[0], classId: '' });
@@ -235,7 +241,7 @@ export default function FeeManagement() {
                         <div className="text-xs text-slate-500">Due: {inv.dueDate}</div>
                       </td>
                       <td className="p-4 font-mono font-bold text-slate-700">
-                        ${inv.amount.toLocaleString()}
+                        ₹{inv.amount.toLocaleString()}
                       </td>
                       <td className="p-4">
                         {inv.status === 'Paid' ? (

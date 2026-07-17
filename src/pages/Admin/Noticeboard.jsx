@@ -6,16 +6,16 @@ import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
 
 const mockNotices = [
-  { id: 'm1', title: 'Welcome to the new academic year', content: 'Classes begin next week.', targetAudience: 'All', date: '2026-07-01' },
-  { id: 'm2', title: 'Parent-Teacher Meeting', content: 'Scheduled for Friday.', targetAudience: 'Parents', date: '2026-07-05' },
-  { id: 'm3', title: 'Sports Day Rehearsal', content: 'Please bring your kits.', targetAudience: 'Students', date: '2026-07-10' },
-  { id: 'm4', title: 'Staff Meeting', content: 'Mandatory staff meeting in the main hall.', targetAudience: 'Teachers', date: '2026-07-12' },
-  { id: 'm5', title: 'Library Renovation', content: 'Library closed for maintenance.', targetAudience: 'All', date: '2026-07-15' },
-  { id: 'm6', title: 'Exam Schedule Released', content: 'Midterm exams schedule is up.', targetAudience: 'Students', date: '2026-07-20' },
-  { id: 'm7', title: 'Fee Payment Deadline', content: 'Last date is 31st July.', targetAudience: 'Parents', date: '2026-07-22' },
-  { id: 'm8', title: 'Science Fair Entries', content: 'Submit your projects to Mr. Smith.', targetAudience: 'Students', date: '2026-07-25' },
-  { id: 'm9', title: 'Workshop on Cyber Security', content: 'For all high school students.', targetAudience: 'Students', date: '2026-07-28' },
-  { id: 'm10', title: 'Holiday Announcement', content: 'School closed on Monday for Labor Day.', targetAudience: 'All', date: '2026-08-01' },
+  { id: 'm1', title: 'Welcome to the new academic year', message: 'Classes begin next week.', audience: 'all', createdAt: '2026-07-01T10:00:00Z', authorName: 'Admin User' },
+  { id: 'm2', title: 'Parent-Teacher Meeting', message: 'Scheduled for Friday.', audience: 'parents', createdAt: '2026-07-05T14:30:00Z', authorName: 'Admin User' },
+  { id: 'm3', title: 'Sports Day Rehearsal', message: 'Please bring your kits.', audience: 'students', createdAt: '2026-07-10T09:15:00Z', authorName: 'Admin User' },
+  { id: 'm4', title: 'Staff Meeting', message: 'Mandatory staff meeting in the main hall.', audience: 'teachers', createdAt: '2026-07-12T16:00:00Z', authorName: 'Admin User' },
+  { id: 'm5', title: 'Library Renovation', message: 'Library closed for maintenance.', audience: 'all', createdAt: '2026-07-15T11:45:00Z', authorName: 'Admin User' },
+  { id: 'm6', title: 'Exam Schedule Released', message: 'Midterm exams schedule is up.', audience: 'students', createdAt: '2026-07-20T08:00:00Z', authorName: 'Admin User' },
+  { id: 'm7', title: 'Fee Payment Deadline', message: 'Last date is 31st July.', audience: 'parents', createdAt: '2026-07-22T10:30:00Z', authorName: 'Admin User' },
+  { id: 'm8', title: 'Science Fair Entries', message: 'Submit your projects to Mr. Smith.', audience: 'students', createdAt: '2026-07-25T13:20:00Z', authorName: 'Admin User' },
+  { id: 'm9', title: 'Workshop on Cyber Security', message: 'For all high school students.', audience: 'students', createdAt: '2026-07-28T15:00:00Z', authorName: 'Admin User' },
+  { id: 'm10', title: 'Holiday Announcement', message: 'School closed on Monday for Labor Day.', audience: 'all', createdAt: '2026-08-01T09:00:00Z', authorName: 'Admin User' },
 ];
 
 export default function Noticeboard() {
@@ -56,7 +56,7 @@ export default function Noticeboard() {
       await createNotice(schoolId, {
         ...newNotice,
         authorId: currentUser.uid,
-        authorName: userProfile.firstName + ' ' + userProfile.lastName
+        authorName: (userProfile.name && userProfile.name !== 'undefined') ? userProfile.name : ((userProfile.firstName && userProfile.firstName !== 'undefined') ? `${userProfile.firstName} ${userProfile.lastName}` : 'Admin User')
       });
       // Listener handles state update
       if (newNotice.sendWhatsApp) {
@@ -137,7 +137,16 @@ export default function Noticeboard() {
               >
                 <div className="flex-1 space-y-4">
                   <div>
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3 mb-2 flex-wrap">
+                      <div className="flex items-center gap-2 mr-2">
+                        <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                          <Users size={12} className="text-slate-500" />
+                        </div>
+                        <span className="text-sm font-bold text-slate-700">
+                          {notice.authorName === 'undefined undefined' || !notice.authorName ? 'Admin User' : notice.authorName} <span className="text-slate-400 font-medium text-xs ml-1">(Admin)</span>
+                        </span>
+                      </div>
+
                       {isHighPriority && (
                         <span className="flex items-center gap-1.5 px-2.5 py-1 bg-red-100 text-red-700 rounded-lg text-xs font-bold uppercase tracking-wider">
                           <AlertTriangle size={14} /> High Priority
@@ -146,12 +155,13 @@ export default function Noticeboard() {
                       <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider
                         ${notice.audience === 'all' ? 'bg-purple-100 text-purple-700' : 
                           notice.audience === 'teachers' ? 'bg-blue-100 text-blue-700' : 
+                          notice.audience === 'students' ? 'bg-orange-100 text-orange-700' : 
+                          notice.audience === 'students_parents' ? 'bg-teal-100 text-teal-700' : 
                           'bg-green-100 text-green-700'}
                       `}>
-                        {notice.audience === 'all' && <Users size={14} />}
+                        {(notice.audience === 'all' || notice.audience === 'parents' || notice.audience === 'students_parents' || notice.audience === 'students') && <Users size={14} />}
                         {notice.audience === 'teachers' && <GraduationCap size={14} />}
-                        {notice.audience === 'parents' && <Users size={14} />}
-                        To: {notice.audience}
+                        To: {(notice.audience || 'all').replace('_', ' & ')}
                       </span>
                       <span className="text-sm font-medium text-slate-400 ml-auto">
                         {new Date(notice.createdAt).toLocaleString(undefined, {
@@ -159,15 +169,11 @@ export default function Noticeboard() {
                         })}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900">{notice.title}</h3>
+                    <h3 className="text-xl font-bold text-slate-900 mt-2">{notice.title}</h3>
                   </div>
                   
                   <div className="text-slate-600 leading-relaxed whitespace-pre-wrap font-medium">
                     {notice.message}
-                  </div>
-                  
-                  <div className="text-sm font-medium text-slate-400">
-                    Posted by: {notice.authorName}
                   </div>
                 </div>
                 
@@ -231,9 +237,11 @@ export default function Noticeboard() {
                       onChange={(e) => setNewNotice({...newNotice, audience: e.target.value})}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium"
                     >
-                      <option value="all">Everyone (Teachers & Parents)</option>
+                      <option value="all">Everyone (Teachers, Parents, Students)</option>
                       <option value="teachers">Teachers Only</option>
                       <option value="parents">Parents Only</option>
+                      <option value="students">Students Only</option>
+                      <option value="students_parents">Students & Parents</option>
                     </select>
                   </div>
                   <div>

@@ -275,9 +275,9 @@ export default function EnvironmentSetup() {
                 onChange={(e) => setFormData({...formData, academicConfig: { ...formData.academicConfig, termType: e.target.value }})}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               >
+                <option value="Trimester_TN">Term I, Term II, Term III</option>
+                <option value="Quarterly_HalfYearly_Annual">Quarterly, Half Yearly, Annual</option>
                 <option value="Semester">Semesters (2 terms)</option>
-                <option value="Trimester">Trimesters (3 terms)</option>
-                <option value="Quarter">Quarters (4 terms)</option>
                 <option value="Annual">Annual (1 term)</option>
               </select>
             </div>
