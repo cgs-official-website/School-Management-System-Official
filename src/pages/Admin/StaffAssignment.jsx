@@ -25,6 +25,7 @@ export default function StaffAssignment() {
   const [assignModalOpen, setAssignModalOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [selectedClassId, setSelectedClassId] = useState('');
+  const [selectedSubjectClassIds, setSelectedSubjectClassIds] = useState([]);
   const [saving, setSaving] = useState(false);
 
   // Upload Modal State
@@ -40,7 +41,8 @@ export default function StaffAssignment() {
     lastName: '',
     email: '',
     role: 'teacher',
-    assignedClassId: ''
+    assignedClassId: '',
+    subjectClassIds: []
   });
   const [addingStaff, setAddingStaff] = useState(false);
 
@@ -80,6 +82,7 @@ export default function StaffAssignment() {
   const openAssignModal = (staffMember) => {
     setSelectedStaff(staffMember);
     setSelectedClassId(staffMember.assignedClassId || '');
+    setSelectedSubjectClassIds(staffMember.subjectClassIds || []);
     setAssignModalOpen(true);
   };
 
@@ -93,7 +96,8 @@ export default function StaffAssignment() {
     setSaving(true);
     try {
       await updateSubDocument(schoolId, 'teachers', selectedStaff.id, {
-        assignedClassId: selectedClassId
+        assignedClassId: selectedClassId,
+        subjectClassIds: selectedSubjectClassIds
       });
       setAssignModalOpen(false);
       // Refresh handled by listener
@@ -131,6 +135,7 @@ export default function StaffAssignment() {
                 email: row['Email'],
                 role: row['Role'] || 'teacher',
                 assignedClassId: row['Assigned Class ID'] || '',
+                subjectClassIds: [],
                 status: 'Active',
                 createdAt: new Date().toISOString()
               });
@@ -194,12 +199,13 @@ export default function StaffAssignment() {
         email: newStaff.email,
         role: newStaff.role,
         assignedClassId: newStaff.assignedClassId,
+        subjectClassIds: newStaff.subjectClassIds,
         status: 'Active',
         createdAt: new Date().toISOString()
       });
       toast.success("Staff member added successfully!");
       setAddStaffModalOpen(false);
-      setNewStaff({ firstName: '', lastName: '', email: '', role: 'teacher', assignedClassId: '' });
+      setNewStaff({ firstName: '', lastName: '', email: '', role: 'teacher', assignedClassId: '', subjectClassIds: [] });
     } catch (error) {
       console.error("Error adding staff:", error);
       toast.error("Failed to add staff member.");
@@ -219,7 +225,8 @@ export default function StaffAssignment() {
       'Name': member.name || `${member.firstName} ${member.lastName}`,
       'Email': member.email,
       'Role': member.role || 'Teacher',
-      'Assigned Class': getClassName(member.assignedClassId)
+      'Assigned Class': getClassName(member.assignedClassId),
+      'Subject Classes': (member.subjectClassIds || []).map(getClassName).join(', ')
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -240,7 +247,7 @@ export default function StaffAssignment() {
     doc.setTextColor(100, 116, 139); // slate-500
     doc.text("Staff Directory", 14, 30);
     
-    const tableColumn = ["Name", "Email", "Role", "Assigned Class"];
+    const tableColumn = ["Name", "Email", "Role", "Class Tr. Of", "Subject Tr. Of"];
     const tableRows = [];
 
     staff.forEach(member => {
@@ -248,7 +255,8 @@ export default function StaffAssignment() {
         member.name || `${member.firstName} ${member.lastName}`,
         member.email || 'N/A',
         (member.role || 'Teacher').toUpperCase(),
-        getClassName(member.assignedClassId)
+        getClassName(member.assignedClassId),
+        (member.subjectClassIds || []).map(getClassName).join(', ')
       ];
       tableRows.push(rowData);
     });
@@ -344,7 +352,7 @@ export default function StaffAssignment() {
               <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Staff Name</th>
                 <th className="p-4">Contact</th>
-                <th className="p-4">Class Assignment</th>
+                <th className="p-4">Class Assignments</th>
                 <th className="p-4">Attachment</th>
                 <th className="p-4 pr-6 text-right">Actions</th>
               </tr>
@@ -382,11 +390,23 @@ export default function StaffAssignment() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold ${
-                          isAssigned ? 'bg-primary-50 text-primary-700 border border-primary-200' : 'bg-slate-100 text-slate-500 border border-slate-200'
-                        }`}>
-                          {getClassName(member.assignedClassId)}
-                        </span>
+                        <div className="flex flex-col gap-1">
+                          {isAssigned && (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-primary-50 text-primary-700 border border-primary-200 w-fit">
+                              {getClassName(member.assignedClassId)} (Class Tr.)
+                            </span>
+                          )}
+                          {member.subjectClassIds?.map(id => (
+                            <span key={id} className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 w-fit">
+                              {getClassName(id)} (Subj Tr.)
+                            </span>
+                          ))}
+                          {!isAssigned && (!member.subjectClassIds || member.subjectClassIds.length === 0) && (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200 w-fit">
+                              Unassigned
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="p-4">
                         {member.attachmentUrl ? (
@@ -446,21 +466,47 @@ export default function StaffAssignment() {
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
               <p className="text-slate-600 mb-6">
-                Select a class to assign <span className="font-bold text-slate-900">{selectedStaff.name || selectedStaff.firstName}</span> as the primary Class Teacher.
+                Manage assignments for <span className="font-bold text-slate-900">{selectedStaff.name || selectedStaff.firstName}</span>.
               </p>
 
-              <div className="space-y-4">
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Select Class & Section</label>
-                <select 
-                  value={selectedClassId}
-                  onChange={(e) => setSelectedClassId(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
-                >
-                  <option value="">-- Unassigned --</option>
-                  {classes.map(c => (
-                    <option key={c.id} value={c.id}>{c.name} - Section {c.section}</option>
-                  ))}
-                </select>
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Class Teacher Assignment (Optional)</label>
+                  <select 
+                    value={selectedClassId}
+                    onChange={(e) => setSelectedClassId(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  >
+                    <option value="">-- None --</option>
+                    {classes.map(c => (
+                      <option key={c.id} value={c.id}>{c.name} - Section {c.section}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Subject Teacher Assignments</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border border-slate-200 rounded-xl bg-slate-50">
+                    {classes.map(c => (
+                      <label key={`subj-${c.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-100 rounded-lg cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedSubjectClassIds.includes(c.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedSubjectClassIds([...selectedSubjectClassIds, c.id]);
+                            } else {
+                              setSelectedSubjectClassIds(selectedSubjectClassIds.filter(id => id !== c.id));
+                            }
+                          }}
+                          className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
+                        />
+                        <span className="text-sm font-medium text-slate-700">{c.name} - Section {c.section}</span>
+                      </label>
+                    ))}
+                    {classes.length === 0 && <span className="text-sm text-slate-500 italic p-2">No classes available.</span>}
+                  </div>
+                </div>
 
                 {classes.length === 0 && (
                   <p className="text-xs text-amber-600 mt-2 bg-amber-50 p-3 rounded-lg border border-amber-200">
@@ -618,17 +664,40 @@ export default function StaffAssignment() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Assign Class (Optional)</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Class Teacher For</label>
                   <select 
                     value={newStaff.assignedClassId}
                     onChange={(e) => setNewStaff({...newStaff, assignedClassId: e.target.value})}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                   >
-                    <option value="">-- Unassigned --</option>
+                    <option value="">-- None --</option>
                     {classes.map(c => (
                       <option key={c.id} value={c.id}>{c.name} - Section {c.section}</option>
                     ))}
                   </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Subject Teacher For</label>
+                  <div className="w-full p-3 rounded-xl border border-slate-200 bg-white flex flex-col sm:grid sm:grid-cols-2 gap-2 max-h-32 overflow-y-auto custom-scrollbar">
+                    {classes.map(c => (
+                      <label key={`add-subj-${c.id}`} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1 rounded">
+                        <input 
+                          type="checkbox" 
+                          checked={newStaff.subjectClassIds.includes(c.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setNewStaff({...newStaff, subjectClassIds: [...newStaff.subjectClassIds, c.id]});
+                            } else {
+                              setNewStaff({...newStaff, subjectClassIds: newStaff.subjectClassIds.filter(id => id !== c.id)});
+                            }
+                          }}
+                          className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
+                        />
+                        <span className="text-sm font-medium text-slate-700 truncate">{c.name} - Section {c.section}</span>
+                      </label>
+                    ))}
+                    {classes.length === 0 && <span className="text-sm text-slate-500 italic p-1">No classes available</span>}
+                  </div>
                 </div>
               </div>
             </div>
@@ -686,12 +755,27 @@ export default function StaffAssignment() {
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Assigned Class</label>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Class Teacher Of</label>
                   <p className="text-slate-900 font-medium">
                     {selectedStaffToView.assignedClassId 
                       ? getClassName(selectedStaffToView.assignedClassId) 
                       : <span className="text-slate-500 italic">Unassigned</span>}
                   </p>
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subject Teacher Of</label>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {selectedStaffToView.subjectClassIds?.length > 0 ? (
+                      selectedStaffToView.subjectClassIds.map(id => (
+                        <span key={id} className="px-2 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-md border border-indigo-100">
+                          {getClassName(id)}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-slate-500 italic">No subject classes</span>
+                    )}
+                  </div>
                 </div>
 
                 <div>

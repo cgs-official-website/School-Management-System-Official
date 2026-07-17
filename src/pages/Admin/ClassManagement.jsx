@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, subscribeToSubCollection, updateSubDocument } from '../../firebase/firestore';
 import { deleteDoc, doc } from 'firebase/firestore';
@@ -26,6 +26,7 @@ export default function ClassManagement() {
   const schoolId = userProfile?.schoolId;
 
   const [classes, setClasses] = useState([]);
+  const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Form State
@@ -39,18 +40,45 @@ export default function ClassManagement() {
     if (!schoolId) return;
     
     setLoading(true);
-    const unsubscribe = subscribeToSubCollection(schoolId, 'classes', (data) => {
+    let classesLoaded = false;
+    let studentsLoaded = false;
+
+    const checkLoading = () => {
+      if (classesLoaded && studentsLoaded) setLoading(false);
+    };
+
+    const unsubscribeClasses = subscribeToSubCollection(schoolId, 'classes', (data) => {
       // Sort alphabetically
       data.sort((a, b) => {
         if(a.name === b.name) return a.section.localeCompare(b.section);
         return a.name.localeCompare(b.name);
       });
       setClasses(data.length > 0 ? data : mockClasses);
-      setLoading(false);
+      classesLoaded = true;
+      checkLoading();
     });
 
-    return () => unsubscribe();
+    const unsubscribeStudents = subscribeToSubCollection(schoolId, 'students', (data) => {
+      setStudents(data);
+      studentsLoaded = true;
+      checkLoading();
+    });
+
+    return () => {
+      unsubscribeClasses();
+      unsubscribeStudents();
+    };
   }, [schoolId]);
+
+  const classStats = useMemo(() => {
+    const stats = {};
+    students.forEach(student => {
+      if (student.classId) {
+        stats[student.classId] = (stats[student.classId] || 0) + 1;
+      }
+    });
+    return stats;
+  }, [students]);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -219,7 +247,7 @@ export default function ClassManagement() {
 
               <div className="flex items-center gap-2 text-slate-500 text-sm mt-4 pt-4 border-t border-slate-100">
                 <Users size={16} />
-                <span>0 Students currently assigned</span>
+                <span>{classStats[cls.id] || 0} Students currently assigned</span>
               </div>
             </div>
           ))}

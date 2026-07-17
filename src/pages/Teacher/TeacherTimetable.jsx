@@ -24,13 +24,21 @@ export default function TeacherTimetable() {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
   useEffect(() => {
-    if (!schoolId || !userProfile?.uid) return;
+    if (!schoolId || !userProfile) return;
 
-    let teachersUnsub, classesUnsub, timetablesUnsub;
+    let teachersData = [];
+    let classesData = [];
+    let timetablesData = [];
+    let loaded = { t: false, c: false, tt: false };
 
-    // We need to fetch teachers to find the current teacher's ID
-    teachersUnsub = subscribeToSubCollection(schoolId, 'teachers', (teachersData) => {
-      const currentTeacher = teachersData.find(t => t.userId === userProfile.uid || t.email === userProfile.email);
+    const processTimetable = () => {
+      if (!loaded.t || !loaded.c || !loaded.tt) return;
+
+      // Find current teacher by email or userId
+      const currentTeacher = teachersData.find(t => 
+        (t.userId && userProfile.id && t.userId === userProfile.id) || 
+        (t.email && userProfile.email && t.email === userProfile.email)
+      );
       const teacherId = currentTeacher?.id;
 
       if (!teacherId) {
@@ -38,85 +46,104 @@ export default function TeacherTimetable() {
         return;
       }
 
-      // Fetch classes for class names
-      classesUnsub = subscribeToSubCollection(schoolId, 'classes', (classesData) => {
-        const classMap = {};
-        classesData.forEach(c => {
-          classMap[c.id] = `${c.name} - Section ${c.section}`;
-        });
+      // Map classes
+      const classMap = {};
+      classesData.forEach(c => {
+        classMap[c.id] = `${c.name} - Section ${c.section}`;
+      });
 
-        // Fetch timetables
-        timetablesUnsub = subscribeToSubCollection(schoolId, 'timetables', (timetablesData) => {
-          const newSubjectSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
-          let newClassSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
+      const newSubjectSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
+      let newClassSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
+      let hasClass = !!currentTeacher?.assignedClassId;
 
-          let hasClass = false;
-
-          // timetablesData is an array of documents where id is the classId
-          timetablesData.forEach(classTimetable => {
-            const classId = classTimetable.id;
-            const className = classMap[classId] || 'Unknown Class';
-            const scheduleData = classTimetable.schedule || {};
-            
-            // Check if this is the teacher's assigned class
-            if (currentTeacher?.assignedClassId === classId) {
-              hasClass = true;
-              days.forEach(day => {
-                const daySlots = scheduleData[day] || [];
-                daySlots.forEach(slot => {
-                  newClassSchedule[day].push({
-                    id: slot.id + classId,
-                    time: `${slot.startTime} - ${slot.endTime}`,
-                    startTime: slot.startTime,
-                    subject: slot.subject,
-                    class: className,
-                    room: `Room (Auto)`,
-                    teacher: slot.teacher || 'Unassigned'
-                  });
-                });
-              });
-            }
-
-            days.forEach(day => {
-              const daySlots = scheduleData[day] || [];
-              daySlots.forEach(slot => {
-                // If slot has a teacherId, match it. Fallback: match by teacher name if no ID is stored yet.
-                const matchesId = slot.teacherId === teacherId;
-                const matchesName = !slot.teacherId && currentTeacher && slot.teacher === (currentTeacher.name || `${currentTeacher.firstName} ${currentTeacher.lastName}`);
-                
-                if (matchesId || matchesName) {
-                  newSubjectSchedule[day].push({
-                    id: slot.id + classId, // Make unique
-                    time: `${slot.startTime} - ${slot.endTime}`,
-                    startTime: slot.startTime, // For sorting
-                    subject: slot.subject,
-                    class: className,
-                    room: `Room (Auto)` // Room management is not implemented in slots yet
-                  });
-                }
+      timetablesData.forEach(classTimetable => {
+        const classId = classTimetable.id;
+        const className = classMap[classId] || 'Unknown Class';
+        const scheduleData = classTimetable.schedule || {};
+        
+        // 1. Fill Class Teacher Timetable
+        if (currentTeacher?.assignedClassId === classId) {
+          days.forEach(day => {
+            const daySlots = scheduleData[day] || [];
+            daySlots.forEach(slot => {
+              newClassSchedule[day].push({
+                id: slot.id + classId,
+                time: `${slot.startTime} - ${slot.endTime}`,
+                startTime: slot.startTime,
+                subject: slot.subject,
+                class: className,
+                room: `Room (Auto)`,
+                teacher: slot.teacher || 'Unassigned'
               });
             });
           });
+        }
 
-          // Sort slots by time for each day
-          days.forEach(day => {
-            newSubjectSchedule[day].sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
-            newClassSchedule[day].sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+        // 2. Fill Subject Teacher Timetable
+        // A teacher teaches a subject if:
+        // - They are assigned as Subject Teacher for this class (subjectClassIds array)
+        // OR - Their teacherId matches the slot's teacherId
+        // OR - Their name matches the slot's teacher name
+        const isSubjectClass = currentTeacher?.subjectClassIds?.includes(classId);
+
+        days.forEach(day => {
+          const daySlots = scheduleData[day] || [];
+          daySlots.forEach(slot => {
+            const matchesId = slot.teacherId === teacherId;
+            const matchesName = !slot.teacherId && currentTeacher && slot.teacher === (currentTeacher.name || `${currentTeacher.firstName} ${currentTeacher.lastName}`);
+            
+            if (isSubjectClass || matchesId || matchesName) {
+              // Ensure we don't duplicate slots if both conditions are somehow met
+              const exists = newSubjectSchedule[day].some(s => s.id === slot.id + classId);
+              if (!exists) {
+                newSubjectSchedule[day].push({
+                  id: slot.id + classId,
+                  time: `${slot.startTime} - ${slot.endTime}`,
+                  startTime: slot.startTime,
+                  subject: slot.subject,
+                  class: className,
+                  room: `Room (Auto)`
+                });
+              }
+            }
           });
-
-          setIsClassTeacher(hasClass);
-          setSubjectTimetable(newSubjectSchedule);
-          setClassTimetable(newClassSchedule);
-          setSchedule(viewType === 'class' && hasClass ? newClassSchedule : newSubjectSchedule);
-          setLoading(false);
         });
       });
+
+      // Sort slots by time for each day
+      days.forEach(day => {
+        newSubjectSchedule[day].sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+        newClassSchedule[day].sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''));
+      });
+
+      setIsClassTeacher(hasClass);
+      setSubjectTimetable(newSubjectSchedule);
+      setClassTimetable(newClassSchedule);
+      setLoading(false);
+    };
+
+    const teachersUnsub = subscribeToSubCollection(schoolId, 'teachers', (data) => {
+      teachersData = data;
+      loaded.t = true;
+      processTimetable();
+    });
+
+    const classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      classesData = data;
+      loaded.c = true;
+      processTimetable();
+    });
+
+    const timetablesUnsub = subscribeToSubCollection(schoolId, 'timetables', (data) => {
+      timetablesData = data;
+      loaded.tt = true;
+      processTimetable();
     });
 
     return () => {
-      if (teachersUnsub) teachersUnsub();
-      if (classesUnsub) classesUnsub();
-      if (timetablesUnsub) timetablesUnsub();
+      teachersUnsub();
+      classesUnsub();
+      timetablesUnsub();
     };
   }, [schoolId, userProfile]);
 
@@ -164,7 +191,7 @@ export default function TeacherTimetable() {
 
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
         <div className="flex-1 overflow-auto p-2 sm:p-6 custom-scrollbar">
-          <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 min-w-[1000px] xl:min-w-0">
+          <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 min-w-[1000px] xl:min-w-0 items-start">
             {days.map(day => (
               <div key={day} className="flex flex-col bg-slate-50/50 rounded-2xl border border-slate-100 p-4">
                 <div className="text-center pb-4 mb-4 border-b border-slate-200">
