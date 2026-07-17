@@ -40,7 +40,7 @@ export default function StaffAssignment() {
     firstName: '',
     lastName: '',
     email: '',
-    role: 'teacher',
+    role: 'Staffs',
     assignedClassId: '',
     staff_type: 'teaching'
   });
@@ -162,7 +162,7 @@ export default function StaffAssignment() {
                 lastName: row['Last Name'],
                 name: `${row['First Name']} ${row['Last Name']}`,
                 email: row['Email'],
-                role: row['Role'] || 'teacher',
+                role: row['Role'] || 'Staffs',
                 assignedClassId: row['Assigned Class ID'] || '',
                 status: 'Active',
                 createdAt: new Date().toISOString()
@@ -238,7 +238,7 @@ export default function StaffAssignment() {
       });
       toast.success("Staff member added successfully!");
       setAddStaffModalOpen(false);
-      setNewStaff({ firstName: '', lastName: '', email: '', role: 'teacher', assignedClassId: '', staff_type: 'teaching' });
+      setNewStaff({ firstName: '', lastName: '', email: '', role: 'Staffs', assignedClassId: '', staff_type: 'teaching' });
     } catch (error) {
       console.error("Error adding staff:", error);
       toast.error("Failed to add staff member.");
@@ -257,7 +257,7 @@ export default function StaffAssignment() {
     const exportData = staff.map(member => ({
       'Name': member.name || `${member.firstName} ${member.lastName}`,
       'Email': member.email,
-      'Role': member.role || 'Teacher',
+      'Role': member.role || 'Staffs',
       'Assigned Class': getClassName(member.assignedClassId),
       'Subject Classes': (member.subjectClassIds || []).map(getClassName).join(', ')
     }));
@@ -287,7 +287,7 @@ export default function StaffAssignment() {
       const rowData = [
         member.name || `${member.firstName} ${member.lastName}`,
         member.email || 'N/A',
-        (member.role || 'Teacher').toUpperCase(),
+        (member.role || 'Staffs').toUpperCase(),
         getClassName(member.assignedClassId),
         (member.subjectClassIds || []).map(getClassName).join(', ')
       ];
@@ -310,7 +310,7 @@ export default function StaffAssignment() {
     const name = member.name || `${member.firstName} ${member.lastName}`;
     const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase()) || 
            (member.email && member.email.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesRole = roleFilter === 'all' || (member.role || 'teacher') === roleFilter;
+    const matchesRole = roleFilter === 'all' || (member.role || 'Staffs') === roleFilter;
     const matchesStatus = statusFilter === 'all' || (member.status || 'Active') === statusFilter;
     
     if (!(matchesSearch && matchesRole && matchesStatus)) return false;
@@ -326,7 +326,8 @@ export default function StaffAssignment() {
   // Metrics
   const totalStaff = staff.length;
   const activeStaff = staff.filter(s => (s.status || 'Active') === 'Active').length;
-  const teachingStaff = staff.filter(s => (s.role || 'teacher') === 'teacher').length;
+  const teachingRoles = ['Correspondent', 'Principal', 'Vice Principal', 'Subject Wise Head', 'Class Incharge', 'Staffs'];
+  const teachingStaff = staff.filter(s => teachingRoles.includes(s.role || 'Staffs')).length;
   const nonTeachingStaff = totalStaff - teachingStaff;
 
   // Pagination Logic
@@ -493,10 +494,21 @@ export default function StaffAssignment() {
               className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="all">All Roles</option>
-              <option value="teacher">Teachers</option>
-              <option value="librarian">Librarians</option>
-              <option value="accountant">Accountants</option>
-              <option value="warden">Wardens</option>
+              <option value="Correspondent">Correspondent</option>
+              <option value="Principal">Principal</option>
+              <option value="Vice Principal">Vice Principal</option>
+              <option value="Subject Wise Head">Subject Wise Head</option>
+              <option value="Class Incharge">Class Incharge</option>
+              <option value="Staffs">Staffs</option>
+              <option value="Administrative Officer">Administrative Officer</option>
+              <option value="Finance Department">Finance Department</option>
+              <option value="Library">Library</option>
+              <option value="Canteen">Canteen</option>
+              <option value="Transport">Transport</option>
+              <option value="Janitors">Janitors</option>
+              <option value="Hostel">Hostel</option>
+              <option value="Inventory">Inventory</option>
+              <option value="Security">Security</option>
             </select>
             <select 
               value={statusFilter}
@@ -565,19 +577,19 @@ export default function StaffAssignment() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-wrap gap-1.5 max-w-[280px]">
                           {isAssigned && (
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-primary-50 text-primary-700 border border-primary-200 w-fit">
-                              {getClassName(member.assignedClassId)} (Class Tr.)
+                            <span className="inline-flex items-center px-2 py-0.5 rounded border border-primary-200/60 bg-primary-50/50 text-primary-700 text-[11px] font-semibold uppercase tracking-wide">
+                              {getClassName(member.assignedClassId)} (Class)
                             </span>
                           )}
                           {member.subjectClassIds?.map(id => (
-                            <span key={id} className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 w-fit">
-                              {getClassName(id)} (Subj Tr.)
+                            <span key={id} className="inline-flex items-center px-2 py-0.5 rounded border border-indigo-200/60 bg-indigo-50/50 text-indigo-700 text-[11px] font-semibold uppercase tracking-wide">
+                              {getClassName(id)} (Subj)
                             </span>
                           ))}
                           {!isAssigned && (!member.subjectClassIds || member.subjectClassIds.length === 0) && (
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200 w-fit">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded border border-slate-200/60 bg-slate-50/50 text-slate-500 text-[11px] font-semibold uppercase tracking-wide">
                               Unassigned
                             </span>
                           )}
@@ -613,9 +625,9 @@ export default function StaffAssignment() {
                           </button>
                           <button 
                             onClick={() => openAssignModal(member)}
-                            className="px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
+                            className="px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors"
                           >
-                            {isAssigned ? 'Change Class' : 'Assign'}
+                            {isAssigned ? 'Edit' : 'Assign'}
                           </button>
                         </div>
                       </td>
@@ -860,10 +872,21 @@ export default function StaffAssignment() {
                     onChange={(e) => setNewStaff({...newStaff, role: e.target.value})}
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                   >
-                    <option value="teacher">Teacher</option>
-                    <option value="librarian">Librarian</option>
-                    <option value="accountant">Accountant</option>
-                    <option value="warden">Warden</option>
+                    <option value="Correspondent">Correspondent</option>
+                    <option value="Principal">Principal</option>
+                    <option value="Vice Principal">Vice Principal</option>
+                    <option value="Subject Wise Head">Subject Wise Head</option>
+                    <option value="Class Incharge">Class Incharge</option>
+                    <option value="Staffs">Staffs</option>
+                    <option value="Administrative Officer">Administrative Officer</option>
+                    <option value="Finance Department">Finance Department</option>
+                    <option value="Library">Library</option>
+                    <option value="Canteen">Canteen</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Janitors">Janitors</option>
+                    <option value="Hostel">Hostel</option>
+                    <option value="Inventory">Inventory</option>
+                    <option value="Security">Security</option>
                   </select>
                 </div>
                 <div>
@@ -935,7 +958,7 @@ export default function StaffAssignment() {
                   <h3 className="text-xl font-bold text-slate-900">
                     {selectedStaffToView.name || `${selectedStaffToView.firstName} ${selectedStaffToView.lastName}`}
                   </h3>
-                  <p className="text-sm font-medium text-indigo-600 capitalize">{selectedStaffToView.role || 'Teacher'}</p>
+                  <p className="text-sm font-medium text-indigo-600 capitalize">{selectedStaffToView.role || 'Staffs'}</p>
                 </div>
               </div>
 

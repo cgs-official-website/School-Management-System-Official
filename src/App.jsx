@@ -49,18 +49,12 @@ const BillingDashboard = lazy(() => import('./pages/Admin/BillingDashboard'));
 const UpgradePlan = lazy(() => import('./pages/Admin/UpgradePlan'));
 const AdminCalendar = lazy(() => import('./pages/Admin/Calendar'));
 const AdminOverview = lazy(() => import('./pages/Admin/AdminOverview'));
-const AttendanceManagement = lazy(() => import('./pages/Admin/AttendanceManagement'));
-const HostelManagement = lazy(() => import('./pages/Admin/HostelManagement'));
-const InventoryManagement = lazy(() => import('./pages/Admin/InventoryManagement'));
 const HRPayrollManagement = lazy(() => import('./pages/Admin/HRPayrollManagement'));
 const ReportsAnalytics = lazy(() => import('./pages/Admin/ReportsAnalytics'));
-const HealthRecords = lazy(() => import('./pages/Admin/HealthRecords'));
-const ComplaintRedressal = lazy(() => import('./pages/Admin/ComplaintRedressal'));
-const AlumniManagement = lazy(() => import('./pages/Admin/AlumniManagement'));
-const DocumentManagement = lazy(() => import('./pages/Admin/DocumentManagement'));
-const MultiBranchManagement = lazy(() => import('./pages/Admin/MultiBranchManagement'));
 const FormBuilder = lazy(() => import('./pages/Admin/FormBuilder'));
 const SubjectManagement = lazy(() => import('./pages/Admin/SubjectManagement'));
+const RolesPermissions = lazy(() => import('./pages/Admin/RolesPermissions'));
+const AdminAttendance = lazy(() => import('./pages/Admin/Attendance'));
 
 // Teacher
 const TeacherRegistration = lazy(() => import('./pages/TeacherRegistration'));
@@ -74,10 +68,10 @@ const HomeworkManagement = lazy(() => import('./pages/Teacher/HomeworkManagement
 const TeacherCalendar = lazy(() => import('./pages/Teacher/Calendar'));
 const TeacherTimetable = lazy(() => import('./pages/Teacher/TeacherTimetable'));
 const LessonPlans = lazy(() => import('./pages/Teacher/LessonPlans'));
-const TeacherLeave = lazy(() => import('./pages/Teacher/TeacherLeave'));
 const PerformanceTracking = lazy(() => import('./pages/Teacher/PerformanceTracking'));
 const ResourceSharing = lazy(() => import('./pages/Teacher/ResourceSharing'));
 const PTMScheduler = lazy(() => import('./pages/Teacher/PTMScheduler'));
+const MySalary = lazy(() => import('./pages/Teacher/MySalary'));
 
 // Parent
 const ParentRegistration = lazy(() => import('./pages/ParentRegistration'));
@@ -89,7 +83,7 @@ const HomeworkOverview = lazy(() => import('./pages/Parent/HomeworkOverview'));
 const ParentCalendar = lazy(() => import('./pages/Parent/Calendar'));
 const ParentCanteen = lazy(() => import('./pages/Parent/Canteen'));
 
-import { Toaster, toast } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
@@ -177,6 +171,7 @@ function App() {
               <Route path="subjects" element={<SubjectManagement />} />
               <Route path="classes" element={<ClassManagement />} />
               <Route path="students" element={<StudentManagement />} />
+              <Route path="attendance" element={<AdminAttendance />} />
               <Route path="staff" element={<StaffAssignment />} />
               <Route path="links" element={<LinkGenerator />} />
               <Route path="fees" element={<FeeManagement />} />
@@ -189,16 +184,9 @@ function App() {
               <Route path="billing" element={<BillingDashboard />} />
               <Route path="upgrade" element={<UpgradePlan />} />
               <Route path="calendar" element={<AdminCalendar />} />
-              <Route path="attendance" element={<AttendanceManagement />} />
-              <Route path="hostel" element={<HostelManagement />} />
-              <Route path="inventory" element={<InventoryManagement />} />
               <Route path="hr-payroll" element={<HRPayrollManagement />} />
               <Route path="reports" element={<ReportsAnalytics />} />
-              <Route path="health" element={<HealthRecords />} />
-              <Route path="complaints" element={<ComplaintRedressal />} />
-              <Route path="alumni" element={<AlumniManagement />} />
-              <Route path="documents" element={<DocumentManagement />} />
-              <Route path="branches" element={<MultiBranchManagement />} />
+              <Route path="roles" element={<RolesPermissions />} />
             </Route>
 
             {/* Teacher Routes */}
@@ -220,10 +208,10 @@ function App() {
               <Route path="calendar" element={<TeacherCalendar />} />
               <Route path="timetable" element={<TeacherTimetable />} />
               <Route path="lesson-plans" element={<LessonPlans />} />
-              <Route path="leave" element={<TeacherLeave />} />
               <Route path="performance" element={<PerformanceTracking />} />
               <Route path="resources" element={<ResourceSharing />} />
               <Route path="ptm" element={<PTMScheduler />} />
+              <Route path="salary" element={<MySalary />} />
             </Route>
 
             {/* Parent Routes */}

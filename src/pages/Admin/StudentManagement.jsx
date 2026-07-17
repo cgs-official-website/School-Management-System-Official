@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/config';
@@ -167,17 +167,36 @@ export default function StudentManagement() {
             
             let successCount = 0;
             let skipCount = 0;
-            const existingAdmissions = new Set(students.map(s => s.admissionNumber?.toLowerCase()));
+            let replaceCount = 0;
+            const importedAdmissions = new Set();
+            const existingAdmissionsMap = new Map(students.map(s => [s.admissionNumber?.toLowerCase(), s]));
 
             for (let i = 0; i < data.length; i++) {
               const row = data[i];
               if (row['Full Name'] && row['Admission Number']) {
                 const admissionNumber = row['Admission Number']?.toString().trim();
                 
-                if (!admissionNumber || existingAdmissions.has(admissionNumber.toLowerCase())) {
+                if (!admissionNumber) {
                   skipCount++;
                   continue;
                 }
+
+                const lowerAdmission = admissionNumber.toLowerCase();
+
+                // Skip duplicates within the imported file itself
+                if (importedAdmissions.has(lowerAdmission)) {
+                  skipCount++;
+                  continue;
+                }
+
+                // If exists in database, delete the old one completely to replace it
+                if (existingAdmissionsMap.has(lowerAdmission)) {
+                  const existingStudent = existingAdmissionsMap.get(lowerAdmission);
+                  await deleteDoc(doc(db, 'schools', schoolId, 'students', existingStudent.id));
+                  replaceCount++;
+                }
+
+                importedAdmissions.add(lowerAdmission);
 
                 const fullName = row['Full Name'].toString().trim();
                 const nameParts = fullName.split(' ');
@@ -219,12 +238,11 @@ export default function StudentManagement() {
                   classId: '',
                   createdAt: new Date().toISOString()
                 });
-                existingAdmissions.add(admissionNumber.toLowerCase());
                 successCount++;
               }
             }
-            if (skipCount > 0) {
-              toast.success(`Imported ${successCount} students. Skipped ${skipCount} duplicates.`, { id: loadingToastId });
+            if (skipCount > 0 || replaceCount > 0) {
+              toast.success(`Imported ${successCount} (Replaced: ${replaceCount}). Skipped ${skipCount} duplicates.`, { id: loadingToastId });
             } else {
               toast.success(`Successfully imported ${successCount} students!`, { id: loadingToastId });
             }

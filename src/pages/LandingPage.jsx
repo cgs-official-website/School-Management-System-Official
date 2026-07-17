@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform, useSpring, useMotionValue, useReducedM
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, MeshDistortMaterial } from '@react-three/drei';
 import { LuAtom as Atom, LuSparkles as Sparkles, LuShieldCheck as ShieldCheck, LuUsers as Users, LuChevronRight as ChevronRight, LuZap as Zap, LuGlobe as Globe, LuCheck as Check, LuGraduationCap as GraduationCap, LuBookOpen as BookOpen, LuLaptop as Laptop, LuMail as Mail, LuMapPin as MapPin, LuPhone as Phone, LuMenu as Menu, LuX as X, LuBriefcase, LuClock as Clock, LuMessageSquare as MessageSquare, LuFileText as FileText } from 'react-icons/lu';
-import { getPlans } from '../firebase/firestore';
+import { subscribeToSubscriptionPlans } from '../firebase/firestore';
 
 // --- 3D Background Component ---
 function Hero3DBackground() {
@@ -85,16 +85,15 @@ export default function LandingPage() {
   const navPy = useTransform(scrollY, [0, 80], ['1.5rem', '1rem']);
 
   useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        const fetchedPlans = await getPlans();
-        setPlans(fetchedPlans);
-      } catch (err) {
-        console.error("Failed to fetch plans", err);
-      }
-    };
-    fetchPlans();
+    const unsub = subscribeToSubscriptionPlans((data) => {
+      const order = ['base', 'standard', 'premium', 'enterprise'];
+      const sortedPlans = [...data].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+      setPlans(sortedPlans);
+    });
 
+    return () => unsub();
+  }, []);
+  useEffect(() => {
     const handleMouseMove = (e) => {
       mouseX.set(e.clientX / window.innerWidth - 0.5);
       mouseY.set(e.clientY / window.innerHeight - 0.5);
@@ -319,86 +318,112 @@ export default function LandingPage() {
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mb-20"
+              className="text-center mb-16"
             >
               <h2 className="text-4xl lg:text-5xl font-black mb-4 tracking-tight">Simple, transparent pricing</h2>
               <p className="text-lg text-[#A8A0AC] max-w-2xl mx-auto">Choose the perfect plan for your institution. Upgrade at any time as your school grows.</p>
             </motion.div>
             
             {plans.length === 0 ? (
-              <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                {[1,2,3].map(i => (
-                  <div key={i} className="h-96 lg:h-[500px] bg-[#1a1625]/50 animate-pulse rounded-[40px] border border-primary-900/30"></div>
-                ))}
+              <div className="flex justify-center items-center h-64">
+                <div className="w-10 h-10 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
               </div>
             ) : (
-              <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
-                {plans.map((plan, idx) => {
-                  const isPopular = idx === 1; // Highlight middle plan
-                  
-                  return (
-                    <motion.div 
-                      key={plan.id}
-                      initial={{ opacity: 0, y: 40 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: idx * 0.15 }}
-                      className={`rounded-[40px] p-8 flex flex-col relative group transition-all duration-300 ${
-                        isPopular 
-                          ? 'bg-gradient-to-b from-[#2a1a35] to-[#1a1625] border-2 border-primary-400 shadow-[0_0_40px_rgba(229,189,223,0.15)] md:scale-105 z-10' 
-                          : 'bg-[#1a1625]/60 backdrop-blur-xl border border-primary-900/40 hover:border-primary-400/40'
-                      }`}
-                    >
-                      {isPopular && (
-                        <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-primary-400 text-[#12101A] font-bold text-xs uppercase tracking-widest py-1 px-4 rounded-full">
-                          Most Popular
-                        </div>
-                      )}
-                      
-                      <div className="mb-8">
-                        <h3 className="text-2xl font-black mb-2 uppercase tracking-wide">{plan.name}</h3>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-5xl font-black text-primary-400">₹{plan.priceMonthly}</span>
-                          <span className="text-[#A8A0AC] font-bold">/mo</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex-1">
-                        <ul className="space-y-4 mb-8">
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 text-primary-400"><Check size={18} strokeWidth={3} /></div>
-                            <span className="text-[#F5F5F7]">Up to <strong>{plan.limits.maxStudents}</strong> Students</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 text-primary-400"><Check size={18} strokeWidth={3} /></div>
-                            <span className="text-[#F5F5F7]">Up to <strong>{plan.limits.maxStaff}</strong> Staff</span>
-                          </li>
-                          <li className="flex items-start gap-3">
-                            <div className="mt-1 text-primary-400"><Check size={18} strokeWidth={3} /></div>
-                            <span className="text-[#F5F5F7]"><strong>{plan.limits.storageGB}GB</strong> Storage</span>
-                          </li>
-                          {plan.features?.map((feat, fidx) => (
-                            <li key={fidx} className="flex items-start gap-3">
-                              <div className="mt-1 text-primary-400"><Check size={18} strokeWidth={3} /></div>
-                              <span className="text-[#F5F5F7]">{feat}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      
-                      <button 
-                        onClick={() => window.open(`/register?plan=${plan.id}`, '_blank')}
-                        className={`w-full py-4 font-bold text-lg rounded-2xl transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#12101A] focus:ring-primary-400 ${
+              <div className="overflow-x-auto custom-scrollbar pb-8 pt-6 -mt-6 px-2 -mx-2">
+                <div className="min-w-[1000px] grid grid-cols-4 gap-4">
+                  {plans.map((plan, idx) => {
+                    const isPopular = plan.id === 'premium';
+                    
+                    return (
+                      <motion.div 
+                        key={plan.id}
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: idx * 0.1 }}
+                        className={`rounded-3xl flex flex-col relative transition-all duration-300 ${
                           isPopular 
-                            ? 'bg-primary-400 text-[#12101A] hover:bg-primary-300' 
-                            : 'bg-[#3D2A4A] text-white hover:bg-[#6B4A73]'
+                            ? 'bg-gradient-to-b from-[#2a1a35] to-[#1a1625] border-2 border-primary-400 shadow-[0_0_30px_rgba(229,189,223,0.15)] z-10' 
+                            : 'bg-[#1a1625]/60 backdrop-blur-xl border border-primary-900/40 hover:border-primary-400/40 mt-4'
                         }`}
                       >
-                        Get Started
-                      </button>
-                    </motion.div>
-                  )
-                })}
+                        {isPopular && (
+                          <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary-400 text-[#12101A] font-bold text-xs uppercase tracking-widest py-1 px-4 rounded-full">
+                            Most Popular
+                          </div>
+                        )}
+                        
+                        <div className={`p-6 border-b ${isPopular ? 'border-primary-900/50' : 'border-primary-900/30'}`}>
+                          <h3 className="text-2xl font-black mb-4 uppercase tracking-wide text-center">{plan.name}</h3>
+                          <div className="text-center mb-6 h-16 flex flex-col justify-center">
+                            {plan.custom ? (
+                              <span className="text-3xl font-black text-[#F5F5F7]">Custom Pricing</span>
+                            ) : (
+                              <div className="flex flex-col items-center justify-center">
+                                <div className="flex items-baseline gap-1">
+                                  <span className="text-4xl font-black text-primary-400">INR {plan.pricePerUserPerYear}</span>
+                                </div>
+                                <span className="text-[#A8A0AC] font-medium text-sm">per user / year</span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="space-y-3 mb-6">
+                            <div className="flex justify-between items-center bg-[#12101A]/50 p-3 rounded-xl border border-primary-900/20">
+                              <span className="text-[#A8A0AC] text-sm font-medium">User Limit</span>
+                              <span className="text-[#F5F5F7] font-bold">{plan.custom ? 'Unlimited' : plan.userLimit}</span>
+                            </div>
+                            <div className="flex justify-between items-center bg-[#12101A]/50 p-3 rounded-xl border border-primary-900/20">
+                              <span className="text-[#A8A0AC] text-sm font-medium">Cloud Storage</span>
+                              <span className="text-[#F5F5F7] font-bold">{plan.custom ? 'Custom' : `${plan.cloudStorageGB} GB`}</span>
+                            </div>
+                          </div>
+
+                          <button 
+                            onClick={() => window.open(plan.custom ? '#contact' : `/register?plan=${plan.id}`, '_self')}
+                            className={`w-full py-3.5 font-bold text-sm uppercase tracking-wider rounded-xl transition-all shadow-sm ${
+                              isPopular 
+                                ? 'bg-primary-400 text-[#12101A] hover:bg-primary-300' 
+                                : 'bg-[#3D2A4A] text-white hover:bg-[#6B4A73]'
+                            }`}
+                          >
+                            {plan.custom ? 'Contact Us' : 'Get Started'}
+                          </button>
+                        </div>
+                        
+                        <div className="p-6 flex-1">
+                          <h4 className="text-xs font-bold text-[#A8A0AC] uppercase tracking-widest mb-4 text-center">Modules Included</h4>
+                          <ul className="space-y-4">
+                            {[
+                              { key: 'staffManagement', label: 'Staff Management' },
+                              { key: 'studentManagement', label: 'Student Management' },
+                              { key: 'timetable', label: 'Timetable' },
+                              { key: 'feeManagement', label: 'Fee Management' },
+                              { key: 'attendance', label: 'Attendance' },
+                              { key: 'exams', label: 'Exams & Reports' },
+                              { key: 'library', label: 'Library' },
+                              { key: 'transport', label: 'Transport' },
+                              { key: 'lms', label: 'LMS Integration' },
+                              { key: 'apiIntegration', label: 'API Integration' }
+                            ].map((mod) => {
+                              const isIncluded = plan.modules && plan.modules[mod.key];
+                              return (
+                                <li key={mod.key} className="flex justify-between items-center border-b border-primary-900/20 pb-3 last:border-0 last:pb-0">
+                                  <span className={`text-sm font-medium ${isIncluded ? 'text-[#F5F5F7]' : 'text-[#A8A0AC]'}`}>{mod.label}</span>
+                                  {isIncluded ? (
+                                    <div className="text-emerald-400 bg-emerald-400/10 p-1 rounded-full"><Check size={14} strokeWidth={3} /></div>
+                                  ) : (
+                                    <div className="text-red-400 bg-red-400/10 p-1 rounded-full"><X size={14} strokeWidth={3} /></div>
+                                  )}
+                                </li>
+                              )
+                            })}
+                          </ul>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
               </div>
             )}
           </div>

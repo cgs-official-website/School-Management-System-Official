@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LuUsers as Users, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuMessageSquare as MessageSquare, LuLock as Lock, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuBuilding2 as Building2, LuCalendarDays, LuBookOpen, LuCalendarOff, LuTrendingUp, LuFolderDown, LuCalendarClock } from 'react-icons/lu';
+import { LuUsers as Users, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuMessageSquare as MessageSquare, LuLock as Lock, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuBuilding2 as Building2, LuCalendarDays, LuBookOpen, LuCalendarOff, LuTrendingUp, LuFolderDown, LuCalendarClock, LuBanknote } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
 import { useAuth } from '../context/AuthContext';
 import { getDoc, doc } from 'firebase/firestore';
@@ -57,7 +57,7 @@ export default function TeacherDashboard() {
     { name: 'PTM Scheduler', path: '/teacher/ptm', icon: LuCalendarClock },
     { name: 'Grades & Exams', path: '/teacher/grades', icon: GraduationCap },
     { name: 'Messages', path: '/teacher/chat', icon: MessageSquare },
-    { name: 'Leave Application', path: '/teacher/leave', icon: LuCalendarOff },
+    { name: 'My Salary', path: '/teacher/salary', icon: LuBanknote },
   ];
 
   if (loading) {

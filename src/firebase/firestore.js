@@ -1031,3 +1031,78 @@ export const subscribeToInvoices = (schoolId, callback) => {
   });
 };
 
+// --- Subscription Plans ---
+export const subscribeToSubscriptionPlans = (callback) => {
+  return onSnapshot(collection(db, "subscriptionPlans"), (snapshot) => {
+    const plans = [];
+    snapshot.forEach((doc) => {
+      plans.push({ id: doc.id, ...doc.data() });
+    });
+    callback(plans);
+  });
+};
+
+export const updateSubscriptionPlan = async (planId, planData) => {
+  try {
+    const planRef = doc(db, 'subscriptionPlans', planId);
+    await setDoc(planRef, {
+      ...planData,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (error) {
+    console.error("Error updating subscription plan:", error);
+    throw error;
+  }
+};
+
+export const initializeDefaultSubscriptionPlans = async () => {
+  const defaults = [
+    {
+      id: 'base',
+      name: 'Base Plan',
+      userLimit: 300,
+      pricePerUserPerYear: 160,
+      cloudStorageGB: 25,
+      custom: false,
+      modules: { staffManagement: true, studentManagement: true, timetable: true, feeManagement: true, attendance: true, exams: false, library: false, transport: false, lms: false, apiIntegration: false }
+    },
+    {
+      id: 'standard',
+      name: 'Standard Plan',
+      userLimit: 600,
+      pricePerUserPerYear: 240,
+      cloudStorageGB: 60,
+      custom: false,
+      modules: { staffManagement: true, studentManagement: true, timetable: true, feeManagement: true, attendance: true, exams: true, library: true, transport: true, lms: false, apiIntegration: true }
+    },
+    {
+      id: 'premium',
+      name: 'Premium Plan',
+      userLimit: 1200,
+      pricePerUserPerYear: 320,
+      cloudStorageGB: 120,
+      custom: false,
+      modules: { staffManagement: true, studentManagement: true, timetable: true, feeManagement: true, attendance: true, exams: true, library: true, transport: true, lms: true, apiIntegration: true }
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise Plan',
+      userLimit: 0,
+      pricePerUserPerYear: 0,
+      cloudStorageGB: 0,
+      custom: true,
+      modules: { staffManagement: true, studentManagement: true, timetable: true, feeManagement: true, attendance: true, exams: true, library: true, transport: true, lms: true, apiIntegration: true }
+    }
+  ];
+
+  try {
+    for (const plan of defaults) {
+      const { id, ...data } = plan;
+      const planRef = doc(db, 'subscriptionPlans', id);
+      await setDoc(planRef, data, { merge: true });
+    }
+  } catch (error) {
+    console.error("Error initializing subscription plans:", error);
+    throw error;
+  }
+};

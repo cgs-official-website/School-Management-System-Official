@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LuBookOpen as BookOpen, LuUsers as Users, LuLogOut as LogOut, LuLayoutDashboard as LayoutDashboard, LuLink as LinkIcon, LuSettings as Settings, LuCreditCard as CreditCard, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuBus as Bus, LuLibrary as Library, LuFileText as FileText, LuBell as Bell, LuKey as Key, LuMenu as Menu, LuX as X, LuBuilding2 as Building2, LuCheck as CheckSquare, LuHouse as Home, LuPackage as PackageIcon, LuBriefcase as Briefcase, LuChartBar as BarChart2, LuHeartPulse as HeartPulse, LuCircleAlert as AlertCircle, LuFiles as Files, LuChevronDown as ChevronDown, LuChevronRight as ChevronRight } from 'react-icons/lu';
+import { LuBookOpen as BookOpen, LuUsers as Users, LuLogOut as LogOut, LuLayoutDashboard as LayoutDashboard, LuLink as LinkIcon, LuSettings as Settings, LuCreditCard as CreditCard, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuBus as Bus, LuLibrary as Library, LuFileText as FileText, LuBell as Bell, LuKey as Key, LuMenu as Menu, LuX as X, LuBuilding2 as Building2, LuCheck as CheckSquare, LuHouse as Home, LuPackage as PackageIcon, LuBriefcase as Briefcase, LuChartBar as BarChart2, LuHeartPulse as HeartPulse, LuCircleAlert as AlertCircle, LuFiles as Files, LuChevronDown as ChevronDown, LuChevronRight as ChevronRight, LuShield as Shield } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
 import { useAuth } from '../context/AuthContext';
+import usePermissions from '../hooks/usePermissions';
 import { getDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
@@ -10,6 +11,7 @@ import useSchoolBranding from '../hooks/useSchoolBranding';
 
 export default function AdminDashboard() {
   const { userProfile } = useAuth();
+  const { permissions, canRead } = usePermissions();
   const navigate = useNavigate();
   const location = useLocation();
   const [schoolData, setSchoolData] = useState(null);
@@ -79,39 +81,47 @@ export default function AdminDashboard() {
       name: 'Classes & Sections', 
       path: '/admin/classes', 
       icon: BookOpen,
+      moduleKey: 'classes',
       subItems: [
         { name: 'Class List', path: '/admin/classes', icon: BookOpen },
         { name: 'Subject Management', path: '/admin/subjects', icon: BookOpen }
       ]
     },
-    { name: 'Student Directory', path: '/admin/students', icon: Users },
-    { name: 'Staff Management', path: '/admin/staff', icon: GraduationCap },
-    { name: 'HR & Payroll', path: '/admin/hr-payroll', icon: Briefcase, moduleKey: 'hr-payroll' },
+    { name: 'Student Directory', path: '/admin/students', icon: Users, moduleKey: 'students' },
     { name: 'Attendance', path: '/admin/attendance', icon: CheckSquare, moduleKey: 'attendance' },
+    { name: 'Staff Management', path: '/admin/staff', icon: GraduationCap, moduleKey: 'staff' },
+    { name: 'HR & Payroll', path: '/admin/hr-payroll', icon: Briefcase, moduleKey: 'hr-payroll' },
     { name: 'Timetables', path: '/admin/timetables', icon: Calendar, moduleKey: 'timetables' },
     { name: 'Calendar', path: '/admin/calendar', icon: Calendar, moduleKey: 'calendar' },
     { name: 'Exams & Results', path: '/admin/exams', icon: FileText, moduleKey: 'exams' },
     { name: 'Fees & Payments', path: '/admin/fees', icon: CreditCard, moduleKey: 'fees' },
     { name: 'Transport', path: '/admin/transport', icon: Bus, moduleKey: 'transport' },
-    { name: 'Hostel', path: '/admin/hostel', icon: Home, moduleKey: 'hostel' },
     { name: 'Library', path: '/admin/library', icon: Library, moduleKey: 'library' },
-    { name: 'Inventory & Assets', path: '/admin/inventory', icon: PackageIcon, moduleKey: 'inventory' },
-    { name: 'Health & Medical', path: '/admin/health', icon: HeartPulse, moduleKey: 'health' },
-    { name: 'Complaint Redressal', path: '/admin/complaints', icon: AlertCircle, moduleKey: 'complaints' },
-    { name: 'Alumni Management', path: '/admin/alumni', icon: GraduationCap, moduleKey: 'alumni' },
-    { name: 'Document Management', path: '/admin/documents', icon: Files, moduleKey: 'documents' },
-    { name: 'Multi-Branch', path: '/admin/branches', icon: Building2, moduleKey: 'branches' },
     { name: 'Reports & Analytics', path: '/admin/reports', icon: BarChart2, moduleKey: 'reports' },
-    { name: 'API Integrations', path: '/admin/api', icon: Key },
-    { name: 'Registration Links', path: '/admin/links', icon: LinkIcon },
-    { name: 'Billing & Plan', path: '/admin/billing', icon: CreditCard },
-    { name: 'Settings', path: '/admin/form-builder', icon: Settings },
+    { name: 'API Integrations', path: '/admin/api', icon: Key, moduleKey: 'api' },
+    { name: 'Registration Links', path: '/admin/links', icon: LinkIcon, moduleKey: 'links' },
+    { name: 'Billing & Plan', path: '/admin/billing', icon: CreditCard, moduleKey: 'billing' },
+    { name: 'Settings', path: '/admin/form-builder', icon: Settings, moduleKey: 'form-builder' },
+    { name: 'Roles & Permissions', path: '/admin/roles', icon: Shield, moduleKey: 'roles' },
   ];
 
   const permittedModules = schoolData.permittedModules || [];
   const navItems = allNavItems.filter(item => {
     if (!item.moduleKey) return true;
-    return permittedModules.includes(item.moduleKey);
+    
+    // Core modules bypass school subscription check
+    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api'];
+    if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
+       return false;
+    }
+    
+    // Check RBAC permissions
+    if (permissions === 'ALL') {
+       return true;
+    } else {
+       if (item.moduleKey === 'roles') return false; // Only super-admin or owner can edit roles
+       return canRead(item.moduleKey);
+    }
   });
 
   return (
