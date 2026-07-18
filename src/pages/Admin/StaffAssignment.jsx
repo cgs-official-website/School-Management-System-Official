@@ -6,7 +6,7 @@ import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter } from 'react-icons/lu';
+import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter, LuLink as LinkIcon, LuCopy as CopyIcon } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -214,28 +214,256 @@ export default function StaffAssignment() {
     }
   };
 
-  const handleAddStaff = async () => {
-    if (!newStaff.firstName || !newStaff.lastName || !newStaff.email) {
-      toast.error("Please fill in all required fields.");
-      return;
+  const handleSaveStaffEdit = async () => {
+    setSavingStaffEdit(true);
+    try {
+      // Upload any new document files first
+      const docCategories = [
+        'academicCertificates', 'markSheets', 'experienceCertificates',
+        'relievingLetter', 'resume', 'referenceLetters', 'govtIdDocument', 'salarySlips'
+      ];
+      const docUpdates = {};
+      const safeSchoolName = schoolName.replace(/[^a-z0-9]/gi, '_').trim();
+      const staffName = ((editStaffData.firstName || '') + '_' + (editStaffData.lastName || '')).replace(/[^a-z0-9]/gi, '_').trim();
+
+      for (const cat of docCategories) {
+        const newFiles = editStaffDocFiles[cat] || [];
+        if (newFiles.length > 0) {
+          const existingDocs = selectedStaffToView[cat] || [];
+          const uploadedDocs = [];
+          for (const file of newFiles) {
+            const safeFileName = file.name.replace(/[^a-z0-9.]/gi, '_');
+            const storagePath = `${safeSchoolName}/Teachers/${staffName}/${cat}/${safeFileName}`;
+            const fileRef = ref(storage, storagePath);
+            await uploadBytes(fileRef, file);
+            const url = await getDownloadURL(fileRef);
+            uploadedDocs.push({ name: file.name, url });
+          }
+          docUpdates[cat] = [...existingDocs, ...uploadedDocs];
+        }
+      }
+      const updateData = {
+        ...docUpdates,
+        staffId:          (editStaffData.staffId || '').trim(),
+        employeeId:       (editStaffData.staffId || '').trim(),
+        firstName:        (editStaffData.firstName || '').trim(),
+        lastName:         (editStaffData.lastName || '').trim(),
+        name:             `${(editStaffData.firstName || '').trim()} ${(editStaffData.lastName || '').trim()}`.trim(),
+        dob:              (editStaffData.dob || '').trim(),
+        gender:           editStaffData.gender || 'Male',
+        nationality:      (editStaffData.nationality || '').trim(),
+        maritalStatus:    editStaffData.maritalStatus || 'Single',
+        bloodGroup:       (editStaffData.bloodGroup || '').trim(),
+        aadharNumber:     (editStaffData.aadharNumber || '').trim(),
+        languagesKnown:   (editStaffData.languagesKnown || '').trim(),
+        mobileNumber:     (editStaffData.mobileNumber || '').trim(),
+        email:            (editStaffData.email || '').trim(),
+        residentialAddress: (editStaffData.residentialAddress || '').trim(),
+        emergencyContact: (editStaffData.emergencyContact || '').trim(),
+        fatherName:       (editStaffData.fatherName || '').trim(),
+        highestQualification: (editStaffData.highestQualification || '').trim(),
+        degreeSpecialization: (editStaffData.degreeSpecialization || '').trim(),
+        universityName:   (editStaffData.universityName || '').trim(),
+        yearOfPassing:    (editStaffData.yearOfPassing || '').trim(),
+        previousExperience: (editStaffData.previousExperience || '').trim(),
+        previousOrganization: (editStaffData.previousOrganization || '').trim(),
+        subjectSpecialization: (editStaffData.subjectSpecialization || '').trim(),
+        gradesClassesHandled: (editStaffData.gradesClassesHandled || '').trim(),
+        professionalCertifications: (editStaffData.professionalCertifications || '').trim(),
+        role:             editStaffData.role || 'Staffs',
+        staff_type:       editStaffData.staff_type || 'teaching',
+        status:           editStaffData.status || 'Active',
+        // Sensitive — only updated if present
+        govtIdType:       (editStaffData.govtIdType || '').trim(),
+        govtIdNumber:     (editStaffData.govtIdNumber || '').trim(),
+        panNumber:        (editStaffData.panNumber || '').trim(),
+        pfNumber:         (editStaffData.pfNumber || '').trim(),
+        esicNumber:       (editStaffData.esicNumber || '').trim(),
+        uanNumber:        (editStaffData.uanNumber || '').trim(),
+        taxIdDetails:     (editStaffData.taxIdDetails || '').trim(),
+        bankName:         (editStaffData.bankName || '').trim(),
+        bankAccountNumber:(editStaffData.bankAccountNumber || '').trim(),
+        branchName:       (editStaffData.branchName || '').trim(),
+        ifscCode:         (editStaffData.ifscCode || '').trim(),
+        lastUpdatedBy:    userProfile?.name || userProfile?.email || 'Admin',
+        lastUpdatedAt:    new Date().toISOString(),
+      };
+
+      await updateSubDocument(schoolId, 'teachers', selectedStaffToView.id, updateData);
+      const updated = { ...selectedStaffToView, ...updateData };
+      setSelectedStaffToView(updated);
+      setIsStaffEditMode(false);
+      setEditStaffDocFiles({});
+      toast.success('Staff details updated successfully.');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save changes.');
+    } finally {
+      setSavingStaffEdit(false);
+    }
+  };
+
+  const checkStaffUniqueness = (staffIdVal, emailVal, currentId = null) => {
+    const isIdDuplicate = staff.some(
+      s => s.id !== currentId && s.staffId && s.staffId.trim().toLowerCase() === staffIdVal.trim().toLowerCase()
+    );
+    const isEmailDuplicate = staff.some(
+      s => s.id !== currentId && s.email && s.email.trim().toLowerCase() === emailVal.trim().toLowerCase()
+    );
+    return { isIdDuplicate, isEmailDuplicate };
+  };
+
+  const validateStaffForm = (isRegisterPage = false) => {
+    const errors = {};
+    if (!newStaff.staffId?.trim()) errors.staffId = "Staff ID is required";
+    if (!newStaff.firstName?.trim()) errors.firstName = "First name is required";
+    if (!newStaff.email?.trim()) {
+      errors.email = "Email is required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(newStaff.email)) errors.email = "Invalid email format";
+    }
+    
+    // Check duplicates
+    if (newStaff.staffId && newStaff.email) {
+      const { isIdDuplicate, isEmailDuplicate } = checkStaffUniqueness(newStaff.staffId, newStaff.email);
+      if (isIdDuplicate) errors.staffId = "Staff ID must be unique";
+      if (isEmailDuplicate) errors.email = "Email must be unique";
     }
 
-    const isDuplicate = staff.some(s => s.email?.toLowerCase() === newStaff.email.trim().toLowerCase());
-    if (isDuplicate) {
-      toast.error(`Staff member with email ${newStaff.email} already exists.`);
+    if (newStaff.mobileNumber && !/^\d{10}$/.test(newStaff.mobileNumber)) {
+      errors.mobileNumber = "Mobile number must be a 10-digit number";
+    }
+    if (newStaff.emergencyContact && !/^\d{10}$/.test(newStaff.emergencyContact)) {
+      errors.emergencyContact = "Emergency contact must be a 10-digit number";
+    }
+    if (newStaff.aadharNumber && !/^\d{12}$/.test(newStaff.aadharNumber)) {
+      errors.aadharNumber = "Aadhaar number must be a 12-digit number";
+    }
+    if (newStaff.panNumber && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(newStaff.panNumber.toUpperCase())) {
+      errors.panNumber = "Invalid PAN format (e.g. ABCDE1234F)";
+    }
+    if (newStaff.ifscCode && !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(newStaff.ifscCode.toUpperCase())) {
+      errors.ifscCode = "Invalid IFSC Code format (e.g. SBIN0001234)";
+    }
+    if (newStaff.yearOfPassing) {
+      const currentYear = new Date().getFullYear();
+      if (Number(newStaff.yearOfPassing) > currentYear) {
+        errors.yearOfPassing = "Year of passing cannot be in the future";
+      }
+    }
+    if (newStaff.previousExperience && Number(newStaff.previousExperience) < 0) {
+      errors.previousExperience = "Previous experience cannot be negative";
+    }
+    if (newStaff.bankAccountNumber && !/^\d+$/.test(newStaff.bankAccountNumber)) {
+      errors.bankAccountNumber = "Bank account number must contain only digits";
+    }
+
+    if (isRegisterPage) {
+      if (!newStaff.username?.trim()) errors.username = "Username is required";
+      if (!newStaff.password) {
+        errors.password = "Password is required";
+      } else {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(newStaff.password)) {
+          errors.password = "Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
+        }
+      }
+    }
+
+    setAddStaffErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const uploadStaffFile = async (file, path) => {
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+  };
+
+  const uploadAllDocuments = async (staffIdOrEmail) => {
+    const urls = {};
+    const baseFolder = `schools/${schoolId}/teachers/${staffIdOrEmail}`;
+    
+    // Photo
+    if (addStaffFiles.photo) {
+      urls.photoUrl = await uploadStaffFile(addStaffFiles.photo, `${baseFolder}/photo_${addStaffFiles.photo.name}`);
+    }
+
+    const docKeys = [
+      'academicCertificates', 'markSheets', 'experienceCertificates', 
+      'relievingLetter', 'resume', 'referenceLetters', 'govtIdDocument', 'salarySlips'
+    ];
+
+    for (const key of docKeys) {
+      const files = addStaffFiles[key] || [];
+      if (files.length > 0) {
+        const uploadedUrls = [];
+        for (const f of files) {
+          const url = await uploadStaffFile(f, `${baseFolder}/${key}/${f.name}`);
+          uploadedUrls.push({ name: f.name, url });
+        }
+        urls[key] = uploadedUrls;
+      }
+    }
+    return urls;
+  };
+
+  const logStaffAudit = async (staffId, staffName, actionPerformed, modifiedFields = []) => {
+    if (!schoolId) return;
+    try {
+      await addSubDocument(schoolId, 'staff_audit_logs', {
+        staffId,
+        staffName,
+        userName: userProfile?.name || userProfile?.email || 'Unknown User',
+        userRole: userProfile?.role || 'Staff',
+        timestamp: new Date().toISOString(),
+        actionPerformed,
+        modifiedFields
+      });
+    } catch (e) {
+      console.error("Failed to write staff audit log:", e);
+    }
+  };
+
+  const handleAddStaff = async () => {
+    // Trim spaces
+    const trimmed = {};
+    Object.keys(newStaff).forEach(k => {
+      if (typeof newStaff[k] === 'string') {
+        trimmed[k] = newStaff[k].trim();
+      } else {
+        trimmed[k] = newStaff[k];
+      }
+    });
+    newStaff.staffId = trimmed.staffId;
+    newStaff.firstName = trimmed.firstName;
+    newStaff.lastName = trimmed.lastName;
+    newStaff.email = trimmed.email;
+    newStaff.mobileNumber = trimmed.mobileNumber;
+    newStaff.aadharNumber = trimmed.aadharNumber;
+    newStaff.panNumber = trimmed.panNumber;
+    newStaff.ifscCode = trimmed.ifscCode;
+    newStaff.bankAccountNumber = trimmed.bankAccountNumber;
+
+    if (!validateStaffForm(false)) {
+      toast.error("Please resolve the validation errors first.");
       return;
     }
 
     setAddingStaff(true);
     try {
+      const uploadedUrls = await uploadAllDocuments(newStaff.staffId || newStaff.email);
       await addSubDocument(schoolId, 'teachers', {
         ...newStaff,
-        name: `${newStaff.firstName} ${newStaff.lastName}`,
+        ...uploadedUrls,
+        name: `${newStaff.firstName} ${newStaff.lastName || ''}`.trim(),
         email: newStaff.email,
         role: newStaff.role,
         assignedClassId: newStaff.assignedClassId,
         staff_type: newStaff.staff_type || 'teaching',
         status: 'Active',
+        employeeId: newStaff.staffId,
         createdAt: new Date().toISOString()
       });
       toast.success("Staff member added successfully!");
@@ -368,83 +596,14 @@ export default function StaffAssignment() {
           >
             <FileText size={18} /> Export PDF
           </button>
-          <div className="relative">
-            {canCreate('staff') && (
-              <button 
-                onClick={() => setAddStaffModalOpen(true)}
-                className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
-              >
-                <UserPlus size={18} /> Add Staff
-              </button>
-            )}
-
-            {/* Filter icon and dropdown directly below Add Staff button */}
-            <div className="absolute right-0 top-full mt-3 z-30" ref={filterDropdownRef}>
-              <button 
-                onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-                className={`p-2.5 rounded-xl border shadow-sm transition-all flex items-center justify-center relative
-                  ${staffTypeFilter !== 'all' 
-                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
-                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                  }`}
-                title="Filter Staff by Type"
-              >
-                <Filter size={18} />
-                {staffTypeFilter !== 'all' && (
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-white" />
-                )}
-              </button>
-
-              {isFilterDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 p-2 z-50 animate-fade-in-up">
-                  <div className="flex flex-col space-y-1">
-                    <button 
-                      onClick={() => {
-                        setStaffTypeFilter('all');
-                        setIsFilterDropdownOpen(false);
-                      }}
-                      className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between
-                        ${staffTypeFilter === 'all' 
-                          ? 'bg-indigo-50 text-indigo-700 font-semibold' 
-                          : 'text-slate-700 hover:bg-slate-50'
-                        }`}
-                    >
-                      <span>All Staff</span>
-                      {staffTypeFilter === 'all' && <CheckCircle2 size={16} className="text-indigo-600" />}
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setStaffTypeFilter('teaching');
-                        setIsFilterDropdownOpen(false);
-                      }}
-                      className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between
-                        ${staffTypeFilter === 'teaching' 
-                          ? 'bg-indigo-50 text-indigo-700 font-semibold' 
-                          : 'text-slate-700 hover:bg-slate-50'
-                        }`}
-                    >
-                      <span>Teaching Staff</span>
-                      {staffTypeFilter === 'teaching' && <CheckCircle2 size={16} className="text-indigo-600" />}
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setStaffTypeFilter('non-teaching');
-                        setIsFilterDropdownOpen(false);
-                      }}
-                      className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between
-                        ${staffTypeFilter === 'non-teaching' 
-                          ? 'bg-indigo-50 text-indigo-700 font-semibold' 
-                          : 'text-slate-700 hover:bg-slate-50'
-                        }`}
-                    >
-                      <span>Non-Teaching Staff</span>
-                      {staffTypeFilter === 'non-teaching' && <CheckCircle2 size={16} className="text-indigo-600" />}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          {canCreate('staff') && (
+            <button 
+              onClick={() => setAddStaffModalOpen(true)}
+              className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
+            >
+              <UserPlus size={18} /> Add Staff
+            </button>
+          )}
           {canCreate('staff') && (
             <button 
               onClick={() => {
@@ -494,6 +653,73 @@ export default function StaffAssignment() {
             />
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            <div className="relative" ref={filterDropdownRef}>
+              <button 
+                onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+                className={`px-3 py-2.5 rounded-xl border transition-all flex items-center justify-center gap-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500
+                  ${staffTypeFilter !== 'all' 
+                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100' 
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                  }`}
+                title="Filter Staff by Type"
+              >
+                <Filter size={16} />
+                <span>{staffTypeFilter === 'all' ? 'All Types' : staffTypeFilter === 'teaching' ? 'Teaching' : 'Non-Teaching'}</span>
+                {staffTypeFilter !== 'all' && (
+                  <span className="w-2 h-2 bg-rose-500 rounded-full" />
+                )}
+              </button>
+
+              {isFilterDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 p-2 z-30 animate-fade-in-up">
+                  <div className="flex flex-col space-y-1">
+                    <button 
+                      onClick={() => {
+                        setStaffTypeFilter('all');
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between
+                        ${staffTypeFilter === 'all' 
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold' 
+                          : 'text-slate-700 hover:bg-slate-50'
+                        }`}
+                    >
+                      <span>All Staff</span>
+                      {staffTypeFilter === 'all' && <CheckCircle2 size={16} className="text-indigo-600" />}
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setStaffTypeFilter('teaching');
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between
+                        ${staffTypeFilter === 'teaching' 
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold' 
+                          : 'text-slate-700 hover:bg-slate-50'
+                        }`}
+                    >
+                      <span>Teaching Staff</span>
+                      {staffTypeFilter === 'teaching' && <CheckCircle2 size={16} className="text-indigo-600" />}
+                    </button>
+                    <button 
+                      onClick={() => {
+                        setStaffTypeFilter('non-teaching');
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between
+                        ${staffTypeFilter === 'non-teaching' 
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold' 
+                          : 'text-slate-700 hover:bg-slate-50'
+                        }`}
+                    >
+                      <span>Non-Teaching Staff</span>
+                      {staffTypeFilter === 'non-teaching' && <CheckCircle2 size={16} className="text-indigo-600" />}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <select 
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
@@ -612,6 +838,19 @@ export default function StaffAssignment() {
                       </td>
                       <td className="p-4 pr-6 text-right">
                         <div className="flex justify-end gap-2">
+                          {!member.userId && (
+                            <button
+                              onClick={() => {
+                                const inviteUrl = `${window.location.origin}/register/teacher/${schoolId}?email=${encodeURIComponent(member.email || '')}&empId=${encodeURIComponent(member.staffId || member.employeeId || '')}`;
+                                navigator.clipboard.writeText(inviteUrl);
+                                toast.success("Registration link copied!");
+                              }}
+                              className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                              title="Copy Invite Link"
+                            >
+                              <LinkIcon size={18} />
+                            </button>
+                          )}
                           <button 
                             onClick={() => {
                               setSelectedStaffToView(member);

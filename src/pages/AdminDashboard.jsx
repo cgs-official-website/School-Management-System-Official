@@ -96,6 +96,7 @@ export default function AdminDashboard() {
     { name: 'Fees & Payments', path: '/admin/fees', icon: CreditCard, moduleKey: 'fees' },
     { name: 'Transport', path: '/admin/transport', icon: Bus, moduleKey: 'transport' },
     { name: 'Library', path: '/admin/library', icon: Library, moduleKey: 'library' },
+    { name: 'Inventory & Assets', path: '/admin/inventory', icon: PackageIcon, moduleKey: 'inventory' },
     { name: 'Reports & Analytics', path: '/admin/reports', icon: BarChart2, moduleKey: 'reports' },
     { name: 'API Integrations', path: '/admin/api', icon: Key, moduleKey: 'api' },
     { name: 'Registration Links', path: '/admin/links', icon: LinkIcon, moduleKey: 'links' },

@@ -79,15 +79,50 @@ export default function TeacherRegistration() {
     setIsRegistering(true);
     setError(null);
     try {
+      // Find the pending staff document by email
+      const q = query(
+        collection(db, `schools/${schoolId}/teachers`),
+        where("email", "==", formData.email.trim())
+      );
+      const querySnapshot = await getDocs(q);
+      
+      let teacherDoc = null;
+      let teacherData = null;
+      
+      for (const d of querySnapshot.docs) {
+        const data = d.data();
+        const docEmpId = (data.employeeId || data.staffId || '').toString().trim().toLowerCase();
+        const inputEmpId = formData.employeeId.trim().toLowerCase();
+        if (docEmpId === inputEmpId) {
+          teacherDoc = d;
+          teacherData = data;
+          break;
+        }
+      }
+      
+      if (!teacherDoc) {
+        setError("Invalid registration details. No matching staff invitation found.");
+        setIsRegistering(false);
+        return;
+      }
+      
+      if (teacherData.userId) {
+        setError("This account has already been registered. Please login instead.");
+        setIsRegistering(false);
+        return;
+      }
+
+      // Register the auth account
       const user = await registerUser(formData.email, formData.password, 'teacher', {
         name: formData.name,
         schoolId: schoolId
       });
 
-      await addSubDocument(schoolId, 'teachers', {
+      // Update existing document
+      await updateDoc(doc(db, `schools/${schoolId}/teachers`, teacherDoc.id), {
         userId: user.uid,
         name: formData.name,
-        email: formData.email,
+        status: 'Active',
         ...customFieldsData
       });
 
