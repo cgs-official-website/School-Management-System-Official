@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
         setCurrentUser(user);
         try {
           const profile = await getUserProfile(user.uid);
-          setUserProfile(profile);
+          setUserProfile(profile ? { ...profile, uid: user.uid } : null);
         } catch (error) {
           console.error("Error fetching profile", error);
         }
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     if (currentUser) {
       try {
         const profile = await getUserProfile(currentUser.uid);
-        setUserProfile(profile);
+        setUserProfile(profile ? { ...profile, uid: currentUser.uid } : null);
       } catch (error) {
         console.error("Error refreshing profile", error);
       }

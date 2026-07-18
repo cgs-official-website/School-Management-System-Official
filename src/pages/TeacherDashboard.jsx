@@ -9,11 +9,12 @@ import TopNavbar from '../components/TopNavbar';
 import useSchoolBranding from '../hooks/useSchoolBranding';
 
 export default function TeacherDashboard() {
-  const { userProfile } = useAuth();
+  const { currentUser, userProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [school, setSchool] = useState(null);
+  const [teacherDoc, setTeacherDoc] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Apply dynamic title and favicon
@@ -27,13 +28,88 @@ export default function TeacherDashboard() {
       // Fetch school info for branding/name
       getDoc(doc(db, "schools", userProfile.schoolId)).then(snap => {
         if (snap.exists()) setSchool(snap.data());
-        setLoading(false);
-      });
+        
+        // Also fetch teacher doc for profile completion
+        if (userProfile.role === 'teacher') {
+          const uid = currentUser?.uid || userProfile?.uid;
+          if (uid) {
+            const q = query(collection(db, `schools/${userProfile.schoolId}/teachers`), where("userId", "==", uid));
+            getDocs(q).then(async (teacherSnap) => {
+               if (!teacherSnap.empty) {
+                 setTeacherDoc(teacherSnap.docs[0].data());
+                 setLoading(false);
+               } else if (currentUser?.email) {
+                 // Fallback to email lookup
+                 const emailQ = query(collection(db, `schools/${userProfile.schoolId}/teachers`), where("email", "==", currentUser.email.trim()));
+                 const emailSnap = await getDocs(emailQ);
+                 if (!emailSnap.empty) {
+                   const docId = emailSnap.docs[0].id;
+                   const { updateDoc } = await import('firebase/firestore');
+                   await updateDoc(doc(db, `schools/${userProfile.schoolId}/teachers`, docId), {
+                     userId: uid
+                   });
+                   setTeacherDoc({ ...emailSnap.docs[0].data(), userId: uid });
+                   setLoading(false);
+                 } else {
+                   // Auto-create document if completely missing!
+                   const { addSubDocument } = await import('../firebase/firestore');
+                   const firstName = userProfile.name ? userProfile.name.split(' ')[0] : currentUser.email.split('@')[0];
+                   const lastName = userProfile.name ? userProfile.name.split(' ').slice(1).join(' ') : '';
+                   const newTeacherDoc = {
+                     userId: uid,
+                     email: currentUser.email,
+                     firstName,
+                     lastName,
+                     name: userProfile.name || currentUser.email.split('@')[0],
+                     role: 'Staffs',
+                     status: 'Active',
+                     staff_type: 'teaching',
+                     createdAt: new Date().toISOString()
+                   };
+                   await addSubDocument(userProfile.schoolId, 'teachers', newTeacherDoc);
+                   setTeacherDoc(newTeacherDoc);
+                   setLoading(false);
+                 }
+               } else {
+                 setLoading(false);
+               }
+            }).catch(() => setLoading(false));
+          } else {
+            setLoading(false);
+          }
+        } else {
+          setLoading(false);
+        }
+      }).catch(() => setLoading(false));
     } else {
       setLoading(false);
     }
   }, [userProfile, navigate]);
 
+  const calculateCompletion = () => {
+    if (!teacherDoc) return 0;
+    const fields = [
+      'dob', 'bloodGroup', 'gender', 'nationality', 'maritalStatus', 
+      'mobileNumber', 'residentialAddress', 'emergencyContact', 'fatherGuardianName', 
+      'highestQualification', 'degreeSpecialization', 'universityName', 'yearOfPassing', 
+      'previousExperience', 'previousOrganization', 'subjectSpecialization', 
+      'bankAccountNumber', 'bankName', 'branchName', 'ifscCode'
+    ];
+    let filled = 0;
+    fields.forEach(f => {
+      const val = teacherDoc[f] || (
+        f === 'mobileNumber' ? teacherDoc.phone :
+        f === 'residentialAddress' ? teacherDoc.address :
+        f === 'highestQualification' ? teacherDoc.qualifications :
+        f === 'previousExperience' ? teacherDoc.experience :
+        f === 'bankAccountNumber' ? teacherDoc.accountNumber : null
+      );
+      if (val && val.toString().trim() !== '') filled++;
+    });
+    return Math.round((filled / fields.length) * 100);
+  };
+  
+  const completionPercentage = calculateCompletion();
   // Close sidebar on route change for mobile
   useEffect(() => {
     setIsSidebarOpen(false);
