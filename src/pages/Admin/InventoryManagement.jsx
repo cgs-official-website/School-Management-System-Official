@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { LuPackage, LuServer, LuClipboardList } from 'react-icons/lu';
 import { useAuth } from '../../context/AuthContext';
+import usePermissions from '../../hooks/usePermissions';
 import { 
   subscribeToSubCollection, 
   addSubDocument, 
@@ -21,6 +22,7 @@ export default function InventoryManagement() {
   const schoolId = userProfile?.schoolId;
   const userName = userProfile?.name || userProfile?.email || 'Unknown User';
   const userRole = userProfile?.role || 'Staff';
+  const { canCreate, canEdit, canDelete } = usePermissions();
 
   const [activeTab, setActiveTab] = useState('items'); // 'items' | 'categories'
   const [items, setItems] = useState([]);
@@ -653,12 +655,14 @@ export default function InventoryManagement() {
             <LuClipboardList size={18} /> Audit Logs
           </button>
           
-          <button 
-            onClick={() => setShowImportModal(true)}
-            className="flex items-center gap-2 border border-slate-200 bg-white text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
-          >
-            <Upload size={18} /> Bulk Import
-          </button>
+          {canCreate('inventory') && (
+            <button 
+              onClick={() => setShowImportModal(true)}
+              className="flex items-center gap-2 border border-slate-200 bg-white text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
+            >
+              <Upload size={18} /> Bulk Import
+            </button>
+          )}
 
            <button 
             onClick={() => setShowExportModal(true)}
@@ -668,19 +672,23 @@ export default function InventoryManagement() {
           </button>
 
           {activeTab === 'items' ? (
-            <button 
-              onClick={() => { setItemFormData({ id: '', productId: '', name: '', category: '', quantity: 0, unit: 'pcs', status: 'In Stock' }); setShowItemModal(true); }}
-              className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2 rounded-xl hover:bg-primary-700 transition-all font-semibold shadow-sm"
-            >
-              <Plus size={18} /> Add Item
-            </button>
+            canCreate('inventory') ? (
+              <button 
+                onClick={() => { setItemFormData({ id: '', productId: '', name: '', category: '', quantity: 0, unit: 'pcs', status: 'In Stock' }); setShowItemModal(true); }}
+                className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2 rounded-xl hover:bg-primary-700 transition-all font-semibold shadow-sm"
+              >
+                <Plus size={18} /> Add Item
+              </button>
+            ) : null
           ) : (
-            <button 
-              onClick={() => { setCategoryFormData({ id: '', name: '', description: '' }); setShowCategoryModal(true); }}
-              className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2 rounded-xl hover:bg-primary-700 transition-all font-semibold shadow-sm"
-            >
-              <Plus size={18} /> Add Category
-            </button>
+            canCreate('inventory') ? (
+              <button 
+                onClick={() => { setCategoryFormData({ id: '', name: '', description: '' }); setShowCategoryModal(true); }}
+                className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2 rounded-xl hover:bg-primary-700 transition-all font-semibold shadow-sm"
+              >
+                <Plus size={18} /> Add Category
+              </button>
+            ) : null
           )}
         </div>
       </div>
@@ -820,18 +828,24 @@ export default function InventoryManagement() {
                       </td>
                       <td className="p-4 pr-6 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <button 
-                            onClick={() => { setStockAdjustment({ itemId: item.id, itemName: item.name, type: 'inbound', quantity: 1, remarks: '', prevStock: item.quantity }); setShowStockModal(true); }}
-                            className="px-2 py-1 text-xs font-bold border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-700"
-                          >
-                            Adjust Stock
-                          </button>
-                          <button onClick={() => { setItemFormData(item); setShowItemModal(true); }} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
-                            <Edit size={16} />
-                          </button>
-                          <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'item', id: item.id, name: item.name })} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                            <Trash2 size={16} />
-                          </button>
+                          {canEdit('inventory') && (
+                            <button 
+                              onClick={() => { setStockAdjustment({ itemId: item.id, itemName: item.name, type: 'inbound', quantity: 1, remarks: '', prevStock: item.quantity }); setShowStockModal(true); }}
+                              className="px-2 py-1 text-xs font-bold border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-700"
+                            >
+                              Adjust Stock
+                            </button>
+                          )}
+                          {canEdit('inventory') && (
+                            <button onClick={() => { setItemFormData(item); setShowItemModal(true); }} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                              <Edit size={16} />
+                            </button>
+                          )}
+                          {canDelete('inventory') && (
+                            <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'item', id: item.id, name: item.name })} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                              <Trash2 size={16} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -912,12 +926,16 @@ export default function InventoryManagement() {
                     <td className="p-4 text-slate-600">{cat.description || 'No description provided'}</td>
                     <td className="p-4 pr-6 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => { setCategoryFormData(cat); setShowCategoryModal(true); }} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
-                          <Edit size={16} />
-                        </button>
-                        <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'category', id: cat.id, name: cat.name })} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                          <Trash2 size={16} />
-                        </button>
+                        {canEdit('inventory') && (
+                          <button onClick={() => { setCategoryFormData(cat); setShowCategoryModal(true); }} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                            <Edit size={16} />
+                          </button>
+                        )}
+                        {canDelete('inventory') && (
+                          <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'category', id: cat.id, name: cat.name })} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

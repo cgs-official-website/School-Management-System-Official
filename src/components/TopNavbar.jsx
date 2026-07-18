@@ -86,15 +86,16 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
           </button>
         )}
         
-        {/* Search Bar */}
-        <form onSubmit={handleSearch} className="relative hidden md:block flex-1 max-w-xl mr-4 min-w-0" ref={dropdownRef}>
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search size={18} className="text-slate-400" />
-          </div>
-          <input
-            type="text"
-            className="block w-full pl-10 pr-3 py-2.5 border-none rounded-2xl text-sm bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all min-w-0"
-            placeholder="Search modules..."
+        {/* Search Bar Wrapper */}
+        <div className="relative hidden md:block w-36 lg:w-56 h-10 mr-4 z-20">
+          <form onSubmit={handleSearch} className="absolute top-0 left-0 w-36 lg:w-56 focus-within:w-72 lg:focus-within:w-96 h-10 transition-all duration-300 ease-out" ref={dropdownRef}>
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+              <Search size={18} className="text-slate-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full h-full pl-10 pr-3 border border-transparent rounded-2xl text-sm bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-primary-200 focus:shadow-md transition-all duration-300 ease-out"
+              placeholder="Search modules..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
@@ -117,7 +118,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
           
           {/* Search Dropdown */}
           {showDropdown && searchQuery && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50 max-h-64 overflow-y-auto custom-scrollbar animate-fade-in-up">
+            <div className="absolute top-full left-0 mt-2 w-full min-w-[300px] bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50 max-h-64 overflow-y-auto custom-scrollbar animate-fade-in-up">
               {filteredNavItems.length > 0 ? (
                 <ul className="py-2">
                   {filteredNavItems.map((item, idx) => (
@@ -149,7 +150,8 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
               )}
             </div>
           )}
-        </form>
+          </form>
+        </div>
       </div>
 
       {/* Right section: Icons & Profile */}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import usePermissions from '../../hooks/usePermissions';
 import { getSubCollection, updateSubDocument, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
 import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
@@ -15,6 +16,7 @@ import 'jspdf-autotable';
 export default function StaffAssignment() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit } = usePermissions();
 
   const [staff, setStaff] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -367,12 +369,14 @@ export default function StaffAssignment() {
             <FileText size={18} /> Export PDF
           </button>
           <div className="relative">
-            <button 
-              onClick={() => setAddStaffModalOpen(true)}
-              className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
-            >
-              <UserPlus size={18} /> Add Staff
-            </button>
+            {canCreate('staff') && (
+              <button 
+                onClick={() => setAddStaffModalOpen(true)}
+                className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
+              >
+                <UserPlus size={18} /> Add Staff
+              </button>
+            )}
 
             {/* Filter icon and dropdown directly below Add Staff button */}
             <div className="absolute right-0 top-full mt-3 z-30" ref={filterDropdownRef}>
@@ -441,16 +445,18 @@ export default function StaffAssignment() {
               )}
             </div>
           </div>
-          <button 
-            onClick={() => {
-              setUploadFile(null);
-              setSelectedStaffForUpload(null);
-              setUploadModalOpen(true);
-            }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
-          >
-            <UploadCloud size={18} /> Bulk Import
-          </button>
+          {canCreate('staff') && (
+            <button 
+              onClick={() => {
+                setUploadFile(null);
+                setSelectedStaffForUpload(null);
+                setUploadModalOpen(true);
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+            >
+              <UploadCloud size={18} /> Bulk Import
+            </button>
+          )}
         </div>
       </div>
 
@@ -616,19 +622,23 @@ export default function StaffAssignment() {
                           >
                             <Eye size={18} />
                           </button>
-                          <button 
-                            onClick={() => openUploadModal(member)}
-                            className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                            title="Upload Document"
-                          >
-                            <UploadCloud size={18} />
-                          </button>
-                          <button 
-                            onClick={() => openAssignModal(member)}
-                            className="px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors"
-                          >
-                            {isAssigned ? 'Edit' : 'Assign'}
-                          </button>
+                          {canEdit('staff') && (
+                            <button 
+                              onClick={() => openUploadModal(member)}
+                              className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                              title="Upload Document"
+                            >
+                              <UploadCloud size={18} />
+                            </button>
+                          )}
+                          {canEdit('staff') && (
+                            <button 
+                              onClick={() => openAssignModal(member)}
+                              className="px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors"
+                            >
+                              {isAssigned ? 'Edit' : 'Assign'}
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

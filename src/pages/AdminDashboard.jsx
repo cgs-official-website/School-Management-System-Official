@@ -11,7 +11,7 @@ import useSchoolBranding from '../hooks/useSchoolBranding';
 
 export default function AdminDashboard() {
   const { userProfile } = useAuth();
-  const { permissions, canRead } = usePermissions();
+  const { permissions, canRead, loading: permsLoading } = usePermissions();
   const navigate = useNavigate();
   const location = useLocation();
   const [schoolData, setSchoolData] = useState(null);
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
     navigate('/');
   };
 
-  if (loading || !schoolData) {
+  if (loading || permsLoading || !schoolData) {
     return (
       <div className="min-h-screen bg-slate-50 flex justify-center items-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
     { name: 'Noticeboard', path: '/admin/notices', icon: Bell, moduleKey: 'noticeboard' },
     { name: 'Environment Setup', path: '/admin/setup', icon: Settings },
-    { name: 'Staff Directory', path: '/admin/staff', icon: GraduationCap },
+    { name: 'Staff Directory', path: '/admin/staff', icon: GraduationCap, moduleKey: 'staff' },
     { 
       name: 'Classes & Sections', 
       path: '/admin/classes', 
@@ -106,8 +106,18 @@ export default function AdminDashboard() {
 
   const permittedModules = schoolData.permittedModules || [];
   const navItems = allNavItems.filter(item => {
+    // 1. Dashboard, Setup, etc. don't have a moduleKey, always show them.
     if (!item.moduleKey) return true;
-    return permittedModules.includes(item.moduleKey);
+    
+    // 2. Check if the school's subscription includes this module
+    // Core modules are included by default, regardless of subscription.
+    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api'];
+    if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
+       return false; // School didn't pay for this module
+    }
+    
+    // 3. Check RBAC (Role-Based Access Control)
+    return canRead(item.moduleKey);
   });
 
   return (
