@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { LuCheck as Check, LuShieldCheck as ShieldCheck, LuArrowRight as ArrowRight, LuArrowLeft as ArrowLeft, LuBuilding2, LuUser, LuCreditCard, LuFileText, LuCalculator } from 'react-icons/lu';
+import { LuCheck as Check, LuShieldCheck as ShieldCheck, LuArrowRight as ArrowRight, LuArrowLeft as ArrowLeft, LuBuilding2, LuUser, LuCreditCard, LuFileText, LuCalculator, LuEye, LuEyeOff } from 'react-icons/lu';
 import { FiLoader as Loader } from 'react-icons/fi';
 import { createSchool, getPlans, generateSchoolId } from '../firebase/firestore';
 import { registerUser } from '../firebase/auth';
@@ -18,6 +18,7 @@ export default function SchoolRegistration() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [calculatorError, setCalculatorError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   
   // Plans data
   const [plans, setPlans] = useState([]);
@@ -525,8 +526,11 @@ export default function SchoolRegistration() {
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <div className="relative group">
-                          <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Password" />
+                          <input type={showPassword ? "text" : "password"} id="password" name="password" value={formData.password} onChange={handleChange} className="w-full px-5 py-4 pr-12 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Password" />
                           <label htmlFor="password" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Password *</label>
+                          <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+                            {showPassword ? <LuEyeOff size={20} /> : <LuEye size={20} />}
+                          </button>
                         </div>
                         {formData.password && (
                           <div className="flex gap-1 h-1.5 px-1">
@@ -538,8 +542,11 @@ export default function SchoolRegistration() {
                       </div>
 
                       <div className="relative group">
-                        <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Confirm Password" />
+                        <input type={showPassword ? "text" : "password"} id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className="w-full px-5 py-4 pr-12 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Confirm Password" />
                         <label htmlFor="confirmPassword" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Confirm Password *</label>
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+                          {showPassword ? <LuEyeOff size={20} /> : <LuEye size={20} />}
+                        </button>
                       </div>
                     </div>
                   </>

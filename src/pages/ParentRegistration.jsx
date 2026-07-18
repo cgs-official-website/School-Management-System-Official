@@ -4,7 +4,7 @@ import { registerUser } from '../firebase/auth';
 import { addSubDocument } from '../firebase/firestore';
 import { db } from '../firebase/config';
 import { getDoc, doc } from 'firebase/firestore';
-import { LuUser as UserIcon, LuLock as LockIcon, LuHash as HashIcon, LuBuilding2 } from 'react-icons/lu';
+import { LuUser as UserIcon, LuLock as LockIcon, LuHash as HashIcon, LuBuilding2, LuEye, LuEyeOff } from 'react-icons/lu';
 import Captcha from '../components/Captcha';
 
 export default function ParentRegistration() {
@@ -21,6 +21,7 @@ export default function ParentRegistration() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState(null);
   const [captchaValid, setCaptchaValid] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const captchaRef = React.useRef(null);
 
@@ -185,15 +186,20 @@ export default function ParentRegistration() {
 
                   <div className="space-y-1">
                     <label className="block text-sm font-bold text-slate-700">Password</label>
-                    <input
-                      name="password"
-                      type="password"
-                      required
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
-                      placeholder="••••••••"
-                    />
+                    <div className="relative">
+                      <input
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        required
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 pr-12 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                        placeholder="••••••••"
+                      />
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+                        {showPassword ? <LuEyeOff size={18} /> : <LuEye size={18} />}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
