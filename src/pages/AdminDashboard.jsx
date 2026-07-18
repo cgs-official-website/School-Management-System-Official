@@ -11,7 +11,7 @@ import useSchoolBranding from '../hooks/useSchoolBranding';
 
 export default function AdminDashboard() {
   const { userProfile } = useAuth();
-  const { permissions, canRead, loading: permsLoading } = usePermissions();
+  const { permissions, canRead } = usePermissions();
   const navigate = useNavigate();
   const location = useLocation();
   const [schoolData, setSchoolData] = useState(null);
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
     navigate('/');
   };
 
-  if (loading || permsLoading || !schoolData) {
+  if (loading || !schoolData) {
     return (
       <div className="min-h-screen bg-slate-50 flex justify-center items-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
@@ -88,7 +88,8 @@ export default function AdminDashboard() {
         { name: 'Subject Management', path: '/admin/subjects', icon: BookOpen }
       ]
     },
-    { name: 'Student Directory', path: '/admin/students', icon: Users },
+    { name: 'Student Directory', path: '/admin/students', icon: Users, moduleKey: 'students' },
+    { name: 'Attendance', path: '/admin/attendance', icon: CheckSquare, moduleKey: 'attendance' },
     { name: 'HR & Payroll', path: '/admin/hr-payroll', icon: Briefcase, moduleKey: 'hr-payroll' },
     { name: 'Timetables', path: '/admin/timetables', icon: Calendar, moduleKey: 'timetables' },
     { name: 'Calendar', path: '/admin/calendar', icon: Calendar, moduleKey: 'calendar' },
@@ -107,18 +108,24 @@ export default function AdminDashboard() {
 
   const permittedModules = schoolData.permittedModules || [];
   const navItems = allNavItems.filter(item => {
-    // 1. Dashboard, Setup, etc. don't have a moduleKey, always show them.
     if (!item.moduleKey) return true;
     
-    // 2. Check if the school's subscription includes this module
-    // Core modules are included by default, regardless of subscription.
+    // Inventory module bypass check for College panels
+    if (item.moduleKey === 'inventory' && schoolData.schoolType === 'College') return true;
+    
+    // Core modules bypass school subscription check
     const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api'];
     if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
-       return false; // School didn't pay for this module
+       return false;
     }
     
-    // 3. Check RBAC (Role-Based Access Control)
-    return canRead(item.moduleKey);
+    // Check RBAC permissions
+    if (permissions === 'ALL') {
+       return true;
+    } else {
+       if (item.moduleKey === 'roles') return false; // Only super-admin or owner can edit roles
+       return canRead(item.moduleKey);
+    }
   });
 
   return (

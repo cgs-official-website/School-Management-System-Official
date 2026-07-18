@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { registerUser } from '../firebase/auth';
-import { addSubDocument } from '../firebase/firestore';
 import { db } from '../firebase/config';
-import { getDoc, doc } from 'firebase/firestore';
-import { LuUser as UserIcon, LuLock as LockIcon, LuMail as MailIcon, LuBriefcase as BriefcaseIcon, LuPhone as PhoneIcon, LuHash as HashIcon, LuBuilding2, LuEye, LuEyeOff } from 'react-icons/lu';
+import { getDoc, doc, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
+import { LuUser as UserIcon, LuLock as LockIcon, LuMail as MailIcon, LuBriefcase as BriefcaseIcon, LuPhone as PhoneIcon, LuHash as HashIcon, LuBuilding2 } from 'react-icons/lu';
 import Captcha from '../components/Captcha';
 
 export default function TeacherRegistration() {
   const { schoolId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const urlEmail = searchParams.get('email') || '';
+  const urlEmpId = searchParams.get('empId') || '';
 
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    email: urlEmail,
+    employeeId: urlEmpId,
     password: ''
   });
   const [customFieldsData, setCustomFieldsData] = useState({});
@@ -23,7 +26,6 @@ export default function TeacherRegistration() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState(null);
   const [captchaValid, setCaptchaValid] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   
   const captchaRef = React.useRef(null);
 
@@ -227,29 +229,39 @@ export default function TeacherRegistration() {
                       name="email"
                       type="email"
                       required
+                      disabled={!!urlEmail}
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
                       placeholder="you@example.com"
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <label className="block text-sm font-bold text-slate-700">Employee ID</label>
+                    <input
+                      name="employeeId"
+                      type="text"
+                      required
+                      disabled={!!urlEmpId}
+                      value={formData.employeeId}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      placeholder="EMP-1024"
                     />
                   </div>
 
                   <div className="space-y-1">
                     <label className="block text-sm font-bold text-slate-700">Password</label>
-                    <div className="relative">
-                      <input
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        required
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 pr-12 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
-                        placeholder="••••••••"
-                      />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
-                        {showPassword ? <LuEyeOff size={18} /> : <LuEye size={18} />}
-                      </button>
-                    </div>
+                    <input
+                      name="password"
+                      type="password"
+                      required
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      placeholder="••••••••"
+                    />
                   </div>
                 </div>
 
