@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LuUsers as Users, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuMessageSquare as MessageSquare, LuLock as Lock, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuBuilding2 as Building2, LuCalendarDays, LuBookOpen, LuCalendarOff, LuTrendingUp, LuFolderDown, LuCalendarClock, LuBanknote } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
 import { useAuth } from '../context/AuthContext';
-import { getDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
+import { getDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
 import useSchoolBranding from '../hooks/useSchoolBranding';
@@ -14,7 +14,6 @@ export default function TeacherDashboard() {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [school, setSchool] = useState(null);
-  const [teacherDoc, setTeacherDoc] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Apply dynamic title and favicon
@@ -28,34 +27,12 @@ export default function TeacherDashboard() {
       // Fetch school info for branding/name
       getDoc(doc(db, "schools", userProfile.schoolId)).then(snap => {
         if (snap.exists()) setSchool(snap.data());
-        
-        // Also fetch teacher doc for profile completion
-        if (userProfile.role === 'teacher') {
-          const q = query(collection(db, `schools/${userProfile.schoolId}/teachers`), where("userId", "==", userProfile.uid));
-          getDocs(q).then(teacherSnap => {
-             if (!teacherSnap.empty) setTeacherDoc(teacherSnap.docs[0].data());
-             setLoading(false);
-          }).catch(() => setLoading(false));
-        } else {
-          setLoading(false);
-        }
-      }).catch(() => setLoading(false));
+        setLoading(false);
+      });
     } else {
       setLoading(false);
     }
   }, [userProfile, navigate]);
-
-  const calculateCompletion = () => {
-    if (!teacherDoc) return 0;
-    const fields = ['dob', 'bloodGroup', 'phone', 'address', 'qualifications', 'experience', 'bankName', 'accountNumber', 'ifscCode'];
-    let filled = 0;
-    fields.forEach(f => {
-      if (teacherDoc[f]) filled++;
-    });
-    return Math.round((filled / fields.length) * 100);
-  };
-  
-  const completionPercentage = calculateCompletion();
 
   // Close sidebar on route change for mobile
   useEffect(() => {
@@ -185,28 +162,8 @@ export default function TeacherDashboard() {
         />
         
         {/* Dashboard Content */}
-        <main className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
-          {completionPercentage < 100 && location.pathname !== '/teacher/profile' && (
-             <div className="p-4 shrink-0">
-               <div onClick={() => navigate('/teacher/profile')} className="cursor-pointer bg-gradient-to-r from-amber-500 to-orange-400 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-                  <div className="flex justify-between items-center relative z-10">
-                     <div>
-                        <h3 className="text-xl font-bold flex items-center gap-2">
-                           Complete Your Profile 
-                        </h3>
-                        <p className="text-white/90 text-sm mt-1 max-w-lg">You are {completionPercentage}% complete. Click here to add missing details like address, qualifications, and bank info to unlock all dashboard features.</p>
-                     </div>
-                     <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center font-bold text-xl relative shrink-0 border-4 border-white/30">
-                        {completionPercentage}%
-                     </div>
-                  </div>
-               </div>
-             </div>
-          )}
-          <div className="flex-1 p-4 pt-0">
-            <Outlet />
-          </div>
+        <main className="flex-1 overflow-y-auto custom-scrollbar">
+          <Outlet />
         </main>
       </div>
     </div>

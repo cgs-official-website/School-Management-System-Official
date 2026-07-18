@@ -88,8 +88,8 @@ export default function AdminDashboard() {
         { name: 'Subject Management', path: '/admin/subjects', icon: BookOpen }
       ]
     },
-    { name: 'Student Directory', path: '/admin/students', icon: Users, moduleKey: 'students' },
-    { name: 'Attendance', path: '/admin/attendance', icon: CheckSquare, moduleKey: 'attendance' },
+    { name: 'Student Directory', path: '/admin/students', icon: Users },
+    { name: 'Staff Management', path: '/admin/staff', icon: GraduationCap },
     { name: 'HR & Payroll', path: '/admin/hr-payroll', icon: Briefcase, moduleKey: 'hr-payroll' },
     { name: 'Timetables', path: '/admin/timetables', icon: Calendar, moduleKey: 'timetables' },
     { name: 'Calendar', path: '/admin/calendar', icon: Calendar, moduleKey: 'calendar' },
@@ -108,23 +108,7 @@ export default function AdminDashboard() {
   const permittedModules = schoolData.permittedModules || [];
   const navItems = allNavItems.filter(item => {
     if (!item.moduleKey) return true;
-    
-    // Inventory module bypass check for College panels
-    if (item.moduleKey === 'inventory' && schoolData.schoolType === 'College') return true;
-    
-    // Core modules bypass school subscription check
-    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api'];
-    if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
-       return false;
-    }
-    
-    // Check RBAC permissions
-    if (permissions === 'ALL') {
-       return true;
-    } else {
-       if (item.moduleKey === 'roles') return false; // Only super-admin or owner can edit roles
-       return canRead(item.moduleKey);
-    }
+    return permittedModules.includes(item.moduleKey);
   });
 
   return (
