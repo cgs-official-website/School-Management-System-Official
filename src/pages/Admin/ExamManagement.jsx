@@ -13,6 +13,8 @@ import {
 import { LuFileText as FileText, LuPlus as Plus, LuX as X, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuFileChartColumn as FileBarChart, LuLoaderCircle as Loader2, LuPrinter as Printer, LuPalette as Palette } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ReportTemplateBuilder from './ReportTemplateBuilder';
+import { db } from '../../firebase/config';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function ExamManagement() {
   const { userProfile } = useAuth();
@@ -158,6 +160,53 @@ export default function ExamManagement() {
     }
   };
 
+  const [publishing, setPublishing] = useState(false);
+
+  const handlePublishReportCards = async () => {
+    if (!reportData || !reportTemplate) {
+      toast.error("Please generate report card data and customize/publish a template first.");
+      return;
+    }
+    
+    setPublishing(true);
+    const loadingToast = toast.loading("Publishing report cards to parent portal...");
+    try {
+      const batchPromises = reportData.students.map(async (row) => {
+        const studentId = row.student.id;
+        const examId = selectedExamId;
+        const docRef = doc(db, `schools/${schoolId}/students/${studentId}/report_cards`, examId);
+        
+        const reportCardDoc = {
+          examId,
+          examName: reportData.examName,
+          classId: selectedClassId,
+          className: reportData.className,
+          studentId,
+          studentName: `${row.student.firstName} ${row.student.lastName}`,
+          marks: row.marks,
+          totalObtained: row.totalObtained,
+          totalMax: row.totalMax,
+          percentage: row.percentage,
+          publishedAt: new Date().toISOString(),
+          publishedBy: userProfile?.name || userProfile?.email || 'Admin',
+          reportTemplate: reportTemplate
+        };
+        
+        await setDoc(docRef, reportCardDoc);
+      });
+      
+      await Promise.all(batchPromises);
+      toast.dismiss(loadingToast);
+      toast.success("Report cards published successfully! Parents can now view them.");
+    } catch (error) {
+      console.error("Error publishing report cards:", error);
+      toast.dismiss(loadingToast);
+      toast.error("Failed to publish report cards.");
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -294,12 +343,21 @@ export default function ExamManagement() {
                           <GraduationCap size={16} /> Class: {reportData.className}
                         </p>
                       </div>
-                      <button 
-                        onClick={() => window.print()}
-                        className="px-4 py-2 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors flex items-center gap-2"
-                      >
-                        <Printer size={18} /> Print Record
-                      </button>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={handlePublishReportCards}
+                          disabled={publishing}
+                          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
+                        >
+                          <FileText size={18} /> {publishing ? 'Publishing...' : 'Publish Report Cards'}
+                        </button>
+                        <button 
+                          onClick={() => window.print()}
+                          className="px-4 py-2 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors flex items-center gap-2"
+                        >
+                          <Printer size={18} /> Print Record
+                        </button>
+                      </div>
                     </div>
 
                     {reportData.assessments.length === 0 ? (
