@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, updateSubDocument, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { getDoc, doc, updateDoc } from 'firebase/firestore';
+import { getDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter, LuLink as LinkIcon, LuCopy as CopyIcon } from 'react-icons/lu';
+import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter, LuLink as LinkIcon, LuCopy as CopyIcon, LuTrash2 as Trash } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function StaffAssignment() {
   const { userProfile } = useAuth();
@@ -34,6 +35,19 @@ export default function StaffAssignment() {
   const [selectedStaffForUpload, setSelectedStaffForUpload] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  const [confirmDeleteState, setConfirmDeleteState] = useState({ isOpen: false, id: null, name: '' });
+
+  const handleDeleteStaff = async (staffId) => {
+    try {
+      await deleteDoc(doc(db, `schools/${schoolId}/teachers`, staffId));
+      toast.success("Staff member deleted successfully!");
+      setConfirmDeleteState({ isOpen: false, id: null, name: '' });
+    } catch (error) {
+      console.error("Error deleting staff member:", error);
+      toast.error("Failed to delete staff member.");
+    }
+  };
 
   // Add Staff Modal State
   const initialStaffFormState = {
@@ -821,7 +835,10 @@ export default function StaffAssignment() {
             <FileText size={18} /> Export PDF
           </button>
           <button 
-              onClick={() => setAddStaffModalOpen(true)}
+              onClick={() => {
+                setAddStaffActiveTab('Personal');
+                setAddStaffModalOpen(true);
+              }}
               className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
             >
               <UserPlus size={18} /> Add Staff
@@ -1080,12 +1097,19 @@ export default function StaffAssignment() {
                           >
                             <UploadCloud size={18} />
                           </button>
-                          <button 
-                            onClick={() => openAssignModal(member)}
-                            className="px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors"
-                          >
-                            {isAssigned ? 'Edit' : 'Assign'}
-                          </button>
+                           <button 
+                             onClick={() => setConfirmDeleteState({ isOpen: true, id: member.id, name: member.name || `${member.firstName} ${member.lastName}` })}
+                             className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                             title="Delete Staff Member"
+                           >
+                             <Trash size={18} />
+                           </button>
+                           <button 
+                             onClick={() => openAssignModal(member)}
+                             className="px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors"
+                           >
+                             {isAssigned ? 'Edit' : 'Assign'}
+                           </button>
                         </div>
                       </td>
                     </tr>
@@ -2051,6 +2075,13 @@ export default function StaffAssignment() {
                             <option>Active</option><option>Inactive</option>
                           </select>
                         </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Staff Type</label>
+                          <select value={editStaffData.staff_type || 'teaching'} onChange={e => setEditStaffData({...editStaffData, staff_type: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            <option value="teaching">Teaching Staff</option>
+                            <option value="non-teaching">Non-Teaching Staff</option>
+                          </select>
+                        </div>
                         <div className="sm:col-span-3">
                           <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Residential Address</label>
                           <textarea rows={2} value={editStaffData.residentialAddress || ''} onChange={e => setEditStaffData({...editStaffData, residentialAddress: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
@@ -2291,6 +2322,12 @@ export default function StaffAssignment() {
                         {selectedStaffToView.createdAt ? new Date(selectedStaffToView.createdAt).toLocaleDateString() : 'N/A'}
                       </p>
                     </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Staff Type</label>
+                      <p className="text-slate-900 font-semibold capitalize">
+                        {selectedStaffToView.staff_type || 'teaching'}
+                      </p>
+                    </div>
                   </div>
 
                   <div>
@@ -2500,6 +2537,7 @@ export default function StaffAssignment() {
                       setEditStaffData({ ...selectedStaffToView });
                       setEditStaffErrors({});
                       setEditStaffDocFiles({});
+                      setAddStaffActiveTab('Personal Info');
                       setIsStaffEditMode(true);
                     }}
                     className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors shadow-sm"
@@ -2518,6 +2556,17 @@ export default function StaffAssignment() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmDeleteState.isOpen}
+        title="Delete Staff Member"
+        message={`Are you sure you want to delete the staff member "${confirmDeleteState.name}"? This action cannot be undone.`}
+        onConfirm={() => handleDeleteStaff(confirmDeleteState.id)}
+        onCancel={() => setConfirmDeleteState({ isOpen: false, id: null, name: '' })}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }

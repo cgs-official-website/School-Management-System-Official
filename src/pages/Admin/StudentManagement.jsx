@@ -5,10 +5,11 @@ import { getDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye } from 'react-icons/lu';
+import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye, LuTrash2 as Trash } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function StudentManagement() {
   const { userProfile } = useAuth();
@@ -53,6 +54,19 @@ export default function StudentManagement() {
   const [selectedStudentForAssign, setSelectedStudentForAssign] = useState(null);
   const [selectedClassIdForAssign, setSelectedClassIdForAssign] = useState('');
   const [assigning, setAssigning] = useState(false);
+
+  const [confirmDeleteState, setConfirmDeleteState] = useState({ isOpen: false, id: null, name: '' });
+
+  const handleDeleteStudent = async (studentId) => {
+    try {
+      await deleteDoc(doc(db, `schools/${schoolId}/students`, studentId));
+      toast.success("Student deleted successfully!");
+      setConfirmDeleteState({ isOpen: false, id: null, name: '' });
+    } catch (error) {
+      console.error("Error deleting student:", error);
+      toast.error("Failed to delete student.");
+    }
+  };
 
   // Filters & Pagination
   const [searchQuery, setSearchQuery] = useState('');
@@ -1047,12 +1061,19 @@ export default function StudentManagement() {
                           >
                             <UploadCloud size={18} />
                           </button>
-                          <button 
-                            onClick={() => openAssignModal(student)}
-                            className="px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
-                          >
-                            {student.classId ? 'Change Class' : 'Assign'}
-                          </button>
+                           <button 
+                             onClick={() => setConfirmDeleteState({ isOpen: true, id: student.id, name: `${student.firstName} ${student.lastName}` })}
+                             className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                             title="Delete Student"
+                           >
+                             <Trash size={18} />
+                           </button>
+                           <button 
+                             onClick={() => openAssignModal(student)}
+                             className="px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
+                           >
+                             {student.classId ? 'Change Class' : 'Assign'}
+                           </button>
                         </div>
                       </td>
                     </tr>
@@ -2114,6 +2135,17 @@ export default function StudentManagement() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={confirmDeleteState.isOpen}
+        title="Delete Student"
+        message={`Are you sure you want to delete the student "${confirmDeleteState.name}"? This action cannot be undone.`}
+        onConfirm={() => handleDeleteStudent(confirmDeleteState.id)}
+        onCancel={() => setConfirmDeleteState({ isOpen: false, id: null, name: '' })}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
 
     </div>
   );
