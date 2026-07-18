@@ -61,6 +61,7 @@ const AdminAttendance = lazy(() => import('./pages/Admin/Attendance'));
 // Teacher
 const TeacherRegistration = lazy(() => import('./pages/TeacherRegistration'));
 const TeacherDashboard = lazy(() => import('./pages/TeacherDashboard'));
+const ProfileSetup = lazy(() => import('./pages/Teacher/ProfileSetup'));
 const ClassRoster = lazy(() => import('./pages/Teacher/ClassRoster'));
 const Attendance = lazy(() => import('./pages/Teacher/Attendance'));
 const Grades = lazy(() => import('./pages/Teacher/Grades'));
@@ -204,6 +205,7 @@ function App() {
               } 
             >
               <Route index element={<ClassRoster />} />
+              <Route path="profile" element={<ProfileSetup />} />
               <Route path="attendance" element={<Attendance />} />
               <Route path="chat" element={<TeacherChat />} />
               <Route path="homework" element={<HomeworkManagement />} />

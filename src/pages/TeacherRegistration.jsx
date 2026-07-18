@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { registerUser } from '../firebase/auth';
-import { addSubDocument } from '../firebase/firestore';
 import { db } from '../firebase/config';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { LuUser as UserIcon, LuLock as LockIcon, LuMail as MailIcon, LuBriefcase as BriefcaseIcon, LuPhone as PhoneIcon, LuHash as HashIcon, LuBuilding2 } from 'react-icons/lu';
 import Captcha from '../components/Captcha';
 
 export default function TeacherRegistration() {
   const { schoolId } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const urlEmail = searchParams.get('email') || '';
+  const urlEmpId = searchParams.get('empId') || '';
 
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    email: urlEmail,
+    employeeId: urlEmpId,
     password: ''
   });
   const [customFieldsData, setCustomFieldsData] = useState({});
@@ -78,15 +81,40 @@ export default function TeacherRegistration() {
     setIsRegistering(true);
     setError(null);
     try {
+      // Find the pending staff document
+      const q = query(
+        collection(db, `schools/${schoolId}/teachers`),
+        where("email", "==", formData.email),
+        where("employeeId", "==", formData.employeeId)
+      );
+      const querySnapshot = await getDocs(q);
+      
+      if (querySnapshot.empty) {
+        setError("Invalid registration link. No matching invitation found.");
+        setIsRegistering(false);
+        return;
+      }
+      
+      const teacherDoc = querySnapshot.docs[0];
+      const teacherData = teacherDoc.data();
+      
+      if (teacherData.status === 'Active') {
+        setError("This account has already been registered. Please login instead.");
+        setIsRegistering(false);
+        return;
+      }
+
+      // Register the auth account
       const user = await registerUser(formData.email, formData.password, 'teacher', {
         name: formData.name,
         schoolId: schoolId
       });
 
-      await addSubDocument(schoolId, 'teachers', {
+      // Update existing document
+      await updateDoc(doc(db, `schools/${schoolId}/teachers`, teacherDoc.id), {
         userId: user.uid,
         name: formData.name,
-        email: formData.email,
+        status: 'Active',
         ...customFieldsData
       });
 
@@ -191,10 +219,25 @@ export default function TeacherRegistration() {
                       name="email"
                       type="email"
                       required
+                      disabled={!!urlEmail}
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
                       placeholder="you@example.com"
+                    />
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <label className="block text-sm font-bold text-slate-700">Employee ID</label>
+                    <input
+                      name="employeeId"
+                      type="text"
+                      required
+                      disabled={!!urlEmpId}
+                      value={formData.employeeId}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      placeholder="EMP-1024"
                     />
                   </div>
 

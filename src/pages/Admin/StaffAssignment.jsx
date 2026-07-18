@@ -5,7 +5,7 @@ import { getDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter } from 'react-icons/lu';
+import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter, LuLink as LinkIcon, LuCopy as CopyIcon } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -40,6 +40,7 @@ export default function StaffAssignment() {
     firstName: '',
     lastName: '',
     email: '',
+    employeeId: '',
     role: 'Staffs',
     assignedClassId: '',
     staff_type: 'teaching'
@@ -213,14 +214,14 @@ export default function StaffAssignment() {
   };
 
   const handleAddStaff = async () => {
-    if (!newStaff.firstName || !newStaff.lastName || !newStaff.email) {
-      toast.error("Please fill in all required fields.");
+    if (!newStaff.firstName || !newStaff.lastName || !newStaff.email || !newStaff.employeeId) {
+      toast.error("Please fill in all required fields (including Employee ID).");
       return;
     }
 
-    const isDuplicate = staff.some(s => s.email?.toLowerCase() === newStaff.email.trim().toLowerCase());
+    const isDuplicate = staff.some(s => s.email?.toLowerCase() === newStaff.email.trim().toLowerCase() || s.employeeId === newStaff.employeeId.trim());
     if (isDuplicate) {
-      toast.error(`Staff member with email ${newStaff.email} already exists.`);
+      toast.error(`Staff member with that email or Employee ID already exists.`);
       return;
     }
 
@@ -229,22 +230,43 @@ export default function StaffAssignment() {
       await addSubDocument(schoolId, 'teachers', {
         ...newStaff,
         name: `${newStaff.firstName} ${newStaff.lastName}`,
-        email: newStaff.email,
+        email: newStaff.email.trim(),
+        employeeId: newStaff.employeeId.trim(),
         role: newStaff.role,
         assignedClassId: newStaff.assignedClassId,
         staff_type: newStaff.staff_type || 'teaching',
-        status: 'Active',
+        status: 'Pending Registration',
         createdAt: new Date().toISOString()
       });
-      toast.success("Staff member added successfully!");
+      
+      const inviteLink = `${window.location.origin}/register/teacher/${schoolId}?email=${encodeURIComponent(newStaff.email.trim())}&empId=${encodeURIComponent(newStaff.employeeId.trim())}`;
+      
+      try {
+         await navigator.clipboard.writeText(inviteLink);
+         toast.success("Staff added! Invite link copied to clipboard.");
+      } catch (err) {
+         toast.success("Staff added successfully! Please manually copy link.");
+      }
+
       setAddStaffModalOpen(false);
-      setNewStaff({ firstName: '', lastName: '', email: '', role: 'Staffs', assignedClassId: '', staff_type: 'teaching' });
+      setNewStaff({ firstName: '', lastName: '', email: '', employeeId: '', role: 'Staffs', assignedClassId: '', staff_type: 'teaching' });
     } catch (error) {
       console.error("Error adding staff:", error);
       toast.error("Failed to add staff member.");
     } finally {
       setAddingStaff(false);
     }
+  };
+
+  const copyInviteLink = (member) => {
+    if (!member.email || !member.employeeId) {
+      toast.error("Missing email or Employee ID to generate link.");
+      return;
+    }
+    const inviteLink = `${window.location.origin}/register/teacher/${schoolId}?email=${encodeURIComponent(member.email)}&empId=${encodeURIComponent(member.employeeId)}`;
+    navigator.clipboard.writeText(inviteLink)
+      .then(() => toast.success("Invite link copied!"))
+      .catch(() => toast.error("Failed to copy link"));
   };
 
   const getClassName = (classId) => {
@@ -517,6 +539,7 @@ export default function StaffAssignment() {
             >
               <option value="all">All Status</option>
               <option value="Active">Active</option>
+              <option value="Pending Registration">Pending Registration</option>
               <option value="Inactive">Inactive</option>
             </select>
             <div className="h-6 w-px bg-slate-200 hidden sm:block mx-1"></div>
@@ -623,6 +646,15 @@ export default function StaffAssignment() {
                           >
                             <UploadCloud size={18} />
                           </button>
+                          {(member.status === 'Pending Registration') && (
+                            <button 
+                              onClick={() => copyInviteLink(member)}
+                              className="px-2.5 py-1 text-xs font-semibold text-primary-600 hover:text-primary-700 hover:bg-primary-50 border border-primary-200 rounded-md transition-colors flex items-center gap-1"
+                              title="Copy Registration Link"
+                            >
+                              <LinkIcon size={12} /> Invite Link
+                            </button>
+                          )}
                           <button 
                             onClick={() => openAssignModal(member)}
                             className="px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors"
@@ -854,15 +886,27 @@ export default function StaffAssignment() {
                   />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Email Address *</label>
-                <input 
-                  type="email" 
-                  value={newStaff.email}
-                  onChange={(e) => setNewStaff({...newStaff, email: e.target.value})}
-                  placeholder="john.doe@example.com"
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Email Address *</label>
+                  <input 
+                    type="email" 
+                    value={newStaff.email}
+                    onChange={(e) => setNewStaff({...newStaff, email: e.target.value})}
+                    placeholder="john.doe@example.com"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Employee ID *</label>
+                  <input 
+                    type="text" 
+                    value={newStaff.employeeId}
+                    onChange={(e) => setNewStaff({...newStaff, employeeId: e.target.value})}
+                    placeholder="EMP-1024"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  />
+                </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -986,7 +1030,11 @@ export default function StaffAssignment() {
 
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    selectedStaffToView.status === 'Pending Registration' 
+                      ? 'bg-amber-100 text-amber-800' 
+                      : 'bg-green-100 text-green-800'
+                  }`}>
                     {selectedStaffToView.status || 'Active'}
                   </span>
                 </div>

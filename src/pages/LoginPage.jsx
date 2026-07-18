@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { LuEye as Eye, LuEyeOff as EyeOff } from 'react-icons/lu';
+import { LuEye as Eye, LuEyeOff as EyeOff, LuArrowLeft } from 'react-icons/lu';
 import { FiLoader as Loader, FiCheckCircle as CheckCircle } from 'react-icons/fi';
 import { loginUser, getUserProfile, loginWithAdmissionNumber } from '../firebase/auth';
 import { useAuth } from '../context/AuthContext';
@@ -107,6 +107,13 @@ export default function LoginPage() {
 
         {/* Right Form Panel */}
         <div className="w-full md:w-1/2 p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-white relative overflow-y-auto overflow-x-hidden custom-scrollbar">
+          
+          {/* Back to Home Button */}
+          <div className="mb-4 sm:mb-8 flex">
+            <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-primary-600 transition-colors focus:outline-none focus:text-primary-600">
+              <LuArrowLeft size={16} /> Back to Home
+            </Link>
+          </div>
           
           {/* Mobile Logo */}
           <div className="md:hidden flex justify-center mb-8">

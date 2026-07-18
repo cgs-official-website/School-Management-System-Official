@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import ConfirmModal from '../../components/ConfirmModal';
+import { sendEmail } from '../../services/emailService';
 
 const mockSchools = [
   { id: 't1', name: 'Springfield Elementary', email: 'contact@springfield.edu', phone: '+1 234 567 8900', status: 'approved', createdAt: '2026-07-01' },
@@ -123,6 +124,26 @@ export default function TenantManagement() {
     try {
       await updateSchoolStatus(selectedSchool.id, 'approved', selectedModules);
       setSchools(schools.map(s => s.id === selectedSchool.id ? { ...s, status: 'approved', permittedModules: selectedModules } : s));
+      
+      if (modalAction === 'approve') {
+        try {
+          await sendEmail({
+            to: selectedSchool.adminEmail,
+            templateType: 'APPROVAL',
+            data: {
+              schoolName: selectedSchool.schoolName || 'School Admin',
+              dashboardLink: window.location.origin + '/login'
+            }
+          });
+          toast.success("School approved & email sent!");
+        } catch (emailError) {
+          console.error("Email error:", emailError);
+          toast.error("Approved, but email failed to send.");
+        }
+      } else {
+        toast.success("Permissions updated successfully.");
+      }
+
       setShowModal(false);
     } catch (error) {
       console.error("Failed to save:", error);
@@ -431,7 +452,21 @@ export default function TenantManagement() {
                 </div>
               )}
 
-              <h4 className="font-semibold text-slate-900 mb-3 text-sm uppercase tracking-wider">Select Permitted Modules</h4>
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="font-semibold text-slate-900 text-sm uppercase tracking-wider">Select Permitted Modules</h4>
+                <button 
+                  onClick={() => {
+                    if (selectedModules.length === AVAILABLE_MODULES.length) {
+                      setSelectedModules([]);
+                    } else {
+                      setSelectedModules(AVAILABLE_MODULES.map(m => m.id));
+                    }
+                  }}
+                  className="text-sm font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                >
+                  {selectedModules.length === AVAILABLE_MODULES.length ? 'Deselect All' : 'Select All'}
+                </button>
+              </div>
               <p className="text-sm text-slate-500 mb-4">Core modules (Dashboard, Students, Staff, Billing) are always included.</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

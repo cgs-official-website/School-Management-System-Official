@@ -25,3 +25,5 @@ dist-ssr
 *.sw?
 
 graphify-out/
+.vercel
+.env*

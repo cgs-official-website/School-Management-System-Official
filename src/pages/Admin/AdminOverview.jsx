@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, getNotices, subscribeToSubCollection, subscribeToNotices } from '../../firebase/firestore';
+import { getSubCollection, getNotices, subscribeToSubCollection, subscribeToNotices, subscribeToInvoices } from '../../firebase/firestore';
 import { 
   LuUsers as Users, 
   LuGraduationCap as GraduationCap, 
@@ -30,6 +30,14 @@ export default function AdminOverview() {
     staff: 0,
     classes: 0,
     notices: 0
+  });
+
+  const [systemStatus, setSystemStatus] = useState({
+    feeCollectedPct: 0,
+    feesActive: false,
+    payrollProcessed: false,
+    payrollActive: false,
+    activeEvents: 0
   });
   
   const [recentNotices, setRecentNotices] = useState([]);
@@ -63,7 +71,7 @@ export default function AdminOverview() {
     if (!schoolId) return;
 
     setLoading(true);
-    let studentsUnsub, staffUnsub, classesUnsub, noticesUnsub;
+    let studentsUnsub, staffUnsub, classesUnsub, noticesUnsub, invoicesUnsub, payrollUnsub, calendarUnsub;
 
     studentsUnsub = subscribeToSubCollection(schoolId, 'students', (data) => {
       setStats(prev => ({ ...prev, students: data.length }));
@@ -83,11 +91,36 @@ export default function AdminOverview() {
       setLoading(false); // Stop loading after notices load
     });
 
+    invoicesUnsub = subscribeToInvoices(schoolId, (invoicesData) => {
+      let expected = 0, collected = 0;
+      invoicesData.forEach(inv => {
+        const amount = Number(inv.amount || 0);
+        expected += amount;
+        if(inv.status === 'paid') collected += amount;
+      });
+      const pct = expected > 0 ? Math.round((collected / expected) * 100) : 0;
+      setSystemStatus(prev => ({ ...prev, feeCollectedPct: pct, feesActive: invoicesData.length > 0 }));
+    });
+
+    payrollUnsub = subscribeToSubCollection(schoolId, 'payroll', (data) => {
+      const currentMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+      const isProcessed = data.some(p => p.month === currentMonth);
+      setSystemStatus(prev => ({ ...prev, payrollProcessed: isProcessed, payrollActive: data.length > 0 }));
+    });
+
+    calendarUnsub = subscribeToSubCollection(schoolId, 'calendar', (data) => {
+      const upcoming = data.filter(e => new Date(e.date) >= new Date()).length;
+      setSystemStatus(prev => ({ ...prev, activeEvents: upcoming }));
+    });
+
     return () => {
       if (studentsUnsub) studentsUnsub();
       if (staffUnsub) staffUnsub();
       if (classesUnsub) classesUnsub();
       if (noticesUnsub) noticesUnsub();
+      if (invoicesUnsub) invoicesUnsub();
+      if (payrollUnsub) payrollUnsub();
+      if (calendarUnsub) calendarUnsub();
     };
   }, [schoolId]);
 
@@ -249,12 +282,14 @@ export default function AdminOverview() {
                     <Wallet className="h-5 w-5 text-amber-400" />
                     <span className="font-medium">Fee Collection</span>
                   </div>
-                  <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-medium text-emerald-300">Active</span>
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${systemStatus.feesActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-500/20 text-slate-300'}`}>
+                    {systemStatus.feesActive ? 'Active' : 'No Invoices'}
+                  </span>
                 </div>
                 <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
-                  <div className="h-1.5 w-[75%] rounded-full bg-amber-400"></div>
+                  <div className="h-1.5 rounded-full bg-amber-400 transition-all duration-1000" style={{ width: `${systemStatus.feeCollectedPct}%` }}></div>
                 </div>
-                <div className="mt-2 text-right text-xs text-slate-300">75% Collected</div>
+                <div className="mt-2 text-right text-xs text-slate-300">{systemStatus.feeCollectedPct}% Collected</div>
               </div>
             )}
 
@@ -263,14 +298,14 @@ export default function AdminOverview() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Calendar className="h-5 w-5 text-blue-400" />
-                    <span className="font-medium">Academic Term</span>
+                    <span className="font-medium">Academic Calendar</span>
                   </div>
-                  <span className="text-xs font-medium text-slate-300">Term 1</span>
+                  <span className="text-xs font-medium text-slate-300">Events</span>
                 </div>
                 <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
-                  <div className="h-1.5 w-[40%] rounded-full bg-blue-400"></div>
+                  <div className="h-1.5 rounded-full bg-blue-400 transition-all duration-1000" style={{ width: `${Math.min(systemStatus.activeEvents * 10, 100)}%` }}></div>
                 </div>
-                <div className="mt-2 text-right text-xs text-slate-300">Week 6 of 15</div>
+                <div className="mt-2 text-right text-xs text-slate-300">{systemStatus.activeEvents} Upcoming Event{systemStatus.activeEvents !== 1 && 's'}</div>
               </div>
             )}
 
@@ -281,12 +316,16 @@ export default function AdminOverview() {
                     <Briefcase className="h-5 w-5 text-purple-400" />
                     <span className="font-medium">HR & Payroll</span>
                   </div>
-                  <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs font-medium text-emerald-300">Active</span>
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${systemStatus.payrollProcessed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                    {systemStatus.payrollProcessed ? 'Processed' : 'Pending'}
+                  </span>
                 </div>
                 <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
-                  <div className="h-1.5 w-[100%] rounded-full bg-purple-400"></div>
+                  <div className="h-1.5 rounded-full bg-purple-400 transition-all duration-1000" style={{ width: systemStatus.payrollProcessed ? '100%' : '25%' }}></div>
                 </div>
-                <div className="mt-2 text-right text-xs text-slate-300">Payroll Processed</div>
+                <div className="mt-2 text-right text-xs text-slate-300">
+                  {systemStatus.payrollProcessed ? 'Payroll Processed' : 'Payroll Pending'}
+                </div>
               </div>
             )}
 
