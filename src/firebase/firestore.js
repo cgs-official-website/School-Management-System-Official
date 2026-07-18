@@ -70,11 +70,10 @@ export const updateAssessmentGrades = async (schoolId, assessmentId, gradesMap) 
 export const findStudentByAdmission = async (schoolId, admissionNumber, dob) => {
   try {
     const studentsRef = collection(db, `schools/${schoolId}/students`);
-    // Querying by both admissionNumber and dob for security
+    const cleanAdmission = (admissionNumber || '').trim().toUpperCase();
     const q = query(
       studentsRef, 
-      where("admissionNumber", "==", admissionNumber.toUpperCase()),
-      where("dob", "==", dob)
+      where("admissionNumber", "==", cleanAdmission)
     );
     const querySnapshot = await getDocs(q);
     
@@ -82,9 +81,47 @@ export const findStudentByAdmission = async (schoolId, admissionNumber, dob) => 
       return null;
     }
     
-    // Return the first match
     const docSnap = querySnapshot.docs[0];
-    return { id: docSnap.id, ...docSnap.data() };
+    const studentData = docSnap.data();
+    
+    // Normalize both dates to compare robustly (e.g. YYYY-MM-DD)
+    const normalizeDate = (dStr) => {
+      if (!dStr) return '';
+      // Try parsing with JS Date
+      const parsed = new Date(dStr);
+      if (!isNaN(parsed.getTime())) {
+        return parsed.toISOString().split('T')[0];
+      }
+      // Manual regex split for formats like DD-MM-YYYY or DD/MM/YYYY
+      const parts = dStr.split(/[-/.]/);
+      if (parts.length === 3) {
+        // YYYY-MM-DD
+        if (parts[0].length === 4) {
+          return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+        }
+        // DD-MM-YYYY or MM-DD-YYYY
+        if (parts[2].length === 4) {
+          return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+      }
+      return dStr.trim();
+    };
+
+    const dbDob = normalizeDate(studentData.dob);
+    const inputDob = normalizeDate(dob);
+
+    if (dbDob === inputDob && dbDob !== '') {
+      return { id: docSnap.id, ...studentData };
+    }
+    
+    // Fallback: compare digit characters only
+    const cleanStr = (s) => (s || '').replace(/[^0-9]/g, '');
+    if (cleanStr(dbDob) === cleanStr(inputDob) && cleanStr(dbDob) !== '') {
+      return { id: docSnap.id, ...studentData };
+    }
+    
+    console.warn(`DOB Mismatch. DB: "${studentData.dob}" (Normalized: "${dbDob}"), Input: "${dob}" (Normalized: "${inputDob}")`);
+    return null;
   } catch (error) {
     console.error("Error finding student:", error);
     throw error;
