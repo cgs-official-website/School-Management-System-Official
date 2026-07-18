@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 
 export default function StaffAssignment() {
   const { userProfile } = useAuth();
@@ -95,7 +96,10 @@ export default function StaffAssignment() {
     resume: [],
     referenceLetters: [],
     govtIdDocument: [],
-    salarySlips: []
+    salarySlips: [],
+    
+    // Custom Data
+    customData: {}
   };
 
   const [addStaffModalOpen, setAddStaffModalOpen] = useState(false);
@@ -1352,7 +1356,23 @@ export default function StaffAssignment() {
                   );
                 })}
               </div>
-            </div>
+              </div>
+              
+              <div className="pt-4 border-t border-slate-100">
+                <CustomFieldsRenderer 
+                  moduleKey="staff"
+                  customData={newStaff.customData}
+                  onChange={(fieldId, value) => {
+                    setNewStaff(prev => ({
+                      ...prev,
+                      customData: {
+                        ...(prev.customData || {}),
+                        [fieldId]: value
+                      }
+                    }));
+                  }}
+                />
+              </div>
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar space-y-6">
               {/* Tab Content: Personal */}
@@ -2276,6 +2296,14 @@ export default function StaffAssignment() {
                   <div>
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Residential Address</label>
                     <p className="text-slate-900 font-semibold whitespace-pre-line">{selectedStaffToView.residentialAddress || '—'}</p>
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t border-slate-100">
+                    <CustomFieldsRenderer 
+                      moduleKey="staff"
+                      customData={selectedStaffToView.customData || {}}
+                      readOnly={true}
+                    />
                   </div>
                 </div>
               )}

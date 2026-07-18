@@ -1079,6 +1079,16 @@ export const subscribeToSubscriptionPlans = (callback) => {
   });
 };
 
+export const getSubscriptionPlans = async () => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "subscriptionPlans"));
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error("Error getting subscription plans:", error);
+    throw error;
+  }
+};
+
 export const updateSubscriptionPlan = async (planId, planData) => {
   try {
     const planRef = doc(db, 'subscriptionPlans', planId);

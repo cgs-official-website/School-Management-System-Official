@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getPlans, getSchool, updateSchoolStatus } from '../../firebase/firestore'; // Using updateSchoolStatus or create a specific update wrapper
+import { getSubscriptionPlans, getSchool, updateSchoolStatus } from '../../firebase/firestore'; // Using updateSchoolStatus or create a specific update wrapper
 import { updateDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { useNavigate } from 'react-router-dom';
@@ -25,11 +25,11 @@ export default function UpgradePlan() {
     setLoading(true);
     try {
       const [allPlans, schoolData] = await Promise.all([
-        getPlans(),
+        getSubscriptionPlans(),
         getSchool(schoolId)
       ]);
       // Sort plans by price
-      setPlans(allPlans.sort((a, b) => a.priceMonthly - b.priceMonthly));
+      setPlans(allPlans.sort((a, b) => (a.pricePerUserPerYear || 0) - (b.pricePerUserPerYear || 0)));
       setCurrentPlanId(schoolData?.planId);
     } catch (error) {
       console.error("Error fetching upgrade data:", error);
@@ -107,7 +107,9 @@ export default function UpgradePlan() {
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan, idx) => {
             const isCurrent = currentPlanId === plan.id;
-            const price = billingCycle === 'monthly' ? plan.priceMonthly : plan.priceYearly;
+            const priceYearly = plan.pricePerUserPerYear || 0;
+            const priceMonthly = Math.round(priceYearly / 12);
+            const price = billingCycle === 'monthly' ? priceMonthly : priceYearly;
             const isPopular = idx === 1; // Highlight middle plan
 
             return (
@@ -132,16 +134,24 @@ export default function UpgradePlan() {
                     <span className={`text-sm font-medium ${isPopular ? 'text-primary-200' : 'text-slate-500'}`}>/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
                   </div>
                   <p className={`text-sm ${isPopular ? 'text-primary-100' : 'text-slate-500'}`}>
-                    {plan.limits.maxStudents > 9000 ? 'Unlimited' : `Up to ${plan.limits.maxStudents}`} Students
+                    {plan.userLimit > 0 ? `Up to ${plan.userLimit}` : 'Unlimited'} Users
                   </p>
                 </div>
 
                 <div className="p-8 flex flex-col flex-1">
                   <ul className="space-y-4 mb-8 flex-1">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-3">
+                    {plan.cloudStorageGB > 0 && (
+                      <li className="flex items-start gap-3">
                         <CheckCircle2 size={18} className={`shrink-0 ${isPopular ? 'text-amber-400' : 'text-primary-500'}`} />
-                        <span className={`text-sm ${isPopular ? 'text-primary-50' : 'text-slate-600'}`}>{feature}</span>
+                        <span className={`text-sm ${isPopular ? 'text-primary-50' : 'text-slate-600'}`}>{plan.cloudStorageGB}GB Cloud Storage</span>
+                      </li>
+                    )}
+                    {plan.modules && Object.entries(plan.modules).filter(([_, v]) => v).map(([key, _]) => (
+                      <li key={key} className="flex items-start gap-3">
+                        <CheckCircle2 size={18} className={`shrink-0 ${isPopular ? 'text-amber-400' : 'text-primary-500'}`} />
+                        <span className={`text-sm ${isPopular ? 'text-primary-50' : 'text-slate-600'} capitalize`}>
+                          {key.replace(/([A-Z])/g, ' $1').trim()}
+                        </span>
                       </li>
                     ))}
                   </ul>

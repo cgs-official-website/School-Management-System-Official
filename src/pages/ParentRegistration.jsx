@@ -79,7 +79,11 @@ export default function ParentRegistration() {
       navigate('/parent');
     } catch (err) {
       console.error(err);
-      setError("Registration failed. Please check your details and try again.");
+      if (err.code === 'auth/email-already-in-use') {
+        setError("An account is already registered for this admission number. Please go to the login page and sign in.");
+      } else {
+        setError("Registration failed. Please check your details and try again.");
+      }
       if (captchaRef.current) captchaRef.current.regenerate();
     } finally {
       setIsRegistering(false);

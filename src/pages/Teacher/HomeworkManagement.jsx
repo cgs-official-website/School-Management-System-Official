@@ -68,7 +68,7 @@ export default function HomeworkManagement() {
       setClassStudents(allStudents.filter(s => s.classId === hw.classId));
     });
     // Listen to submissions
-    return subscribeToSubCollection(`${schoolId}/homeworks/${hw.id}/submissions`, (subs) => {
+    return subscribeToSubCollection(schoolId, `homeworks/${hw.id}/submissions`, (subs) => {
       setSubmissions(subs);
     });
   };

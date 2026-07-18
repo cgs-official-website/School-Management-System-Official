@@ -32,7 +32,7 @@ export default function AcademicCalendar({ isAdmin }) {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [newEvent, setNewEvent] = useState({ title: '', start: '', end: '', type: 'event' });
+  const [newEvent, setNewEvent] = useState({ title: '', start: '', end: '', type: 'event', isCustomDates: false, customDates: [] });
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
@@ -44,11 +44,24 @@ export default function AcademicCalendar({ isAdmin }) {
   const fetchEvents = async () => {
     try {
       const data = await getSubCollection(schoolId, 'calendar');
-      const formattedEvents = data.map(ev => ({
-        ...ev,
-        start: new Date(ev.start),
-        end: new Date(ev.end)
-      }));
+      const formattedEvents = [];
+      data.forEach(ev => {
+        if (ev.isCustomDates && ev.customDates && ev.customDates.length > 0) {
+          ev.customDates.forEach(dateStr => {
+            formattedEvents.push({
+              ...ev,
+              start: new Date(dateStr),
+              end: new Date(dateStr)
+            });
+          });
+        } else {
+          formattedEvents.push({
+            ...ev,
+            start: new Date(ev.start),
+            end: new Date(ev.end)
+          });
+        }
+      });
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error fetching calendar events:", error);
@@ -60,12 +73,30 @@ export default function AcademicCalendar({ isAdmin }) {
     if (!isAdmin) return;
     
     try {
-      const eventData = {
-        title: newEvent.title,
-        start: new Date(newEvent.start).toISOString(),
-        end: new Date(newEvent.end).toISOString(),
-        type: newEvent.type
-      };
+      let eventData;
+      if (newEvent.isCustomDates) {
+        if (newEvent.customDates.length === 0) {
+          toast.error("Please add at least one custom date");
+          return;
+        }
+        eventData = {
+          title: newEvent.title,
+          type: newEvent.type,
+          isCustomDates: true,
+          customDates: newEvent.customDates,
+          start: new Date(newEvent.customDates[0]).toISOString(),
+          end: new Date(newEvent.customDates[newEvent.customDates.length - 1]).toISOString()
+        };
+      } else {
+        eventData = {
+          title: newEvent.title,
+          start: new Date(newEvent.start).toISOString(),
+          end: new Date(newEvent.end).toISOString(),
+          type: newEvent.type,
+          isCustomDates: false,
+          customDates: []
+        };
+      }
       
       if (selectedEvent) {
         await updateSubDocument(schoolId, 'calendar', selectedEvent.id, eventData);
@@ -77,7 +108,7 @@ export default function AcademicCalendar({ isAdmin }) {
       
       setShowModal(false);
       setSelectedEvent(null);
-      setNewEvent({ title: '', start: '', end: '', type: 'event' });
+      setNewEvent({ title: '', start: '', end: '', type: 'event', isCustomDates: false, customDates: [] });
       fetchEvents();
     } catch (error) {
       console.error("Error saving event:", error);
@@ -93,7 +124,7 @@ export default function AcademicCalendar({ isAdmin }) {
         toast.success("Event deleted!");
         setShowModal(false);
         setSelectedEvent(null);
-        setNewEvent({ title: '', start: '', end: '', type: 'event' });
+        setNewEvent({ title: '', start: '', end: '', type: 'event', isCustomDates: false, customDates: [] });
         fetchEvents();
       } catch (error) {
         console.error("Error deleting event:", error);
@@ -107,16 +138,18 @@ export default function AcademicCalendar({ isAdmin }) {
     setSelectedEvent(event);
     setNewEvent({
       title: event.title,
-      start: format(new Date(event.start), "yyyy-MM-dd"),
-      end: format(new Date(event.end), "yyyy-MM-dd"),
-      type: event.type
+      start: event.start ? format(new Date(event.start), "yyyy-MM-dd") : '',
+      end: event.end ? format(new Date(event.end), "yyyy-MM-dd") : '',
+      type: event.type,
+      isCustomDates: event.isCustomDates || false,
+      customDates: event.customDates || []
     });
     setShowModal(true);
   };
 
   const openNewEventModal = () => {
     setSelectedEvent(null);
-    setNewEvent({ title: '', start: '', end: '', type: 'event' });
+    setNewEvent({ title: '', start: '', end: '', type: 'event', isCustomDates: false, customDates: [] });
     setShowModal(true);
   };
 
@@ -211,24 +244,77 @@ export default function AcademicCalendar({ isAdmin }) {
                 />
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Start Date</label>
-                  <input 
-                    type="date" required
-                    value={newEvent.start} onChange={e => setNewEvent({...newEvent, start: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">End Date</label>
-                  <input 
-                    type="date" required
-                    value={newEvent.end} onChange={e => setNewEvent({...newEvent, end: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
+              <div className="flex items-center gap-2 mt-4 mb-2">
+                <input 
+                  type="checkbox" 
+                  id="customDatesToggle"
+                  checked={newEvent.isCustomDates}
+                  onChange={e => setNewEvent({...newEvent, isCustomDates: e.target.checked})}
+                  className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
+                />
+                <label htmlFor="customDatesToggle" className="text-sm font-semibold text-slate-700 cursor-pointer">Add multiple custom dates</label>
               </div>
+
+              {!newEvent.isCustomDates ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Start Date</label>
+                    <input 
+                      type="date" required={!newEvent.isCustomDates}
+                      value={newEvent.start} onChange={e => setNewEvent({...newEvent, start: e.target.value})}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">End Date</label>
+                    <input 
+                      type="date" required={!newEvent.isCustomDates}
+                      value={newEvent.end} onChange={e => setNewEvent({...newEvent, end: e.target.value})}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Select Dates</label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="date" 
+                      id="customDateInput"
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const dateVal = document.getElementById('customDateInput').value;
+                        if (dateVal && !newEvent.customDates.includes(dateVal)) {
+                          setNewEvent({...newEvent, customDates: [...newEvent.customDates, dateVal].sort()});
+                          document.getElementById('customDateInput').value = '';
+                        }
+                      }}
+                      className="px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-sm border border-slate-200"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {newEvent.customDates.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2 max-h-32 overflow-y-auto custom-scrollbar p-1">
+                      {newEvent.customDates.map((date, idx) => (
+                        <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-semibold rounded-lg shadow-sm">
+                          {new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                          <button 
+                            type="button"
+                            onClick={() => setNewEvent({...newEvent, customDates: newEvent.customDates.filter(d => d !== date)})}
+                            className="p-0.5 hover:bg-indigo-200 rounded-full transition-colors text-indigo-500 hover:text-indigo-800"
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Event Type</label>

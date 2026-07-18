@@ -9,13 +9,21 @@ export default function FormBuilder() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
 
-  const [activeModule, setActiveModule] = useState('student_admission');
+  const [activeModule, setActiveModule] = useState('staff');
   const [fields, setFields] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const modules = [
-    { id: 'student_admission', name: 'Student Admission' },
+    { id: 'staff', name: 'Staff Directory' },
+    { id: 'students', name: 'Student Directory' },
+    { id: 'inventory', name: 'Inventory Management' },
+    { id: 'hr-payroll', name: 'HR & Payroll' },
+    { id: 'timetables', name: 'Timetables' },
+    { id: 'exams', name: 'Exams & Results' },
+    { id: 'fees', name: 'Fees & Payments' },
+    { id: 'transport', name: 'Transport' },
+    { id: 'library', name: 'Library' },
     { id: 'environment_setup', name: 'Environment Setup' },
   ];
 
@@ -113,9 +121,9 @@ export default function FormBuilder() {
         <div>
           <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
             <Settings className="text-primary-600" />
-            Form Builder
+            Custom Fields
           </h1>
-          <p className="text-slate-500 mt-1">Customize fields for different modules across the system.</p>
+          <p className="text-slate-500 mt-1">Create dynamic custom fields for different modules across the system.</p>
         </div>
         
         <div className="flex items-center gap-3 w-full md:w-auto">

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { subscribeToPlans } from '../../firebase/firestore';
+import { subscribeToSubscriptionPlans } from '../../firebase/firestore';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { LuCreditCard as CreditCard, LuZap as Zap, LuCircleCheck as CheckCircle2, LuCircleAlert as AlertCircle, LuFileText as FileText, LuDownload as Download } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 
@@ -31,7 +31,7 @@ export default function BillingDashboard() {
 
     let allPlans = [];
 
-    plansUnsub = subscribeToPlans((data) => {
+    plansUnsub = subscribeToSubscriptionPlans((data) => {
       allPlans = data;
       updateCurrentPlan();
     });
@@ -99,13 +99,13 @@ export default function BillingDashboard() {
                 </h2>
                 {currentPlan && (
                   <p className="text-slate-500 mt-2">
-                    Billing cycle: <span className="font-semibold text-slate-700">Monthly</span> &middot; Next charge: <span className="font-semibold text-slate-700">Aug 1, 2026</span>
+                    Billing cycle: <span className="font-semibold text-slate-700 capitalize">{school?.billingCycle || 'monthly'}</span> &middot; Next charge: <span className="font-semibold text-slate-700">Next cycle</span>
                   </p>
                 )}
               </div>
               <div className="text-right">
                 <div className="text-4xl font-extrabold text-slate-900 mb-2">
-                  ₹{currentPlan ? currentPlan.priceMonthly : 0}<span className="text-lg text-slate-500 font-medium">/mo</span>
+                  ₹{currentPlan ? (school?.billingCycle === 'yearly' ? currentPlan.pricePerUserPerYear : Math.round((currentPlan.pricePerUserPerYear || 0) / 12)) : 0}<span className="text-lg text-slate-500 font-medium">/{school?.billingCycle === 'yearly' ? 'yr' : 'mo'}</span>
                 </div>
                 <button 
                   onClick={() => navigate('/admin/upgrade')}
@@ -124,24 +124,24 @@ export default function BillingDashboard() {
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span className="font-medium text-slate-700">Students</span>
-                      <span className="text-slate-500"><span className="font-bold text-slate-900">{mockUsage.students}</span> / {currentPlan.limits.maxStudents > 9000 ? 'Unlimited' : currentPlan.limits.maxStudents}</span>
+                      <span className="text-slate-500"><span className="font-bold text-slate-900">{mockUsage.students}</span> / {currentPlan.userLimit > 0 ? currentPlan.userLimit : 'Unlimited'}</span>
                     </div>
                     <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
                       <div 
-                        className={`h-full rounded-full ${getPercentage(mockUsage.students, currentPlan.limits.maxStudents) > 90 ? 'bg-red-500' : 'bg-primary-500'}`} 
-                        style={{ width: `${getPercentage(mockUsage.students, currentPlan.limits.maxStudents)}%` }}
+                        className={`h-full rounded-full ${getPercentage(mockUsage.students, currentPlan.userLimit || 1) > 90 ? 'bg-red-500' : 'bg-primary-500'}`} 
+                        style={{ width: `${getPercentage(mockUsage.students, currentPlan.userLimit || 10000)}%` }}
                       ></div>
                     </div>
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span className="font-medium text-slate-700">Staff Accounts</span>
-                      <span className="text-slate-500"><span className="font-bold text-slate-900">{mockUsage.staff}</span> / {currentPlan.limits.maxStaff > 9000 ? 'Unlimited' : currentPlan.limits.maxStaff}</span>
+                      <span className="text-slate-500"><span className="font-bold text-slate-900">{mockUsage.staff}</span> / {currentPlan.userLimit > 0 ? Math.floor(currentPlan.userLimit * 0.1) : 'Unlimited'}</span>
                     </div>
                     <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
                       <div 
-                        className={`h-full rounded-full ${getPercentage(mockUsage.staff, currentPlan.limits.maxStaff) > 90 ? 'bg-red-500' : 'bg-primary-500'}`} 
-                        style={{ width: `${getPercentage(mockUsage.staff, currentPlan.limits.maxStaff)}%` }}
+                        className={`h-full rounded-full ${getPercentage(mockUsage.staff, (currentPlan.userLimit * 0.1) || 1) > 90 ? 'bg-red-500' : 'bg-primary-500'}`} 
+                        style={{ width: `${getPercentage(mockUsage.staff, (currentPlan.userLimit * 0.1) || 1000)}%` }}
                       ></div>
                     </div>
                   </div>

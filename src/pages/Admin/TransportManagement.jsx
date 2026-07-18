@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, createTransportRoute, getTransportRoutes, assignStudentToRoute, subscribeToSubCollection, subscribeToTransportRoutes } from '../../firebase/firestore';
+import { getSubCollection, createTransportRoute, getTransportRoutes, assignStudentToRoute, subscribeToSubCollection, subscribeToTransportRoutes, updateSubDocument, deleteSubDocument } from '../../firebase/firestore';
+import { doc, writeBatch, arrayRemove } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import { LuBus as Bus, LuPlus as Plus, LuX as X, LuUsers as Users, LuPhone as Phone, LuNavigation as Navigation, LuTriangleAlert as AlertTriangle, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
+import { Edit, Trash2, Eye, MoreVertical } from 'lucide-react';
+import ConfirmModal from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
 
 export default function TransportManagement() {
@@ -15,7 +19,10 @@ export default function TransportManagement() {
   // Modals state
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [activeRouteId, setActiveRouteId] = useState(null); // For assignment
+  const [selectedRouteToView, setSelectedRouteToView] = useState(null);
+  const [confirmDeleteState, setConfirmDeleteState] = useState({ isOpen: false, id: null, name: '' });
 
   // Forms state
   const [creating, setCreating] = useState(false);
@@ -56,19 +63,39 @@ export default function TransportManagement() {
     setCreating(true);
 
     try {
-      await createTransportRoute(schoolId, {
-        ...newRoute,
-        capacity: Number(newRoute.capacity)
-      });
-      // Refresh handled by listener
+      if (newRoute.id) {
+        await updateSubDocument(schoolId, 'transportRoutes', newRoute.id, {
+          ...newRoute,
+          capacity: Number(newRoute.capacity)
+        });
+        toast.success("Route updated successfully!");
+      } else {
+        await createTransportRoute(schoolId, {
+          ...newRoute,
+          capacity: Number(newRoute.capacity)
+        });
+        toast.success("Route created successfully!");
+      }
       
       setShowCreateModal(false);
       setNewRoute({ name: '', vehicleNumber: '', driverName: '', driverPhone: '', capacity: '' });
     } catch (error) {
-      console.error("Error creating route:", error);
-      toast.error("Failed to create route.");
+      console.error("Error saving route:", error);
+      toast.error("Failed to save route.");
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleDeleteRoute = async () => {
+    if (!confirmDeleteState.id) return;
+    try {
+      await deleteSubDocument(schoolId, 'transportRoutes', confirmDeleteState.id);
+      toast.success("Route deleted successfully");
+      setConfirmDeleteState({ isOpen: false, id: null, name: '' });
+    } catch (error) {
+      console.error("Error deleting route:", error);
+      toast.error("Failed to delete route");
     }
   };
 
@@ -97,6 +124,37 @@ export default function TransportManagement() {
       toast.error("Failed to assign student.");
     } finally {
       setAssigning(false);
+    }
+  };
+
+  const handleUnassignStudent = async (routeId, studentId) => {
+    if (!schoolId || !routeId || !studentId) return;
+    try {
+      const batch = writeBatch(db);
+      
+      const routeRef = doc(db, `schools/${schoolId}/transportRoutes`, routeId);
+      batch.update(routeRef, {
+        assignedStudents: arrayRemove(studentId)
+      });
+
+      // Try updating student, but if they are deleted, it doesn't matter much (will just silently fail or we ignore)
+      const studentRef = doc(db, `schools/${schoolId}/students`, studentId);
+      batch.update(studentRef, {
+        transportRouteId: null
+      });
+
+      await batch.commit();
+      
+      // Update selected route view state to reflect changes immediately
+      setSelectedRouteToView(prev => ({
+        ...prev,
+        assignedStudents: prev.assignedStudents.filter(id => id !== studentId)
+      }));
+      
+      toast.success("Student unassigned successfully");
+    } catch (error) {
+      console.error("Error unassigning student:", error);
+      toast.error("Failed to unassign student");
     }
   };
 
@@ -149,9 +207,29 @@ export default function TransportManagement() {
               <div key={route.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow">
                 <div className="p-6 border-b border-slate-100 bg-slate-50/50">
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-bold text-lg text-slate-900 leading-tight">{route.name}</h3>
-                    <div className="bg-white p-2 rounded-xl shadow-sm border border-slate-200">
-                      <Bus size={20} className="text-primary-500" />
+                    <h3 className="font-bold text-lg text-slate-900 leading-tight pr-4 truncate">{route.name}</h3>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button 
+                        onClick={() => { setSelectedRouteToView(route); setShowViewModal(true); }}
+                        className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        title="View Details"
+                      >
+                        <Eye size={18} />
+                      </button>
+                      <button 
+                        onClick={() => { setNewRoute(route); setShowCreateModal(true); }}
+                        className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                        title="Edit Route"
+                      >
+                        <Edit size={18} />
+                      </button>
+                      <button 
+                        onClick={() => setConfirmDeleteState({ isOpen: true, id: route.id, name: route.name })}
+                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete Route"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </div>
                   </div>
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-200/50 text-slate-700 rounded-lg text-xs font-mono font-bold tracking-wide">
@@ -207,7 +285,7 @@ export default function TransportManagement() {
           <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Navigation className="text-primary-600" /> New Route
+                <Navigation className="text-primary-600" /> {newRoute.id ? 'Edit Route' : 'New Route'}
               </h2>
               <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
                 <X size={20} />
@@ -284,7 +362,7 @@ export default function TransportManagement() {
                   disabled={creating}
                   className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors"
                 >
-                  {creating ? 'Creating...' : 'Create Route'}
+                  {creating ? 'Saving...' : (newRoute.id ? 'Save Changes' : 'Create Route')}
                 </button>
               </div>
             </form>
@@ -314,7 +392,8 @@ export default function TransportManagement() {
                     required
                     value={selectedStudentId}
                     onChange={(e) => setSelectedStudentId(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white appearance-none pr-10 cursor-pointer"
+                    style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 24 24" stroke="%2364748B" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}
                   >
                     <option value="">Choose an unassigned student...</option>
                     {unassignedStudents.map(s => (
@@ -352,6 +431,106 @@ export default function TransportManagement() {
           </div>
         </div>
       )}
+
+      {/* View Route Modal */}
+      {showViewModal && selectedRouteToView && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
+          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Bus className="text-indigo-600" />
+                Route Details
+              </h2>
+              <button onClick={() => setShowViewModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 flex-1 overflow-y-auto custom-scrollbar space-y-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Route Name</label>
+                <p className="text-slate-900 font-semibold">{selectedRouteToView.name}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Vehicle No.</label>
+                  <p className="text-slate-900 font-mono font-semibold">{selectedRouteToView.vehicleNumber}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Capacity</label>
+                  <p className="text-slate-900 font-semibold">
+                    {selectedRouteToView.assignedStudents?.length || 0} / {selectedRouteToView.capacity}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Driver Name</label>
+                  <p className="text-slate-900 font-semibold">{selectedRouteToView.driverName || 'N/A'}</p>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Driver Phone</label>
+                  <p className="text-slate-900 font-semibold">{selectedRouteToView.driverPhone || 'N/A'}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assigned Students</label>
+                {selectedRouteToView.assignedStudents?.length > 0 ? (
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                    <ul className="divide-y divide-slate-100 max-h-48 overflow-y-auto custom-scrollbar">
+                      {selectedRouteToView.assignedStudents.map((s, idx) => {
+                        const sId = typeof s === 'object' ? (s.id || s.studentId) : String(s);
+                        const studentData = students.find(st => String(st.id) === String(sId));
+                        
+                        let displayName = sId;
+                        if (studentData) {
+                          const fullName = `${studentData.firstName || ''} ${studentData.lastName || ''}`.trim();
+                          displayName = fullName || studentData.name || 'Unnamed Student';
+                        } else {
+                          displayName = `Student ID: ${sId}`;
+                        }
+
+                        return (
+                          <li key={idx} className="p-3 text-sm text-slate-700 flex justify-between items-center hover:bg-slate-100 transition-colors">
+                            <span className="font-medium">{displayName}</span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs text-slate-400 font-mono">{studentData?.admissionNumber || 'N/A'}</span>
+                              <button 
+                                onClick={() => handleUnassignStudent(selectedRouteToView.id, sId)}
+                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Unassign Student"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500 italic p-3 bg-slate-50 rounded-xl border border-slate-200">No students assigned to this route yet.</p>
+                )}
+              </div>
+            </div>
+            
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <button onClick={() => setShowViewModal(false)} className="px-6 py-2 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ConfirmModal 
+        isOpen={confirmDeleteState.isOpen}
+        onClose={() => setConfirmDeleteState({ isOpen: false, id: null, name: '' })}
+        onConfirm={handleDeleteRoute}
+        title="Delete Route"
+        message={`Are you sure you want to delete the route "${confirmDeleteState.name}"? This will unassign all students currently on this route. This action cannot be undone.`}
+        confirmText="Delete Route"
+      />
     </div>
   );
 }

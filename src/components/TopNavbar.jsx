@@ -219,7 +219,9 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                 <button 
                   onClick={() => {
                     setShowNotifications(false);
-                    navigate(`/${userProfile.role === 'superadmin' ? 'superadmin' : userProfile.role}/noticeboard`);
+                    const baseRoute = userProfile?.role?.toLowerCase() || 'admin';
+                    // The superadmin module might use a different noticeboard path, or none at all, but we map to /notices safely
+                    navigate(`/${baseRoute}/notices`);
                   }} 
                   className="text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors"
                 >

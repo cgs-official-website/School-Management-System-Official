@@ -89,7 +89,7 @@ export default function StudentManagement() {
 
     const fetchSchema = async () => {
       try {
-        const snap = await getDoc(doc(db, `schools/${schoolId}/formSchemas/student_admission`));
+        const snap = await getDoc(doc(db, `schools/${schoolId}/formSchemas/students`));
         if (snap.exists()) {
           setFormSchema(snap.data().fields || []);
         }

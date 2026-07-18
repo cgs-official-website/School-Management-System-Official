@@ -57,6 +57,7 @@ const FormBuilder = lazy(() => import('./pages/Admin/FormBuilder'));
 const SubjectManagement = lazy(() => import('./pages/Admin/SubjectManagement'));
 const RolesPermissions = lazy(() => import('./pages/Admin/RolesPermissions'));
 const AdminAttendance = lazy(() => import('./pages/Admin/Attendance'));
+const AdminHomework = lazy(() => import('./pages/Admin/AdminHomework'));
 
 // Teacher
 const TeacherRegistration = lazy(() => import('./pages/TeacherRegistration'));
@@ -192,6 +193,7 @@ function App() {
               <Route path="hr-payroll" element={<HRPayrollManagement />} />
               <Route path="reports" element={<ReportsAnalytics />} />
               <Route path="roles" element={<RolesPermissions />} />
+              <Route path="homework" element={<AdminHomework />} />
             </Route>
 
             {/* Teacher Routes */}

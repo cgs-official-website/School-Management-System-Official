@@ -94,6 +94,7 @@ export default function AdminDashboard() {
     { name: 'Timetables', path: '/admin/timetables', icon: Calendar, moduleKey: 'timetables' },
     { name: 'Calendar', path: '/admin/calendar', icon: Calendar, moduleKey: 'calendar' },
     { name: 'Exams & Results', path: '/admin/exams', icon: FileText, moduleKey: 'exams' },
+    { name: 'Homework', path: '/admin/homework', icon: BookOpen, moduleKey: 'homework' },
     { name: 'Fees & Payments', path: '/admin/fees', icon: CreditCard, moduleKey: 'fees' },
     { name: 'Transport', path: '/admin/transport', icon: Bus, moduleKey: 'transport' },
     { name: 'Library', path: '/admin/library', icon: Library, moduleKey: 'library' },
@@ -102,7 +103,7 @@ export default function AdminDashboard() {
     { name: 'API Integrations', path: '/admin/api', icon: Key, moduleKey: 'api' },
     { name: 'Registration Links', path: '/admin/links', icon: LinkIcon, moduleKey: 'links' },
     { name: 'Billing & Plan', path: '/admin/billing', icon: CreditCard, moduleKey: 'billing' },
-    { name: 'Settings', path: '/admin/form-builder', icon: Settings, moduleKey: 'form-builder' },
+    { name: 'Custom Fields', path: '/admin/form-builder', icon: Settings, moduleKey: 'form-builder' },
     { name: 'Roles & Permissions', path: '/admin/roles', icon: Shield, moduleKey: 'roles' },
   ];
 
@@ -114,7 +115,7 @@ export default function AdminDashboard() {
     if (item.moduleKey === 'inventory' && schoolData.schoolType === 'College') return true;
     
     // Core modules bypass school subscription check
-    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api'];
+    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api', 'homework'];
     if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
        return false;
     }
