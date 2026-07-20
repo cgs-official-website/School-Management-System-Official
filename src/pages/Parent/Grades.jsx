@@ -4,15 +4,21 @@ import { db } from '../../firebase/config';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { LuFileSpreadsheet as FileIcon, LuPrinter as Printer, LuArrowLeft as ArrowLeft, LuCalendar as Calendar, LuAward as Award, LuDownload as DownloadIcon } from 'react-icons/lu';
 import toast from 'react-hot-toast';
+import { useLocation } from 'react-router-dom';
 
 export default function ParentGrades() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
   const studentId = userProfile?.linkedStudentId;
+  const location = useLocation();
 
   const [loading, setLoading] = useState(true);
   const [reportCards, setReportCards] = useState([]);
   const [selectedReport, setSelectedReport] = useState(null);
+
+  useEffect(() => {
+    setSelectedReport(null);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!schoolId || !studentId) {

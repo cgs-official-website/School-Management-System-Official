@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 import {
   getExams, 
   createExam, 
@@ -19,9 +20,12 @@ import { doc, setDoc } from 'firebase/firestore';
 export default function ExamManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const location = useLocation();
 
   const [activeTab, setActiveTab] = useState('manage'); // 'manage' | 'reports'
   const [exams, setExams] = useState([]);
+
+
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,6 +41,14 @@ export default function ExamManagement() {
   const [generatingReport, setGeneratingReport] = useState(false);
   const [isBuildingTemplate, setIsBuildingTemplate] = useState(false);
   const [reportTemplate, setReportTemplate] = useState(null);
+
+  useEffect(() => {
+    setIsBuildingTemplate(false);
+    setActiveTab('manage');
+    setSelectedExamId('');
+    setSelectedClassId('');
+    setReportData(null);
+  }, [location.pathname]);
 
   const fetchTemplate = () => {
     if (schoolId) {

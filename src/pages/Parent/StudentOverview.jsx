@@ -71,7 +71,7 @@ export default function StudentOverview() {
 
   // Calculate overall attendance %
   const attendancePercentage = attendanceStats.total === 0 
-    ? 100 
+    ? 0 
     : Math.round(((attendanceStats.present + attendanceStats.late) / attendanceStats.total) * 100);
 
   return (
@@ -110,13 +110,36 @@ export default function StudentOverview() {
             </div>
 
             <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-32 h-32 rounded-full border-8 border-slate-50 relative">
+              <div className="inline-flex items-center justify-center w-32 h-32 rounded-full relative">
                 {/* Visual ring approximation */}
                 <svg className="absolute inset-0 w-full h-full -rotate-90">
-                  <circle cx="60" cy="60" r="56" fill="transparent" stroke="currentColor" strokeWidth="8" className="text-slate-100" />
-                  <circle cx="60" cy="60" r="56" fill="transparent" stroke="currentColor" strokeWidth="8" className={`transition-all duration-1000 ${attendancePercentage >= 90 ? 'text-green-500' : attendancePercentage >= 75 ? 'text-amber-500' : 'text-red-500'}`} strokeDasharray={`${(attendancePercentage / 100) * 351} 351`} />
+                  {attendanceStats.total === 0 ? (
+                    <circle cx="64" cy="64" r="52" fill="transparent" stroke="currentColor" strokeWidth="8" className="text-slate-200" />
+                  ) : (
+                    <>
+                      <circle cx="64" cy="64" r="52" fill="transparent" stroke="currentColor" strokeWidth="8" className="text-slate-100" />
+                      <circle 
+                        cx="64" 
+                        cy="64" 
+                        r="52" 
+                        fill="transparent" 
+                        stroke="currentColor" 
+                        strokeWidth="8" 
+                        className={`transition-all duration-1000 ${
+                          attendancePercentage >= 90 
+                            ? 'text-green-500' 
+                            : attendancePercentage >= 75 
+                              ? 'text-amber-500' 
+                              : 'text-red-500'
+                        }`} 
+                        strokeDasharray={`${(attendancePercentage / 100) * 326.7} 326.7`} 
+                      />
+                    </>
+                  )}
                 </svg>
-                <div className="text-3xl font-black text-slate-900">{attendancePercentage}%</div>
+                <div className="text-3xl font-black text-slate-900">
+                  {attendanceStats.total === 0 ? '--' : `${attendancePercentage}%`}
+                </div>
               </div>
             </div>
 
@@ -135,12 +158,16 @@ export default function StudentOverview() {
               </div>
             </div>
             
-            {attendancePercentage < 80 && (
+            {attendanceStats.total === 0 ? (
+              <div className="mt-6 bg-slate-50 text-slate-500 p-3 rounded-xl border border-slate-200/60 text-center text-xs font-semibold uppercase tracking-wider">
+                No Attendance Recorded Yet
+              </div>
+            ) : attendancePercentage < 80 ? (
               <div className="mt-6 bg-red-50 text-red-700 p-3 rounded-xl border border-red-200 text-sm flex gap-2">
                 <AlertTriangle size={16} className="shrink-0 mt-0.5" />
                 <p>Attendance has dropped below 80%. Please monitor.</p>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
 
