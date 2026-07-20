@@ -10,8 +10,8 @@ import toast from 'react-hot-toast';
 export default function HomeworkOverview() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
-  const classId = userProfile?.classId;
-  const studentId = userProfile?.id; // Parent's child ID
+  const classId = userProfile?.linkedClassId;
+  const studentId = userProfile?.linkedStudentId; // Parent's child ID
 
   const [homeworks, setHomeworks] = useState([]);
   const [studentStatuses, setStudentStatuses] = useState({});

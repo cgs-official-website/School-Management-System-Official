@@ -92,7 +92,7 @@ export default function TeacherTimetable() {
             const matchesId = slot.teacherId === teacherId;
             const matchesName = !slot.teacherId && currentTeacher && slot.teacher === (currentTeacher.name || `${currentTeacher.firstName} ${currentTeacher.lastName}`);
             
-            if (isSubjectClass || matchesId || matchesName) {
+            if (matchesId || matchesName) {
               // Ensure we don't duplicate slots if both conditions are somehow met
               const exists = newSubjectSchedule[day].some(s => s.id === slot.id + classId);
               if (!exists) {
