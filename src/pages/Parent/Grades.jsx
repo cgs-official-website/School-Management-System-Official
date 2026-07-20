@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase/config';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { LuFileSpreadsheet as FileIcon, LuPrinter as Printer, LuArrowLeft as ArrowLeft, LuCalendar as Calendar, LuAward as Award, LuDownload as DownloadIcon } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
@@ -20,23 +20,22 @@ export default function ParentGrades() {
       return;
     }
 
-    const fetchReportCards = async () => {
-      try {
-        const ref = collection(db, `schools/${schoolId}/students/${studentId}/report_cards`);
-        const snap = await getDocs(ref);
-        const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        // Sort by publication date descending
-        list.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
-        setReportCards(list);
-      } catch (error) {
-        console.error("Error fetching report cards:", error);
-        toast.error("Failed to load report cards.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    const ref = collection(db, `schools/${schoolId}/students/${studentId}/report_cards`);
+    
+    const unsubscribe = onSnapshot(ref, (snap) => {
+      const list = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Sort by publication date descending
+      list.sort((a, b) => new Date(b.publishedAt || 0) - new Date(a.publishedAt || 0));
+      setReportCards(list);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching report cards:", error);
+      toast.error("Failed to load report cards.");
+      setLoading(false);
+    });
 
-    fetchReportCards();
+    return () => unsubscribe();
   }, [schoolId, studentId]);
 
   if (loading) {
