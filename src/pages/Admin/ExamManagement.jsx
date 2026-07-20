@@ -38,6 +38,14 @@ export default function ExamManagement() {
   const [isBuildingTemplate, setIsBuildingTemplate] = useState(false);
   const [reportTemplate, setReportTemplate] = useState(null);
 
+  const fetchTemplate = () => {
+    if (schoolId) {
+      getTemplate(schoolId, 'report_card').then(templateData => {
+        setReportTemplate(templateData);
+      });
+    }
+  };
+
   useEffect(() => {
     if (!schoolId) return;
 
@@ -45,9 +53,7 @@ export default function ExamManagement() {
     let examsUnsub, classesUnsub;
 
     // Fetch template once statically
-    getTemplate(schoolId, 'report_card').then(templateData => {
-      setReportTemplate(templateData);
-    });
+    fetchTemplate();
 
     examsUnsub = subscribeToExams(schoolId, (data) => {
       setExams(data);
@@ -218,7 +224,7 @@ export default function ExamManagement() {
   if (isBuildingTemplate) {
     return <ReportTemplateBuilder onBack={() => {
       setIsBuildingTemplate(false);
-      fetchInitialData(); // Refetch template in case they saved it
+      fetchTemplate(); // Refetch template in case they saved it
     }} />;
   }
 
