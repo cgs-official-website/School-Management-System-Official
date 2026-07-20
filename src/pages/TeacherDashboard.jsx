@@ -7,9 +7,11 @@ import { getDoc, doc, collection, query, where, getDocs } from 'firebase/firesto
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
 import useSchoolBranding from '../hooks/useSchoolBranding';
+import { useNotifications } from '../context/NotificationContext';
 
 export default function TeacherDashboard() {
   const { currentUser, userProfile } = useAuth();
+  const { unreadCounts, clearBadge } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -116,6 +118,13 @@ export default function TeacherDashboard() {
     setIsSidebarOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const matchedItem = navItems.find(item => location.pathname === item.path);
+    if (matchedItem && matchedItem.moduleKey) {
+      clearBadge(matchedItem.moduleKey);
+    }
+  }, [location.pathname, clearBadge]);
+
   const handleLogout = async () => {
     await logoutUser();
     navigate('/login');
@@ -123,13 +132,13 @@ export default function TeacherDashboard() {
 
   const navItems = [
     { name: 'Class Roster', path: '/teacher', icon: Users, exact: true },
-    { name: 'Noticeboard', path: '/teacher/notices', icon: Bell },
+    { name: 'Noticeboard', path: '/teacher/notices', icon: Bell, moduleKey: 'noticeboard' },
     { name: 'Calendar', path: '/teacher/calendar', icon: Calendar },
     { name: 'Timetable', path: '/teacher/timetable', icon: LuCalendarDays },
     { name: 'Lesson Plans', path: '/teacher/lesson-plans', icon: LuBookOpen },
     { name: 'Resources', path: '/teacher/resources', icon: LuFolderDown },
     { name: 'Attendance', path: '/teacher/attendance', icon: CheckSquare },
-    { name: 'Homework', path: '/teacher/homework', icon: FileText },
+    { name: 'Homework', path: '/teacher/homework', icon: FileText, moduleKey: 'homework' },
     { name: 'Performance', path: '/teacher/performance', icon: LuTrendingUp },
     { name: 'PTM Scheduler', path: '/teacher/ptm', icon: LuCalendarClock },
     { name: 'Grades & Exams', path: '/teacher/grades', icon: GraduationCap },
@@ -202,6 +211,11 @@ export default function TeacherDashboard() {
                     )}
                     <item.icon size={20} className="shrink-0" />
                     <span>{item.name}</span>
+                    {item.moduleKey && unreadCounts[item.moduleKey] > 0 && (
+                      <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full select-none shrink-0 ml-auto animate-pulse">
+                        {unreadCounts[item.moduleKey]}
+                      </span>
+                    )}
                   </>
                 )}
             </NavLink>
