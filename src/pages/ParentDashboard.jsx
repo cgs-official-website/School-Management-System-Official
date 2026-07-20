@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { logoutUser } from '../firebase/auth';
@@ -6,11 +6,13 @@ import { findStudentByAdmission, linkStudentToParent } from '../firebase/firesto
 import { getDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
-import { LuCircleUser as UserCircle, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuMessageSquare as MessageSquare, LuLink as LinkIcon, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuCoffee as Coffee, LuBuilding2 as Building2 } from 'react-icons/lu';
+import { LuCircleUser as UserCircle, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuCreditCard as CreditCard, LuLink as LinkIcon, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuCoffee as Coffee, LuBuilding2 as Building2 } from 'react-icons/lu';
 import useSchoolBranding from '../hooks/useSchoolBranding';
+import { useNotifications } from '../context/NotificationContext';
 
 export default function ParentDashboard() {
   const { currentUser, userProfile, updateProfileData } = useAuth();
+  const { unreadCounts, clearBadge } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -43,6 +45,13 @@ export default function ParentDashboard() {
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const matchedItem = navItems.find(item => location.pathname === item.path);
+    if (matchedItem && matchedItem.moduleKey) {
+      clearBadge(matchedItem.moduleKey);
+    }
+  }, [location.pathname, clearBadge]);
 
   const handleLogout = async () => {
     await logoutUser();
@@ -79,13 +88,13 @@ export default function ParentDashboard() {
 
   const navItems = [
     { name: 'Student Overview', path: '/parent', icon: UserCircle, exact: true },
-    { name: 'Noticeboard', path: '/parent/notices', icon: Bell },
+    { name: 'Noticeboard', path: '/parent/notices', icon: Bell, moduleKey: 'noticeboard' },
     { name: 'Calendar', path: '/parent/calendar', icon: Calendar },
     { name: 'Attendance', path: '/parent/attendance', icon: CheckSquare },
     { name: 'Canteen', path: '/parent/canteen', icon: Coffee },
-    { name: 'Homework', path: '/parent/homework', icon: FileText },
+    { name: 'Homework', path: '/parent/homework', icon: FileText, moduleKey: 'homework' },
     { name: 'Report Card', path: '/parent/grades', icon: GraduationCap },
-    { name: 'Messages', path: '/parent/chat', icon: MessageSquare },
+    { name: 'Fees & Payments', path: '/parent/fees', icon: CreditCard, moduleKey: 'fees' },
   ];
 
   if (loading) {
@@ -215,6 +224,11 @@ export default function ParentDashboard() {
                   )}
                   <item.icon size={20} className="shrink-0" />
                   <span>{item.name}</span>
+                  {item.moduleKey && unreadCounts[item.moduleKey] > 0 && (
+                    <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full select-none shrink-0 ml-auto animate-pulse">
+                      {unreadCounts[item.moduleKey]}
+                    </span>
+                  )}
                 </>
               )}
             </NavLink>
@@ -252,9 +266,14 @@ export default function ParentDashboard() {
           navItems={navItems}
         />
         
-        {/* Dashboard Content */}
         <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <Outlet />
+          <Suspense fallback={
+            <div className="flex-1 flex justify-center items-center h-[50vh]">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

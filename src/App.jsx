@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Loading Fallback (Sleek futuristic spinner)
@@ -81,7 +82,7 @@ const MySalary = lazy(() => import('./pages/Teacher/MySalary'));
 const ParentRegistration = lazy(() => import('./pages/ParentRegistration'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
 const StudentOverview = lazy(() => import('./pages/Parent/StudentOverview'));
-const ParentChat = lazy(() => import('./pages/Parent/Chat'));
+const ParentFees = lazy(() => import('./pages/Parent/Fees'));
 const ParentNoticeboard = lazy(() => import('./pages/Parent/ParentNoticeboard'));
 const HomeworkOverview = lazy(() => import('./pages/Parent/HomeworkOverview'));
 const ParentCalendar = lazy(() => import('./pages/Parent/Calendar'));
@@ -94,7 +95,8 @@ import { Toaster } from 'react-hot-toast';
 function App() {
   return (
     <AuthProvider>
-      <Toaster 
+      <NotificationProvider>
+        <Toaster 
         position="top-right" 
         toastOptions={{
           className: '',
@@ -239,7 +241,7 @@ function App() {
               <Route path="attendance" element={<ParentAttendance />} />
               <Route path="homework" element={<HomeworkOverview />} />
               <Route path="grades" element={<ParentGrades />} />
-              <Route path="chat" element={<ParentChat />} />
+              <Route path="fees" element={<ParentFees />} />
               <Route path="notices" element={<ParentNoticeboard />} />
               <Route path="calendar" element={<ParentCalendar />} />
               <Route path="canteen" element={<ParentCanteen />} />
@@ -250,6 +252,7 @@ function App() {
           </Routes>
         </Suspense>
       </Router>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

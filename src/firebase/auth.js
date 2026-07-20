@@ -83,6 +83,9 @@ export const getUserProfile = async (uid) => {
     const userDoc = await getDoc(doc(db, "users", uid));
     if (userDoc.exists()) {
       const data = userDoc.data();
+      if (data.role) {
+        data.role = data.role.toLowerCase();
+      }
       
       // If the user is a teacher, dynamically fetch their assignedClassId from their school record
       if (data.role === 'teacher' && data.schoolId) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useLocation } from 'react-router-dom';
 import {
   getExams, 
   createExam, 
@@ -19,9 +20,12 @@ import { doc, setDoc } from 'firebase/firestore';
 export default function ExamManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const location = useLocation();
 
   const [activeTab, setActiveTab] = useState('manage'); // 'manage' | 'reports'
   const [exams, setExams] = useState([]);
+
+
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,15 +43,29 @@ export default function ExamManagement() {
   const [reportTemplate, setReportTemplate] = useState(null);
 
   useEffect(() => {
+    setIsBuildingTemplate(false);
+    setActiveTab('manage');
+    setSelectedExamId('');
+    setSelectedClassId('');
+    setReportData(null);
+  }, [location.pathname]);
+
+  const fetchTemplate = () => {
+    if (schoolId) {
+      getTemplate(schoolId, 'report_card').then(templateData => {
+        setReportTemplate(templateData);
+      });
+    }
+  };
+
+  useEffect(() => {
     if (!schoolId) return;
 
     setLoading(true);
     let examsUnsub, classesUnsub;
 
     // Fetch template once statically
-    getTemplate(schoolId, 'report_card').then(templateData => {
-      setReportTemplate(templateData);
-    });
+    fetchTemplate();
 
     examsUnsub = subscribeToExams(schoolId, (data) => {
       setExams(data);
@@ -218,7 +236,7 @@ export default function ExamManagement() {
   if (isBuildingTemplate) {
     return <ReportTemplateBuilder onBack={() => {
       setIsBuildingTemplate(false);
-      fetchInitialData(); // Refetch template in case they saved it
+      fetchTemplate(); // Refetch template in case they saved it
     }} />;
   }
 
