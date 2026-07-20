@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToStudentsByClass } from '../../firebase/firestore';
-import { getDoc, doc, onSnapshot } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuUsers as Users, LuSearch as Search, LuGraduationCap as GraduationCap, LuMail as Mail, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
 
 export default function ClassRoster() {
-  const { userProfile } = useAuth();
+  const { userProfile, currentUser } = useAuth();
   const schoolId = userProfile?.schoolId;
-  const classId = userProfile?.assignedClassId;
+  const [classId, setClassId] = useState(userProfile?.assignedClassId || null);
+
+  useEffect(() => {
+    if (!schoolId || !currentUser?.uid) return;
+    const q = query(collection(db, `schools/${schoolId}/teachers`), where("userId", "==", currentUser.uid));
+    const unsub = onSnapshot(q, (snap) => {
+      if (!snap.empty) {
+        setClassId(snap.docs[0].data().assignedClassId || null);
+      }
+    });
+    return () => unsub();
+  }, [schoolId, currentUser?.uid]);
 
   const [classDetails, setClassDetails] = useState(null);
   const [students, setStudents] = useState([]);

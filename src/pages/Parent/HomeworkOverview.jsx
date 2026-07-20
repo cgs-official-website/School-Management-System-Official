@@ -19,7 +19,7 @@ export default function HomeworkOverview() {
 
   const handleStatusChange = async (hwId, newStatus) => {
     try {
-      const subRef = doc(db, `schools/${schoolId}/homeworks/${hwId}/submissions`, studentId);
+      const subRef = doc(db, 'schools', schoolId, 'homeworks', hwId, 'submissions', studentId);
       await setDoc(subRef, {
         id: studentId,
         status: newStatus,
