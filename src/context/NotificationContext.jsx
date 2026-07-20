@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { db } from '../firebase/config';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
@@ -24,11 +24,11 @@ export const NotificationProvider = ({ children }) => {
     homework: localStorage.getItem('lastViewed_homework') || '1970-01-01T00:00:00.000Z'
   });
 
-  const clearBadge = (moduleKey) => {
+  const clearBadge = useCallback((moduleKey) => {
     const now = new Date().toISOString();
     localStorage.setItem(`lastViewed_${moduleKey}`, now);
     setLastViewed(prev => ({ ...prev, [moduleKey]: now }));
-  };
+  }, []);
 
   useEffect(() => {
     if (!schoolId || !currentUser) {
@@ -127,7 +127,7 @@ export const NotificationProvider = ({ children }) => {
     return () => {
       unsubscribers.forEach(unsub => unsub());
     };
-  }, [schoolId, role, currentUser, lastViewed]);
+  }, [schoolId, role, currentUser, lastViewed.noticeboard, lastViewed.homework]);
 
   return (
     <NotificationContext.Provider value={{ unreadCounts, clearBadge }}>

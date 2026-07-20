@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LuBookOpen as BookOpen, LuUsers as Users, LuLogOut as LogOut, LuLayoutDashboard as LayoutDashboard, LuLink as LinkIcon, LuSettings as Settings, LuCreditCard as CreditCard, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuBus as Bus, LuLibrary as Library, LuFileText as FileText, LuBell as Bell, LuKey as Key, LuMenu as Menu, LuX as X, LuBuilding2 as Building2, LuCheck as CheckSquare, LuHouse as Home, LuPackage as PackageIcon, LuBriefcase as Briefcase, LuChartBar as BarChart2, LuHeartPulse as HeartPulse, LuCircleAlert as AlertCircle, LuFiles as Files, LuChevronDown as ChevronDown, LuChevronRight as ChevronRight, LuShield as Shield } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
@@ -283,9 +283,14 @@ export default function AdminDashboard() {
           navItems={navItems}
         />
         
-        {/* Dashboard Content */}
         <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <Outlet />
+          <Suspense fallback={
+            <div className="flex-1 flex justify-center items-center h-[50vh]">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

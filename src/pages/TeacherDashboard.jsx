@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LuUsers as Users, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuMessageSquare as MessageSquare, LuLock as Lock, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuBuilding2 as Building2, LuCalendarDays, LuBookOpen, LuCalendarOff, LuTrendingUp, LuFolderDown, LuCalendarClock, LuBanknote, LuUser as UserIcon } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
@@ -274,7 +274,13 @@ export default function TeacherDashboard() {
              </div>
           )}
           <div className="flex-1 p-4 pt-0">
-            <Outlet />
+            <Suspense fallback={
+              <div className="flex-1 flex justify-center items-center h-[50vh]">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+              </div>
+            }>
+              <Outlet />
+            </Suspense>
           </div>
         </main>
       </div>

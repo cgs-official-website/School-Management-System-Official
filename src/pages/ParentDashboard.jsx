@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { logoutUser } from '../firebase/auth';
@@ -266,9 +266,14 @@ export default function ParentDashboard() {
           navItems={navItems}
         />
         
-        {/* Dashboard Content */}
         <main className="flex-1 overflow-y-auto custom-scrollbar">
-          <Outlet />
+          <Suspense fallback={
+            <div className="flex-1 flex justify-center items-center h-[50vh]">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>
