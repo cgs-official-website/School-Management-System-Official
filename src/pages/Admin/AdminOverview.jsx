@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, getNotices, subscribeToSubCollection, subscribeToNotices, subscribeToInvoices } from '../../firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import { 
   LuUsers as Users, 
   LuGraduationCap as GraduationCap, 
@@ -15,6 +17,16 @@ import {
   LuCheck as Check,
   LuCopy as Copy
 } from 'react-icons/lu';
+import { 
+  FiSettings as Settings,
+  FiX as X,
+  FiSave as Save,
+  FiLink as LinkIcon,
+  FiBarChart2 as BarChart2,
+  FiUserPlus as UserPlus,
+  FiEdit as FileEdit,
+  FiCheckSquare as ClipboardCheck
+} from 'react-icons/fi';
 
 export default function AdminOverview() {
   const { userProfile } = useAuth();
@@ -47,6 +59,16 @@ export default function AdminOverview() {
   const [copiedRole, setCopiedRole] = useState(null);
   const dropdownRef = useRef(null);
 
+  // Customization State
+  const defaultConfig = {
+    metrics: { students: true, staff: true, classes: true, notices: true },
+    widgets: { recentNotices: true, systemStatus: true, quickActions: true, attendanceSummary: true }
+  };
+  const [config, setConfig] = useState(defaultConfig);
+  const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [tempConfig, setTempConfig] = useState(defaultConfig);
+  const [savingConfig, setSavingConfig] = useState(false);
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -65,6 +87,45 @@ export default function AdminOverview() {
       setCopiedRole(null);
       setIsInviteDropdownOpen(false);
     }, 2000);
+  };
+
+  // Fetch dashboard config
+  useEffect(() => {
+    const fetchConfig = async () => {
+      if (userProfile?.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', userProfile.uid));
+          if (userDoc.exists() && userDoc.data().dashboardConfig) {
+            const savedConfig = userDoc.data().dashboardConfig;
+            // Merge with default config to ensure new keys aren't missing
+            const mergedConfig = {
+              metrics: { ...defaultConfig.metrics, ...(savedConfig.metrics || {}) },
+              widgets: { ...defaultConfig.widgets, ...(savedConfig.widgets || {}) }
+            };
+            setConfig(mergedConfig);
+            setTempConfig(mergedConfig);
+          }
+        } catch (error) {
+          console.error("Error fetching config:", error);
+        }
+      }
+    };
+    fetchConfig();
+  }, [userProfile]);
+
+  const handleSaveConfig = async () => {
+    setSavingConfig(true);
+    try {
+      await updateDoc(doc(db, 'users', userProfile.uid), {
+        dashboardConfig: tempConfig
+      });
+      setConfig(tempConfig);
+      setIsConfigModalOpen(false);
+    } catch (error) {
+      console.error("Error saving config:", error);
+    } finally {
+      setSavingConfig(false);
+    }
   };
 
   useEffect(() => {
@@ -132,8 +193,9 @@ export default function AdminOverview() {
     );
   }
 
-  const statCards = [
+  const allStatCards = [
     {
+      id: 'students',
       title: "Total Students",
       value: stats.students,
       icon: <GraduationCap className="h-6 w-6 text-blue-600" />,
@@ -141,6 +203,7 @@ export default function AdminOverview() {
       trend: "+12% from last month"
     },
     {
+      id: 'staff',
       title: "Teaching Staff",
       value: stats.staff,
       icon: <Users className="h-6 w-6 text-purple-600" />,
@@ -148,6 +211,7 @@ export default function AdminOverview() {
       trend: "+2 new this month"
     },
     {
+      id: 'classes',
       title: "Active Classes",
       value: stats.classes,
       icon: <BookOpen className="h-6 w-6 text-green-600" />,
@@ -155,6 +219,7 @@ export default function AdminOverview() {
       trend: "Across all sections"
     },
     {
+      id: 'notices',
       title: "School Notices",
       value: stats.notices,
       icon: <Bell className="h-6 w-6 text-amber-600" />,
@@ -163,8 +228,10 @@ export default function AdminOverview() {
     }
   ];
 
+  const visibleStatCards = allStatCards.filter(card => config.metrics[card.id] !== false);
+
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="space-y-6 animate-fade-in-up">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -172,6 +239,15 @@ export default function AdminOverview() {
             <p className="text-sm text-slate-500 mt-1">Welcome back, here's what's happening at your school today.</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
+            
+            <button 
+              onClick={() => setIsConfigModalOpen(true)}
+              className="flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm font-semibold transition-all active:scale-[0.98]"
+            >
+              <Settings size={18} />
+              Customize
+            </button>
+
             <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setIsInviteDropdownOpen(!isInviteDropdownOpen)}
@@ -213,137 +289,317 @@ export default function AdminOverview() {
         </div>
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((stat, idx) => (
-          <div key={idx} className="overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-slate-200 transition-all hover:shadow-md hover:-translate-y-1">
-            <div className="flex items-center gap-4">
-              <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${stat.bg}`}>
-                {stat.icon}
-              </div>
-              <div>
-                <p className="text-sm font-medium text-slate-500">{stat.title}</p>
-                <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500">
-              <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
-              <span>{stat.trend}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Recent Notices */}
-        <div className="col-span-1 rounded-xl bg-white shadow-sm border border-slate-200 lg:col-span-2">
-          <div className="border-b border-slate-100 px-6 py-4">
-            <h2 className="text-base font-semibold text-slate-900">Recent Notices</h2>
-          </div>
-          <div className="p-6">
-            {recentNotices.length > 0 ? (
-              <div className="space-y-4">
-                {recentNotices.map((notice) => (
-                  <div key={notice.id} className="group relative flex gap-4 rounded-xl border border-slate-100 p-4 transition-all hover:bg-slate-50">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
-                      <Bell className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-slate-900">{notice.title}</h3>
-                      <p className="mt-1 line-clamp-2 text-sm text-slate-500">{notice.content}</p>
-                      <p className="mt-2 text-xs font-medium text-slate-400">
-                        {new Date(notice.date).toLocaleDateString()} • {notice.targetAudience ? notice.targetAudience.charAt(0).toUpperCase() + notice.targetAudience.slice(1) : 'All'}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="mb-3 rounded-full bg-slate-50 p-3">
-                  <Bell className="h-6 w-6 text-slate-400" />
+      {visibleStatCards.length > 0 && (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {visibleStatCards.map((stat, idx) => (
+            <div key={idx} className="overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-slate-200 transition-all hover:shadow-md hover:-translate-y-1">
+              <div className="flex items-center gap-4">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${stat.bg}`}>
+                  {stat.icon}
                 </div>
-                <h3 className="text-sm font-medium text-slate-900">No notices yet</h3>
-                <p className="mt-1 text-sm text-slate-500">Create a notice to keep everyone informed.</p>
+                <div>
+                  <p className="text-sm font-medium text-slate-500">{stat.title}</p>
+                  <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+                </div>
               </div>
-            )}
-          </div>
+              <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500">
+                <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
+                <span>{stat.trend}</span>
+              </div>
+            </div>
+          ))}
         </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {/* Recent Notices */}
+        {config.widgets.recentNotices !== false && (
+          <div className="col-span-1 rounded-xl bg-white shadow-sm border border-slate-200">
+            <div className="border-b border-slate-100 px-6 py-4">
+              <h2 className="text-base font-semibold text-slate-900">Recent Notices</h2>
+            </div>
+            <div className="p-6">
+              {recentNotices.length > 0 ? (
+                <div className="space-y-4">
+                  {recentNotices.map((notice) => (
+                    <div key={notice.id} className="group relative flex gap-4 rounded-xl border border-slate-100 p-4 transition-all hover:bg-slate-50">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                        <Bell className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-slate-900">{notice.title}</h3>
+                        <p className="mt-1 line-clamp-2 text-sm text-slate-500">{notice.content}</p>
+                        <p className="mt-2 text-xs font-medium text-slate-400">
+                          {new Date(notice.date).toLocaleDateString()} • {notice.targetAudience ? notice.targetAudience.charAt(0).toUpperCase() + notice.targetAudience.slice(1) : 'All'}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="mb-3 rounded-full bg-slate-50 p-3">
+                    <Bell className="h-6 w-6 text-slate-400" />
+                  </div>
+                  <h3 className="text-sm font-medium text-slate-900">No notices yet</h3>
+                  <p className="mt-1 text-sm text-slate-500">Create a notice to keep everyone informed.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Quick Actions / Status */}
-        <div className="col-span-1 rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white shadow-md">
-          <h2 className="text-lg font-semibold text-white">System Status</h2>
-          <p className="mt-1 text-sm text-slate-300">All modules running smoothly</p>
-          
-          <div className="mt-8 space-y-4">
-            {hasModule('fees') && (
-              <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Wallet className="h-5 w-5 text-amber-400" />
-                    <span className="font-medium">Fee Collection</span>
+        {config.widgets.systemStatus !== false && (
+          <div className="col-span-1 rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 text-white shadow-md">
+            <h2 className="text-lg font-semibold text-white">System Status</h2>
+            <p className="mt-1 text-sm text-slate-300">All modules running smoothly</p>
+            
+            <div className="mt-8 space-y-4">
+              {hasModule('fees') && (
+                <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Wallet className="h-5 w-5 text-amber-400" />
+                      <span className="font-medium">Fee Collection</span>
+                    </div>
+                    <span className={`rounded-full px-2 py-1 text-xs font-medium ${systemStatus.feesActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-500/20 text-slate-300'}`}>
+                      {systemStatus.feesActive ? 'Active' : 'No Invoices'}
+                    </span>
                   </div>
-                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${systemStatus.feesActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-500/20 text-slate-300'}`}>
-                    {systemStatus.feesActive ? 'Active' : 'No Invoices'}
-                  </span>
-                </div>
-                <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
-                  <div className="h-1.5 rounded-full bg-amber-400 transition-all duration-1000" style={{ width: `${systemStatus.feeCollectedPct}%` }}></div>
-                </div>
-                <div className="mt-2 text-right text-xs text-slate-300">{systemStatus.feeCollectedPct}% Collected</div>
-              </div>
-            )}
-
-            {hasModule('calendar') && (
-              <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Calendar className="h-5 w-5 text-blue-400" />
-                    <span className="font-medium">Academic Calendar</span>
+                  <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
+                    <div className="h-1.5 rounded-full bg-amber-400 transition-all duration-1000" style={{ width: `${systemStatus.feeCollectedPct}%` }}></div>
                   </div>
-                  <span className="text-xs font-medium text-slate-300">Events</span>
+                  <div className="mt-2 text-right text-xs text-slate-300">{systemStatus.feeCollectedPct}% Collected</div>
                 </div>
-                <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
-                  <div className="h-1.5 rounded-full bg-blue-400 transition-all duration-1000" style={{ width: `${Math.min(systemStatus.activeEvents * 10, 100)}%` }}></div>
-                </div>
-                <div className="mt-2 text-right text-xs text-slate-300">{systemStatus.activeEvents} Upcoming Event{systemStatus.activeEvents !== 1 && 's'}</div>
-              </div>
-            )}
+              )}
 
-            {hasModule('hr-payroll') && (
-              <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Briefcase className="h-5 w-5 text-purple-400" />
-                    <span className="font-medium">HR & Payroll</span>
+              {hasModule('calendar') && (
+                <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Calendar className="h-5 w-5 text-blue-400" />
+                      <span className="font-medium">Academic Calendar</span>
+                    </div>
+                    <span className="text-xs font-medium text-slate-300">Events</span>
                   </div>
-                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${systemStatus.payrollProcessed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
-                    {systemStatus.payrollProcessed ? 'Processed' : 'Pending'}
-                  </span>
+                  <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
+                    <div className="h-1.5 rounded-full bg-blue-400 transition-all duration-1000" style={{ width: `${Math.min(systemStatus.activeEvents * 10, 100)}%` }}></div>
+                  </div>
+                  <div className="mt-2 text-right text-xs text-slate-300">{systemStatus.activeEvents} Upcoming Event{systemStatus.activeEvents !== 1 && 's'}</div>
                 </div>
-                <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
-                  <div className="h-1.5 rounded-full bg-purple-400 transition-all duration-1000" style={{ width: systemStatus.payrollProcessed ? '100%' : '25%' }}></div>
-                </div>
-                <div className="mt-2 text-right text-xs text-slate-300">
-                  {systemStatus.payrollProcessed ? 'Payroll Processed' : 'Payroll Pending'}
-                </div>
-              </div>
-            )}
+              )}
 
-            {!hasModule('fees') && !hasModule('calendar') && !hasModule('hr-payroll') && (
-              <div className="text-center text-sm text-slate-400 py-6">
-                No system status widgets available for your active modules.
-              </div>
-            )}
+              {hasModule('hr-payroll') && (
+                <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Briefcase className="h-5 w-5 text-purple-400" />
+                      <span className="font-medium">HR & Payroll</span>
+                    </div>
+                    <span className={`rounded-full px-2 py-1 text-xs font-medium ${systemStatus.payrollProcessed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}`}>
+                      {systemStatus.payrollProcessed ? 'Processed' : 'Pending'}
+                    </span>
+                  </div>
+                  <div className="mt-3 h-1.5 w-full rounded-full bg-white/10">
+                    <div className="h-1.5 rounded-full bg-purple-400 transition-all duration-1000" style={{ width: systemStatus.payrollProcessed ? '100%' : '25%' }}></div>
+                  </div>
+                  <div className="mt-2 text-right text-xs text-slate-300">
+                    {systemStatus.payrollProcessed ? 'Payroll Processed' : 'Payroll Pending'}
+                  </div>
+                </div>
+              )}
+
+              {!hasModule('fees') && !hasModule('calendar') && !hasModule('hr-payroll') && (
+                <div className="text-center text-sm text-slate-400 py-6">
+                  No system status widgets available for your active modules.
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <button onClick={() => window.location.href = '/admin/setup'} className="w-full rounded-lg bg-white/10 hover:bg-white/20 px-4 py-2.5 text-sm font-semibold text-white transition-colors">
+                Configure Environment
+              </button>
+            </div>
           </div>
+        )}
 
-          <div className="mt-8 pt-6 border-t border-white/10">
-            <button onClick={() => window.location.href = '/admin/setup'} className="w-full rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-50">
-              Configure Environment
-            </button>
+        {/* Quick Actions */}
+        {config.widgets.quickActions !== false && (
+          <div className="col-span-1 rounded-xl bg-white shadow-sm border border-slate-200 flex flex-col">
+            <div className="border-b border-slate-100 px-6 py-4 shrink-0">
+              <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                <Zap className="text-primary-500" size={20} /> Quick Actions
+              </h2>
+            </div>
+            <div className="p-6 flex-1 flex flex-col justify-center">
+              <div className="grid grid-cols-2 gap-4 h-full">
+                <button onClick={() => window.location.href = '/admin/students'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                    <UserPlus size={20} />
+                  </div>
+                  <span className="text-sm font-semibold text-slate-700 text-center">Add Student</span>
+                </button>
+                <button onClick={() => window.location.href = '/admin/staff'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                  <div className="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                    <Users size={20} />
+                  </div>
+                  <span className="text-sm font-semibold text-slate-700 text-center">Add Staff</span>
+                </button>
+                <button onClick={() => window.location.href = '/admin/attendance'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                    <ClipboardCheck size={20} />
+                  </div>
+                  <span className="text-sm font-semibold text-slate-700 text-center">Mark Attendance</span>
+                </button>
+                <button onClick={() => window.location.href = '/admin/notices'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                  <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                    <FileEdit size={20} />
+                  </div>
+                  <span className="text-sm font-semibold text-slate-700 text-center">Create Notice</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Attendance Summary */}
+        {config.widgets.attendanceSummary !== false && (
+          <div className="col-span-1 rounded-xl bg-white shadow-sm border border-slate-200 flex flex-col">
+            <div className="border-b border-slate-100 px-6 py-4 shrink-0">
+              <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                <BarChart2 className="text-primary-500" size={20} /> Today's Attendance
+              </h2>
+            </div>
+            <div className="p-6 flex flex-col justify-center flex-1">
+              <div className="text-center mb-6">
+                <div className="text-4xl font-black text-slate-800">85%</div>
+                <div className="text-sm font-bold text-slate-400 uppercase tracking-wider mt-1">School Average</div>
+              </div>
+              <div className="space-y-4 w-full max-w-sm mx-auto">
+                <div>
+                  <div className="flex justify-between text-xs font-semibold mb-1">
+                    <span className="text-slate-600">Students</span>
+                    <span className="text-emerald-600">82% Present</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full" style={{width: '82%'}}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-semibold mb-1">
+                    <span className="text-slate-600">Teaching Staff</span>
+                    <span className="text-emerald-600">96% Present</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full" style={{width: '96%'}}></div>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-semibold mb-1">
+                    <span className="text-slate-600">Non-Teaching Staff</span>
+                    <span className="text-emerald-600">90% Present</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full" style={{width: '90%'}}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      </div>
+
+      {/* Settings Modal */}
+      {isConfigModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Settings className="text-primary-600" />
+                Customize Dashboard
+              </h2>
+              <button onClick={() => setIsConfigModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <X size={24} />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-8 overflow-y-auto">
+              {/* Metrics */}
+              <div>
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Metrics</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {['students', 'staff', 'classes', 'notices'].map(metric => (
+                    <label key={metric} className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-slate-50 transition-colors">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.metrics[metric] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 text-slate-400'}`}>
+                        {metric === 'students' && <GraduationCap size={20} />}
+                        {metric === 'staff' && <Users size={20} />}
+                        {metric === 'classes' && <BookOpen size={20} />}
+                        {metric === 'notices' && <Bell size={20} />}
+                      </div>
+                      <div className="flex-1 font-semibold text-slate-700 capitalize text-sm">{metric}</div>
+                      <input 
+                        type="checkbox" 
+                        checked={tempConfig.metrics[metric] !== false}
+                        onChange={(e) => setTempConfig({ ...tempConfig, metrics: { ...tempConfig.metrics, [metric]: e.target.checked } })}
+                        className="w-4 h-4 rounded text-primary-600 focus:ring-primary-500 border-slate-300"
+                      />
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Widgets */}
+              <div>
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Widgets</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  {[
+                    { id: 'recentNotices', name: 'Recent Notices', icon: <Bell size={20} /> },
+                    { id: 'systemStatus', name: 'System Status', icon: <Zap size={20} /> },
+                    { id: 'quickActions', name: 'Quick Actions', icon: <LinkIcon size={20} /> },
+                    { id: 'attendanceSummary', name: 'Attendance Summary', icon: <BarChart2 size={20} /> }
+                  ].map(widget => (
+                    <label key={widget.id} className="flex items-center justify-between cursor-pointer group p-3 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-slate-50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.widgets[widget.id] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 text-slate-400'}`}>
+                          {widget.icon}
+                        </div>
+                        <div className="font-semibold text-slate-700 text-sm">{widget.name}</div>
+                      </div>
+                      <input 
+                        type="checkbox" 
+                        checked={tempConfig.widgets[widget.id] !== false}
+                        onChange={(e) => setTempConfig({ ...tempConfig, widgets: { ...tempConfig.widgets, [widget.id]: e.target.checked } })}
+                        className="w-4 h-4 rounded text-primary-600 focus:ring-primary-500 border-slate-300"
+                      />
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 shrink-0">
+              <button 
+                onClick={() => setIsConfigModalOpen(false)}
+                className="px-6 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSaveConfig}
+                disabled={savingConfig}
+                className="px-6 py-2.5 rounded-xl font-bold text-white bg-primary-600 hover:bg-primary-700 shadow-sm transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                {savingConfig ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div> : <Save size={18} />}
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
     </div>
-  </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToAttendanceForClass } from '../../firebase/firestore';
 import { LuCalendar as Calendar, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle } from 'react-icons/lu';
@@ -11,6 +11,7 @@ export default function ParentAttendance() {
 
   const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     if (!schoolId || !classId || !studentId) {
@@ -62,17 +63,62 @@ export default function ParentAttendance() {
     return 'bg-slate-50 text-slate-700 border-slate-200';
   };
 
-  const presentCount = attendanceRecords.filter(r => r.status === 'Present').length;
-  const absentCount = attendanceRecords.filter(r => r.status === 'Absent').length;
-  const lateCount = attendanceRecords.filter(r => r.status === 'Late').length;
-  const totalCount = attendanceRecords.length;
+  const filteredRecords = useMemo(() => {
+    const now = new Date();
+    return attendanceRecords.filter(record => {
+      const recordDate = new Date(record.date);
+      if (filter === 'weekly') {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(now.getDate() - 7);
+        return recordDate >= sevenDaysAgo && recordDate <= now;
+      }
+      if (filter === 'monthly') {
+        return recordDate.getMonth() === now.getMonth() && recordDate.getFullYear() === now.getFullYear();
+      }
+      if (filter === 'term') {
+        const recordMonth = recordDate.getMonth();
+        const nowMonth = now.getMonth();
+        const recordTerm = recordMonth >= 3 && recordMonth <= 8 ? 1 : 2;
+        const nowTerm = nowMonth >= 3 && nowMonth <= 8 ? 1 : 2;
+        
+        let recordAcademicYear = recordDate.getFullYear();
+        if (recordMonth < 3) recordAcademicYear -= 1;
+        
+        let nowAcademicYear = now.getFullYear();
+        if (nowMonth < 3) nowAcademicYear -= 1;
+        
+        return recordTerm === nowTerm && recordAcademicYear === nowAcademicYear;
+      }
+      return true;
+    });
+  }, [attendanceRecords, filter]);
+
+  const presentCount = filteredRecords.filter(r => r.status === 'Present').length;
+  const absentCount = filteredRecords.filter(r => r.status === 'Absent').length;
+  const lateCount = filteredRecords.filter(r => r.status === 'Late').length;
+  const totalCount = filteredRecords.length;
   const percentage = totalCount === 0 ? 100 : Math.round(((presentCount + lateCount) / totalCount) * 100);
 
   return (
     <div className="p-4 sm:p-8 max-w-5xl mx-auto animate-fade-in-up pb-24">
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Detailed Attendance</h1>
-        <p className="text-slate-500 mt-1">View your child's daily attendance records.</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Detailed Attendance</h1>
+          <p className="text-slate-500 mt-1">View your child's daily attendance records.</p>
+        </div>
+        
+        <div className="w-full sm:w-48">
+          <select 
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 font-semibold text-slate-700 bg-white"
+          >
+            <option value="all">All Time</option>
+            <option value="weekly">This Week</option>
+            <option value="monthly">This Month</option>
+            <option value="term">This Term</option>
+          </select>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -95,15 +141,15 @@ export default function ParentAttendance() {
       </div>
 
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        {attendanceRecords.length === 0 ? (
+        {filteredRecords.length === 0 ? (
           <div className="p-16 text-center text-slate-500">
             <Calendar size={48} className="mx-auto mb-4 text-slate-300" />
             <p className="text-lg font-bold text-slate-900 mb-1">No Records Found</p>
-            <p>No attendance records have been marked yet.</p>
+            <p>No attendance records found for this period.</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
-            {attendanceRecords.map(record => (
+            {filteredRecords.map(record => (
               <div key={record.id} className="p-4 sm:p-6 hover:bg-slate-50/50 transition-colors flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-500 border border-slate-200">

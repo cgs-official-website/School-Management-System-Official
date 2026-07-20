@@ -103,7 +103,7 @@ export default function AdminDashboard() {
     { name: 'API Integrations', path: '/admin/api', icon: Key, moduleKey: 'api' },
     { name: 'Registration Links', path: '/admin/links', icon: LinkIcon, moduleKey: 'links' },
     { name: 'Billing & Plan', path: '/admin/billing', icon: CreditCard, moduleKey: 'billing' },
-    { name: 'Custom Fields', path: '/admin/form-builder', icon: Settings, moduleKey: 'form-builder' },
+    { name: 'Custom Modules', path: '/admin/form-builder', icon: Settings, moduleKey: 'form-builder' },
     { name: 'Roles & Permissions', path: '/admin/roles', icon: Shield, moduleKey: 'roles' },
   ];
 
