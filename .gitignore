@@ -27,3 +27,22 @@ dist-ssr
 graphify-out/
 .vercel
 .env*
+
+# Security / Confidential Files
+*.pem
+*.key
+*.cert
+*.crt
+secrets/
+*.p12
+*.pfx
+
+# Firebase Secrets
+.firebase/
+*firebase-adminsdk*.json
+firebase-debug.log
+
+# Testing / QA Outputs
+screenshots/
+test-reports/
+coverage/

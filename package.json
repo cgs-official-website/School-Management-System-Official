@@ -37,8 +37,10 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "autoprefixer": "^10.5.2",
+    "mocha": "^11.7.6",
     "oxlint": "^1.71.0",
     "postcss": "^8.5.16",
+    "selenium-webdriver": "^4.46.0",
     "tailwindcss": "^4.3.2",
     "vite": "^8.1.1"
   }
