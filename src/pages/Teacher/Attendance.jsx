@@ -3,7 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { getStudentsByClass, getAttendance, saveAttendance, subscribeToStudentsByClass, subscribeToAttendance, getAttendanceForClass } from '../../firebase/firestore';
 import { getDoc, doc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle, LuSave as Save, LuUsers as Users } from 'react-icons/lu';
+import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle, LuSave as Save, LuUsers as Users, LuFileDown, LuX } from 'react-icons/lu';
+import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 
 export default function Attendance() {
@@ -26,6 +27,52 @@ export default function Attendance() {
   const [viewMode, setViewMode] = useState('daily');
   const [historicalRecords, setHistoricalRecords] = useState([]);
   const [reportStats, setReportStats] = useState({});
+
+  const [showExportModal, setShowExportModal] = useState(false);
+
+  const dailyFieldsList = [
+    { key: 'admissionNo', label: 'Admission No' },
+    { key: 'studentName', label: 'Student Name' },
+    { key: 'status', label: 'Status' },
+    { key: 'date', label: 'Date' },
+    { key: 'session', label: 'Session' },
+  ];
+  const reportFieldsList = [
+    { key: 'admissionNo', label: 'Admission No' },
+    { key: 'studentName', label: 'Student Name' },
+    { key: 'totalClasses', label: 'Total Classes' },
+    { key: 'present', label: 'Present' },
+    { key: 'absent', label: 'Absent' },
+    { key: 'late', label: 'Late' },
+    { key: 'percentage', label: 'Attendance %' },
+  ];
+
+  const availableFieldsList = viewMode === 'daily' ? dailyFieldsList : reportFieldsList;
+
+  const [selectedFields, setSelectedFields] = useState(() => {
+    const init = {};
+    dailyFieldsList.forEach(f => { init[f.key] = true; });
+    return init;
+  });
+
+  // Reset selected fields when view mode changes
+  useEffect(() => {
+    const init = {};
+    availableFieldsList.forEach(f => { init[f.key] = true; });
+    setSelectedFields(init);
+  }, [viewMode]);
+
+  const handleFieldToggle = (fieldKey) => {
+    setSelectedFields(prev => ({ ...prev, [fieldKey]: !prev[fieldKey] }));
+  };
+
+  const handleSelectAll = (selectVal) => {
+    const updated = {};
+    availableFieldsList.forEach(field => {
+      updated[field.key] = selectVal;
+    });
+    setSelectedFields(updated);
+  };
 
   useEffect(() => {
     if (!schoolId || !classId) return;
@@ -186,6 +233,74 @@ export default function Attendance() {
     }
   };
 
+  const handleExport = () => {
+    const activeFields = Object.keys(selectedFields).filter(k => selectedFields[k]);
+    if (activeFields.length === 0) {
+      toast.error('Please select at least one column to export.');
+      return;
+    }
+    try {
+      const className = classDetails ? `${classDetails.name}-${classDetails.section}` : 'class';
+      let wsData = [];
+      let fileName = '';
+
+      if (viewMode === 'daily') {
+        fileName = `Attendance_${className}_${selectedDate}_${selectedSession}.xlsx`;
+        wsData = students.map((student) => {
+          const row = {};
+          availableFieldsList.forEach(field => {
+            if (!selectedFields[field.key]) return;
+            if (field.key === 'admissionNo') row[field.label] = student.admissionNumber || '';
+            if (field.key === 'studentName') row[field.label] = `${student.firstName} ${student.lastName}`;
+            if (field.key === 'status') row[field.label] = attendanceRecords[student.id] || 'Present';
+            if (field.key === 'date') row[field.label] = selectedDate;
+            if (field.key === 'session') row[field.label] = selectedSession === 'FN' ? 'Forenoon' : 'Afternoon';
+          });
+          return row;
+        });
+      } else {
+        const periodLabel = viewMode === 'weekly' ? 'Weekly' : viewMode === 'monthly' ? 'Monthly' : 'Term';
+        fileName = `Attendance_${className}_${periodLabel}_Report.xlsx`;
+        wsData = students.map((student) => {
+          const stat = reportStats[student.id] || { present: 0, absent: 0, late: 0, total: 0 };
+          const percentage = stat.total === 0 ? 100 : Math.round(((stat.present + stat.late) / stat.total) * 100);
+          const row = {};
+          availableFieldsList.forEach(field => {
+            if (!selectedFields[field.key]) return;
+            if (field.key === 'admissionNo') row[field.label] = student.admissionNumber || '';
+            if (field.key === 'studentName') row[field.label] = `${student.firstName} ${student.lastName}`;
+            if (field.key === 'totalClasses') row[field.label] = stat.total;
+            if (field.key === 'present') row[field.label] = stat.present;
+            if (field.key === 'absent') row[field.label] = stat.absent;
+            if (field.key === 'late') row[field.label] = stat.late;
+            if (field.key === 'percentage') row[field.label] = `${percentage}%`;
+          });
+          return row;
+        });
+      }
+
+      if (wsData.length === 0 || Object.keys(wsData[0]).length === 0) {
+        toast.error('No data to export.');
+        return;
+      }
+
+      const ws = XLSX.utils.json_to_sheet(wsData);
+      const colWidths = Object.keys(wsData[0]).map(key => ({
+        wch: Math.max(key.length, ...wsData.map(row => String(row[key] || '').length)) + 2
+      }));
+      ws['!cols'] = colWidths;
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
+      XLSX.writeFile(wb, fileName);
+      setShowExportModal(false);
+      toast.success('Attendance exported successfully!');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export attendance.');
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'Present': return 'bg-green-100 text-green-700 border-green-200';
@@ -260,16 +375,26 @@ export default function Attendance() {
             <Users size={18} />
             <span>{students.length} Students</span>
           </div>
-          {viewMode === 'daily' && (
+          <div className="flex items-center gap-2">
             <button 
-              onClick={handleSave}
-              disabled={saving || loading || students.length === 0}
-              className="px-6 py-2 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
+              onClick={() => setShowExportModal(true)}
+              disabled={loading || students.length === 0}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98] disabled:opacity-50"
             >
-              {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div> : <Save size={18} />}
-              {saving ? 'Saving...' : 'Save Attendance'}
+              <LuFileDown size={18} />
+              Export
             </button>
-          )}
+            {viewMode === 'daily' && (
+              <button 
+                onClick={handleSave}
+                disabled={saving || loading || students.length === 0}
+                className="px-6 py-2 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
+              >
+                {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div> : <Save size={18} />}
+                {saving ? 'Saving...' : 'Save Attendance'}
+              </button>
+            )}
+          </div>
         </div>
         
         <div className="p-4 border-b border-slate-200 bg-white">
@@ -398,6 +523,85 @@ export default function Attendance() {
           </div>
         )}
       </div>
+
+      {/* Export Field Selector Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Export Attendance</h3>
+                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+              >
+                <LuX size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* Select All / Deselect All Controls */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(true)}
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                >
+                  Select All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(false)}
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                >
+                  Deselect All
+                </button>
+              </div>
+
+              {/* Checkbox Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {availableFieldsList.map((field) => (
+                  <label 
+                    key={field.key}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
+                  >
+                    <input 
+                      type="checkbox"
+                      checked={selectedFields[field.key]}
+                      onChange={() => handleFieldToggle(field.key)}
+                      className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
+                    />
+                    <span className="text-sm font-semibold text-slate-700">{field.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowExportModal(false)}
+                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExport}
+                className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+              >
+                <LuFileDown size={18} />
+                Generate Sheet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

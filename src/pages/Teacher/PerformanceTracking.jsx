@@ -6,8 +6,9 @@ import {
   subscribeToAssessmentsByClass,
   updateStudentPerformanceStatus
 } from '../../firebase/firestore';
-import { LuTrendingUp, LuSearch, LuChevronDown, LuFilter, LuDownload, LuAward } from 'react-icons/lu';
+import { LuTrendingUp, LuSearch, LuChevronDown, LuFilter, LuDownload, LuAward, LuX, LuFileDown } from 'react-icons/lu';
 import toast from 'react-hot-toast';
+import * as XLSX from 'xlsx';
 
 export default function PerformanceTracking() {
   const { userProfile } = useAuth();
@@ -20,6 +21,75 @@ export default function PerformanceTracking() {
   const [assessmentsData, setAssessmentsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+
+  const [showExportModal, setShowExportModal] = useState(false);
+
+  const availableFieldsList = [
+    { key: 'admissionNo', label: 'Admission No' },
+    { key: 'studentName', label: 'Student Name' },
+    { key: 'attendance', label: 'Attendance %' },
+    { key: 'lastExam', label: 'Last Exam Score' },
+    { key: 'grade', label: 'Overall Grade' },
+    { key: 'status', label: 'Trend Status' },
+  ];
+
+  const [selectedFields, setSelectedFields] = useState(() => {
+    const init = {};
+    [
+      'admissionNo', 'studentName', 'attendance',
+      'lastExam', 'grade', 'status'
+    ].forEach(k => { init[k] = true; });
+    return init;
+  });
+
+  const handleFieldToggle = (fieldKey) => {
+    setSelectedFields(prev => ({ ...prev, [fieldKey]: !prev[fieldKey] }));
+  };
+
+  const handleSelectAll = (selectVal) => {
+    const updated = {};
+    availableFieldsList.forEach(field => {
+      updated[field.key] = selectVal;
+    });
+    setSelectedFields(updated);
+  };
+
+  const handleExport = () => {
+    const activeFields = Object.keys(selectedFields).filter(k => selectedFields[k]);
+    if (activeFields.length === 0) {
+      toast.error('Please select at least one column to export.');
+      return;
+    }
+    if (processedStudents.length === 0) {
+      toast.error('No student data available to export.');
+      return;
+    }
+    try {
+      const exportData = processedStudents.map((student, index) => {
+        const row = { 'S.No': index + 1 };
+        availableFieldsList.forEach(field => {
+          if (!selectedFields[field.key]) return;
+          if (field.key === 'admissionNo') row[field.label] = student.admissionNumber || '';
+          if (field.key === 'studentName') row[field.label] = `${student.firstName} ${student.lastName}`;
+          if (field.key === 'attendance') row[field.label] = `${student.attendancePerc}%`;
+          if (field.key === 'lastExam') row[field.label] = student.lastExamScore;
+          if (field.key === 'grade') row[field.label] = student.avgGrade;
+          if (field.key === 'status') row[field.label] = student.status.charAt(0).toUpperCase() + student.status.slice(1);
+        });
+        return row;
+      });
+
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Performance');
+      XLSX.writeFile(wb, 'Student_Performance_Report.xlsx');
+      setShowExportModal(false);
+      toast.success('Performance report exported successfully!');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export report.');
+    }
+  };
 
   useEffect(() => {
     if (!schoolId || !classId) return;
@@ -175,7 +245,10 @@ export default function PerformanceTracking() {
           <p className="text-slate-500 mt-1">Track academic progress and attendance trends dynamically.</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
+          <button 
+            onClick={() => setShowExportModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
+          >
             <LuDownload size={18} /> Export
           </button>
         </div>
@@ -275,6 +348,85 @@ export default function PerformanceTracking() {
           </table>
         </div>
       </div>
+
+      {/* Export Field Selector Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Export Performance Report</h3>
+                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+              >
+                <LuX size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* Select All / Deselect All Controls */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(true)}
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                >
+                  Select All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(false)}
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                >
+                  Deselect All
+                </button>
+              </div>
+
+              {/* Checkbox Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {availableFieldsList.map((field) => (
+                  <label 
+                    key={field.key}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
+                  >
+                    <input 
+                      type="checkbox"
+                      checked={selectedFields[field.key]}
+                      onChange={() => handleFieldToggle(field.key)}
+                      className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
+                    />
+                    <span className="text-sm font-semibold text-slate-700">{field.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowExportModal(false)}
+                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExport}
+                className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+              >
+                <LuFileDown size={18} />
+                Generate Sheet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
