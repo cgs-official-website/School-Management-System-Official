@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getStudentsByClass, getAttendance, saveAttendance, subscribeToStudentsByClass, subscribeToAttendance, getAttendanceForClass } from '../../firebase/firestore';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle, LuSave as Save, LuUsers as Users } from 'react-icons/lu';
 import toast from 'react-hot-toast';
@@ -148,6 +148,34 @@ export default function Attendance() {
     try {
       const attendanceKey = `${selectedDate}_${selectedSession}`;
       await saveAttendance(schoolId, classId, attendanceKey, currentUser.uid, attendanceRecords);
+
+      // Trigger notifications for Absent/Late students
+      for (const [studentId, status] of Object.entries(attendanceRecords)) {
+        if (status === 'Absent' || status === 'Late') {
+          const student = students.find(s => s.id === studentId);
+          const studentName = student ? `${student.firstName} ${student.lastName}` : 'Your child';
+
+          // Query parents linked to this student
+          const parentQuery = query(
+            collection(db, 'users'),
+            where('schoolId', '==', schoolId),
+            where('linkedStudentId', '==', studentId),
+            where('role', '==', 'parent')
+          );
+          const parentSnap = await getDocs(parentQuery);
+
+          for (const parentDoc of parentSnap.docs) {
+            await addDoc(collection(db, `schools/${schoolId}/notifications`), {
+              userId: parentDoc.id,
+              title: `Attendance Alert: ${status}`,
+              message: `${studentName} was marked ${status} today (${new Date(selectedDate).toLocaleDateString()}).`,
+              createdAt: new Date().toISOString(),
+              read: false,
+              type: 'attendance'
+            });
+          }
+        }
+      }
       setSuccessMsg('Attendance saved successfully!');
       setTimeout(() => setSuccessMsg(''), 3000);
     } catch (error) {

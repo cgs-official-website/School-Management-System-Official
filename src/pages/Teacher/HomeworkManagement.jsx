@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { LuPlus as Plus, LuUpload as Upload, LuFileText as FileText, LuSearch as Search, LuX as X, LuCircleCheck as CheckCircle } from 'react-icons/lu';
+import { LuPlus as Plus, LuUpload as Upload, LuFileText as FileText, LuSearch as Search, LuX as X, LuCircleCheck as CheckCircle, LuFileDown as FileDown } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { TableSkeleton } from '../../components/Skeleton';
@@ -19,6 +19,70 @@ export default function HomeworkManagement() {
   const [showExcelModal, setShowExcelModal] = useState(false);
   const [showTrackingModal, setShowTrackingModal] = useState(false);
   const [selectedHomework, setSelectedHomework] = useState(null);
+
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [selectedFields, setSelectedFields] = useState({
+    studentName: true,
+    admissionNumber: true,
+    status: true,
+    lastUpdated: true
+  });
+
+  const availableFieldsList = [
+    { key: 'studentName', label: 'Student Name' },
+    { key: 'admissionNumber', label: 'Admission Number' },
+    { key: 'status', label: 'Submission Status' },
+    { key: 'lastUpdated', label: 'Last Updated' }
+  ];
+
+  const handleFieldToggle = (fieldKey) => {
+    setSelectedFields(prev => ({ ...prev, [fieldKey]: !prev[fieldKey] }));
+  };
+
+  const handleSelectAll = (selectVal) => {
+    const updated = {};
+    availableFieldsList.forEach(field => {
+      updated[field.key] = selectVal;
+    });
+    setSelectedFields(updated);
+  };
+
+  const handleExport = () => {
+    if (classStudents.length === 0) {
+      toast.error("No student data available to export.");
+      return;
+    }
+
+    const activeFields = Object.keys(selectedFields).filter(k => selectedFields[k]);
+    if (activeFields.length === 0) {
+      toast.error("Please select at least one column to export.");
+      return;
+    }
+
+    const exportData = classStudents.map((student, index) => {
+      const submission = submissions.find(s => s.id === student.id);
+      const status = submission?.status || 'Not Started';
+      const lastUpdated = submission?.lastUpdated ? new Date(submission.lastUpdated).toLocaleString() : 'N/A';
+
+      const row = { "S.No": index + 1 };
+      
+      if (selectedFields.studentName) row["Student Name"] = `${student.firstName} ${student.lastName}`;
+      if (selectedFields.admissionNumber) row["Admission Number"] = student.admissionNumber || '';
+      if (selectedFields.status) row["Submission Status"] = status;
+      if (selectedFields.lastUpdated) row["Last Updated"] = lastUpdated;
+      
+      return row;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Submissions");
+    
+    const hwTitle = selectedHomework ? selectedHomework.title.replace(/\s+/g, '_') : "Homework";
+    XLSX.writeFile(workbook, `${hwTitle}_Submissions.xlsx`);
+    setShowExportModal(false);
+    toast.success("Submissions roster exported successfully!");
+  };
   const [classStudents, setClassStudents] = useState([]);
   const [submissions, setSubmissions] = useState([]); // Submissions for selected homework
   const [creating, setCreating] = useState(false);
@@ -29,6 +93,7 @@ export default function HomeworkManagement() {
     classId: '',
     subject: '',
     dueDate: '',
+    remarks: '',
   });
 
   const [excelFile, setExcelFile] = useState(null);
@@ -87,7 +152,7 @@ export default function HomeworkManagement() {
       });
       toast.success("Homework assigned successfully!");
       setShowCreateModal(false);
-      setNewHomework({ title: '', description: '', classId: '', subject: '', dueDate: '' });
+      setNewHomework({ title: '', description: '', classId: '', subject: '', dueDate: '', remarks: '' });
       // loadData(); - handled by real-time listener
     } catch (err) {
       console.error(err);
@@ -246,6 +311,16 @@ export default function HomeworkManagement() {
                   placeholder="Instructions for the students..."
                 />
               </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Remarks (Optional)</label>
+                <input 
+                  type="text"
+                  value={newHomework.remarks}
+                  onChange={e => setNewHomework({...newHomework, remarks: e.target.value})}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  placeholder="e.g. Bring formula notebooks tomorrow, refer pg. 45"
+                />
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1">Class</label>
@@ -257,7 +332,7 @@ export default function HomeworkManagement() {
                   >
                     <option value="">Select Class</option>
                     {classes.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
+                      <option key={c.id} value={c.id}>{c.name} - Section {c.section}</option>
                     ))}
                   </select>
                 </div>
@@ -370,9 +445,18 @@ export default function HomeworkManagement() {
                 <h2 className="text-xl font-bold text-slate-900">{selectedHomework.title}</h2>
                 <p className="text-sm font-semibold text-slate-500">Student Progress Tracking</p>
               </div>
-              <button onClick={() => setShowTrackingModal(false)} className="text-slate-400 hover:text-slate-600">
-                <X size={24} />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowExportModal(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
+                >
+                  <FileDown size={18} />
+                  Export
+                </button>
+                <button onClick={() => setShowTrackingModal(false)} className="text-slate-400 hover:text-slate-600">
+                  <X size={24} />
+                </button>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
               {classStudents.length === 0 ? (
@@ -403,6 +487,84 @@ export default function HomeworkManagement() {
                   })}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showExportModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Export Submissions Roster</h3>
+                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* Select All / Deselect All Controls */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(true)}
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                >
+                  Select All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(false)}
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                >
+                  Deselect All
+                </button>
+              </div>
+
+              {/* Checkbox Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {availableFieldsList.map((field) => (
+                  <label 
+                    key={field.key}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
+                  >
+                    <input 
+                      type="checkbox"
+                      checked={selectedFields[field.key]}
+                      onChange={() => handleFieldToggle(field.key)}
+                      className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
+                    />
+                    <span className="text-sm font-semibold text-slate-700">{field.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowExportModal(false)}
+                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExport}
+                className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+              >
+                <FileDown size={18} />
+                Generate Sheet
+              </button>
             </div>
           </div>
         </div>

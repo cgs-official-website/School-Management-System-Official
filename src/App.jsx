@@ -79,8 +79,13 @@ const PerformanceTracking = lazy(() => import('./pages/Teacher/PerformanceTracki
 const ResourceSharing = lazy(() => import('./pages/Teacher/ResourceSharing'));
 const PTMScheduler = lazy(() => import('./pages/Teacher/PTMScheduler'));
 const MySalary = lazy(() => import('./pages/Teacher/MySalary'));
+const TeacherLeaves = lazy(() => import('./pages/Teacher/LeaveRequests'));
+
+// Admin Leaves
+const AdminLeaves = lazy(() => import('./pages/Admin/LeaveManagement'));
 
 // Parent
+const ParentLeaves = lazy(() => import('./pages/Parent/LeaveRequests'));
 const ParentRegistration = lazy(() => import('./pages/ParentRegistration'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
 const StudentOverview = lazy(() => import('./pages/Parent/StudentOverview'));
@@ -204,6 +209,7 @@ function App() {
               <Route path="roles" element={<RolesPermissions />} />
               <Route path="homework" element={<AdminHomework />} />
               <Route path="custom/:moduleId" element={<CustomModuleView />} />
+              <Route path="leaves" element={<AdminLeaves />} />
             </Route>
 
             {/* Teacher Routes */}
@@ -230,6 +236,7 @@ function App() {
               <Route path="resources" element={<ResourceSharing />} />
               <Route path="ptm" element={<PTMScheduler />} />
               <Route path="salary" element={<MySalary />} />
+              <Route path="leaves" element={<TeacherLeaves />} />
               <Route path="profile" element={<ProfileSetup />} />
             </Route>
 
@@ -253,6 +260,7 @@ function App() {
               <Route path="notices" element={<ParentNoticeboard />} />
               <Route path="calendar" element={<ParentCalendar />} />
               <Route path="canteen" element={<ParentCanteen />} />
+              <Route path="leaves" element={<ParentLeaves />} />
             </Route>
 
             {/* Fallback */}

@@ -41,28 +41,6 @@ export default function ParentAttendance() {
     return () => unsub();
   }, [schoolId, classId, studentId]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[80vh]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
-      </div>
-    );
-  }
-
-  const getStatusIcon = (status) => {
-    if (status === 'Present') return <CheckCircle2 size={20} className="text-green-500" />;
-    if (status === 'Absent') return <XCircle size={20} className="text-red-500" />;
-    if (status === 'Late') return <AlertCircle size={20} className="text-amber-500" />;
-    return null;
-  };
-
-  const getStatusColor = (status) => {
-    if (status === 'Present') return 'bg-green-50 text-green-700 border-green-200';
-    if (status === 'Absent') return 'bg-red-50 text-red-700 border-red-200';
-    if (status === 'Late') return 'bg-amber-50 text-amber-700 border-amber-200';
-    return 'bg-slate-50 text-slate-700 border-slate-200';
-  };
-
   const filteredRecords = useMemo(() => {
     const now = new Date();
     return attendanceRecords.filter(record => {
@@ -92,6 +70,28 @@ export default function ParentAttendance() {
       return true;
     });
   }, [attendanceRecords, filter]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-[80vh]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  const getStatusIcon = (status) => {
+    if (status === 'Present') return <CheckCircle2 size={20} className="text-green-500" />;
+    if (status === 'Absent') return <XCircle size={20} className="text-red-500" />;
+    if (status === 'Late') return <AlertCircle size={20} className="text-amber-500" />;
+    return null;
+  };
+
+  const getStatusColor = (status) => {
+    if (status === 'Present') return 'bg-green-50 text-green-700 border-green-200';
+    if (status === 'Absent') return 'bg-red-50 text-red-700 border-red-200';
+    if (status === 'Late') return 'bg-amber-50 text-amber-700 border-amber-200';
+    return 'bg-slate-50 text-slate-700 border-slate-200';
+  };
 
   const presentCount = filteredRecords.filter(r => r.status === 'Present').length;
   const absentCount = filteredRecords.filter(r => r.status === 'Absent').length;

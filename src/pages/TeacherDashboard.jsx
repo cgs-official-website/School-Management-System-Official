@@ -148,6 +148,7 @@ export default function TeacherDashboard() {
     { name: 'Grades & Exams', path: '/teacher/grades', icon: GraduationCap },
     { name: 'Messages', path: '/teacher/chat', icon: MessageSquare },
     { name: 'My Salary', path: '/teacher/salary', icon: LuBanknote },
+    { name: 'Leave Requests', path: '/teacher/leaves', icon: Calendar },
     { name: 'Profile', path: '/teacher/profile', icon: UserIcon },
   ];
 

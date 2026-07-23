@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { LuCalendarDays, LuClock, LuMapPin, LuBookOpen } from 'react-icons/lu';
+import React, { useState, useEffect, useCallback } from 'react';
+import { LuCalendarDays, LuClock, LuMapPin, LuBookOpen, LuFileDown, LuX } from 'react-icons/lu';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection } from '../../firebase/firestore';
+import * as XLSX from 'xlsx';
+import toast from 'react-hot-toast';
 
 export default function TeacherTimetable() {
   const { userProfile } = useAuth();
@@ -21,6 +23,74 @@ export default function TeacherTimetable() {
   });
   const [loading, setLoading] = useState(true);
 
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [selectedFields, setSelectedFields] = useState({
+    time: true,
+    subject: true,
+    class: true,
+    room: true,
+    teacher: true
+  });
+
+  const availableFieldsList = [
+    { key: 'time', label: 'Time Slot' },
+    { key: 'subject', label: 'Subject Name' },
+    { key: 'class', label: 'Class / Section' },
+    { key: 'room', label: 'Room / Location' },
+    { key: 'teacher', label: 'Teacher Name' }
+  ];
+
+  const handleFieldToggle = (fieldKey) => {
+    setSelectedFields(prev => ({ ...prev, [fieldKey]: !prev[fieldKey] }));
+  };
+
+  const handleSelectAll = (selectVal) => {
+    const updated = {};
+    availableFieldsList.forEach(field => {
+      updated[field.key] = selectVal;
+    });
+    setSelectedFields(updated);
+  };
+
+  const handleExport = () => {
+    const exportData = [];
+    
+    days.forEach(day => {
+      const daySlots = schedule[day] || [];
+      daySlots.forEach(slot => {
+        const row = { "Day": day };
+        
+        if (selectedFields.time) row["Time Slot"] = slot.time || '';
+        if (selectedFields.subject) row["Subject Name"] = slot.subject || '';
+        if (selectedFields.class) row["Class / Section"] = slot.class || '';
+        if (selectedFields.room) row["Room / Location"] = slot.room || 'Room (Auto)';
+        if (selectedFields.teacher) row["Teacher Name"] = slot.teacher || 'Unassigned';
+        
+        exportData.push(row);
+      });
+    });
+
+    if (exportData.length === 0) {
+      toast.error("No timetable data available to export.");
+      return;
+    }
+
+    const activeFields = Object.keys(selectedFields).filter(k => selectedFields[k]);
+    if (activeFields.length === 0) {
+      toast.error("Please select at least one column to export.");
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Weekly Timetable");
+    
+    const fileName = viewType === 'class' ? "My_Class_Timetable" : "My_Subject_Timetable";
+    XLSX.writeFile(workbook, `${fileName}.xlsx`);
+    setShowExportModal(false);
+    toast.success("Timetable exported successfully!");
+  };
+
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
   useEffect(() => {
@@ -36,8 +106,8 @@ export default function TeacherTimetable() {
 
       // Find current teacher by email or userId
       const currentTeacher = teachersData.find(t => 
-        (t.userId && userProfile.id && t.userId === userProfile.id) || 
-        (t.email && userProfile.email && t.email === userProfile.email)
+        (t.userId && (userProfile.uid || userProfile.id) && t.userId === (userProfile.uid || userProfile.id)) || 
+        (t.email && userProfile.email && t.email.trim().toLowerCase() === userProfile.email.trim().toLowerCase())
       );
       const teacherId = currentTeacher?.id;
 
@@ -186,6 +256,13 @@ export default function TeacherTimetable() {
           <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 font-bold text-slate-700 shadow-sm">
             {currentWeek}
           </div>
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
+          >
+            <LuFileDown size={18} />
+            Export
+          </button>
         </div>
       </div>
 
@@ -228,6 +305,84 @@ export default function TeacherTimetable() {
           </div>
         </div>
       </div>
+
+      {showExportModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Export Timetable</h3>
+                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+              >
+                <LuX size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* Select All / Deselect All Controls */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(true)}
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                >
+                  Select All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(false)}
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                >
+                  Deselect All
+                </button>
+              </div>
+
+              {/* Checkbox Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {availableFieldsList.map((field) => (
+                  <label 
+                    key={field.key}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
+                  >
+                    <input 
+                      type="checkbox"
+                      checked={selectedFields[field.key]}
+                      onChange={() => handleFieldToggle(field.key)}
+                      className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
+                    />
+                    <span className="text-sm font-semibold text-slate-700">{field.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowExportModal(false)}
+                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExport}
+                className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+              >
+                <LuFileDown size={18} />
+                Generate Sheet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

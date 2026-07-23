@@ -3,6 +3,8 @@ import { Menu, Search, Bell, RefreshCw, ChevronRight, X, AlertTriangle, ArrowLef
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { subscribeToNotices } from '../firebase/firestore';
+import { db } from '../firebase/config';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 
 export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navItems = [] }) {
   const { userProfile } = useAuth();
@@ -13,6 +15,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   const dropdownRef = useRef(null);
 
   const [notices, setNotices] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
 
@@ -56,11 +59,45 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
 
   useEffect(() => {
     if (!userProfile?.schoolId) return;
-    const unsub = subscribeToNotices(userProfile.schoolId, userProfile.role, (data) => {
+    
+    // Subscribe to global notices
+    const unsubNotices = subscribeToNotices(userProfile.schoolId, userProfile.role, (data) => {
       setNotices(data);
     });
-    return () => unsub();
-  }, [userProfile?.schoolId, userProfile?.role]);
+
+    // Subscribe to user-specific notifications
+    let unsubNotifications = () => {};
+    if (userProfile?.uid) {
+      const q = query(
+        collection(db, `schools/${userProfile.schoolId}/notifications`),
+        where("userId", "==", userProfile.uid)
+      );
+      unsubNotifications = onSnapshot(q, (snapshot) => {
+        const list = [];
+        snapshot.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        setNotifications(list);
+      }, (err) => {
+        console.error("Error subscribing to personal notifications:", err);
+      });
+    }
+
+    return () => {
+      unsubNotices();
+      unsubNotifications();
+    };
+  }, [userProfile?.schoolId, userProfile?.role, userProfile?.uid]);
+
+  const allNotifications = [
+    ...notifications,
+    ...notices.map(n => ({ ...n, type: 'notice' }))
+  ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  const unreadCount = allNotifications.filter(n => {
+    if (n.type === 'notice') return !readNotices.includes(n.id);
+    return true;
+  }).length;
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -201,7 +238,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
             title="Notifications"
           >
             <Bell size={20} />
-            {unreadNotices.length > 0 && (
+            {unreadCount > 0 && (
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             )}
           </button>
@@ -211,7 +248,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
               <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <h3 className="font-semibold text-slate-900">Notifications</h3>
                 <div className="flex items-center gap-3">
-                  {unreadNotices.length > 0 && (
+                  {unreadCount > 0 && (
                     <button 
                       onClick={handleMarkAllAsRead} 
                       className="text-xs font-bold text-primary-600 hover:text-primary-700 transition-colors"
@@ -219,41 +256,45 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                       Mark all read
                     </button>
                   )}
-                  <span className="text-xs font-medium bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">{unreadNotices.length} new</span>
+                  <span className="text-xs font-medium bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">{unreadCount} new</span>
                 </div>
               </div>
               <div className="max-h-[28rem] overflow-y-auto custom-scrollbar">
-                {notices.length === 0 ? (
+                {allNotifications.length === 0 ? (
                   <div className="p-8 text-center text-slate-500">
                     <Bell size={32} className="mx-auto mb-3 text-slate-300" />
                     <p className="text-sm font-medium">No new notifications</p>
                   </div>
                 ) : (
                   <div className="divide-y divide-slate-100">
-                    {notices.map((notice) => {
-                      const isUnread = !readNotices.includes(notice.id);
+                    {allNotifications.map((notice) => {
+                      const isUnread = notice.type !== 'notice' || !readNotices.includes(notice.id);
                       return (
-                      <div key={notice.id} className={`p-4 hover:bg-slate-50 transition-colors ${notice.priority === 'high' ? 'bg-red-50/30' : ''} ${isUnread ? 'bg-primary-50/30' : 'opacity-70'}`}>
-                        <div className="flex gap-3">
-                          <div className={`shrink-0 mt-1 ${notice.priority === 'high' ? 'text-red-500' : 'text-primary-500'}`}>
-                            {notice.priority === 'high' ? <AlertTriangle size={16} /> : <Bell size={16} />}
+                        <div 
+                          key={notice.id} 
+                          onClick={() => notice.type === 'notice' && handleMarkAsRead(notice.id)}
+                          className={`p-4 hover:bg-slate-50 transition-colors ${notice.priority === 'high' || notice.type !== 'notice' ? 'bg-red-50/10' : ''} ${isUnread ? 'bg-primary-50/30' : 'opacity-70'}`}
+                        >
+                          <div className="flex gap-3">
+                            <div className={`shrink-0 mt-1 ${notice.priority === 'high' ? 'text-red-500' : 'text-primary-500'}`}>
+                              {notice.priority === 'high' ? <AlertTriangle size={16} /> : <Bell size={16} />}
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-slate-900 line-clamp-1">{notice.title}</p>
+                              <p className="text-xs font-semibold text-slate-650 mt-1 line-clamp-2 leading-relaxed">{notice.message}</p>
+                              <p className="text-[10px] text-slate-400 mt-2 font-bold">
+                                {new Date(notice.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            </div>
+                            {isUnread && notice.type === 'notice' && (
+                              <button 
+                                onClick={() => handleMarkAsRead(notice.id)}
+                                className="ml-auto mt-1 shrink-0 w-2.5 h-2.5 bg-primary-500 rounded-full self-start hover:scale-125 transition-transform"
+                                title="Mark as read"
+                              />
+                            )}
                           </div>
-                          <div>
-                            <p className="text-sm font-medium text-slate-900 line-clamp-1">{notice.title}</p>
-                            <p className="text-xs text-slate-500 mt-1 line-clamp-2">{notice.message}</p>
-                            <p className="text-[10px] text-slate-400 mt-2 font-medium">
-                              {new Date(notice.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                            </p>
-                          </div>
-                          {isUnread && (
-                            <button 
-                              onClick={() => handleMarkAsRead(notice.id)}
-                              className="ml-auto mt-1 shrink-0 w-2.5 h-2.5 bg-primary-500 rounded-full self-start hover:scale-125 transition-transform"
-                              title="Mark as read"
-                            />
-                          )}
                         </div>
-                      </div>
                       );
                     })}
                   </div>

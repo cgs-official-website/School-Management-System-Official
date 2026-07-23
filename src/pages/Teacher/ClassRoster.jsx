@@ -3,7 +3,9 @@ import { useAuth } from '../../context/AuthContext';
 import { subscribeToStudentsByClass, getTransportRoutes, getAttendance } from '../../firebase/firestore';
 import { getDoc, doc, onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuUsers as Users, LuSearch as Search, LuGraduationCap as GraduationCap, LuMail as Mail, LuCircleCheck as CheckCircle2, LuBus, LuUserCheck, LuUserX, LuUser, LuUserRound } from 'react-icons/lu';
+import { LuUsers as Users, LuSearch as Search, LuGraduationCap as GraduationCap, LuMail as Mail, LuCircleCheck as CheckCircle2, LuBus, LuUserCheck, LuUserX, LuUser, LuUserRound, LuFileDown, LuX } from 'react-icons/lu';
+import * as XLSX from 'xlsx';
+import toast from 'react-hot-toast';
 
 export default function ClassRoster() {
   const { userProfile, currentUser } = useAuth();
@@ -30,6 +32,81 @@ export default function ClassRoster() {
   const [transportRoutes, setTransportRoutes] = useState([]);
   const [attendanceRecords, setAttendanceRecords] = useState({});
   const [todayDate] = useState(new Date().toISOString().split('T')[0]); // YYYY-MM-DD
+
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [selectedFields, setSelectedFields] = useState({
+    admissionNumber: true,
+    firstName: true,
+    lastName: true,
+    rollNumber: true,
+    gender: true,
+    dob: true,
+    email: true,
+    phone: true,
+    address: true,
+    guardianName: true,
+    guardianPhone: true,
+    bloodGroup: true
+  });
+
+  const availableFieldsList = [
+    { key: 'admissionNumber', label: 'Admission Number' },
+    { key: 'firstName', label: 'First Name' },
+    { key: 'lastName', label: 'Last Name' },
+    { key: 'rollNumber', label: 'Roll Number' },
+    { key: 'gender', label: 'Gender' },
+    { key: 'dob', label: 'Date of Birth' },
+    { key: 'email', label: 'Email Address' },
+    { key: 'phone', label: 'Phone Number' },
+    { key: 'address', label: 'Home Address' },
+    { key: 'guardianName', label: 'Guardian Name' },
+    { key: 'guardianPhone', label: 'Guardian Phone' },
+    { key: 'bloodGroup', label: 'Blood Group' }
+  ];
+
+  const handleFieldToggle = (fieldKey) => {
+    setSelectedFields(prev => ({ ...prev, [fieldKey]: !prev[fieldKey] }));
+  };
+
+  const handleSelectAll = (selectVal) => {
+    const updated = {};
+    availableFieldsList.forEach(field => {
+      updated[field.key] = selectVal;
+    });
+    setSelectedFields(updated);
+  };
+
+  const handleExport = () => {
+    if (students.length === 0) {
+      toast.error("No student data available to export.");
+      return;
+    }
+
+    const activeFields = Object.keys(selectedFields).filter(k => selectedFields[k]);
+    if (activeFields.length === 0) {
+      toast.error("Please select at least one column to export.");
+      return;
+    }
+
+    const exportData = students.map((student, index) => {
+      const row = { "S.No": index + 1 };
+      availableFieldsList.forEach(field => {
+        if (selectedFields[field.key]) {
+          row[field.label] = student[field.key] || '';
+        }
+      });
+      return row;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Class Roster");
+    
+    const className = classDetails ? `${classDetails.name}_Section_${classDetails.section}` : "Class_Roster";
+    XLSX.writeFile(workbook, `${className}_Students.xlsx`);
+    setShowExportModal(false);
+    toast.success("Student details exported successfully!");
+  };
 
   useEffect(() => {
     if (!schoolId) return;
@@ -197,6 +274,14 @@ export default function ClassRoster() {
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all"
             />
           </div>
+          
+          <button
+            onClick={() => setShowExportModal(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
+          >
+            <LuFileDown size={18} />
+            Export
+          </button>
         </div>
 
         {/* Roster Table */}
@@ -283,6 +368,84 @@ export default function ClassRoster() {
           </table>
         </div>
       </div>
+
+      {showExportModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Export Student Roster</h3>
+                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+              >
+                <LuX size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* Select All / Deselect All Controls */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(true)}
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                >
+                  Select All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(false)}
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                >
+                  Deselect All
+                </button>
+              </div>
+
+              {/* Checkbox Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {availableFieldsList.map((field) => (
+                  <label 
+                    key={field.key}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
+                  >
+                    <input 
+                      type="checkbox"
+                      checked={selectedFields[field.key]}
+                      onChange={() => handleFieldToggle(field.key)}
+                      className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
+                    />
+                    <span className="text-sm font-semibold text-slate-700">{field.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowExportModal(false)}
+                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleExport}
+                className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+              >
+                <LuFileDown size={18} />
+                Generate Sheet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

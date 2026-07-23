@@ -12,26 +12,41 @@ export default function StudentOverview() {
   const classId = userProfile?.linkedClassId;
 
   const [student, setStudent] = useState(null);
+  const [resolvedClassId, setResolvedClassId] = useState(classId);
   const [classDetails, setClassDetails] = useState(null);
   const [attendanceStats, setAttendanceStats] = useState({ total: 0, present: 0, absent: 0, late: 0 });
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Subscribe to student document to get actual classId
   useEffect(() => {
-    if (!schoolId || !studentId || !classId) return;
+    if (!schoolId || !studentId) return;
 
-    setLoading(true);
-    let studentUnsub, classUnsub, attendanceUnsub, assessmentsUnsub;
-
-    studentUnsub = onSnapshot(doc(db, `schools/${schoolId}/students`, studentId), (docSnap) => {
-      if (docSnap.exists()) setStudent({ id: docSnap.id, ...docSnap.data() });
+    const unsub = onSnapshot(doc(db, `schools/${schoolId}/students`, studentId), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setStudent({ id: docSnap.id, ...data });
+        if (data.classId) {
+          setResolvedClassId(data.classId);
+        }
+      }
     });
 
-    classUnsub = onSnapshot(doc(db, `schools/${schoolId}/classes`, classId), (docSnap) => {
+    return () => unsub();
+  }, [schoolId, studentId]);
+
+  // Subscribe to class-related details once classId is resolved
+  useEffect(() => {
+    if (!schoolId || !studentId || !resolvedClassId) return;
+
+    setLoading(true);
+    let classUnsub, attendanceUnsub, assessmentsUnsub;
+
+    classUnsub = onSnapshot(doc(db, `schools/${schoolId}/classes`, resolvedClassId), (docSnap) => {
       if (docSnap.exists()) setClassDetails({ id: docSnap.id, ...docSnap.data() });
     });
 
-    attendanceUnsub = subscribeToAttendanceForClass(schoolId, classId, (attendanceDocs) => {
+    attendanceUnsub = subscribeToAttendanceForClass(schoolId, resolvedClassId, (attendanceDocs) => {
       let present = 0, absent = 0, late = 0, total = 0;
       attendanceDocs.forEach(docData => {
         const record = docData.records?.[studentId];
@@ -45,19 +60,18 @@ export default function StudentOverview() {
       setAttendanceStats({ total, present, absent, late });
     });
 
-    assessmentsUnsub = subscribeToAssessmentsByClass(schoolId, classId, (assessmentsData) => {
+    assessmentsUnsub = subscribeToAssessmentsByClass(schoolId, resolvedClassId, (assessmentsData) => {
       const gradedAssessments = assessmentsData.filter(a => a.grades && a.grades[studentId] !== undefined);
       setAssessments(gradedAssessments);
       setLoading(false);
     });
 
     return () => {
-      if (studentUnsub) studentUnsub();
       if (classUnsub) classUnsub();
       if (attendanceUnsub) attendanceUnsub();
       if (assessmentsUnsub) assessmentsUnsub();
     };
-  }, [schoolId, studentId, classId]);
+  }, [schoolId, studentId, resolvedClassId]);
 
   if (loading) {
     return (

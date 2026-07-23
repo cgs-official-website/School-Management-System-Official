@@ -37,6 +37,7 @@ export const allNavItems = [
   { name: 'Transport', path: '/admin/transport', icon: Bus, moduleKey: 'transport' },
   { name: 'Library', path: '/admin/library', icon: Library, moduleKey: 'library' },
   { name: 'Inventory & Assets', path: '/admin/inventory', icon: PackageIcon, moduleKey: 'inventory' },
+  { name: 'Leave Requests', path: '/admin/leaves', icon: Calendar, moduleKey: 'leaves' },
   { name: 'Reports & Analytics', path: '/admin/reports', icon: BarChart2, moduleKey: 'reports' },
   { name: 'API Integrations', path: '/admin/api', icon: Key, moduleKey: 'api' },
   { name: 'Registration Links', path: '/admin/links', icon: LinkIcon, moduleKey: 'links' },
@@ -168,7 +169,7 @@ export default function AdminDashboard() {
     if (item.moduleKey === 'inventory' && schoolData.schoolType === 'College') return true;
     
     // Core modules bypass school subscription check
-    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api', 'homework'];
+    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api', 'homework', 'leaves'];
     if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
        return false;
     }

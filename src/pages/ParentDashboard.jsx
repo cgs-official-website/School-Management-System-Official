@@ -101,6 +101,7 @@ export default function ParentDashboard() {
     { name: 'Homework', path: '/parent/homework', icon: FileText, moduleKey: 'homework' },
     { name: 'Report Card', path: '/parent/grades', icon: GraduationCap },
     { name: 'Fees & Payments', path: '/parent/fees', icon: CreditCard, moduleKey: 'fees' },
+    { name: 'Leave Requests', path: '/parent/leaves', icon: Calendar },
   ];
 
   if (loading) {

@@ -35,36 +35,63 @@ export default function HomeworkOverview() {
   };
 
   useEffect(() => {
-    if (!schoolId || !classId) {
+    if (!schoolId || !studentId) {
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    const unsub = subscribeToSubCollection(schoolId, 'homeworks', async (hwData) => {
-      // Filter by the student's class
-      const classHw = hwData.filter(hw => hw.classId === classId);
-      
-      // Fetch statuses for this student for all these homeworks
-      const statuses = {};
-      for (const hw of classHw) {
-        const subRef = doc(db, `schools/${schoolId}/homeworks/${hw.id}/submissions`, studentId);
-        const subSnap = await getDoc(subRef);
-        if (subSnap.exists()) {
-          statuses[hw.id] = subSnap.data().status;
-        } else {
-          statuses[hw.id] = 'Not Started';
+    let unsub;
+
+    const initHomework = async () => {
+      let resolvedClassId = null;
+      try {
+        const studentDoc = await getDoc(doc(db, `schools/${schoolId}/students`, studentId));
+        if (studentDoc.exists()) {
+          resolvedClassId = studentDoc.data().classId;
         }
+      } catch (err) {
+        console.error("Failed to resolve student classId:", err);
       }
-      setStudentStatuses(statuses);
 
-      // Sort by due date (closest first)
-      setHomeworks(classHw.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)));
-      setLoading(false);
-    });
+      if (!resolvedClassId) {
+        resolvedClassId = classId;
+      }
 
-    return () => unsub();
-  }, [schoolId, classId]);
+      if (!resolvedClassId) {
+        setLoading(false);
+        return;
+      }
+
+      unsub = subscribeToSubCollection(schoolId, 'homeworks', async (hwData) => {
+        // Filter by the student's class
+        const classHw = hwData.filter(hw => hw.classId === resolvedClassId);
+        
+        // Fetch statuses for this student for all these homeworks
+        const statuses = {};
+        for (const hw of classHw) {
+          const subRef = doc(db, `schools/${schoolId}/homeworks/${hw.id}/submissions`, studentId);
+          const subSnap = await getDoc(subRef);
+          if (subSnap.exists()) {
+            statuses[hw.id] = subSnap.data().status;
+          } else {
+            statuses[hw.id] = 'Not Started';
+          }
+        }
+        setStudentStatuses(statuses);
+
+        // Sort by due date (closest first)
+        setHomeworks(classHw.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)));
+        setLoading(false);
+      });
+    };
+
+    initHomework();
+
+    return () => {
+      if (unsub) unsub();
+    };
+  }, [schoolId, classId, studentId]);
 
   if (loading) {
     return (
@@ -108,6 +135,12 @@ export default function HomeworkOverview() {
                   <div>
                     <h3 className="text-lg font-bold text-slate-900">{hw.title}</h3>
                     <p className="text-slate-600 mt-1 mb-3">{hw.description}</p>
+                    {hw.remarks && (
+                      <div className="mb-3 px-3 py-2 bg-slate-50/50 border border-slate-100 rounded-xl text-xs font-semibold text-slate-700 italic max-w-xl">
+                        <span className="font-bold text-primary-700 not-italic block mb-0.5">Teacher's Remarks:</span>
+                        "{hw.remarks}"
+                      </div>
+                    )}
                     <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-500">
                       <span className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
                         <BookOpen size={12} /> {hw.subject || 'General'}
