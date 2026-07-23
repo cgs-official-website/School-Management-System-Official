@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, getNotices, subscribeToSubCollection, subscribeToNotices, subscribeToInvoices } from '../../firebase/firestore';
+import { getSubCollection, getNotices, subscribeToSubCollection, subscribeToNotices, subscribeToInvoices, cleanupOldChatAudio } from '../../firebase/firestore';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
+import ConfirmModal from '../../components/ConfirmModal';
 import { 
   LuUsers as Users, 
   LuGraduationCap as GraduationCap, 
@@ -15,7 +16,8 @@ import {
   LuBriefcase as Briefcase,
   LuUser as User,
   LuCheck as Check,
-  LuCopy as Copy
+  LuCopy as Copy,
+  LuTrash2 as Trash2
 } from 'react-icons/lu';
 import { 
   FiSettings as Settings,
@@ -58,6 +60,8 @@ export default function AdminOverview() {
   const [isInviteDropdownOpen, setIsInviteDropdownOpen] = useState(false);
   const [copiedRole, setCopiedRole] = useState(null);
   const dropdownRef = useRef(null);
+  const [isCleaningAudio, setIsCleaningAudio] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: null, message: '', title: '' });
 
   // Customization State
   const defaultConfig = {
@@ -459,6 +463,34 @@ export default function AdminOverview() {
                   </div>
                   <span className="text-sm font-semibold text-slate-700 text-center">Create Notice</span>
                 </button>
+                <button 
+                  onClick={() => {
+                    setConfirmModal({
+                      isOpen: true,
+                      title: "Cleanup Audio Files",
+                      message: "Are you sure you want to delete all chat audio messages older than 7 days? This action cannot be undone.",
+                      onConfirm: async () => {
+                        setConfirmModal({ ...confirmModal, isOpen: false });
+                        setIsCleaningAudio(true);
+                        try {
+                          const count = await cleanupOldChatAudio(schoolId);
+                          toast.success(`Cleaned up ${count} old audio message${count !== 1 ? 's' : ''}`);
+                        } catch (err) {
+                          toast.error("Failed to clean up audio");
+                        } finally {
+                          setIsCleaningAudio(false);
+                        }
+                      }
+                    });
+                  }} 
+                  disabled={isCleaningAudio}
+                  className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-red-200 hover:bg-red-50 transition-colors group col-span-2 sm:col-span-1"
+                >
+                  <div className={`w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 transition-transform ${isCleaningAudio ? 'animate-spin' : 'group-hover:scale-110'}`}>
+                    <Trash2 size={20} />
+                  </div>
+                  <span className="text-sm font-semibold text-slate-700 text-center">{isCleaningAudio ? 'Cleaning...' : 'Cleanup DB Space'}</span>
+                </button>
               </div>
             </div>
           </div>
@@ -599,7 +631,13 @@ export default function AdminOverview() {
           </div>
         </div>
       )}
-
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+        onConfirm={confirmModal.onConfirm}
+        message={confirmModal.message}
+        title={confirmModal.title}
+      />
     </div>
   );
 }

@@ -16,6 +16,30 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
 
+  const [readNotices, setReadNotices] = useState(() => {
+    try {
+      const stored = localStorage.getItem(`readNotices_${userProfile?.uid}`);
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const unreadNotices = notices.filter(n => !readNotices.includes(n.id));
+
+  const handleMarkAsRead = (noticeId) => {
+    const updated = [...readNotices, noticeId];
+    setReadNotices(updated);
+    localStorage.setItem(`readNotices_${userProfile?.uid}`, JSON.stringify(updated));
+  };
+
+  const handleMarkAllAsRead = () => {
+    const allIds = notices.map(n => n.id);
+    const updated = [...new Set([...readNotices, ...allIds])];
+    setReadNotices(updated);
+    localStorage.setItem(`readNotices_${userProfile?.uid}`, JSON.stringify(updated));
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
@@ -177,7 +201,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
             title="Notifications"
           >
             <Bell size={20} />
-            {notices.length > 0 && (
+            {unreadNotices.length > 0 && (
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             )}
           </button>
@@ -186,7 +210,17 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
             <div className="absolute top-full right-[-2rem] sm:right-0 mt-2 w-[300px] sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50 flex flex-col animate-fade-in-up">
               <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <h3 className="font-semibold text-slate-900">Notifications</h3>
-                <span className="text-xs font-medium bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">{notices.length} new</span>
+                <div className="flex items-center gap-3">
+                  {unreadNotices.length > 0 && (
+                    <button 
+                      onClick={handleMarkAllAsRead} 
+                      className="text-xs font-bold text-primary-600 hover:text-primary-700 transition-colors"
+                    >
+                      Mark all read
+                    </button>
+                  )}
+                  <span className="text-xs font-medium bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">{unreadNotices.length} new</span>
+                </div>
               </div>
               <div className="max-h-[28rem] overflow-y-auto custom-scrollbar">
                 {notices.length === 0 ? (
@@ -196,8 +230,10 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                   </div>
                 ) : (
                   <div className="divide-y divide-slate-100">
-                    {notices.map((notice) => (
-                      <div key={notice.id} className={`p-4 hover:bg-slate-50 transition-colors ${notice.priority === 'high' ? 'bg-red-50/30' : ''}`}>
+                    {notices.map((notice) => {
+                      const isUnread = !readNotices.includes(notice.id);
+                      return (
+                      <div key={notice.id} className={`p-4 hover:bg-slate-50 transition-colors ${notice.priority === 'high' ? 'bg-red-50/30' : ''} ${isUnread ? 'bg-primary-50/30' : 'opacity-70'}`}>
                         <div className="flex gap-3">
                           <div className={`shrink-0 mt-1 ${notice.priority === 'high' ? 'text-red-500' : 'text-primary-500'}`}>
                             {notice.priority === 'high' ? <AlertTriangle size={16} /> : <Bell size={16} />}
@@ -209,9 +245,17 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                               {new Date(notice.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                             </p>
                           </div>
+                          {isUnread && (
+                            <button 
+                              onClick={() => handleMarkAsRead(notice.id)}
+                              className="ml-auto mt-1 shrink-0 w-2.5 h-2.5 bg-primary-500 rounded-full self-start hover:scale-125 transition-transform"
+                              title="Mark as read"
+                            />
+                          )}
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>

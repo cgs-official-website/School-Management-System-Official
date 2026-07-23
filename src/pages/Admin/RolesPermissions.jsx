@@ -4,6 +4,7 @@ import { db } from '../../firebase/config';
 import { collection, getDocs, doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { LuShield, LuSave, LuCheck, LuX, LuPlus, LuTrash2 } from 'react-icons/lu';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../../components/ConfirmModal';
 
 const DEFAULT_ROLES = [
   'Correspondent',
@@ -61,6 +62,7 @@ export default function RolesPermissions() {
   const [activeRole, setActiveRole] = useState(DEFAULT_ROLES[0]);
   const [newRoleName, setNewRoleName] = useState('');
   const [isAddingRole, setIsAddingRole] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: null, message: '', title: '' });
 
   const [permissions, setPermissions] = useState({}); // { [role]: { [moduleKey]: { read, create, edit, delete } } }
   const [displayModules, setDisplayModules] = useState([]);
@@ -163,30 +165,40 @@ export default function RolesPermissions() {
     });
   };
 
-  const handleDeleteRole = async (e, roleToDelete) => {
+  const handleDeleteRole = (e, roleToDelete) => {
     e.stopPropagation();
-    if (!schoolId) return;
-    if (!window.confirm(`Are you sure you want to delete the role "${roleToDelete}"? This action cannot be undone.`)) return;
-
-    try {
-      await deleteDoc(doc(db, `schools/${schoolId}/roles`, roleToDelete));
-      
-      setRolesList(prev => prev.filter(r => r !== roleToDelete));
-      setPermissions(prev => {
-        const newPerms = { ...prev };
-        delete newPerms[roleToDelete];
-        return newPerms;
-      });
-      
-      if (activeRole === roleToDelete) {
-        setActiveRole(rolesList.find(r => r !== roleToDelete) || '');
-      }
-      
-      toast.success(`${roleToDelete} role deleted successfully!`);
-    } catch (error) {
-      console.error("Error deleting role:", error);
-      toast.error("Failed to delete role.");
+    if (DEFAULT_ROLES.includes(roleToDelete)) {
+      toast.error("Cannot delete core system roles");
+      return;
     }
+    
+    setConfirmModal({
+      isOpen: true,
+      title: "Delete Role",
+      message: `Are you sure you want to delete the role "${roleToDelete}"? This action cannot be undone.`,
+      onConfirm: async () => {
+        setConfirmModal({ ...confirmModal, isOpen: false });
+        try {
+          await deleteDoc(doc(db, `schools/${schoolId}/roles`, roleToDelete));
+          
+          setRolesList(prev => prev.filter(r => r !== roleToDelete));
+          setPermissions(prev => {
+            const newPerms = { ...prev };
+            delete newPerms[roleToDelete];
+            return newPerms;
+          });
+          
+          if (activeRole === roleToDelete) {
+            setActiveRole(rolesList.find(r => r !== roleToDelete) || '');
+          }
+          
+          toast.success(`${roleToDelete} role deleted successfully!`);
+        } catch (error) {
+          console.error("Error deleting role:", error);
+          toast.error("Failed to delete role.");
+        }
+      }
+    });
   };
 
   const handleSave = async () => {
@@ -392,6 +404,13 @@ export default function RolesPermissions() {
           </div>
         </div>
       </div>
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+        onConfirm={confirmModal.onConfirm}
+        message={confirmModal.message}
+        title={confirmModal.title}
+      />
     </div>
   );
 }

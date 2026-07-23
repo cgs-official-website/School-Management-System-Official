@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 export default function BrandingSettings() {
   const [settings, setSettings] = useState({
-    platformName: 'Zuna',
+    platformName: 'School',
     primaryColor: '#7b40a3',
     logoUrl: '/logo.png',
     faviconUrl: '/logo.png',

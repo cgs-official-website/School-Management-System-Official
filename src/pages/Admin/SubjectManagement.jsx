@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, addSubDocument, deleteSubDocument, updateSubDocument } from '../../firebase/firestore';
 import { LuBookOpen, LuPlus, LuX, LuTrash2, LuPencil } from 'react-icons/lu';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function SubjectManagement() {
   const { userProfile } = useAuth();
@@ -14,6 +15,7 @@ export default function SubjectManagement() {
 
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: null, message: '', title: '' });
   
   const [formData, setFormData] = useState({
     name: '',
@@ -102,15 +104,21 @@ export default function SubjectManagement() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this subject?")) {
-      try {
-        await deleteSubDocument(schoolId, 'subjects', id);
-        toast.success("Subject deleted!");
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to delete subject.");
+    setConfirmModal({
+      isOpen: true,
+      title: "Delete Subject",
+      message: "Are you sure you want to delete this subject?",
+      onConfirm: async () => {
+        setConfirmModal({ ...confirmModal, isOpen: false });
+        try {
+          await deleteSubDocument(schoolId, 'subjects', id);
+          toast.success("Subject deleted!");
+        } catch (error) {
+          console.error(error);
+          toast.error("Failed to delete subject.");
+        }
       }
-    }
+    });
   };
 
   const toggleTeacherAssignment = (teacherId) => {
@@ -275,6 +283,13 @@ export default function SubjectManagement() {
           </div>
         </div>
       )}
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+        onConfirm={confirmModal.onConfirm}
+        message={confirmModal.message}
+        title={confirmModal.title}
+      />
     </div>
   );
 }

@@ -138,7 +138,7 @@ export default function LandingPage() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => scrollToSection('home')}>
-            <img src="/logo.png" alt="Zuna Logo" className="w-auto h-10 object-contain group-hover:scale-105 transition-transform mix-blend-screen bg-transparent" style={{ filter: 'drop-shadow(0 0 10px rgba(229,189,223,0.2))' }} />
+            <img src="/logo.png" alt="School Logo" className="w-auto h-10 object-contain group-hover:scale-105 transition-transform mix-blend-screen bg-transparent" style={{ filter: 'drop-shadow(0 0 10px rgba(229,189,223,0.2))' }} />
           </div>
           
           <div className="hidden md:flex gap-8 items-center font-medium text-[#A8A0AC]">
@@ -239,7 +239,7 @@ export default function LandingPage() {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="text-lg lg:text-xl text-[#A8A0AC] max-w-2xl mx-auto mb-10 leading-relaxed"
             >
-              Zuna is the ultimate multi-tenant OS for education. Seamlessly connect administrators, teachers, and parents in a secure, lightning-fast cloud ecosystem.
+              School is the ultimate multi-tenant OS for education. Seamlessly connect administrators, teachers, and parents in a secure, lightning-fast cloud ecosystem.
             </motion.p>
 
             <motion.div
@@ -440,7 +440,7 @@ export default function LandingPage() {
             <div>
               <h2 className="text-4xl lg:text-5xl font-black mb-6 tracking-tight">Get in touch</h2>
               <p className="text-lg text-[#A8A0AC] mb-10">
-                Have questions about Zuna? Our team is here to help you set up your institution for success. Reach out to us anytime.
+                Have questions about School? Our team is here to help you set up your institution for success. Reach out to us anytime.
               </p>
               
               <div className="space-y-6">
@@ -450,7 +450,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h4 className="font-bold text-[#F5F5F7]">Email Us</h4>
-                    <p className="text-[#A8A0AC]">hello@zuna.edu</p>
+                    <p className="text-[#A8A0AC]">hello@School.edu</p>
                   </div>
                 </motion.div>
                 
@@ -509,7 +509,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-16">
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <img src="/logo.png" alt="Zuna Logo" className="w-auto h-10 object-contain mix-blend-screen bg-transparent" />
+              <img src="/logo.png" alt="School Logo" className="w-auto h-10 object-contain mix-blend-screen bg-transparent" />
             </div>
             <p className="text-[#A8A0AC] font-medium leading-relaxed">
               Empowering educational institutions globally with cutting-edge cloud management technology.
@@ -547,7 +547,7 @@ export default function LandingPage() {
         </div>
         
         <div className="max-w-7xl mx-auto px-6 pt-8 border-t border-primary-900/20 flex flex-col md:flex-row justify-between items-center gap-4 text-[#A8A0AC] text-sm font-medium">
-          <p>&copy; {currentYear} Zuna. All rights reserved.</p>
+          <p>&copy; {currentYear} School. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-primary-400 transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-primary-400 transition-colors">Terms of Service</a>

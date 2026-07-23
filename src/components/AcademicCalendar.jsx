@@ -8,6 +8,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useAuth } from '../context/AuthContext';
 import { getSubCollection, addSubDocument, updateSubDocument, deleteSubDocument } from '../firebase/firestore';
 import toast from 'react-hot-toast';
+import ConfirmModal from './ConfirmModal';
 import { LuPlus as Plus, LuX as X, LuCalendarDays as CalendarIcon, LuTrash2 as Trash2 } from 'react-icons/lu';
 
 import enUS from 'date-fns/locale/en-US';
@@ -32,6 +33,7 @@ export default function AcademicCalendar({ isAdmin }) {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: null, message: '', title: '' });
   const [newEvent, setNewEvent] = useState({ title: '', start: '', end: '', type: 'event', isCustomDates: false, customDates: [] });
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -116,21 +118,27 @@ export default function AcademicCalendar({ isAdmin }) {
     }
   };
 
-  const handleDeleteEvent = async () => {
+  const handleDeleteEvent = () => {
     if (!selectedEvent || !isAdmin) return;
-    if (window.confirm("Are you sure you want to delete this event?")) {
-      try {
-        await deleteSubDocument(schoolId, 'calendar', selectedEvent.id);
-        toast.success("Event deleted!");
-        setShowModal(false);
-        setSelectedEvent(null);
-        setNewEvent({ title: '', start: '', end: '', type: 'event', isCustomDates: false, customDates: [] });
-        fetchEvents();
-      } catch (error) {
-        console.error("Error deleting event:", error);
-        toast.error("Failed to delete event.");
+    setConfirmModal({
+      isOpen: true,
+      title: "Delete Event",
+      message: "Are you sure you want to delete this event?",
+      onConfirm: async () => {
+        setConfirmModal({ ...confirmModal, isOpen: false });
+        try {
+          await deleteSubDocument(schoolId, 'calendar', selectedEvent.id);
+          toast.success("Event deleted!");
+          setShowModal(false);
+          setSelectedEvent(null);
+          setNewEvent({ title: '', start: '', end: '', type: 'event', isCustomDates: false, customDates: [] });
+          fetchEvents();
+        } catch (error) {
+          console.error("Error deleting event:", error);
+          toast.error("Failed to delete event.");
+        }
       }
-    }
+    });
   };
 
   const handleSelectEvent = (event) => {
@@ -354,6 +362,13 @@ export default function AcademicCalendar({ isAdmin }) {
           </div>
         </div>
       )}
+      <ConfirmModal 
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+        onConfirm={confirmModal.onConfirm}
+        message={confirmModal.message}
+        title={confirmModal.title}
+      />
     </div>
   );
 }

@@ -32,7 +32,7 @@ export default function ExamManagement() {
   // Manage Exams State
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [newExam, setNewExam] = useState({ name: '', startDate: '', endDate: '' });
+  const [newExam, setNewExam] = useState({ name: '', startDate: '', endDate: '', examType: 'Custom Exam', maxMarks: 100 });
 
   // Report Card State
   const [selectedExamId, setSelectedExamId] = useState('');
@@ -106,11 +106,12 @@ export default function ExamManagement() {
     try {
       await createExam(schoolId, {
         ...newExam,
+        maxMarks: Number(newExam.maxMarks),
         status: 'active'
       });
       // Listener handles updates
       setShowCreateModal(false);
-      setNewExam({ name: '', startDate: '', endDate: '' });
+      setNewExam({ name: '', startDate: '', endDate: '', examType: 'Custom Exam', maxMarks: 100 });
     } catch (error) {
       toast.error("Failed to create exam");
     } finally {
@@ -296,9 +297,15 @@ export default function ExamManagement() {
                       </span>
                     </div>
                     <h3 className="font-bold text-lg text-slate-900 mb-2">{exam.name}</h3>
-                    <div className="flex items-center gap-2 text-sm text-slate-500">
-                      <Calendar size={16} />
-                      {new Date(exam.startDate).toLocaleDateString()} - {new Date(exam.endDate).toLocaleDateString()}
+                    <div className="flex flex-col gap-2 text-sm text-slate-500 mb-2">
+                      <div className="flex items-center gap-2 font-medium text-slate-600">
+                        <FileText size={16} className="text-primary-500" />
+                        {exam.examType || 'Standard Exam'} <span className="text-slate-300">•</span> {exam.maxMarks || 100} Max Marks
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar size={16} />
+                        {new Date(exam.startDate).toLocaleDateString()} - {new Date(exam.endDate).toLocaleDateString()}
+                      </div>
                     </div>
                   </div>
                 ))
@@ -600,6 +607,29 @@ export default function ExamManagement() {
                     placeholder="e.g. Mid-Term 2026"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                   />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Exam Type</label>
+                    <input 
+                      type="text" required
+                      value={newExam.examType}
+                      onChange={(e) => setNewExam({...newExam, examType: e.target.value})}
+                      placeholder="e.g. Unit Test, Midterm, Final"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Max Marks</label>
+                    <input 
+                      type="number" min="1" required
+                      value={newExam.maxMarks}
+                      onChange={(e) => setNewExam({...newExam, maxMarks: e.target.value})}
+                      placeholder="100"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    />
+                  </div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

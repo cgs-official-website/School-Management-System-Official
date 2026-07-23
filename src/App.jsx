@@ -59,6 +59,8 @@ const SubjectManagement = lazy(() => import('./pages/Admin/SubjectManagement'));
 const RolesPermissions = lazy(() => import('./pages/Admin/RolesPermissions'));
 const AdminAttendance = lazy(() => import('./pages/Admin/Attendance'));
 const AdminHomework = lazy(() => import('./pages/Admin/AdminHomework'));
+const CustomModuleView = lazy(() => import('./pages/Admin/CustomModuleView'));
+const ChatMonitor = lazy(() => import('./pages/Admin/ChatMonitor'));
 
 // Teacher
 const TeacherRegistration = lazy(() => import('./pages/TeacherRegistration'));
@@ -89,6 +91,8 @@ const ParentCalendar = lazy(() => import('./pages/Parent/Calendar'));
 const ParentCanteen = lazy(() => import('./pages/Parent/Canteen'));
 const ParentGrades = lazy(() => import('./pages/Parent/Grades'));
 const ParentAttendance = lazy(() => import('./pages/Parent/Attendance'));
+const ParentPerformance = lazy(() => import('./pages/Parent/Performance'));
+const ParentPTM = lazy(() => import('./pages/Parent/PTM'));
 
 import { Toaster } from 'react-hot-toast';
 
@@ -188,6 +192,7 @@ function App() {
               <Route path="library" element={<LibraryManagement />} />
               <Route path="exams" element={<ExamManagement />} />
               <Route path="notices" element={<Noticeboard />} />
+              <Route path="chats" element={<ChatMonitor />} />
               <Route path="api" element={<APIIntegrations />} />
               <Route path="billing" element={<BillingDashboard />} />
               <Route path="upgrade" element={<UpgradePlan />} />
@@ -198,6 +203,7 @@ function App() {
               <Route path="reports" element={<ReportsAnalytics />} />
               <Route path="roles" element={<RolesPermissions />} />
               <Route path="homework" element={<AdminHomework />} />
+              <Route path="custom/:moduleId" element={<CustomModuleView />} />
             </Route>
 
             {/* Teacher Routes */}
@@ -241,6 +247,8 @@ function App() {
               <Route path="attendance" element={<ParentAttendance />} />
               <Route path="homework" element={<HomeworkOverview />} />
               <Route path="grades" element={<ParentGrades />} />
+              <Route path="performance" element={<ParentPerformance />} />
+              <Route path="ptm" element={<ParentPTM />} />
               <Route path="fees" element={<ParentFees />} />
               <Route path="notices" element={<ParentNoticeboard />} />
               <Route path="calendar" element={<ParentCalendar />} />

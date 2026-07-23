@@ -3,10 +3,10 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { logoutUser } from '../firebase/auth';
 import { findStudentByAdmission, linkStudentToParent } from '../firebase/firestore';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
-import { LuCircleUser as UserCircle, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuCreditCard as CreditCard, LuLink as LinkIcon, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuCoffee as Coffee, LuBuilding2 as Building2 } from 'react-icons/lu';
+import { LuCircleUser as UserCircle, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuCreditCard as CreditCard, LuLink as LinkIcon, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuCoffee as Coffee, LuBuilding2 as Building2, LuTrendingUp as TrendingUp, LuCalendarClock as CalendarClock } from 'react-icons/lu';
 import useSchoolBranding from '../hooks/useSchoolBranding';
 import { useNotifications } from '../context/NotificationContext';
 
@@ -29,16 +29,20 @@ export default function ParentDashboard() {
   useSchoolBranding(school);
 
   useEffect(() => {
+    let unsubSchool;
     if (userProfile && userProfile.role !== 'parent') {
       navigate('/');
     } else if (userProfile?.schoolId) {
-      getDoc(doc(db, "schools", userProfile.schoolId)).then(snap => {
+      unsubSchool = onSnapshot(doc(db, "schools", userProfile.schoolId), snap => {
         if (snap.exists()) setSchool(snap.data());
         setLoading(false);
       });
     } else {
       setLoading(false);
     }
+    return () => {
+      if (unsubSchool) unsubSchool();
+    };
   }, [userProfile, navigate]);
 
   // Close sidebar on route change for mobile
@@ -88,6 +92,8 @@ export default function ParentDashboard() {
 
   const navItems = [
     { name: 'Student Overview', path: '/parent', icon: UserCircle, exact: true },
+    { name: 'Performance', path: '/parent/performance', icon: TrendingUp },
+    { name: 'PTM Meetings', path: '/parent/ptm', icon: CalendarClock },
     { name: 'Noticeboard', path: '/parent/notices', icon: Bell, moduleKey: 'noticeboard' },
     { name: 'Calendar', path: '/parent/calendar', icon: Calendar },
     { name: 'Attendance', path: '/parent/attendance', icon: CheckSquare },
@@ -190,11 +196,11 @@ export default function ParentDashboard() {
 
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center p-1 shrink-0">
-              <img src="/logo.png" alt="Zuna" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
-              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z<span className="text-primary-500">.</span></div>
+              <img src="/logo.png" alt="School" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
+              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z</div>
             </div>
             <div className="min-w-0">
-              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">Zuna<span className="text-primary-500">.</span></h2>
+              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">Zuna</h2>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">Parent Portal</p>
             </div>
           </div>

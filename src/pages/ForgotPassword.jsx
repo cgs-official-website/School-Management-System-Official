@@ -56,7 +56,7 @@ export default function ForgotPassword() {
       >
         <div className="mb-8 flex flex-col items-center">
           <Link to="/" className="inline-flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg p-1">
-            <img src="/logo.png" alt="Zuna Logo" className="w-auto h-12 object-contain group-hover:scale-105 transition-transform drop-shadow-sm filter invert" />
+            <img src="/logo.png" alt="School Logo" className="w-auto h-12 object-contain group-hover:scale-105 transition-transform drop-shadow-sm filter invert" />
           </Link>
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">Reset Password</h2>
           <p className="mt-2 text-sm text-slate-500 text-center">Enter your email address and we'll send you a link to reset your password.</p>

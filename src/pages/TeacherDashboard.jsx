@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LuUsers as Users, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuMessageSquare as MessageSquare, LuLock as Lock, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuBuilding2 as Building2, LuCalendarDays, LuBookOpen, LuCalendarOff, LuTrendingUp, LuFolderDown, LuCalendarClock, LuBanknote, LuUser as UserIcon } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
 import { useAuth } from '../context/AuthContext';
-import { getDoc, doc, collection, query, where, getDocs } from 'firebase/firestore';
+import { getDoc, doc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
 import useSchoolBranding from '../hooks/useSchoolBranding';
@@ -24,12 +24,14 @@ export default function TeacherDashboard() {
 
   // Fallback check to ensure role is correct
   useEffect(() => {
+    let unsubSchool;
     if (userProfile && userProfile.role !== 'teacher') {
       navigate('/');
     } else if (userProfile?.schoolId) {
-      // Fetch school info for branding/name
-      getDoc(doc(db, "schools", userProfile.schoolId)).then(snap => {
+      // Fetch school info for branding/name dynamically
+      unsubSchool = onSnapshot(doc(db, "schools", userProfile.schoolId), snap => {
         if (snap.exists()) setSchool(snap.data());
+      });
         
         // Also fetch teacher doc for profile completion
         if (userProfile.role === 'teacher') {
@@ -82,11 +84,13 @@ export default function TeacherDashboard() {
         } else {
           setLoading(false);
         }
-      }).catch(() => setLoading(false));
     } else {
       setLoading(false);
     }
-  }, [userProfile, navigate]);
+    return () => {
+      if (unsubSchool) unsubSchool();
+    };
+  }, [userProfile, navigate, currentUser]);
 
   const calculateCompletion = () => {
     if (!teacherDoc) return 0;
@@ -131,7 +135,7 @@ export default function TeacherDashboard() {
   };
 
   const navItems = [
-    { name: 'Class Roster', path: '/teacher', icon: Users, exact: true },
+    { name: 'Dashboard', path: '/teacher', icon: Users, exact: true },
     { name: 'Noticeboard', path: '/teacher/notices', icon: Bell, moduleKey: 'noticeboard' },
     { name: 'Calendar', path: '/teacher/calendar', icon: Calendar },
     { name: 'Timetable', path: '/teacher/timetable', icon: LuCalendarDays },
@@ -176,11 +180,11 @@ export default function TeacherDashboard() {
 
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center p-1 shrink-0">
-              <img src="/logo.png" alt="Zuna" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
-              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z<span className="text-primary-500">.</span></div>
+              <img src="/logo.png" alt="School" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
+              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z</div>
             </div>
             <div className="min-w-0">
-              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">Zuna<span className="text-primary-500">.</span></h2>
+              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">Zuna</h2>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">Teacher Portal</p>
             </div>
           </div>

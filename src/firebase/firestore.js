@@ -1,4 +1,5 @@
-import { db } from "./config";
+import { db, storage } from "./config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { 
   collection, 
   doc, 
@@ -51,6 +52,23 @@ export const getAssessmentsByClass = async (schoolId, classId) => {
     console.error("Error getting assessments:", error);
     throw error;
   }
+};
+
+export const updateChatRoomStatus = async (schoolId, studentId, teacherId, status) => {
+  const chatRoomId = `${studentId}_${teacherId}`;
+  const chatRef = doc(db, `schools/${schoolId}/chats`, chatRoomId);
+  await setDoc(chatRef, { status }, { merge: true });
+};
+
+export const subscribeToChatRoom = (schoolId, studentId, teacherId, callback) => {
+  const chatRoomId = `${studentId}_${teacherId}`;
+  return onSnapshot(doc(db, `schools/${schoolId}/chats`, chatRoomId), (docSnap) => {
+    if (docSnap.exists()) {
+      callback({ id: docSnap.id, ...docSnap.data() });
+    } else {
+      callback(null);
+    }
+  });
 };
 
 export const updateAssessmentGrades = async (schoolId, assessmentId, gradesMap) => {
@@ -155,8 +173,8 @@ export const generateSchoolId = async () => {
       const nextCount = currentCount + 1;
       transaction.set(counterRef, { count: nextCount }, { merge: true });
       
-      // format to ZUNAS001
-      return `ZUNAS${String(nextCount).padStart(3, '0')}`;
+      // format to SchoolS001
+      return `SchoolS${String(nextCount).padStart(3, '0')}`;
     });
     return newId;
   } catch (error) {
@@ -442,22 +460,26 @@ export const deletePlan = async (planId) => {
 };
 
 // --- Chat Operations ---
-export const sendMessage = async (schoolId, studentId, teacherId, parentId, senderId, senderRole, text) => {
+export const sendMessage = async (schoolId, studentId, teacherId, parentId, senderId, senderRole, text, mediaUrl = null, mediaType = null) => {
   try {
-    const messagesRef = collection(db, `schools/${schoolId}/chats/${studentId}/messages`);
+    const chatRoomId = `${studentId}_${teacherId}`;
+    const messagesRef = collection(db, `schools/${schoolId}/chats/${chatRoomId}/messages`);
+    
     await addDoc(messagesRef, {
       senderId,
       senderRole,
       text,
+      mediaUrl,
+      mediaType,
       createdAt: new Date().toISOString()
     });
 
-    const chatRef = doc(db, `schools/${schoolId}/chats`, studentId);
+    const chatRef = doc(db, `schools/${schoolId}/chats`, chatRoomId);
     await setDoc(chatRef, {
       studentId,
       teacherId,
       parentId, // could be null if not yet linked
-      lastMessage: text,
+      lastMessage: text || (mediaType ? `Sent a ${mediaType}` : 'Sent an attachment'),
       lastMessageTime: new Date().toISOString()
     }, { merge: true });
 
@@ -467,8 +489,9 @@ export const sendMessage = async (schoolId, studentId, teacherId, parentId, send
   }
 };
 
-export const subscribeToMessages = (schoolId, studentId, callback) => {
-  const messagesRef = collection(db, `schools/${schoolId}/chats/${studentId}/messages`);
+export const subscribeToMessages = (schoolId, studentId, teacherId, callback) => {
+  const chatRoomId = `${studentId}_${teacherId}`;
+  const messagesRef = collection(db, `schools/${schoolId}/chats/${chatRoomId}/messages`);
   const q = query(messagesRef, orderBy("createdAt", "asc"));
   
   return onSnapshot(q, (snapshot) => {
@@ -479,6 +502,114 @@ export const subscribeToMessages = (schoolId, studentId, callback) => {
     callback(messages);
   }, (error) => {
     console.error("Error subscribing to messages:", error);
+  });
+};
+
+export const deleteChatMessage = async (schoolId, chatRoomId, messageId) => {
+  try {
+    const messageRef = doc(db, `schools/${schoolId}/chats/${chatRoomId}/messages`, messageId);
+    await deleteDoc(messageRef);
+  } catch (error) {
+    console.error("Error deleting chat message:", error);
+    throw error;
+  }
+};
+
+export const getChatThreads = async (schoolId) => {
+  try {
+    const chatsRef = collection(db, `schools/${schoolId}/chats`);
+    const q = query(chatsRef, orderBy("lastMessageTime", "desc"));
+    const querySnapshot = await getDocs(q);
+    const threads = [];
+    querySnapshot.forEach((doc) => {
+      threads.push({ id: doc.id, ...doc.data() });
+    });
+    return threads;
+  } catch (error) {
+    console.error("Error getting chat threads:", error);
+    throw error;
+  }
+};
+
+export const cleanupOldChatAudio = async (schoolId) => {
+  try {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const timeLimit = oneWeekAgo.toISOString();
+
+    const chatsRef = collection(db, `schools/${schoolId}/chats`);
+    const chatSnapshot = await getDocs(chatsRef);
+    
+    let cleanedCount = 0;
+    const batch = writeBatch(db);
+    let batchCount = 0;
+
+    for (const chatDoc of chatSnapshot.docs) {
+      const messagesRef = collection(db, `schools/${schoolId}/chats/${chatDoc.id}/messages`);
+      const q = query(
+        messagesRef,
+        where("mediaType", "==", "audio"),
+        where("createdAt", "<", timeLimit)
+      );
+      
+      const messagesSnap = await getDocs(q);
+      messagesSnap.forEach((msgDoc) => {
+        batch.update(msgDoc.ref, {
+          mediaUrl: null,
+          mediaType: null,
+          text: msgDoc.data().text ? msgDoc.data().text + '\n[Voice message automatically removed to save storage]' : '[Voice message automatically removed to save storage]'
+        });
+        cleanedCount++;
+        batchCount++;
+      });
+      
+      if (batchCount >= 400) {
+        await batch.commit();
+        batchCount = 0;
+      }
+    }
+    
+    if (batchCount > 0) {
+      await batch.commit();
+    }
+    
+    return cleanedCount;
+  } catch (error) {
+    console.error("Error cleaning up audio messages:", error);
+    throw error;
+  }
+};
+
+export const getTeachersForChat = async (schoolId) => {
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(
+      usersRef, 
+      where("schoolId", "==", schoolId),
+      where("role", "==", "teacher")
+    );
+    const querySnapshot = await getDocs(q);
+    const teachers = [];
+    querySnapshot.forEach(doc => {
+      teachers.push({ id: doc.id, ...doc.data() });
+    });
+    return teachers;
+  } catch (error) {
+    console.error("Error getting teachers:", error);
+    throw error;
+  }
+};
+
+export const uploadChatMedia = async (schoolId, chatRoomId, file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = () => {
+      reject(new Error("Failed to read file as Base64"));
+    };
+    reader.readAsDataURL(file);
   });
 };
 
@@ -814,6 +945,9 @@ export const createNotice = async (schoolId, noticeData) => {
   try {
     const noticeRef = await addDoc(collection(db, `schools/${schoolId}/notices`), {
       ...noticeData,
+      type: noticeData.type || 'global',
+      classId: noticeData.classId || null,
+      viewedBy: [], // Array of { uid, name, role, class }
       createdAt: new Date().toISOString()
     });
     return noticeRef.id;
@@ -823,24 +957,46 @@ export const createNotice = async (schoolId, noticeData) => {
   }
 };
 
+export const updateNotice = async (schoolId, noticeId, noticeData) => {
+  try {
+    const noticeRef = doc(db, `schools/${schoolId}/notices`, noticeId);
+    await updateDoc(noticeRef, {
+      ...noticeData,
+      updatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("Error updating notice:", error);
+    throw error;
+  }
+};
+
+export const markNoticeAsViewed = async (schoolId, noticeId, userDetails) => {
+  try {
+    const noticeRef = doc(db, `schools/${schoolId}/notices`, noticeId);
+    // userDetails should be { uid, name, role, class: (optional string) }
+    await updateDoc(noticeRef, {
+      viewedBy: arrayUnion(userDetails)
+    });
+  } catch (error) {
+    // Fail silently if there's an error so it doesn't crash the UI for users
+    console.warn("Could not mark notice as viewed:", error);
+  }
+};
+
 export const getNotices = async (schoolId, targetAudience = null) => {
   try {
     let q = collection(db, `schools/${schoolId}/notices`);
     
     if (targetAudience) {
-      // Fetch notices for the specific audience OR for 'all'
       q = query(q, where("audience", "in", [targetAudience, 'all']));
     }
     
-    // Note: Due to the 'in' query, we can't easily orderBy on a different field without an index.
-    // We will fetch and sort locally to avoid requiring complex composite indexes for MVP.
     const querySnapshot = await getDocs(q);
     let notices = [];
     querySnapshot.forEach((doc) => {
       notices.push({ id: doc.id, ...doc.data() });
     });
     
-    // Sort descending by createdAt
     notices.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     
     return notices;
@@ -1042,6 +1198,52 @@ export const subscribeToExamAssessments = (schoolId, classId, examId, callback) 
   });
 };
 
+export const subscribeToGlobalNotices = (schoolId, targetAudience, callback) => {
+  let q = collection(db, `schools/${schoolId}/notices`);
+  // We can't combine where(type) and where(audience in) without an index, 
+  // so we filter locally for now.
+  return onSnapshot(q, (snapshot) => {
+    let notices = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      if ((data.type === 'global' || !data.type) && 
+          (!targetAudience || data.audience === targetAudience || data.audience === 'all' || 
+           (targetAudience === 'parents' && data.audience === 'students_parents') ||
+           (targetAudience === 'students' && data.audience === 'students_parents'))) {
+        notices.push({ id: doc.id, ...data });
+      }
+    });
+    notices.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    callback(notices);
+  });
+};
+
+export const subscribeToClassNotices = (schoolId, classId = null, callback) => {
+  let q;
+  if (classId) {
+    q = query(
+      collection(db, `schools/${schoolId}/notices`),
+      where("type", "==", "class"),
+      where("classId", "==", classId)
+    );
+  } else {
+    q = query(
+      collection(db, `schools/${schoolId}/notices`),
+      where("type", "==", "class")
+    );
+  }
+  
+  return onSnapshot(q, (snapshot) => {
+    let notices = [];
+    snapshot.forEach((doc) => {
+      notices.push({ id: doc.id, ...doc.data() });
+    });
+    notices.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    callback(notices);
+  });
+};
+
+// Keeping the original for backwards compatibility in other places temporarily
 export const subscribeToNotices = (schoolId, targetAudience, callback) => {
   let q = collection(db, `schools/${schoolId}/notices`);
   if (targetAudience) {
@@ -1152,4 +1354,80 @@ export const initializeDefaultSubscriptionPlans = async () => {
     console.error("Error initializing subscription plans:", error);
     throw error;
   }
+};
+
+// ==========================================
+// PTM OPERATIONS
+// ==========================================
+
+export const createPTM = async (schoolId, ptmData) => {
+  try {
+    const ptmsRef = collection(db, `schools/${schoolId}/ptms`);
+    const docRef = await addDoc(ptmsRef, {
+      ...ptmData,
+      createdAt: new Date().toISOString()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating PTM:", error);
+    throw error;
+  }
+};
+
+export const updatePTM = async (schoolId, ptmId, updates) => {
+  try {
+    const docRef = doc(db, `schools/${schoolId}/ptms`, ptmId);
+    await updateDoc(docRef, updates);
+  } catch (error) {
+    console.error("Error updating PTM:", error);
+    throw error;
+  }
+};
+
+export const subscribeToClassPTMs = (schoolId, classId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/ptms`),
+    where("classId", "==", classId)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const data = [];
+    snapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() });
+    });
+    callback(data);
+  });
+};
+
+export const subscribeToStudentPTMs = (schoolId, studentId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/ptms`),
+    where("studentId", "==", studentId)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const data = [];
+    snapshot.forEach((doc) => {
+      data.push({ id: doc.id, ...doc.data() });
+    });
+    callback(data);
+  });
+};
+
+// ==========================================
+// PERFORMANCE OPERATIONS
+// ==========================================
+
+export const updateStudentPerformanceStatus = async (schoolId, studentId, status) => {
+  try {
+    const docRef = doc(db, `schools/${schoolId}/students`, studentId);
+    await updateDoc(docRef, { performanceStatus: status });
+  } catch (error) {
+    console.error("Error updating performance status:", error);
+    throw error;
+  }
+};
+
+export const getChatsForTeacher = async (schoolId, teacherId) => {
+  const q = query(collection(db, `schools/${schoolId}/chats`), where("teacherId", "==", teacherId));
+  const snap = await getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };

@@ -151,7 +151,7 @@ export default function TeacherRegistration() {
           
           <div className="relative z-10 flex flex-col h-full justify-between p-8 text-white">
             <Link to="/" className="inline-flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-white/50 rounded-lg w-max">
-              <img src="/logo.png" alt="Zuna Logo" className="w-auto h-10 object-contain drop-shadow-sm filter brightness-0 invert" />
+              <img src="/logo.png" alt="School Logo" className="w-auto h-10 object-contain drop-shadow-sm filter brightness-0 invert" />
             </Link>
 
             <div className="mt-auto">
@@ -192,7 +192,7 @@ export default function TeacherRegistration() {
                 )}
                 <div className="md:hidden">
                   <Link to="/">
-                    <img src="/logo.png" alt="Zuna Logo" className="w-auto h-8 object-contain" />
+                    <img src="/logo.png" alt="School Logo" className="w-auto h-8 object-contain" />
                   </Link>
                 </div>
               </div>

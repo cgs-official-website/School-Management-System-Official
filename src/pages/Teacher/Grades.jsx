@@ -123,6 +123,24 @@ export default function Grades() {
     }
   };
 
+  const handleExamLinkChange = (e) => {
+    const selectedExamId = e.target.value;
+    const selectedExam = exams.find(ex => ex.id === selectedExamId);
+    
+    if (selectedExam && selectedExam.maxMarks) {
+       setNewAssessment(prev => ({
+         ...prev,
+         examId: selectedExamId,
+         totalMarks: selectedExam.maxMarks
+       }));
+    } else {
+       setNewAssessment(prev => ({
+         ...prev,
+         examId: selectedExamId
+       }));
+    }
+  };
+
   const handleGradeChange = (studentId, value) => {
     // Only allow numbers
     if (value !== '' && isNaN(Number(value))) return;
@@ -484,7 +502,8 @@ export default function Grades() {
                       type="number" min="1" required
                       value={newAssessment.totalMarks}
                       onChange={(e) => setNewAssessment({...newAssessment, totalMarks: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      disabled={!!newAssessment.examId}
+                      className={`w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white ${!!newAssessment.examId ? 'opacity-50 cursor-not-allowed bg-slate-50' : ''}`}
                     />
                   </div>
                 </div>
@@ -493,12 +512,15 @@ export default function Grades() {
                   <label className="block text-sm font-semibold text-slate-700 mb-1">Link to Formal Exam (Optional)</label>
                   <select 
                     value={newAssessment.examId || ''}
-                    onChange={(e) => setNewAssessment({...newAssessment, examId: e.target.value})}
+                    onChange={handleExamLinkChange}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                   >
                     <option value="">-- No Exam Link --</option>
                     {exams.map(exam => (
-                      <option key={exam.id} value={exam.id}>{exam.name}</option>
+                      <option key={exam.id} value={exam.id}>
+                        {exam.name} {exam.examType ? `(${exam.examType})` : ''} 
+                        {exam.maxMarks ? ` - [${exam.maxMarks} Marks]` : ''}
+                      </option>
                     ))}
                   </select>
                   <p className="text-xs text-slate-500 mt-1">Linking to an exam will include these marks in the formal Report Card.</p>

@@ -52,11 +52,11 @@ export default function SuperAdminDashboard() {
 
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center p-1 shrink-0">
-              <img src="/logo.png" alt="Zuna" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
-              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z<span className="text-primary-500">.</span></div>
+              <img src="/logo.png" alt="School" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
+              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z</div>
             </div>
             <div className="min-w-0">
-              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">Zuna<span className="text-primary-500">.</span></h2>
+              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">School</h2>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">SuperAdmin</p>
             </div>
           </div>

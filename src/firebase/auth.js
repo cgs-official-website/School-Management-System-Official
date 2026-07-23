@@ -46,7 +46,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 export const loginWithAdmissionNumber = async (admissionNumber, password) => {
   try {
     // Reconstruct the global synthetic email directly (avoids unauthenticated DB reads!)
-    const syntheticEmail = `${admissionNumber.replace(/[^a-zA-Z0-9]/g, '')}@parent.zuna.com`.toLowerCase();
+    const syntheticEmail = `${admissionNumber.replace(/[^a-zA-Z0-9]/g, '')}@parent.School.com`.toLowerCase();
     
     const userCredential = await signInWithEmailAndPassword(auth, syntheticEmail, password);
     return userCredential.user;

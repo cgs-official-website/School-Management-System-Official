@@ -10,10 +10,12 @@ export default function Attendance() {
 
   const today = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(today);
+  const [selectedSession, setSelectedSession] = useState('FN');
   const [classes, setClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState('');
   
   const [students, setStudents] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [attendanceRecords, setAttendanceRecords] = useState({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -48,7 +50,8 @@ export default function Attendance() {
   useEffect(() => {
     if (students.length === 0 || !selectedClassId || viewMode !== 'daily') return;
     setLoading(true);
-    const unsub = subscribeToAttendance(schoolId, selectedClassId, selectedDate, (existingRecord) => {
+    const attendanceKey = `${selectedDate}_${selectedSession}`;
+    const unsub = subscribeToAttendance(schoolId, selectedClassId, attendanceKey, (existingRecord) => {
       const newRecords = {};
       if (existingRecord && existingRecord.records) {
         students.forEach(student => {
@@ -83,7 +86,13 @@ export default function Attendance() {
 
     const now = new Date();
     const filteredRecords = historicalRecords.filter(record => {
-      const recordDate = new Date(record.date);
+      // Record date might be stored as "YYYY-MM-DD" or "YYYY-MM-DD_FN"
+      const dateString = record.date ? record.date.split('_')[0] : '';
+      const recordDate = new Date(dateString);
+      
+      // Check for valid date
+      if (isNaN(recordDate.getTime())) return false;
+      
       if (viewMode === 'weekly') {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(now.getDate() - 7);
@@ -137,7 +146,8 @@ export default function Attendance() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await saveAttendance(schoolId, selectedClassId, selectedDate, currentUser.uid, attendanceRecords);
+      const attendanceKey = `${selectedDate}_${selectedSession}`;
+      await saveAttendance(schoolId, selectedClassId, attendanceKey, currentUser.uid, attendanceRecords);
       toast.success('Attendance saved successfully!');
     } catch (error) {
       console.error("Error saving attendance:", error);
@@ -186,14 +196,24 @@ export default function Attendance() {
             <option value="term">This Term Report</option>
           </select>
           {viewMode === 'daily' && (
-            <div className="flex items-center gap-2 bg-white p-2 rounded-xl border border-slate-200 shadow-sm shrink-0">
-              <CalendarIcon size={20} className="text-slate-400 ml-2" />
-              <input 
-                type="date" 
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="border-none focus:ring-0 text-slate-700 font-medium py-1 pr-2 bg-transparent cursor-pointer outline-none"
-              />
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                <CalendarIcon size={20} className="text-slate-400 ml-2" />
+                <input 
+                  type="date" 
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="border-none focus:ring-0 text-slate-700 font-medium py-1 pr-2 bg-transparent cursor-pointer outline-none"
+                />
+              </div>
+              <select 
+                value={selectedSession}
+                onChange={(e) => setSelectedSession(e.target.value)}
+                className="border border-slate-200 rounded-xl focus:ring-primary-500 text-slate-700 font-bold py-2.5 px-4 bg-white shadow-sm outline-none"
+              >
+                <option value="FN">FN (Forenoon)</option>
+                <option value="AN">AN (Afternoon)</option>
+              </select>
             </div>
           )}
         </div>
@@ -216,6 +236,16 @@ export default function Attendance() {
             </button>
           )}
         </div>
+        
+        <div className="p-4 border-b border-slate-200 bg-white">
+          <input 
+            type="text" 
+            placeholder="Search student by name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full md:w-1/3 px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+          />
+        </div>
 
         {loading ? (
           <div className="p-20 flex justify-center">
@@ -235,7 +265,9 @@ export default function Attendance() {
                 </tr>
               </thead>
               <tbody>
-                {students.map((student) => (
+                {students
+                  .filter(s => `${s.firstName} ${s.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()))
+                  .map((student) => (
                   <tr key={student.id} className="border-b border-slate-50 hover:bg-slate-50/50">
                     <td className="p-4 text-slate-600 font-medium">{student.rollNumber || '-'}</td>
                     <td className="p-4 font-bold text-slate-900">
@@ -283,7 +315,9 @@ export default function Attendance() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm">
-                {students.map(student => {
+                {students
+                  .filter(s => `${s.firstName} ${s.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()))
+                  .map(student => {
                   const stat = reportStats[student.id] || { present: 0, absent: 0, late: 0, total: 0 };
                   const percentage = stat.total === 0 ? 100 : Math.round(((stat.present + stat.late) / stat.total) * 100);
                   

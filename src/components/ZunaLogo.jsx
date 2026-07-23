@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ZunaLogo({ className, size = 32 }) {
+export default function SchoolLogo({ className, size = 32 }) {
   return (
     <svg 
       width={size} 

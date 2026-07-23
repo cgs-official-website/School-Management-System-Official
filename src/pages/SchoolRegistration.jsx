@@ -248,7 +248,7 @@ export default function SchoolRegistration() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link to="/" className="inline-flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg p-1">
-            <img src="/logo.png" alt="Zuna Logo" className="w-auto h-12 object-contain group-hover:scale-105 transition-transform drop-shadow-sm filter invert" />
+            <img src="/logo.png" alt="School Logo" className="w-auto h-12 object-contain group-hover:scale-105 transition-transform drop-shadow-sm filter invert" />
           </Link>
         </div>
 
@@ -583,7 +583,7 @@ export default function SchoolRegistration() {
                           <input type="checkbox" name="termsAccepted" checked={formData.termsAccepted} onChange={handleChange} className="w-5 h-5 rounded border-slate-300 bg-white text-primary-500 focus:ring-primary-500 focus:ring-offset-white cursor-pointer" />
                         </div>
                         <span className="text-sm text-slate-500 leading-relaxed group-hover:text-slate-700 transition-colors">
-                          I agree to the Zuna <a href="#" className="text-primary-600 hover:underline">Terms of Service</a> and <a href="#" className="text-primary-600 hover:underline">Privacy Policy</a>. I understand my account will be manually verified before activation.
+                          I agree to the School <a href="#" className="text-primary-600 hover:underline">Terms of Service</a> and <a href="#" className="text-primary-600 hover:underline">Privacy Policy</a>. I understand my account will be manually verified before activation.
                         </span>
                       </label>
                     </div>

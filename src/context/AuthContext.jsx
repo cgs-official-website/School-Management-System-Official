@@ -20,11 +20,11 @@ export const AuthProvider = ({ children }) => {
       if (import.meta.env.DEV) {
         setCurrentUser({
           uid: "dev-admin-uid",
-          email: "admin@zuna.com"
+          email: "admin@School.com"
         });
         setUserProfile({
           uid: "dev-admin-uid",
-          email: "admin@zuna.com",
+          email: "admin@School.com",
           role: "admin",
           schoolId: "dev-school-id",
           schoolName: "Dev Academy",

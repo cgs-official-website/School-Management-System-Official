@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { subscribeToStudentsByClass } from '../../firebase/firestore';
+import { subscribeToStudentsByClass, getTransportRoutes, getAttendance } from '../../firebase/firestore';
 import { getDoc, doc, onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuUsers as Users, LuSearch as Search, LuGraduationCap as GraduationCap, LuMail as Mail, LuCircleCheck as CheckCircle2 } from 'react-icons/lu';
+import { LuUsers as Users, LuSearch as Search, LuGraduationCap as GraduationCap, LuMail as Mail, LuCircleCheck as CheckCircle2, LuBus, LuUserCheck, LuUserX, LuUser, LuUserRound } from 'react-icons/lu';
 
 export default function ClassRoster() {
   const { userProfile, currentUser } = useAuth();
@@ -25,6 +25,11 @@ export default function ClassRoster() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // New States for Dashboard
+  const [transportRoutes, setTransportRoutes] = useState([]);
+  const [attendanceRecords, setAttendanceRecords] = useState({});
+  const [todayDate] = useState(new Date().toISOString().split('T')[0]); // YYYY-MM-DD
 
   useEffect(() => {
     if (!schoolId) return;
@@ -48,16 +53,43 @@ export default function ClassRoster() {
       setLoading(false);
     });
 
+    // Fetch Transport Routes
+    getTransportRoutes(schoolId).then(routes => {
+      setTransportRoutes(routes);
+    }).catch(console.error);
+
+    // Fetch Today's Attendance
+    getAttendance(schoolId, classId, `${todayDate}_Morning`).then(record => {
+      if (record && record.records) {
+        setAttendanceRecords(record.records);
+      } else {
+        getAttendance(schoolId, classId, todayDate).then(rec => {
+           if (rec && rec.records) setAttendanceRecords(rec.records);
+        }).catch(console.error);
+      }
+    }).catch(console.error);
+
     return () => {
       if (classUnsub) classUnsub();
       if (studentsUnsub) studentsUnsub();
     };
-  }, [schoolId, classId]);
+  }, [schoolId, classId, todayDate]);
 
   const filteredStudents = students.filter(student => {
     const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
     return fullName.includes(searchQuery.toLowerCase()) || 
-           student.admissionNumber.toLowerCase().includes(searchQuery.toLowerCase());
+           (student.admissionNumber && student.admissionNumber.toLowerCase().includes(searchQuery.toLowerCase()));
+  });
+
+  // Calculate Stats
+  const totalStudents = students.length;
+  const boysCount = students.filter(s => s.gender === 'Male' || s.gender === 'Boy').length;
+  const girlsCount = students.filter(s => s.gender === 'Female' || s.gender === 'Girl').length;
+  let presentCount = 0;
+  let absentCount = 0;
+  students.forEach(student => {
+     if (attendanceRecords[student.id] === 'Present') presentCount++;
+     if (attendanceRecords[student.id] === 'Absent') absentCount++;
   });
 
   if (loading) {
@@ -82,7 +114,7 @@ export default function ClassRoster() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto pb-24">
-      <div className="mb-8 bg-gradient-to-r from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
+      <div className="mb-6 bg-gradient-to-r from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-primary-500/20 rounded-full blur-2xl translate-y-1/2"></div>
@@ -92,12 +124,63 @@ export default function ClassRoster() {
             <Users size={14} /> My Assigned Class
           </span>
           <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-tight">
-            {classDetails ? `${classDetails.name} - Section ${classDetails.section}` : 'Loading Class...'}
+            Class Dashboard
           </h1>
           <p className="text-slate-300 text-lg flex items-center gap-2">
-            <GraduationCap size={20} className="text-primary-400"/> 
-            {students.length} Students Enrolled
+            {classDetails ? `${classDetails.name} - Section ${classDetails.section}` : 'Loading Class...'}
           </p>
+        </div>
+      </div>
+
+      {/* Stats Widgets */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-slate-500 font-medium text-sm">Class Strength</span>
+            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+              <Users size={18} />
+            </div>
+          </div>
+          <div className="text-3xl font-black text-slate-900">{totalStudents}</div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-slate-500 font-medium text-sm">Boys</span>
+            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+              <LuUser size={18} />
+            </div>
+          </div>
+          <div className="text-3xl font-black text-slate-900">{boysCount}</div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-slate-500 font-medium text-sm">Girls</span>
+            <div className="p-2 bg-pink-50 text-pink-600 rounded-lg">
+              <LuUserRound size={18} />
+            </div>
+          </div>
+          <div className="text-3xl font-black text-slate-900">{girlsCount}</div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-slate-500 font-medium text-sm">Today's Attendance</span>
+            <div className="flex gap-2">
+              <div className="p-2 bg-green-50 text-green-600 rounded-lg" title="Present">
+                <LuUserCheck size={18} />
+              </div>
+              <div className="p-2 bg-red-50 text-red-600 rounded-lg" title="Absent">
+                <LuUserX size={18} />
+              </div>
+            </div>
+          </div>
+          <div className="flex items-end gap-2">
+            <div className="text-3xl font-black text-green-600">{presentCount}</div>
+            <div className="text-lg font-medium text-slate-400 mb-1">/</div>
+            <div className="text-3xl font-black text-red-500">{absentCount}</div>
+          </div>
         </div>
       </div>
 
@@ -124,14 +207,15 @@ export default function ClassRoster() {
                 <th className="p-4 pl-6">Student Name</th>
                 <th className="p-4">Admission No.</th>
                 <th className="p-4">Gender</th>
-                <th className="p-4">Parent Email</th>
+                <th className="p-4">Bus Route</th>
+                <th className="p-4">Bus Number</th>
                 <th className="p-4 pr-6 text-right">Quick Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-16 text-center text-slate-500">
+                  <td colSpan="6" className="p-16 text-center text-slate-500">
                     <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <GraduationCap size={32} className="text-slate-400" />
                     </div>
@@ -161,13 +245,25 @@ export default function ClassRoster() {
                       {student.admissionNumber}
                     </td>
                     <td className="p-4 text-slate-600">
-                      {student.gender}
+                      {student.gender || '—'}
                     </td>
                     <td className="p-4 text-slate-600">
                       <div className="flex items-center gap-2">
-                        <Mail size={14} className="text-slate-400" />
-                        {student.parentEmail || <span className="text-slate-400 italic">Not provided</span>}
+                        <LuBus size={14} className="text-slate-400" />
+                        {student.busRoute || student.transportDetails || <span className="text-slate-400 italic">—</span>}
                       </div>
+                    </td>
+                    <td className="p-4 text-slate-600">
+                      {(() => {
+                         const routeName = student.busRoute || student.transportDetails;
+                         if (!routeName) return <span className="text-slate-400 italic">—</span>;
+                         const matchedRoute = transportRoutes.find(r => r.name === routeName || r.id === routeName);
+                         return matchedRoute?.vehicleNumber ? (
+                           <span className="font-mono bg-slate-100 px-2 py-1 rounded text-xs border border-slate-200">
+                             {matchedRoute.vehicleNumber}
+                           </span>
+                         ) : <span className="text-slate-400 italic">Unknown</span>;
+                      })()}
                     </td>
                     <td className="p-4 pr-6 text-right">
                       {/* These actions will be wired up in subsequent modules */}

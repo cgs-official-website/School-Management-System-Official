@@ -84,7 +84,7 @@ export default function LinkGenerator() {
   };
 
   const handleEmailShare = (url, title) => {
-    const subject = encodeURIComponent(`Invitation to join Zuna - ${title}`);
+    const subject = encodeURIComponent(`Invitation to join School - ${title}`);
     const body = encodeURIComponent(`Please use the following link to register your account:\n\n${url}`);
     window.open(`mailto:?subject=${subject}&body=${body}`);
   };

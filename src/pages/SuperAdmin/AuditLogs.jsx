@@ -9,7 +9,7 @@ export default function AuditLogs() {
 
   const logs = [
     { id: 'LOG-8912', action: 'Plan Upgrade', user: 'Admin (Greenwood)', details: 'Upgraded to Enterprise Plan', date: '2026-07-11T14:30:00Z', ip: '192.168.1.45', type: 'billing' },
-    { id: 'LOG-8911', action: 'Failed Login', user: 'Unknown User', details: '5 failed attempts for superadmin@zuna.com', date: '2026-07-11T12:15:00Z', ip: '45.22.11.9', type: 'security' },
+    { id: 'LOG-8911', action: 'Failed Login', user: 'Unknown User', details: '5 failed attempts for superadmin@School.com', date: '2026-07-11T12:15:00Z', ip: '45.22.11.9', type: 'security' },
     { id: 'LOG-8910', action: 'API Key Generated', user: 'Admin (Sunrise)', details: 'Generated new API key for SMS gateway', date: '2026-07-10T09:00:00Z', ip: '10.0.0.12', type: 'system' },
     { id: 'LOG-8909', action: 'User Deleted', user: 'SuperAdmin', details: 'Deleted teacher account (ID: 1045)', date: '2026-07-09T16:45:00Z', ip: '192.168.1.1', type: 'data' },
     { id: 'LOG-8908', action: 'Settings Changed', user: 'Admin (Oakridge)', details: 'Updated grading scale to 10-point GPA', date: '2026-07-08T11:20:00Z', ip: '172.16.0.4', type: 'system' },

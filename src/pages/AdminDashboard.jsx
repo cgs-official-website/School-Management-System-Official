@@ -1,16 +1,16 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LuBookOpen as BookOpen, LuUsers as Users, LuLogOut as LogOut, LuLayoutDashboard as LayoutDashboard, LuLink as LinkIcon, LuSettings as Settings, LuCreditCard as CreditCard, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuBus as Bus, LuLibrary as Library, LuFileText as FileText, LuBell as Bell, LuKey as Key, LuMenu as Menu, LuX as X, LuBuilding2 as Building2, LuCheck as CheckSquare, LuHouse as Home, LuPackage as PackageIcon, LuBriefcase as Briefcase, LuChartBar as BarChart2, LuHeartPulse as HeartPulse, LuCircleAlert as AlertCircle, LuFiles as Files, LuChevronDown as ChevronDown, LuChevronRight as ChevronRight, LuShield as Shield } from 'react-icons/lu';
+import { LuBookOpen as BookOpen, LuUsers as Users, LuLogOut as LogOut, LuLayoutDashboard as LayoutDashboard, LuLink as LinkIcon, LuSettings as Settings, LuCreditCard as CreditCard, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuBus as Bus, LuLibrary as Library, LuFileText as FileText, LuBell as Bell, LuKey as Key, LuMenu as Menu, LuX as X, LuBuilding2 as Building2, LuCheck as CheckSquare, LuHouse as Home, LuPackage as PackageIcon, LuBriefcase as Briefcase, LuChartBar as BarChart2, LuHeartPulse as HeartPulse, LuCircleAlert as AlertCircle, LuFiles as Files, LuChevronDown as ChevronDown, LuChevronRight as ChevronRight, LuShield as Shield, LuLayoutGrid as LayoutGrid, LuMessageSquare as MessageSquare } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
 import { useAuth } from '../context/AuthContext';
 import usePermissions from '../hooks/usePermissions';
-import { getDoc, doc } from 'firebase/firestore';
+import { getDoc, doc, collection, getDocs, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
 import useSchoolBranding from '../hooks/useSchoolBranding';
 import { useNotifications } from '../context/NotificationContext';
 
-const allNavItems = [
+export const allNavItems = [
   { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
   { name: 'Noticeboard', path: '/admin/notices', icon: Bell, moduleKey: 'noticeboard' },
   { name: 'Environment Setup', path: '/admin/setup', icon: Settings },
@@ -28,6 +28,7 @@ const allNavItems = [
   { name: 'Student Directory', path: '/admin/students', icon: Users, moduleKey: 'students' },
   { name: 'Attendance', path: '/admin/attendance', icon: CheckSquare, moduleKey: 'attendance' },
   { name: 'HR & Payroll', path: '/admin/hr-payroll', icon: Briefcase, moduleKey: 'hr-payroll' },
+  { name: 'Chat Monitor', path: '/admin/chats', icon: MessageSquare, moduleKey: 'chats' },
   { name: 'Timetables', path: '/admin/timetables', icon: Calendar, moduleKey: 'timetables' },
   { name: 'Calendar', path: '/admin/calendar', icon: Calendar, moduleKey: 'calendar' },
   { name: 'Exams & Results', path: '/admin/exams', icon: FileText, moduleKey: 'exams' },
@@ -54,6 +55,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState(['Classes & Sections']); // Default expand if needed
+  const [customNavItems, setCustomNavItems] = useState([]);
+  const [sidebarOrder, setSidebarOrder] = useState([]);
 
   // Apply dynamic title and favicon
   useSchoolBranding(schoolData);
@@ -71,6 +74,42 @@ export default function AdminDashboard() {
               return;
             } else {
               setSchoolData(data);
+              
+              // Real-time listener for school data (e.g. name changes)
+              onSnapshot(doc(db, 'schools', userProfile.schoolId), (docSnap) => {
+                if (docSnap.exists()) {
+                  setSchoolData(docSnap.data());
+                }
+              });
+
+              // Setup real-time listener for custom modules so sidebar instantly re-arranges
+              try {
+                const unsubscribe = onSnapshot(collection(db, `schools/${userProfile.schoolId}/customModules`), (snapshot) => {
+                  const customMods = snapshot.docs
+                    .map(d => ({ id: d.id, ...d.data() }))
+                    .sort((a, b) => a.order - b.order)
+                    .map(m => ({
+                      name: m.name,
+                      path: `/admin/custom/${m.id}`,
+                      icon: LayoutGrid,
+                      moduleKey: m.id, // custom module key
+                      isCustom: true
+                    }));
+                  setCustomNavItems(customMods);
+                });
+                
+                // Real-time listener for global sidebar order
+                const orderUnsubscribe = onSnapshot(doc(db, `schools/${userProfile.schoolId}/settings`, 'sidebar'), (docSnap) => {
+                  if (docSnap.exists() && docSnap.data().order) {
+                    setSidebarOrder(docSnap.data().order);
+                  }
+                });
+                
+                // Cleanup on unmount can be complex here without refactoring the useEffect significantly, 
+                // but since this is the main layout component it typically stays mounted.
+              } catch (err) {
+                console.error("Error fetching custom modules:", err);
+              }
             }
           } else {
             navigate('/admin/pending');
@@ -117,8 +156,13 @@ export default function AdminDashboard() {
   }
 
   const permittedModules = schoolData.permittedModules || [];
-  const navItems = allNavItems.filter(item => {
-    if (!item.moduleKey) return true;
+  const combinedNavItems = [...allNavItems, ...customNavItems];
+  
+  let navItems = combinedNavItems.filter(item => {
+    if (!item.moduleKey && item.name === 'Dashboard') return true;
+    if (!item.moduleKey && item.name === 'Environment Setup') return true; // Keep Environment Setup if no key
+    
+    if (item.isCustom) return true; // Custom modules are dynamically available
     
     // Inventory module bypass check for College panels
     if (item.moduleKey === 'inventory' && schoolData.schoolType === 'College') return true;
@@ -138,6 +182,26 @@ export default function AdminDashboard() {
     }
   });
 
+  // Sort navItems based on global sidebarOrder
+  if (sidebarOrder.length > 0) {
+    navItems.sort((a, b) => {
+      // Use moduleKey or name for sorting lookup. Dashboard doesn't have a moduleKey in allNavItems.
+      const keyA = a.moduleKey || a.name.toLowerCase().replace(/\s+/g, '-');
+      const keyB = b.moduleKey || b.name.toLowerCase().replace(/\s+/g, '-');
+      const indexA = sidebarOrder.indexOf(keyA);
+      const indexB = sidebarOrder.indexOf(keyB);
+      
+      // If both exist in order array, sort by index
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      // If A exists but B doesn't, A goes first
+      if (indexA !== -1) return -1;
+      // If B exists but A doesn't, B goes first
+      if (indexB !== -1) return 1;
+      // If neither exists, maintain original order
+      return 0;
+    });
+  }
+
   return (
     <div className="flex h-screen bg-[#f4f7fe] font-sans overflow-hidden p-4 gap-4">
       {/* Mobile Sidebar Overlay */}
@@ -156,11 +220,11 @@ export default function AdminDashboard() {
         <div className="px-6 pb-6 pt-8 flex justify-between items-start">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center p-1 shrink-0">
-              <img src="/logo.png" alt="Zuna" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
-              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z<span className="text-primary-500">.</span></div>
+              <img src="/logo.png" alt="School" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
+              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z</div>
             </div>
             <div className="min-w-0">
-              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">Zuna<span className="text-primary-500">.</span></h2>
+              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">Zuna</h2>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">Admin Portal</p>
             </div>
           </div>
