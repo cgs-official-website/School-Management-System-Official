@@ -16,6 +16,8 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   const dropdownRef = useRef(null);
   const [showTicketModal, setShowTicketModal] = useState(false);
 
+  const isAdminUser = userProfile?.role === 'admin' || userProfile?.role === 'superadmin' || userProfile?.role === 'school_admin' || userProfile?.type === 'admin' || (userProfile && !['teacher', 'parent', 'student'].includes(userProfile?.role));
+
   const [notices, setNotices] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -245,21 +247,25 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
             )}
           </button>
 
-          {/* Raise Support Ticket Button */}
-          <button
-            onClick={() => setShowTicketModal(true)}
-            className="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-full transition-colors relative"
-            title="Raise Support Ticket to Zuna"
-          >
-            <LifeBuoy size={20} />
-          </button>
-          
-          <RaiseTicketModal 
-            isOpen={showTicketModal} 
-            onClose={() => setShowTicketModal(false)} 
-            schoolName={schoolName || userProfile?.name || 'School Admin'}
-            schoolEmail={userProfile?.email || ''}
-          />
+          {/* Raise Support Ticket Button (Admin Only) */}
+          {isAdminUser && (
+            <>
+              <button
+                onClick={() => setShowTicketModal(true)}
+                className="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-full transition-colors relative"
+                title="Raise Support Ticket to Zuna"
+              >
+                <LifeBuoy size={20} />
+              </button>
+              
+              <RaiseTicketModal 
+                isOpen={showTicketModal} 
+                onClose={() => setShowTicketModal(false)} 
+                schoolName={schoolName || userProfile?.name || 'School Admin'}
+                schoolEmail={userProfile?.email || ''}
+              />
+            </>
+          )}
           
           {showNotifications && (
             <div className="absolute top-full right-[-2rem] sm:right-0 mt-2 w-[300px] sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50 flex flex-col animate-fade-in-up">
