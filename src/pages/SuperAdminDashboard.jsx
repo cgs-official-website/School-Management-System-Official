@@ -31,6 +31,7 @@ export default function SuperAdminDashboard() {
     { name: 'License & Usage', path: '/superadmin/license-usage', icon: LuKey },
     { name: 'Support Tickets', path: '/superadmin/support-tickets', icon: LuLifeBuoy },
     { name: 'Audit Logs & Activity', path: '/superadmin/audit-logs', icon: LuClipboardList },
+    { name: 'Email Templates', path: '/superadmin/email-templates', icon: LuUserCog },
   ];
 
   return (

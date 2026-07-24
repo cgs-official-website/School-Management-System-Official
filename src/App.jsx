@@ -30,6 +30,7 @@ const PlanManagement = lazy(() => import('./pages/SuperAdmin/PlanManagement'));
 const LicenseUsage = lazy(() => import('./pages/SuperAdmin/LicenseUsage'));
 const SupportTickets = lazy(() => import('./pages/SuperAdmin/SupportTickets'));
 const AuditLogs = lazy(() => import('./pages/SuperAdmin/AuditLogs'));
+const EmailTemplates = lazy(() => import('./pages/SuperAdmin/EmailTemplates'));
 
 // School Admin
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
@@ -170,6 +171,7 @@ function App() {
               <Route path="license-usage" element={<LicenseUsage />} />
               <Route path="support-tickets" element={<SupportTickets />} />
               <Route path="audit-logs" element={<AuditLogs />} />
+              <Route path="email-templates" element={<EmailTemplates />} />
             </Route>
 
             {/* School Admin Routes */}

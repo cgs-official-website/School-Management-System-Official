@@ -91,9 +91,10 @@ export default function SchoolRegistration() {
       return false;
     }
 
-    // Indian Phone Number Validation (10 digits starting with 6-9, optional +91)
-    const phoneRegex = /^(?:\+91|91)?[6789]\d{9}$/;
-    if (!phoneRegex.test(formData.phone.replace(/\s+/g, ''))) {
+    // Indian Phone Number Validation (10 digits starting with 6-9, optional +91 or 0)
+    const cleanPhone = formData.phone.replace(/[\s\-\(\)]/g, '');
+    const phoneRegex = /^(?:\+?91|0)?[1-9]\d{9}$/;
+    if (!phoneRegex.test(cleanPhone)) {
       setError("Please enter a valid Indian phone number.");
       return false;
     }
