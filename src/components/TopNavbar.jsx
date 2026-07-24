@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, Search, Bell, RefreshCw, ChevronRight, X, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { Menu, Search, Bell, RefreshCw, ChevronRight, X, AlertTriangle, ArrowLeft, LifeBuoy } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { subscribeToNotices } from '../firebase/firestore';
 import { db } from '../firebase/config';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import RaiseTicketModal from './RaiseTicketModal';
 
 export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navItems = [] }) {
   const { userProfile } = useAuth();
@@ -13,6 +14,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const [showTicketModal, setShowTicketModal] = useState(false);
 
   const [notices, setNotices] = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -242,6 +244,22 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             )}
           </button>
+
+          {/* Raise Support Ticket Button */}
+          <button
+            onClick={() => setShowTicketModal(true)}
+            className="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-full transition-colors relative"
+            title="Raise Support Ticket to Zuna"
+          >
+            <LifeBuoy size={20} />
+          </button>
+          
+          <RaiseTicketModal 
+            isOpen={showTicketModal} 
+            onClose={() => setShowTicketModal(false)} 
+            schoolName={schoolName || userProfile?.name || 'School Admin'}
+            schoolEmail={userProfile?.email || ''}
+          />
           
           {showNotifications && (
             <div className="absolute top-full right-[-2rem] sm:right-0 mt-2 w-[300px] sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50 flex flex-col animate-fade-in-up">
