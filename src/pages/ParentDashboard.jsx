@@ -267,7 +267,7 @@ export default function ParentDashboard() {
       {/* Main Content Area Wrapper */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-4 relative">
         <TopNavbar 
-          schoolName={school?.schoolName || 'Parent Portal'} 
+          schoolName={school?.name || school?.schoolName || 'Parent Portal'} 
           schoolLogo={school?.branding?.logoUrl}
           toggleSidebar={() => setIsSidebarOpen(true)} 
           navItems={navItems}

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase/config';
 import { getUserProfile } from '../firebase/auth';
+import { CacheService } from '../services/CacheService';
 
 const AuthContext = createContext();
 
@@ -43,9 +44,22 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUser(user);
+        
+        // 1. Optimistic Cache Load
+        const cachedProfile = CacheService.getPersistent('global', `userProfile_${user.uid}`);
+        if (cachedProfile) {
+          setUserProfile(cachedProfile);
+          setLoading(false); // Instantly unblock the UI
+        }
+
+        // 2. Background Sync
         try {
           const profile = await getUserProfile(user.uid);
-          setUserProfile(profile ? { ...profile, uid: user.uid } : null);
+          const fullProfile = profile ? { ...profile, uid: user.uid } : null;
+          setUserProfile(fullProfile);
+          if (fullProfile) {
+            CacheService.setPersistent('global', `userProfile_${user.uid}`, fullProfile);
+          }
         } catch (error) {
           console.error("Error fetching profile", error);
         }

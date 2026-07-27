@@ -4,6 +4,7 @@ import { getSubCollection, updateSubDocument, addSubDocument, subscribeToSubColl
 import { getDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
 import { storage } from '../../firebase/config';
 import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter, LuLink as LinkIcon, LuCopy as CopyIcon, LuTrash2 as Trash } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
@@ -13,6 +14,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import ConfirmModal from '../../components/ConfirmModal';
+import FilePreviewModal from '../../components/FilePreviewModal';
 
 export default function StaffAssignment() {
   const { userProfile } = useAuth();
@@ -22,6 +24,7 @@ export default function StaffAssignment() {
   const [classes, setClasses] = useState([]);
   const [schoolName, setSchoolName] = useState('');
   const [loading, setLoading] = useState(true);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   // Assignment Modal State
   const [assignModalOpen, setAssignModalOpen] = useState(false);
@@ -32,7 +35,6 @@ export default function StaffAssignment() {
 
   // Upload Modal State
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
-  const [selectedStaffForUpload, setSelectedStaffForUpload] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -216,11 +218,7 @@ export default function StaffAssignment() {
     setAssignModalOpen(true);
   };
 
-  const openUploadModal = (staffMember) => {
-    setSelectedStaffForUpload(staffMember);
-    setUploadFile(null);
-    setUploadModalOpen(true);
-  };
+
 
   const handleAssign = async () => {
     setSaving(true);
@@ -243,8 +241,7 @@ export default function StaffAssignment() {
     if (!uploadFile) return;
     setUploading(true);
 
-    if (!selectedStaffForUpload) {
-      // BULK IMPORT LOGIC
+    // BULK IMPORT LOGIC
       const loadingToastId = toast.loading("Processing bulk import...");
       try {
         const reader = new FileReader();
@@ -375,35 +372,6 @@ export default function StaffAssignment() {
         toast.error("Failed to process file.", { id: loadingToastId });
         setUploading(false);
       }
-      return;
-    }
-
-    try {
-      const safeSchoolName = schoolName.replace(/[^a-z0-9]/gi, '_').trim();
-      const staffName = selectedStaffForUpload.name || selectedStaffForUpload.firstName || 'Teacher';
-      const safeStaffName = staffName.replace(/[^a-z0-9]/gi, '_').trim();
-      const safeFileName = uploadFile.name.replace(/[^a-z0-9.]/gi, '_');
-
-      // STRICT PATH: [SchoolName]/Teachers/[TeacherName]/[FileName]
-      const storagePath = `${safeSchoolName}/Teachers/${safeStaffName}/${safeFileName}`;
-      const fileRef = ref(storage, storagePath);
-
-      await uploadBytes(fileRef, uploadFile);
-      const downloadUrl = await getDownloadURL(fileRef);
-
-      await updateSubDocument(schoolId, 'teachers', selectedStaffForUpload.id, {
-        attachmentUrl: downloadUrl,
-        attachmentName: uploadFile.name
-      });
-
-      setUploadModalOpen(false);
-      fetchData(); // Refresh to show new attachment
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      toast.error("Failed to upload document.");
-    } finally {
-      setUploading(false);
-    }
   };
 
   const handleSaveStaffEdit = async () => {
@@ -418,15 +386,23 @@ export default function StaffAssignment() {
     if (editStaffData.aadharNumber?.trim() && !/^\d{12}$/.test(editStaffData.aadharNumber.trim())) {
       errors.aadharNumber = 'Aadhaar number must be 12 digits';
     }
-    // Check for duplicate email/staffId (excluding self)
-    const isDupEmail = staff.some(s => s.id !== selectedStaffToView.id && s.email?.toLowerCase() === editStaffData.email?.trim().toLowerCase());
+    // Check for duplicate email/staffId (excluding self, ONLY if changed)
+    const currentEmail = (editStaffData.email || '').trim().toLowerCase();
+    const originalEmail = (selectedStaffToView.email || '').trim().toLowerCase();
+    const emailChanged = currentEmail !== originalEmail;
+    const isDupEmail = emailChanged && currentEmail !== '' && staff.some(s => s.id !== selectedStaffToView.id && (s.email || '').trim().toLowerCase() === currentEmail);
     if (isDupEmail) errors.email = 'Email already in use by another staff member';
-    const isDupId = editStaffData.staffId?.trim() && staff.some(s => s.id !== selectedStaffToView.id && s.staffId?.toLowerCase() === editStaffData.staffId.trim().toLowerCase());
+    
+    const currentStaffId = (editStaffData.staffId || '').trim().toLowerCase();
+    const originalStaffId = (selectedStaffToView.staffId || '').trim().toLowerCase();
+    const staffIdChanged = currentStaffId !== originalStaffId;
+    const isDupId = staffIdChanged && currentStaffId !== '' && staff.some(s => s.id !== selectedStaffToView.id && (s.staffId || '').trim().toLowerCase() === currentStaffId);
     if (isDupId) errors.staffId = 'Staff ID already in use';
 
     setEditStaffErrors(errors);
     if (Object.keys(errors).length > 0) {
-      toast.error('Please fix the highlighted errors.');
+      setAddStaffActiveTab('Personal Info');
+      toast.error('Please fix the highlighted errors in Personal Info.');
       return;
     }
 
@@ -443,15 +419,15 @@ export default function StaffAssignment() {
 
       for (const cat of docCategories) {
         const newFiles = editStaffDocFiles[cat] || [];
-        if (newFiles.length > 0) {
-          const existingDocs = selectedStaffToView[cat] || [];
+        const existingDocs = editStaffData[cat] || []; // Use editStaffData since it can be modified (files deleted)
+        
+        // If there are new files to upload, or if the user deleted an existing file:
+        if (newFiles.length > 0 || (editStaffData[cat] !== undefined && editStaffData[cat].length !== (selectedStaffToView[cat] || []).length)) {
           const uploadedDocs = [];
           for (const file of newFiles) {
             const safeFileName = file.name.replace(/[^a-z0-9.]/gi, '_');
             const storagePath = `${safeSchoolName}/Teachers/${staffName}/${cat}/${safeFileName}`;
-            const fileRef = ref(storage, storagePath);
-            await uploadBytes(fileRef, file);
-            const url = await getDownloadURL(fileRef);
+            const url = await uploadFileToCloudinaryOrFirebase(file, schoolId, storagePath);
             uploadedDocs.push({ name: file.name, url });
           }
           docUpdates[cat] = [...existingDocs, ...uploadedDocs];
@@ -515,7 +491,7 @@ export default function StaffAssignment() {
       toast.success('Staff details updated successfully.');
     } catch (err) {
       console.error(err);
-      toast.error('Failed to save changes.');
+      toast.error(err.message || 'Failed to save changes.');
     } finally {
       setSavingStaffEdit(false);
     }
@@ -594,9 +570,7 @@ export default function StaffAssignment() {
   };
 
   const uploadStaffFile = async (file, path) => {
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
+    return await uploadFileToCloudinaryOrFirebase(file, schoolId, path);
   };
 
   const uploadAllDocuments = async (staffIdOrEmail) => {
@@ -714,7 +688,7 @@ export default function StaffAssignment() {
       setAddStaffActiveTab('Personal');
     } catch (error) {
       console.error("Error adding staff:", error);
-      toast.error("Failed to add staff member.", { id: progressToastId });
+      toast.error(error.message || "Failed to add staff member.", { id: progressToastId });
     } finally {
       setAddingStaff(false);
     }
@@ -1001,14 +975,13 @@ export default function StaffAssignment() {
                 <th className="p-4 pl-6">Staff Name</th>
                 <th className="p-4">Contact</th>
                 <th className="p-4">Class Assignments</th>
-                <th className="p-4">Attachment</th>
                 <th className="p-4 pr-6 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
               {paginatedStaff.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-12 text-center text-slate-500">
+                  <td colSpan="4" className="p-12 text-center text-slate-500">
                     <ShieldCheck size={48} className="mx-auto mb-4 text-slate-300" />
                     <p className="text-lg font-medium text-slate-900 mb-1">No staff members found</p>
                     <p>Generate a teacher invite link to start onboarding your faculty.</p>
@@ -1056,15 +1029,6 @@ export default function StaffAssignment() {
                           )}
                         </div>
                       </td>
-                      <td className="p-4">
-                        {member.attachmentUrl ? (
-                          <a href={member.attachmentUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-colors tooltip-trigger" title={member.attachmentName}>
-                            <ExternalLink size={12} /> View Doc
-                          </a>
-                        ) : (
-                          <span className="text-slate-400 text-xs italic">No attachment</span>
-                        )}
-                      </td>
                       <td className="p-4 pr-6 text-right">
                         <div className="flex justify-end gap-2">
                           {!member.userId && (
@@ -1094,13 +1058,6 @@ export default function StaffAssignment() {
                             title="View Details"
                           >
                             <Eye size={18} />
-                          </button>
-                          <button 
-                            onClick={() => openUploadModal(member)}
-                            className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                            title="Upload Document"
-                          >
-                            <UploadCloud size={18} />
                           </button>
                            <button 
                              onClick={() => setConfirmDeleteState({ isOpen: true, id: member.id, name: member.name || `${member.firstName} ${member.lastName}` })}
@@ -1944,10 +1901,20 @@ export default function StaffAssignment() {
                         multiple
                         accept=".pdf, image/*"
                         onChange={(e) => {
+                          const selected = Array.from(e.target.files);
+                          const validFiles = [];
+                          selected.forEach(file => {
+                            if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                              toast.error(`File "${file.name}" exceeds the 3MB limit.`);
+                            } else {
+                              validFiles.push(file);
+                            }
+                          });
                           setAddStaffFiles(prev => ({
                             ...prev,
-                            [key]: [...(prev[key] || []), ...Array.from(e.target.files)]
+                            [key]: [...(prev[key] || []), ...validFiles]
                           }));
+                          e.target.value = '';
                         }}
                         className="text-sm"
                       />
@@ -1965,9 +1932,10 @@ export default function StaffAssignment() {
                                     return { ...prev, [key]: list };
                                   });
                                 }}
-                                className="text-red-500 hover:text-red-700 font-bold px-2"
+                                className="text-red-500 hover:text-red-700 font-bold px-2 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                title="Remove Document"
                               >
-                                Remove
+                                <Trash size={16} />
                               </button>
                             </div>
                           ))}
@@ -2189,7 +2157,7 @@ export default function StaffAssignment() {
                         { key: 'govtIdDocument', label: 'Government ID Document' },
                         { key: 'salarySlips', label: 'Salary Slips' }
                       ].map(({ key, label }) => {
-                        const existingFiles = selectedStaffToView[key] || [];
+                        const existingFiles = editStaffData[key] || selectedStaffToView[key] || [];
                         const newFiles = editStaffDocFiles[key] || [];
                         return (
                           <div key={key} className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
@@ -2197,18 +2165,30 @@ export default function StaffAssignment() {
 
                             {/* Existing uploaded files */}
                             {existingFiles.length > 0 && (
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                              <div className="grid grid-cols-1 gap-2 mb-3">
                                 {existingFiles.map((file, idx) => (
-                                  <a
-                                    key={idx}
-                                    href={file.url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg hover:bg-indigo-50 transition-colors text-xs font-semibold text-indigo-600"
-                                  >
-                                    <ExternalLink size={12} />
-                                    <span className="truncate">{file.name}</span>
-                                  </a>
+                                  <div key={idx} className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-2 text-xs">
+                                    <button
+                                      type="button"
+                                      onClick={() => setPreviewUrl(file.url)}
+                                      className="flex items-center gap-2 hover:bg-indigo-50 transition-colors font-semibold text-indigo-600 text-left flex-1 min-w-0"
+                                    >
+                                      <Eye size={14} className="shrink-0" />
+                                      <span className="truncate">{file.name}</span>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newList = [...existingFiles];
+                                        newList.splice(idx, 1);
+                                        setEditStaffData(prev => ({ ...prev, [key]: newList }));
+                                      }}
+                                      className="text-red-500 hover:text-red-700 font-bold px-3 shrink-0 border-l border-slate-100 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                      title="Delete Document"
+                                    >
+                                      <Trash size={16} />
+                                    </button>
+                                  </div>
                                 ))}
                               </div>
                             )}
@@ -2228,9 +2208,10 @@ export default function StaffAssignment() {
                                           return { ...prev, [key]: list };
                                         });
                                       }}
-                                      className="text-red-500 hover:text-red-700 font-bold px-2 ml-2 shrink-0"
+                                      className="text-red-500 hover:text-red-700 font-bold px-2 ml-2 shrink-0 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                      title="Remove Document"
                                     >
-                                      Remove
+                                      <Trash size={16} />
                                     </button>
                                   </div>
                                 ))}
@@ -2248,9 +2229,17 @@ export default function StaffAssignment() {
                                 className="hidden"
                                 onChange={e => {
                                   const selected = Array.from(e.target.files);
+                                  const validFiles = [];
+                                  selected.forEach(file => {
+                                    if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                                      toast.error(`File "${file.name}" exceeds the 3MB limit.`);
+                                    } else {
+                                      validFiles.push(file);
+                                    }
+                                  });
                                   setEditStaffDocFiles(prev => ({
                                     ...prev,
-                                    [key]: [...(prev[key] || []), ...selected]
+                                    [key]: [...(prev[key] || []), ...validFiles]
                                   }));
                                   e.target.value = '';
                                 }}
@@ -2510,16 +2499,15 @@ export default function StaffAssignment() {
                         {files.length > 0 ? (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {files.map((file, idx) => (
-                              <a
+                              <button
                                 key={idx}
-                                href={file.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-xs font-semibold text-indigo-600"
+                                type="button"
+                                onClick={() => setPreviewUrl(file.url)}
+                                className="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-xs font-semibold text-indigo-600 text-left"
                               >
-                                <ExternalLink size={14} />
+                                <Eye size={14} />
                                 <span className="truncate">{file.name}</span>
-                              </a>
+                              </button>
                             ))}
                           </div>
                         ) : (
@@ -2555,7 +2543,11 @@ export default function StaffAssignment() {
                 <>
                   <button
                     onClick={() => {
-                      setEditStaffData({ ...selectedStaffToView });
+                      setEditStaffData({ 
+                        ...selectedStaffToView,
+                        firstName: selectedStaffToView.firstName || selectedStaffToView.name?.split(' ')[0] || '',
+                        lastName: selectedStaffToView.lastName || selectedStaffToView.name?.split(' ').slice(1).join(' ') || ''
+                      });
                       setEditStaffErrors({});
                       setEditStaffDocFiles({});
                       setAddStaffActiveTab('Personal Info');
@@ -2587,6 +2579,12 @@ export default function StaffAssignment() {
         confirmText="Delete"
         cancelText="Cancel"
         type="danger"
+      />
+
+      <FilePreviewModal 
+        isOpen={!!previewUrl} 
+        fileUrl={previewUrl} 
+        onClose={() => setPreviewUrl(null)} 
       />
     </div>
   );

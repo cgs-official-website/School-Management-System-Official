@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
 import { getDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, getDownloadURL } from 'firebase/storage';
 import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
 import { storage } from '../../firebase/config';
 import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye, LuTrash2 as Trash } from 'react-icons/lu';
@@ -760,7 +760,14 @@ export default function StudentManagement() {
                   <label className="block text-sm font-semibold text-slate-700 mb-1">Profile Photo (JPG/PNG)</label>
                   <input type="file" accept="image/png, image/jpeg" onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
-                      setTempImageFile(URL.createObjectURL(e.target.files[0]));
+                      const file = e.target.files[0];
+                      if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                        toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+                        e.target.value = '';
+                        return;
+                      }
+                      setTempImageFile(URL.createObjectURL(file));
+                      setNewStudent({ ...newStudent, photo: file });
                       setCropTarget('add');
                       setCropModalOpen(true);
                       e.target.value = null; // Reset input
@@ -1097,7 +1104,6 @@ export default function StudentManagement() {
                           <button 
                             onClick={() => openUploadModal(student)}
                             className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                            title="Upload Document"
                           >
                             <UploadCloud size={18} />
                           </button>
@@ -1181,7 +1187,17 @@ export default function StudentManagement() {
                 <input 
                   type="file" 
                   accept={selectedStudentForUpload ? "image/*, .pdf" : ".xlsx, .csv"}
-                  onChange={(e) => setUploadFile(e.target.files[0])}
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                        toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+                        e.target.value = '';
+                        return;
+                      }
+                      setUploadFile(file);
+                    }
+                  }}
                   className="absolute inset-0 opacity-0 cursor-pointer z-10" 
                 />
                 <UploadCloud size={32} className={`mx-auto mb-3 ${uploadFile ? 'text-green-500' : 'text-slate-400 group-hover:text-primary-500'}`} />
@@ -1530,7 +1546,14 @@ export default function StudentManagement() {
                         <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Profile Photo (JPG/PNG)</label>
                         <input type="file" accept="image/png, image/jpeg" onChange={(e) => {
                           if (e.target.files && e.target.files.length > 0) {
-                            setTempImageFile(URL.createObjectURL(e.target.files[0]));
+                            const file = e.target.files[0];
+                            if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                              toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+                              e.target.value = '';
+                              return;
+                            }
+                            setTempImageFile(URL.createObjectURL(file));
+                            setEditStudentData({ ...editStudentData, photo: file });
                             setCropTarget('edit');
                             setCropModalOpen(true);
                             e.target.value = null;

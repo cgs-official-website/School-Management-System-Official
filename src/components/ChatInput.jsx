@@ -18,8 +18,9 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("File must be less than 5MB");
+      if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+        toast.error("File exceeds the 3MB size limit.");
+        e.target.value = '';
         return;
       }
       setMediaFile(file);

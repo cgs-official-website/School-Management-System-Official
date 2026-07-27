@@ -68,8 +68,14 @@ export default function SchoolRegistration() {
   };
 
   const handleFileChange = (e, name) => {
-    if (e.target.files[0]) {
-      setFiles({ ...files, [name]: e.target.files[0] });
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+        toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+        e.target.value = '';
+        return;
+      }
+      setFiles({ ...files, [name]: file });
     }
   };
 

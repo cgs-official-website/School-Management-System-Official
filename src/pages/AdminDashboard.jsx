@@ -342,7 +342,7 @@ export default function AdminDashboard() {
       {/* Main Content Area Wrapper */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-4 relative">
         <TopNavbar 
-          schoolName={schoolData?.schoolName || 'Admin Portal'} 
+          schoolName={schoolData?.name || schoolData?.schoolName || 'Admin Portal'} 
           schoolLogo={schoolData?.branding?.logoUrl}
           toggleSidebar={() => setIsSidebarOpen(true)} 
           navItems={navItems}

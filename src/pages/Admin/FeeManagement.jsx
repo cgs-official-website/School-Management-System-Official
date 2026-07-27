@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, createFeeStructure, getInvoices, markInvoicePaid, subscribeToSubCollection, subscribeToInvoices } from '../../firebase/firestore';
-import { LuCreditCard as CreditCard, LuPlus as Plus, LuCircleCheck as CheckCircle2, LuSearch as Search, LuX as X, LuReceipt as Receipt, LuIndianRupee as DollarSign, LuTrendingUp as TrendingUp, LuTriangleAlert as AlertTriangle } from 'react-icons/lu';
+import { getSubCollection, createFeeStructure, getInvoices, markInvoicePaid, subscribeToSubCollection, subscribeToInvoices, subscribeToFeeCollectionPeriods } from '../../firebase/firestore';
+import { LuCreditCard as CreditCard, LuPlus as Plus, LuCircleCheck as CheckCircle2, LuSearch as Search, LuX as X, LuReceipt as Receipt, LuIndianRupee as DollarSign, LuTrendingUp as TrendingUp, LuTriangleAlert as AlertTriangle, LuFilter as Filter } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
@@ -13,9 +13,11 @@ export default function FeeManagement() {
   const [classes, setClasses] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [students, setStudents] = useState({}); // Map of studentId -> student data
+  const [periods, setPeriods] = useState([]); // Fee collection periods from Environment Setup
   
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterPeriodId, setFilterPeriodId] = useState(''); // '' = All Periods
 
   // Dashboard Stats
   const [stats, setStats] = useState({ expected: 0, collected: 0, outstanding: 0 });
@@ -28,6 +30,8 @@ export default function FeeManagement() {
     amount: '',
     dueDate: new Date().toISOString().split('T')[0],
     classId: '',
+    collectionPeriodId: '',
+    collectionPeriodName: '',
     customData: {}
   });
 
@@ -35,7 +39,7 @@ export default function FeeManagement() {
     if (!schoolId) return;
 
     setLoading(true);
-    let classesUnsub, studentsUnsub, invoicesUnsub;
+    let classesUnsub, studentsUnsub, invoicesUnsub, periodsUnsub;
 
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', setClasses);
 
@@ -51,10 +55,14 @@ export default function FeeManagement() {
       setLoading(false);
     });
 
+    // Load fee collection periods configured in Environment Setup
+    periodsUnsub = subscribeToFeeCollectionPeriods(schoolId, setPeriods);
+
     return () => {
       if (classesUnsub) classesUnsub();
       if (studentsUnsub) studentsUnsub();
       if (invoicesUnsub) invoicesUnsub();
+      if (periodsUnsub) periodsUnsub();
     };
   }, [schoolId]);
 
@@ -69,6 +77,18 @@ export default function FeeManagement() {
       }
     });
     setStats({ expected, collected, outstanding });
+  };
+
+  // When a collection period is selected, auto-generate the fee name
+  const handlePeriodChange = (periodId) => {
+    const selected = periods.find(p => p.id === periodId);
+    setNewFee(prev => ({
+      ...prev,
+      collectionPeriodId: periodId,
+      collectionPeriodName: selected ? selected.name : '',
+      // Auto-generate fee name: "Term 1" or left blank for manual entry if no period
+      name: selected ? selected.name : prev.name
+    }));
   };
 
   const handleCreateFee = async (e) => {
@@ -91,7 +111,7 @@ export default function FeeManagement() {
       }
       
       setShowCreateModal(false);
-      setNewFee({ name: '', amount: '', dueDate: new Date().toISOString().split('T')[0], classId: '', customData: {} });
+      setNewFee({ name: '', amount: '', dueDate: new Date().toISOString().split('T')[0], classId: '', collectionPeriodId: '', collectionPeriodName: '', customData: {} });
     } catch (error) {
       console.error("Error creating fee:", error);
       toast.error("Failed to create fee and generate invoices.");
@@ -114,8 +134,12 @@ export default function FeeManagement() {
     }
   };
 
-  // Filter invoices based on search
+  // Filter invoices based on search and period filter
   const filteredInvoices = invoices.filter(inv => {
+    // Period filter
+    if (filterPeriodId && inv.collectionPeriodId !== filterPeriodId) return false;
+
+    // Search filter
     if (!searchQuery) return true;
     const student = students[inv.studentId];
     if (!student) return false;
@@ -124,7 +148,8 @@ export default function FeeManagement() {
       student.firstName.toLowerCase().includes(searchTerm) ||
       student.lastName.toLowerCase().includes(searchTerm) ||
       student.admissionNumber.toLowerCase().includes(searchTerm) ||
-      inv.feeName.toLowerCase().includes(searchTerm)
+      inv.feeName.toLowerCase().includes(searchTerm) ||
+      (inv.collectionPeriodName || '').toLowerCase().includes(searchTerm)
     );
   });
 
@@ -159,7 +184,7 @@ export default function FeeManagement() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Expected</p>
-            <p className="text-2xl font-black text-slate-900">₹{stats.expected.toLocaleString()}</p>
+            <p className="text-2xl font-black text-slate-900">â‚¹{stats.expected.toLocaleString()}</p>
           </div>
         </div>
         
@@ -169,7 +194,7 @@ export default function FeeManagement() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Collected Revenue</p>
-            <p className="text-2xl font-black text-slate-900">₹{stats.collected.toLocaleString()}</p>
+            <p className="text-2xl font-black text-slate-900">â‚¹{stats.collected.toLocaleString()}</p>
           </div>
         </div>
         
@@ -179,7 +204,7 @@ export default function FeeManagement() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Outstanding</p>
-            <p className="text-2xl font-black text-slate-900">₹{stats.outstanding.toLocaleString()}</p>
+            <p className="text-2xl font-black text-slate-900">â‚¹{stats.outstanding.toLocaleString()}</p>
           </div>
         </div>
       </div>
@@ -187,6 +212,7 @@ export default function FeeManagement() {
       {/* Invoices Table */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
+          {/* Search */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
@@ -197,6 +223,24 @@ export default function FeeManagement() {
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm transition-all bg-white"
             />
           </div>
+
+          {/* Period Filter */}
+          {periods.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Filter size={16} className="text-slate-400 shrink-0" />
+              <select
+                value={filterPeriodId}
+                onChange={(e) => setFilterPeriodId(e.target.value)}
+                className="px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white text-slate-700 font-medium"
+              >
+                <option value="">All Periods</option>
+                {periods.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+                <option value="null_period">General (No Period)</option>
+              </select>
+            </div>
+          )}
         </div>
 
         <div className="overflow-x-auto">
@@ -205,6 +249,7 @@ export default function FeeManagement() {
               <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Student</th>
                 <th className="p-4">Fee Details</th>
+                <th className="p-4">Collection Period</th>
                 <th className="p-4">Amount</th>
                 <th className="p-4">Status</th>
                 <th className="p-4 pr-6 text-right">Action</th>
@@ -213,7 +258,7 @@ export default function FeeManagement() {
             <tbody className="divide-y divide-slate-100 text-sm">
               {filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-16 text-center text-slate-500">
+                  <td colSpan="6" className="p-16 text-center text-slate-500">
                     <CreditCard size={48} className="mx-auto mb-4 text-slate-300" />
                     <p className="font-bold text-slate-900 mb-1">No invoices found</p>
                     <p>Assign a fee to a class to generate invoices.</p>
@@ -247,8 +292,17 @@ export default function FeeManagement() {
                         <div className="font-bold text-slate-900">{inv.feeName}</div>
                         <div className="text-xs text-slate-500">Due: {inv.dueDate}</div>
                       </td>
+                      <td className="p-4">
+                        {inv.collectionPeriodName && inv.collectionPeriodName !== 'General' ? (
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                            {inv.collectionPeriodName}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">General</span>
+                        )}
+                      </td>
                       <td className="p-4 font-mono font-bold text-slate-700">
-                        ₹{inv.amount.toLocaleString()}
+                        â‚¹{inv.amount.toLocaleString()}
                       </td>
                       <td className="p-4">
                         {inv.status === 'Paid' ? (
@@ -293,8 +347,41 @@ export default function FeeManagement() {
 
             <form onSubmit={handleCreateFee} className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
               <div className="p-6 space-y-6 flex-1">
+
+                {/* Collection Period Selector */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Fee Description</label>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                    Collection Period
+                    {periods.length === 0 && (
+                      <span className="ml-2 text-xs font-normal text-amber-600">
+                        (Configure periods in Environment Setup)
+                      </span>
+                    )}
+                  </label>
+                  {periods.length > 0 ? (
+                    <select
+                      value={newFee.collectionPeriodId}
+                      onChange={(e) => handlePeriodChange(e.target.value)}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    >
+                      <option value="">No Period (General)</option>
+                      {periods.filter(p => p.status === 'active').map(p => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="px-4 py-2.5 rounded-xl border border-dashed border-slate-300 text-sm text-slate-400 bg-slate-50">
+                      No periods configured. Fee will be saved as "General".
+                    </div>
+                  )}
+                </div>
+
+                {/* Fee Name (auto-filled from period, but editable) */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                    Fee Description
+                    <span className="ml-1 text-xs font-normal text-slate-400">(auto-filled from period, editable)</span>
+                  </label>
                   <input 
                     type="text" required
                     value={newFee.name}
@@ -306,7 +393,7 @@ export default function FeeManagement() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Amount (₹)</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Amount (â‚¹)</label>
                     <input 
                       type="number" required min="0" step="0.01"
                       value={newFee.amount}

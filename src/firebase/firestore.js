@@ -634,10 +634,56 @@ export const checkParentRegistration = async (schoolId, studentId) => {
   }
 };
 
+// --- Fee Collection Periods ---
+export const subscribeToFeeCollectionPeriods = (schoolId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/feeCollectionPeriods`),
+    orderBy('displayOrder', 'asc')
+  );
+  return onSnapshot(q, (snapshot) => {
+    const periods = [];
+    snapshot.forEach((doc) => periods.push({ id: doc.id, ...doc.data() }));
+    callback(periods);
+  });
+};
+
+export const createFeeCollectionPeriod = async (schoolId, periodData) => {
+  try {
+    return await addDoc(collection(db, `schools/${schoolId}/feeCollectionPeriods`), {
+      ...periodData,
+      createdAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Error creating fee collection period:', error);
+    throw error;
+  }
+};
+
+export const updateFeeCollectionPeriod = async (schoolId, periodId, data) => {
+  try {
+    await updateDoc(doc(db, `schools/${schoolId}/feeCollectionPeriods`, periodId), {
+      ...data,
+      updatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Error updating fee collection period:', error);
+    throw error;
+  }
+};
+
+export const deleteFeeCollectionPeriod = async (schoolId, periodId) => {
+  try {
+    await deleteDoc(doc(db, `schools/${schoolId}/feeCollectionPeriods`, periodId));
+  } catch (error) {
+    console.error('Error deleting fee collection period:', error);
+    throw error;
+  }
+};
+
 // --- Fee Management Operations ---
 export const createFeeStructure = async (schoolId, feeData) => {
   try {
-    // 1. Create the Fee Structure document
+    // 1. Create the Fee Structure document (includes collectionPeriodId/Name if provided)
     const feeRef = await addDoc(collection(db, `schools/${schoolId}/feeStructures`), {
       ...feeData,
       createdAt: new Date().toISOString()
@@ -647,6 +693,7 @@ export const createFeeStructure = async (schoolId, feeData) => {
     const students = await getStudentsByClass(schoolId, feeData.classId);
 
     // 3. Batch create invoices for all students in the class
+    // Each invoice now carries collectionPeriodId & collectionPeriodName for filtering
     const batch = writeBatch(db);
     students.forEach(student => {
       const invoiceRef = doc(collection(db, `schools/${schoolId}/invoices`));
@@ -657,6 +704,9 @@ export const createFeeStructure = async (schoolId, feeData) => {
         amount: Number(feeData.amount),
         dueDate: feeData.dueDate,
         status: 'Pending',
+        // Collection period – null for legacy records, populated for new ones
+        collectionPeriodId: feeData.collectionPeriodId || null,
+        collectionPeriodName: feeData.collectionPeriodName || 'General',
         customData: feeData.customData || {},
         createdAt: new Date().toISOString()
       });

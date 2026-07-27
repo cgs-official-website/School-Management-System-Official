@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSchool, updateSchool } from '../../firebase/firestore';
+import { getSchool, updateSchool, subscribeToFeeCollectionPeriods, createFeeCollectionPeriod, updateFeeCollectionPeriod, deleteFeeCollectionPeriod } from '../../firebase/firestore';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuSave as Save, LuBuilding2 as Building2, LuMapPin as MapPin, LuPhone as Phone, LuGlobe as Globe, LuImage as ImageIcon, LuPalette as Palette, LuCalendar as Calendar, LuCircleCheck as CheckCircle2, LuSettings as Settings } from 'react-icons/lu';
+import { LuSave as Save, LuBuilding2 as Building2, LuMapPin as MapPin, LuPhone as Phone, LuGlobe as Globe, LuImage as ImageIcon, LuPalette as Palette, LuCalendar as Calendar, LuCircleCheck as CheckCircle2, LuSettings as Settings, LuPlus as Plus, LuPencil as Pencil, LuTrash as Trash, LuX as X, LuIndianRupee as IndianRupee } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
 export default function EnvironmentSetup() {
@@ -31,9 +31,84 @@ export default function EnvironmentSetup() {
   const [customData, setCustomData] = useState({});
   const [formSchema, setFormSchema] = useState([]);
 
+  // --- Fee Collection Periods State ---
+  const [periods, setPeriods] = useState([]);
+  const [showPeriodModal, setShowPeriodModal] = useState(false);
+  const [editingPeriod, setEditingPeriod] = useState(null); // null = create, object = edit
+  const [periodForm, setPeriodForm] = useState({ name: '', code: '', displayOrder: '', description: '', status: 'active' });
+  const [savingPeriod, setSavingPeriod] = useState(false);
+
   useEffect(() => {
     if (schoolId) fetchSchoolData();
   }, [schoolId]);
+
+  // Subscribe to fee collection periods in real-time
+  useEffect(() => {
+    if (!schoolId) return;
+    const unsub = subscribeToFeeCollectionPeriods(schoolId, setPeriods);
+    return () => unsub();
+  }, [schoolId]);
+
+  // --- Fee Period Handlers ---
+  const openAddPeriod = () => {
+    setEditingPeriod(null);
+    setPeriodForm({ name: '', code: '', displayOrder: periods.length + 1, description: '', status: 'active' });
+    setShowPeriodModal(true);
+  };
+
+  const openEditPeriod = (p) => {
+    setEditingPeriod(p);
+    setPeriodForm({ name: p.name, code: p.code || '', displayOrder: p.displayOrder || '', description: p.description || '', status: p.status || 'active' });
+    setShowPeriodModal(true);
+  };
+
+  const handleSavePeriod = async (e) => {
+    e.preventDefault();
+    if (!periodForm.name.trim()) return toast.error('Period name is required.');
+    setSavingPeriod(true);
+    try {
+      const payload = {
+        name: periodForm.name.trim(),
+        code: periodForm.code.trim() || periodForm.name.trim().toUpperCase().replace(/\s+/g, '_'),
+        displayOrder: Number(periodForm.displayOrder) || periods.length + 1,
+        description: periodForm.description.trim(),
+        status: periodForm.status
+      };
+      if (editingPeriod) {
+        await updateFeeCollectionPeriod(schoolId, editingPeriod.id, payload);
+        toast.success('Period updated successfully.');
+      } else {
+        await createFeeCollectionPeriod(schoolId, payload);
+        toast.success('Fee collection period added.');
+      }
+      setShowPeriodModal(false);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save period.');
+    } finally {
+      setSavingPeriod(false);
+    }
+  };
+
+  const handleDeletePeriod = async (p) => {
+    if (!window.confirm(`Delete period "${p.name}"? This will NOT affect existing invoices.`)) return;
+    try {
+      await deleteFeeCollectionPeriod(schoolId, p.id);
+      toast.success('Period deleted.');
+    } catch (err) {
+      toast.error('Failed to delete period.');
+    }
+  };
+
+  const handleTogglePeriodStatus = async (p) => {
+    const newStatus = p.status === 'active' ? 'inactive' : 'active';
+    try {
+      await updateFeeCollectionPeriod(schoolId, p.id, { status: newStatus });
+      toast.success(`Period marked as ${newStatus}.`);
+    } catch (err) {
+      toast.error('Failed to update status.');
+    }
+  };
 
   const fetchSchoolData = async () => {
     try {
@@ -349,7 +424,132 @@ export default function EnvironmentSetup() {
           </section>
         )}
 
+        {/* Fee Collection Periods */}
+        <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <IndianRupee className="text-primary-600" size={24} />
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Fee Collection Periods</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Define your school's fee collection schedule (e.g. Term 1, Quarter 1, Annual).</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={openAddPeriod}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-semibold text-sm hover:bg-primary-700 transition-colors"
+            >
+              <Plus size={16} /> Add Period
+            </button>
+          </div>
+
+          {periods.length === 0 ? (
+            <div className="p-12 text-center text-slate-400">
+              <IndianRupee className="mx-auto mb-3 opacity-30" size={40} />
+              <p className="font-semibold text-sm text-slate-500">No fee collection periods configured yet.</p>
+              <p className="text-xs mt-1">Add periods like Term 1, Quarter 1, Annual to assign fees against them.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-100">
+              {periods.map((p) => (
+                <div key={p.id} className="flex items-center justify-between px-6 py-4 hover:bg-slate-50/60 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="w-9 h-9 rounded-xl bg-primary-50 text-primary-700 flex items-center justify-center font-black text-sm shrink-0">
+                      {p.displayOrder || '—'}
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-900">{p.name}</p>
+                      {p.description && <p className="text-xs text-slate-500 mt-0.5">{p.description}</p>}
+                      <span className="text-[10px] font-mono text-slate-400">{p.code}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleTogglePeriodStatus(p)}
+                      className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
+                        p.status === 'active'
+                          ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                      }`}
+                    >
+                      {p.status === 'active' ? 'Active' : 'Inactive'}
+                    </button>
+                    <button type="button" onClick={() => openEditPeriod(p)} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                      <Pencil size={15} />
+                    </button>
+                    <button type="button" onClick={() => handleDeletePeriod(p)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                      <Trash size={15} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
       </div>
+
+      {/* Period Modal */}
+      {showPeriodModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-lg font-bold text-slate-900">{editingPeriod ? 'Edit Period' : 'Add Fee Collection Period'}</h3>
+              <button type="button" onClick={() => setShowPeriodModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full"><X size={18} /></button>
+            </div>
+            <form onSubmit={handleSavePeriod} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Period Name <span className="text-red-500">*</span></label>
+                <input
+                  type="text" required
+                  value={periodForm.name}
+                  onChange={(e) => setPeriodForm(p => ({ ...p, name: e.target.value }))}
+                  placeholder="e.g. Term 1, Quarter 2, Annual"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Code</label>
+                  <input
+                    type="text"
+                    value={periodForm.code}
+                    onChange={(e) => setPeriodForm(p => ({ ...p, code: e.target.value }))}
+                    placeholder="e.g. TERM1"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 font-mono uppercase text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Display Order</label>
+                  <input
+                    type="number" min="1"
+                    value={periodForm.displayOrder}
+                    onChange={(e) => setPeriodForm(p => ({ ...p, displayOrder: e.target.value }))}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Description</label>
+                <input
+                  type="text"
+                  value={periodForm.description}
+                  onChange={(e) => setPeriodForm(p => ({ ...p, description: e.target.value }))}
+                  placeholder="Optional description"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <button type="button" onClick={() => setShowPeriodModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
+                <button type="submit" disabled={savingPeriod} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60">
+                  {savingPeriod ? 'Saving...' : editingPeriod ? 'Update Period' : 'Add Period'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
