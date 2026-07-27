@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { doc, getDoc, setDoc, collection, getDocs, deleteDoc, addDoc, writeBatch, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuPlus, LuSettings, LuTrash2, LuSave, LuEye, LuLayoutGrid, LuType, LuAlignLeft, LuHash, LuCalendar, LuList, LuToggleLeft, LuArrowUp, LuArrowDown, LuChevronUp, LuChevronDown, LuX } from 'react-icons/lu';
+import { Settings, Plus, LayoutGrid, MoveUp, MoveDown, Trash2, Folder, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { allNavItems } from '../AdminDashboard';
 import ConfirmModal from '../../components/ConfirmModal';
@@ -49,6 +50,7 @@ export default function FormBuilder() {
     { value: 'select', label: 'Dropdown (Select)' },
     { value: 'checkbox', label: 'Checkbox' },
     { value: 'relation', label: 'Relation (Lookup)' },
+    { value: 'file', label: 'File Upload' },
   ];
 
   // Fetch Custom Modules
@@ -177,15 +179,35 @@ export default function FormBuilder() {
         order,
         createdAt: new Date().toISOString()
       });
-      setCustomModules([...customModules, { id: docRef.id, name: newModuleName.trim(), icon: 'Folder', order }]);
+      
+      const newMod = { id: docRef.id, name: newModuleName.trim(), icon: 'Folder', order };
+      setCustomModules([...customModules, newMod]);
       
       // Also append to global sidebarOrder to ensure it stays at bottom initially
       const newOrderArray = unifiedModules.map(m => m.id);
       newOrderArray.push(docRef.id);
       await setDoc(doc(db, `schools/${schoolId}/settings`, 'sidebar'), { order: newOrderArray }, { merge: true });
       
+      // Create initial schema for the module
+      const initialSchema = {
+        sections: [{
+          id: `sec_${Date.now()}`,
+          title: 'General Details',
+          fields: [{
+             id: `field_${Date.now()}`,
+             label: 'Name',
+             type: 'text',
+             required: true,
+             options: '',
+             relationModule: ''
+          }]
+        }],
+        updatedAt: new Date().toISOString()
+      };
+      await setDoc(doc(db, `schools/${schoolId}/formSchemas`, docRef.id), initialSchema);
+      
       setNewModuleName('');
-      toast.success("Custom module created!");
+      toast.success("Custom module created with initial schema!");
     } catch (error) {
       console.error("Error creating module:", error);
       toast.error("Failed to create module.");
@@ -196,11 +218,40 @@ export default function FormBuilder() {
     setConfirmModal({
       isOpen: true,
       title: "Delete Module",
-      message: "Are you sure? This will delete the module from the sidebar. (Data collections might still exist manually but will be inaccessible).",
+      message: "Are you sure? This will delete the module from the sidebar, ITS SCHEMA, and ALL DATA COLLECTIONS. This action is irreversible.",
       onConfirm: async () => {
         setConfirmModal({ ...confirmModal, isOpen: false });
         try {
+          // 1. Delete module record
           await deleteDoc(doc(db, `schools/${schoolId}/customModules`, id));
+          
+          // 2. Delete schema
+          await deleteDoc(doc(db, `schools/${schoolId}/formSchemas`, id));
+          
+          // 3. Delete all collection documents
+          const collectionRef = collection(db, `schools/${schoolId}/custom_${id}`);
+          const snapshot = await getDocs(collectionRef);
+          
+          // Batch delete (note: batch has a limit of 500, but we can iterate)
+          let batch = writeBatch(db);
+          let count = 0;
+          let totalDeleted = 0;
+          
+          for (const d of snapshot.docs) {
+             batch.delete(d.ref);
+             count++;
+             totalDeleted++;
+             
+             if (count >= 490) { // Keep under 500 limit
+                 await batch.commit();
+                 batch = writeBatch(db);
+                 count = 0;
+             }
+          }
+          if (count > 0) {
+             await batch.commit();
+          }
+
           // Re-order remaining
           const remaining = customModules.filter(m => m.id !== id);
           setCustomModules(remaining);
@@ -209,7 +260,7 @@ export default function FormBuilder() {
           const newOrderArray = sidebarOrder.filter(key => key !== id);
           await setDoc(doc(db, `schools/${schoolId}/settings`, 'sidebar'), { order: newOrderArray }, { merge: true });
           
-          toast.success("Module deleted.");
+          toast.success(`Module and ${totalDeleted} records deleted.`);
         } catch (error) {
           console.error("Error deleting module:", error);
           toast.error("Failed to delete module.");

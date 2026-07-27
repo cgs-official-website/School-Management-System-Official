@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useAuth } from '../context/AuthContext';
+import { LuPaperclip, LuExternalLink } from 'react-icons/lu';
 
 export default function CustomFieldsRenderer({ moduleKey, customData, onChange, readOnly = false }) {
   const { userProfile } = useAuth();
@@ -74,9 +75,15 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                     </label>
                     
                     {readOnly ? (
-                      <p className="text-slate-900 font-medium">
-                        {field.type === 'checkbox' ? (value ? 'Yes' : 'No') : (value || 'N/A')}
-                      </p>
+                      <div className="text-slate-900 font-medium">
+                        {field.type === 'checkbox' ? (value ? 'Yes' : 'No') : field.type === 'file' ? (
+                          value ? (
+                            <a href={value} target="_blank" rel="noreferrer" className="text-primary-600 hover:underline flex items-center gap-1">
+                              <LuExternalLink size={14} /> View File
+                            </a>
+                          ) : 'N/A'
+                        ) : (value || 'N/A')}
+                      </div>
                     ) : (
                       <>
                         {field.type === 'text' && (
@@ -143,6 +150,27 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                               className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
                             />
                             <span className="text-sm text-slate-700">Yes</span>
+                          </div>
+                        )}
+                        
+                        {field.type === 'file' && (
+                          <div className="flex flex-col gap-2">
+                            <input
+                              type="file"
+                              required={field.required && !value}
+                              onChange={(e) => onChange(field.id, e.target.files[0])}
+                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                            />
+                            {value instanceof File && (
+                              <span className="text-xs text-green-600 flex items-center gap-1">
+                                <LuPaperclip /> Selected: {value.name}
+                              </span>
+                            )}
+                            {!(value instanceof File) && value && typeof value === 'string' && (
+                              <a href={value} target="_blank" rel="noreferrer" className="text-xs text-primary-600 flex items-center gap-1 hover:underline">
+                                <LuExternalLink /> View Current File
+                              </a>
+                            )}
                           </div>
                         )}
                       </>

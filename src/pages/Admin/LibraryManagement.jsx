@@ -14,6 +14,8 @@ import {
 import { LuBook as Book, LuPlus as Plus, LuX as X, LuSearch as Search, LuCircleCheck as CheckCircle2, LuCircleAlert as AlertCircle, LuLibrary as Library, LuUndo2 as Undo2, LuUsers as Users } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
+import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
+import { uploadCustomDataFiles } from '../../utils/cloudinary';
 
 const mockStudents = [
   { id: 's1', name: 'Alice Smith', email: 'alice@example.com' },
@@ -62,7 +64,7 @@ export default function LibraryManagement() {
   // Forms
   const [addingBook, setAddingBook] = useState(false);
   const [newBook, setNewBook] = useState({
-    title: '', author: '', isbn: '', category: '', totalQuantity: 1
+    title: '', author: '', isbn: '', category: '', totalQuantity: 1, customData: {}
   });
 
   const [issuingBook, setIssuingBook] = useState(false);
@@ -100,13 +102,15 @@ export default function LibraryManagement() {
     e.preventDefault();
     setAddingBook(true);
     try {
+      const uploadedCustomData = await uploadCustomDataFiles(newBook.customData, schoolId, 'library');
       await addBook(schoolId, {
         ...newBook,
+        customData: uploadedCustomData,
         totalQuantity: Number(newBook.totalQuantity)
       });
       // Listner handles updates
       setShowAddModal(false);
-      setNewBook({ title: '', author: '', isbn: '', category: '', totalQuantity: 1 });
+      setNewBook({ title: '', author: '', isbn: '', category: '', totalQuantity: 1, customData: {} });
     } catch (error) {
       toast.error("Failed to add book");
     } finally {
@@ -435,6 +439,14 @@ export default function LibraryManagement() {
                     value={newBook.totalQuantity}
                     onChange={(e) => setNewBook({...newBook, totalQuantity: e.target.value})}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  />
+                </div>
+
+                <div className="pt-6 border-t border-slate-100 mt-6">
+                  <CustomFieldsRenderer
+                    moduleKey="library"
+                    customData={newBook.customData}
+                    onChange={(k, v) => setNewBook(prev => ({...prev, customData: {...(prev.customData || {}), [k]: v}}))}
                   />
                 </div>
               </div>

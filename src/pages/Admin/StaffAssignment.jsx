@@ -457,6 +457,8 @@ export default function StaffAssignment() {
           docUpdates[cat] = [...existingDocs, ...uploadedDocs];
         }
       }
+      const uploadedCustomData = await uploadCustomDataFiles(editStaffData.customData, schoolId, 'staff');
+
       const updateData = {
         ...docUpdates,
         staffId:          (editStaffData.staffId || '').trim(),
@@ -502,6 +504,7 @@ export default function StaffAssignment() {
         ifscCode:         (editStaffData.ifscCode || '').trim(),
         lastUpdatedBy:    userProfile?.name || userProfile?.email || 'Admin',
         lastUpdatedAt:    new Date().toISOString(),
+        customData:       uploadedCustomData || {},
       };
 
       await updateSubDocument(schoolId, 'teachers', selectedStaffToView.id, updateData);
@@ -671,11 +674,13 @@ export default function StaffAssignment() {
     try {
       // 1. Upload files
       const uploadedUrls = await uploadAllDocuments(newStaff.staffId);
-      
+      const uploadedCustomData = await uploadCustomDataFiles(newStaff.customData, schoolId, 'staff');
+
       // 2. Add to database
       const staffDoc = {
         ...newStaff,
         ...uploadedUrls,
+        customData: uploadedCustomData || {},
         name: `${newStaff.firstName} ${newStaff.lastName || ''}`.trim(),
         employeeId: newStaff.staffId,
         createdAt: new Date().toISOString()
@@ -1617,6 +1622,14 @@ export default function StaffAssignment() {
                       />
                     </div>
                   </div>
+
+                  <div className="mt-6 pt-6 border-t border-slate-100">
+                    <CustomFieldsRenderer
+                      moduleKey="staff"
+                      customData={newStaff.customData}
+                      onChange={(k, v) => setNewStaff(prev => ({...prev, customData: {...(prev.customData || {}), [k]: v}}))}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -2086,6 +2099,14 @@ export default function StaffAssignment() {
                           <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Residential Address</label>
                           <textarea rows={2} value={editStaffData.residentialAddress || ''} onChange={e => setEditStaffData({...editStaffData, residentialAddress: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
+                      </div>
+
+                      <div className="mt-6 pt-6 border-t border-slate-100">
+                        <CustomFieldsRenderer
+                          moduleKey="staff"
+                          customData={editStaffData.customData}
+                          onChange={(k, v) => setEditStaffData(prev => ({...prev, customData: {...(prev.customData || {}), [k]: v}}))}
+                        />
                       </div>
                     </div>
                   )}

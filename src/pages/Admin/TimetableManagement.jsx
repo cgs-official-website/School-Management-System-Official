@@ -6,6 +6,8 @@ import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
+import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
+import { uploadCustomDataFiles } from '../../utils/cloudinary';
 
 export default function TimetableManagement() {
   const { userProfile } = useAuth();
@@ -19,6 +21,7 @@ export default function TimetableManagement() {
   const [schedule, setSchedule] = useState({
     Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
   });
+  const [customData, setCustomData] = useState({});
   
   const [allTimetables, setAllTimetables] = useState({});
   const [masterDay, setMasterDay] = useState('Monday');
@@ -83,8 +86,10 @@ export default function TimetableManagement() {
             Friday: scheduleData.Friday || [],
             Saturday: scheduleData.Saturday || []
           });
+          setCustomData(docSnap.data().customData || {});
         } else {
           setSchedule({ Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [] });
+          setCustomData({});
         }
         setLoading(false);
       });
@@ -159,7 +164,8 @@ export default function TimetableManagement() {
     if (!selectedClassId) return;
     setSaving(true);
     try {
-      await saveTimetable(schoolId, selectedClassId, schedule);
+      const uploadedCustomData = await uploadCustomDataFiles(customData, schoolId, 'timetables');
+      await saveTimetable(schoolId, selectedClassId, schedule, uploadedCustomData);
       toast.success("Timetable saved successfully!");
     } catch (error) {
       console.error("Error saving timetable:", error);
@@ -366,6 +372,15 @@ export default function TimetableManagement() {
                 </div>
               ))}
             </div>
+          </div>
+          
+          <div className="bg-white border-t border-slate-200 p-6 shrink-0 z-10 relative shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            <h3 className="text-lg font-bold text-slate-800 mb-4">Additional Information</h3>
+            <CustomFieldsRenderer
+              moduleKey="timetables"
+              customData={customData}
+              onChange={(k, v) => setCustomData(prev => ({...prev, [k]: v}))}
+            />
           </div>
         </div>
       )}

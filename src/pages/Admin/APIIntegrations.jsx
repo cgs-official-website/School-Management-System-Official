@@ -17,7 +17,7 @@ export default function APIIntegrations() {
   const [permittedModules, setPermittedModules] = useState([]);
   const [apiKeys, setApiKeys] = useState({
     googleMaps: '',
-    cloudinary: ''
+    cloudinary: { cloudName: '', uploadPreset: '' }
   });
 
   useEffect(() => {
@@ -35,7 +35,9 @@ export default function APIIntegrations() {
         if (data.apiKeys) {
           setApiKeys({
             googleMaps: data.apiKeys.googleMaps || '',
-            cloudinary: data.apiKeys.cloudinary || ''
+            cloudinary: (data.apiKeys.cloudinary && typeof data.apiKeys.cloudinary === 'object') 
+              ? data.apiKeys.cloudinary 
+              : { cloudName: '', uploadPreset: '' }
           });
         }
       }
@@ -126,19 +128,31 @@ export default function APIIntegrations() {
                   <h2 className="text-xl font-bold text-slate-900">Cloudinary (Media Module)</h2>
                 </div>
                 <div className="space-y-4 max-w-2xl">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Cloud Name / API Key</label>
-                    <input 
-                      type="text"
-                      value={apiKeys.cloudinary}
-                      onChange={(e) => setApiKeys({...apiKeys, cloudinary: e.target.value})}
-                      placeholder="e.g. dxq... / 123..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono"
-                    />
-                    <p className="text-xs text-slate-500 mt-2">
-                      Required for uploading student profile photos, library book covers, and noticeboard attachments.
-                    </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Cloud Name</label>
+                      <input 
+                        type="text"
+                        value={apiKeys.cloudinary.cloudName}
+                        onChange={(e) => setApiKeys({...apiKeys, cloudinary: { ...apiKeys.cloudinary, cloudName: e.target.value }})}
+                        placeholder="e.g. dxyz123"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Unsigned Upload Preset</label>
+                      <input 
+                        type="text"
+                        value={apiKeys.cloudinary.uploadPreset}
+                        onChange={(e) => setApiKeys({...apiKeys, cloudinary: { ...apiKeys.cloudinary, uploadPreset: e.target.value }})}
+                        placeholder="e.g. preset_name"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono"
+                      />
+                    </div>
                   </div>
+                  <p className="text-xs text-slate-500 mt-2">
+                    Required for uploading student profile photos, library book covers, and noticeboard attachments. Ensure the preset is set to "Unsigned" in your Cloudinary settings.
+                  </p>
                 </div>
               </div>
             )}

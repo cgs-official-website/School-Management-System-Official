@@ -219,7 +219,7 @@ export const updateSchoolStatus = async (schoolId, newStatus, permittedModules =
     if (newStatus === 'approved') {
       updateData.permittedModules = permittedModules;
       // Initialize empty API keys if not present
-      updateData.apiKeys = { googleMaps: '', cloudinary: '' };
+      updateData.apiKeys = { googleMaps: '', cloudinary: { cloudName: '', uploadPreset: '' } };
     }
     await updateDoc(schoolRef, updateData);
   } catch (error) {
@@ -657,6 +657,7 @@ export const createFeeStructure = async (schoolId, feeData) => {
         amount: Number(feeData.amount),
         dueDate: feeData.dueDate,
         status: 'Pending',
+        customData: feeData.customData || {},
         createdAt: new Date().toISOString()
       });
     });
@@ -715,12 +716,13 @@ export const getTimetable = async (schoolId, classId) => {
   }
 };
 
-export const saveTimetable = async (schoolId, classId, scheduleData) => {
+export const saveTimetable = async (schoolId, classId, scheduleData, customData = {}) => {
   try {
     const docRef = doc(db, `schools/${schoolId}/timetables`, classId);
     await setDoc(docRef, {
       classId,
       schedule: scheduleData,
+      customData,
       updatedAt: new Date().toISOString()
     }, { merge: true });
   } catch (error) {

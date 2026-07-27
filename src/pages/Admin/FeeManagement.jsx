@@ -3,6 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, createFeeStructure, getInvoices, markInvoicePaid, subscribeToSubCollection, subscribeToInvoices } from '../../firebase/firestore';
 import { LuCreditCard as CreditCard, LuPlus as Plus, LuCircleCheck as CheckCircle2, LuSearch as Search, LuX as X, LuReceipt as Receipt, LuIndianRupee as DollarSign, LuTrendingUp as TrendingUp, LuTriangleAlert as AlertTriangle } from 'react-icons/lu';
 import toast from 'react-hot-toast';
+import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
+import { uploadCustomDataFiles } from '../../utils/cloudinary';
 
 export default function FeeManagement() {
   const { userProfile } = useAuth();
@@ -25,7 +27,8 @@ export default function FeeManagement() {
     name: '',
     amount: '',
     dueDate: new Date().toISOString().split('T')[0],
-    classId: ''
+    classId: '',
+    customData: {}
   });
 
   useEffect(() => {
@@ -74,7 +77,11 @@ export default function FeeManagement() {
     setCreating(true);
 
     try {
-      const result = await createFeeStructure(schoolId, newFee);
+      const uploadedCustomData = await uploadCustomDataFiles(newFee.customData, schoolId, 'fees');
+      const result = await createFeeStructure(schoolId, {
+        ...newFee,
+        customData: uploadedCustomData
+      });
       // Re-fetch invoices handled by listener
       
       if (result && result.invoiceCount === 0) {
@@ -84,7 +91,7 @@ export default function FeeManagement() {
       }
       
       setShowCreateModal(false);
-      setNewFee({ name: '', amount: '', dueDate: new Date().toISOString().split('T')[0], classId: '' });
+      setNewFee({ name: '', amount: '', dueDate: new Date().toISOString().split('T')[0], classId: '', customData: {} });
     } catch (error) {
       console.error("Error creating fee:", error);
       toast.error("Failed to create fee and generate invoices.");
@@ -335,6 +342,14 @@ export default function FeeManagement() {
                   <p className="text-xs text-slate-500 mt-2">
                     Invoices will be automatically generated for all students currently enrolled in this class.
                   </p>
+                </div>
+
+                <div className="pt-6 border-t border-slate-100 mt-6">
+                  <CustomFieldsRenderer
+                    moduleKey="fees"
+                    customData={newFee.customData}
+                    onChange={(k, v) => setNewFee(prev => ({...prev, customData: {...(prev.customData || {}), [k]: v}}))}
+                  />
                 </div>
               </div>
 

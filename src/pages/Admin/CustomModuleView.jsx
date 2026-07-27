@@ -3,7 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { doc, getDoc, collection, getDocs, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuPlus, LuPencil, LuTrash2, LuLayoutGrid, LuX, LuSave } from 'react-icons/lu';
+import { LuPlus, LuPencil, LuTrash2, LuLayoutGrid, LuX, LuSave, LuPaperclip, LuExternalLink } from 'react-icons/lu';
+import { uploadFileToCloudinaryOrFirebase } from '../../utils/cloudinary';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
 
@@ -20,6 +21,7 @@ export default function CustomModuleView() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({});
+  const [formFiles, setFormFiles] = useState({});
   const [saving, setSaving] = useState(false);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: null, message: '', title: '' });
 
@@ -78,6 +80,11 @@ export default function CustomModuleView() {
     setIsModalOpen(false);
     setEditingId(null);
     setFormData({});
+    setFormFiles({});
+  };
+
+  const handleFileChange = (fieldId, file) => {
+    setFormFiles(prev => ({ ...prev, [fieldId]: file }));
   };
 
   const handleInputChange = (fieldId, value) => {
@@ -88,15 +95,34 @@ export default function CustomModuleView() {
     e.preventDefault();
     setSaving(true);
     try {
+      // 1. Upload files if any
+      const uploadPromises = Object.entries(formFiles).map(async ([fieldId, file]) => {
+        if (file) {
+          const safeSchoolName = moduleMetadata?.name?.replace(/[^a-z0-9]/gi, '_').trim() || 'CustomModule';
+          const safeFileName = file.name.replace(/[^a-z0-9.]/gi, '_');
+          const storagePath = `CustomModules/${safeSchoolName}/${safeFileName}`;
+          const url = await uploadFileToCloudinaryOrFirebase(file, schoolId, storagePath);
+          return { fieldId, url };
+        }
+        return null;
+      });
+      
+      const uploadedFiles = await Promise.all(uploadPromises);
+      const finalFormData = { ...formData };
+      uploadedFiles.forEach(res => {
+        if (res) finalFormData[res.fieldId] = res.url;
+      });
+
+      // 2. Save data
       if (editingId) {
         const docRef = doc(db, `schools/${schoolId}/${moduleId}_data`, editingId);
-        await updateDoc(docRef, { ...formData, updatedAt: new Date().toISOString() });
-        setData(data.map(d => d.id === editingId ? { ...d, ...formData } : d));
+        await updateDoc(docRef, { ...finalFormData, updatedAt: new Date().toISOString() });
+        setData(data.map(d => d.id === editingId ? { ...d, ...finalFormData } : d));
         toast.success("Record updated");
       } else {
         const colRef = collection(db, `schools/${schoolId}/${moduleId}_data`);
-        const docRef = await addDoc(colRef, { ...formData, createdAt: new Date().toISOString() });
-        setData([...data, { id: docRef.id, ...formData }]);
+        const docRef = await addDoc(colRef, { ...finalFormData, createdAt: new Date().toISOString() });
+        setData([...data, { id: docRef.id, ...finalFormData }]);
         toast.success("Record created");
       }
       handleCloseModal();
@@ -188,7 +214,15 @@ export default function CustomModuleView() {
                     <tr key={record.id} className="hover:bg-slate-50/50 transition-colors">
                       {tableColumns.map(col => (
                         <td key={col.id} className="px-6 py-4">
-                          {record[col.id] !== undefined ? String(record[col.id]) : '-'}
+                          {record[col.id] !== undefined ? (
+                            String(record[col.id]).startsWith('http') ? (
+                              <a href={record[col.id]} target="_blank" rel="noreferrer" className="text-primary-600 hover:underline flex items-center gap-1">
+                                <LuExternalLink size={14} /> View File
+                              </a>
+                            ) : (
+                              String(record[col.id])
+                            )
+                          ) : '-'}
                         </td>
                       ))}
                       <td className="px-6 py-4 text-right">
@@ -264,6 +298,25 @@ export default function CustomModuleView() {
                             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 placeholder-slate-400"
                             placeholder={`Enter related ${field.relationModule || 'record'} ID`}
                           />
+                        ) : field.type === 'file' ? (
+                          <div className="flex flex-col gap-2">
+                            <input
+                              type="file"
+                              required={field.required && !formData[field.id]}
+                              onChange={(e) => handleFileChange(field.id, e.target.files[0])}
+                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                            />
+                            {formFiles[field.id] && (
+                              <span className="text-xs text-green-600 flex items-center gap-1">
+                                <LuPaperclip /> Selected: {formFiles[field.id].name}
+                              </span>
+                            )}
+                            {!formFiles[field.id] && formData[field.id] && (
+                              <a href={formData[field.id]} target="_blank" rel="noreferrer" className="text-xs text-primary-600 flex items-center gap-1 hover:underline">
+                                <LuExternalLink /> View Current File
+                              </a>
+                            )}
+                          </div>
                         ) : (
                           <input
                             type={field.type}

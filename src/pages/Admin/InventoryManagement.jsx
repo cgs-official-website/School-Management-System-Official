@@ -16,6 +16,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
+import { uploadCustomDataFiles } from '../../utils/cloudinary';
 
 export default function InventoryManagement() {
   const navigate = useNavigate();
@@ -141,6 +142,8 @@ export default function InventoryManagement() {
     const qty = parseInt(itemFormData.quantity) || 0;
     const status = qty === 0 ? 'Out of Stock' : qty <= 10 ? 'Low Stock' : 'In Stock';
 
+    const uploadedCustomData = await uploadCustomDataFiles(itemFormData.customData, schoolId, 'inventory');
+
     const finalData = {
       productId: prodIdTrimmed,
       name: nameTrimmed,
@@ -148,7 +151,7 @@ export default function InventoryManagement() {
       quantity: qty,
       unit: itemFormData.unit.trim() || 'pcs',
       status: status,
-      customData: itemFormData.customData || {}
+      customData: uploadedCustomData || {}
     };
 
     try {

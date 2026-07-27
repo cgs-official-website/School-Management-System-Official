@@ -7,6 +7,8 @@ import { LuBus as Bus, LuPlus as Plus, LuX as X, LuUsers as Users, LuPhone as Ph
 import { Edit, Trash2, Eye, MoreVertical } from 'lucide-react';
 import ConfirmModal from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
+import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
+import { uploadCustomDataFiles } from '../../utils/cloudinary';
 
 export default function TransportManagement() {
   const { userProfile } = useAuth();
@@ -31,7 +33,8 @@ export default function TransportManagement() {
     vehicleNumber: '',
     driverName: '',
     driverPhone: '',
-    capacity: ''
+    capacity: '',
+    customData: {}
   });
   const [selectedStudentId, setSelectedStudentId] = useState('');
   const [assigning, setAssigning] = useState(false);
@@ -63,22 +66,26 @@ export default function TransportManagement() {
     setCreating(true);
 
     try {
+      const uploadedCustomData = await uploadCustomDataFiles(newRoute.customData, schoolId, 'transport');
+
       if (newRoute.id) {
         await updateSubDocument(schoolId, 'transportRoutes', newRoute.id, {
           ...newRoute,
+          customData: uploadedCustomData,
           capacity: Number(newRoute.capacity)
         });
         toast.success("Route updated successfully!");
       } else {
         await createTransportRoute(schoolId, {
           ...newRoute,
+          customData: uploadedCustomData,
           capacity: Number(newRoute.capacity)
         });
         toast.success("Route created successfully!");
       }
       
       setShowCreateModal(false);
-      setNewRoute({ name: '', vehicleNumber: '', driverName: '', driverPhone: '', capacity: '' });
+      setNewRoute({ name: '', vehicleNumber: '', driverName: '', driverPhone: '', capacity: '', customData: {} });
     } catch (error) {
       console.error("Error saving route:", error);
       toast.error("Failed to save route.");
@@ -347,6 +354,14 @@ export default function TransportManagement() {
                     />
                   </div>
                 </div>
+
+                <div className="pt-6 border-t border-slate-100 mt-6">
+                  <CustomFieldsRenderer
+                    moduleKey="transport"
+                    customData={newRoute.customData}
+                    onChange={(k, v) => setNewRoute(prev => ({...prev, customData: {...(prev.customData || {}), [k]: v}}))}
+                  />
+                </div>
               </div>
 
               <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
@@ -473,6 +488,17 @@ export default function TransportManagement() {
                   <p className="text-slate-900 font-semibold">{selectedRouteToView.driverPhone || 'N/A'}</p>
                 </div>
               </div>
+
+              {selectedRouteToView.customData && Object.keys(selectedRouteToView.customData).length > 0 && (
+                <div className="pt-6 border-t border-slate-100">
+                  <CustomFieldsRenderer
+                    moduleKey="transport"
+                    customData={selectedRouteToView.customData}
+                    readOnly={true}
+                  />
+                </div>
+              )}
+
               <div>
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assigned Students</label>
                 {selectedRouteToView.assignedStudents?.length > 0 ? (

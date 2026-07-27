@@ -14,8 +14,9 @@ import {
 import { LuFileText as FileText, LuPlus as Plus, LuX as X, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuFileChartColumn as FileBarChart, LuLoaderCircle as Loader2, LuPrinter as Printer, LuPalette as Palette } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ReportTemplateBuilder from './ReportTemplateBuilder';
-import { db } from '../../firebase/config';
 import { doc, setDoc } from 'firebase/firestore';
+import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
+import { uploadCustomDataFiles } from '../../utils/cloudinary';
 
 export default function ExamManagement() {
   const { userProfile } = useAuth();
@@ -32,7 +33,7 @@ export default function ExamManagement() {
   // Manage Exams State
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [newExam, setNewExam] = useState({ name: '', startDate: '', endDate: '', examType: 'Custom Exam', maxMarks: 100 });
+  const [newExam, setNewExam] = useState({ name: '', startDate: '', endDate: '', examType: 'Custom Exam', maxMarks: 100, customData: {} });
 
   // Report Card State
   const [selectedExamId, setSelectedExamId] = useState('');
@@ -104,14 +105,16 @@ export default function ExamManagement() {
     e.preventDefault();
     setCreating(true);
     try {
+      const uploadedCustomData = await uploadCustomDataFiles(newExam.customData, schoolId, 'exams');
       await createExam(schoolId, {
         ...newExam,
+        customData: uploadedCustomData,
         maxMarks: Number(newExam.maxMarks),
         status: 'active'
       });
       // Listener handles updates
       setShowCreateModal(false);
-      setNewExam({ name: '', startDate: '', endDate: '', examType: 'Custom Exam', maxMarks: 100 });
+      setNewExam({ name: '', startDate: '', endDate: '', examType: 'Custom Exam', maxMarks: 100, customData: {} });
     } catch (error) {
       toast.error("Failed to create exam");
     } finally {
@@ -307,6 +310,15 @@ export default function ExamManagement() {
                         {new Date(exam.startDate).toLocaleDateString()} - {new Date(exam.endDate).toLocaleDateString()}
                       </div>
                     </div>
+                    {exam.customData && Object.keys(exam.customData).length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-slate-100">
+                        <CustomFieldsRenderer
+                          moduleKey="exams"
+                          customData={exam.customData}
+                          readOnly={true}
+                        />
+                      </div>
+                    )}
                   </div>
                 ))
               )}
@@ -652,6 +664,14 @@ export default function ExamManagement() {
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                     />
                   </div>
+                </div>
+
+                <div className="pt-6 border-t border-slate-100 mt-6">
+                  <CustomFieldsRenderer
+                    moduleKey="exams"
+                    customData={newExam.customData}
+                    onChange={(k, v) => setNewExam(prev => ({...prev, customData: {...(prev.customData || {}), [k]: v}}))}
+                  />
                 </div>
               </div>
 

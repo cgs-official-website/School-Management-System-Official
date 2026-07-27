@@ -55,7 +55,18 @@ export default function EnvironmentSetup() {
       // Fetch Schema
       const schemaSnap = await getDoc(doc(db, `schools/${schoolId}/formSchemas/environment_setup`));
       if (schemaSnap.exists()) {
-        setFormSchema(schemaSnap.data().fields || []);
+        const data = schemaSnap.data();
+        let allFields = [];
+        if (data.sections) {
+          data.sections.forEach(sec => {
+            if (sec.fields) {
+              allFields = allFields.concat(sec.fields);
+            }
+          });
+        } else if (data.fields) {
+          allFields = data.fields;
+        }
+        setFormSchema(allFields);
       }
     } catch (error) {
       console.error("Error fetching school:", error);

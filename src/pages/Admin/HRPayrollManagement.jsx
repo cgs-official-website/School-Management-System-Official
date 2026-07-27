@@ -6,7 +6,9 @@ import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, addSubDocument, updateSubDocument, deleteSubDocument } from '../../firebase/firestore';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
 import { db, storage } from '../../firebase/config';
+import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -24,7 +26,7 @@ export default function HRPayrollManagement() {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showPayslipModal, setShowPayslipModal] = useState(null); // stores payroll object
   const [confirmModalState, setConfirmModalState] = useState({ isOpen: false, idToDelete: null });
-  const [formData, setFormData] = useState({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0, esiCalculated: 0 });
+  const [formData, setFormData] = useState({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0, esiCalculated: 0, customData: {} });
   const [searchTerm, setSearchTerm] = useState('');
 
   const [signatureFile, setSignatureFile] = useState(null);
@@ -92,7 +94,7 @@ export default function HRPayrollManagement() {
         esiCalculated: esi
       }));
     } else {
-      setFormData(prev => ({ ...prev, teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, pfCalculated: 0, esiCalculated: 0 }));
+      setFormData(prev => ({ ...prev, teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, pfCalculated: 0, esiCalculated: 0, customData: {} }));
     }
   };
 
@@ -125,19 +127,22 @@ export default function HRPayrollManagement() {
     }
 
     try {
+      const uploadedCustomData = await uploadCustomDataFiles(formData.customData, schoolId, 'hr-payroll');
+      const finalFormData = { ...formData, customData: uploadedCustomData };
+
       if (formData.id) {
-        await updateSubDocument(schoolId, 'payroll', formData.id, formData);
+        await updateSubDocument(schoolId, 'payroll', formData.id, finalFormData);
         toast.success("Payroll updated successfully");
       } else {
         await addSubDocument(schoolId, 'payroll', {
-          ...formData,
+          ...finalFormData,
           month: currentMonth,
           createdAt: new Date().toISOString()
         });
         toast.success("Payroll record added");
       }
       setShowModal(false);
-      setFormData({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0, esiCalculated: 0 });
+      setFormData({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0, esiCalculated: 0, customData: {} });
     } catch (err) {
       console.error(err);
       toast.error("Failed to save payroll record");
@@ -164,29 +169,25 @@ export default function HRPayrollManagement() {
     if (!signatureFile) return;
     setUploadingSig(true);
     try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64String = reader.result;
-        
-        const schoolRef = doc(db, 'schools', schoolId);
-        await updateDoc(schoolRef, {
-          'hrConfig.authorizedSignature': base64String
-        });
-        
-        setSchoolDetails(prev => ({
-          ...prev,
-          hrConfig: { ...(prev?.hrConfig || {}), authorizedSignature: base64String }
-        }));
-        
-        toast.success("Signature uploaded successfully!");
-        setSignatureFile(null);
-        setUploadingSig(false);
-      };
-      reader.onerror = () => {
-        toast.error("Failed to read file.");
-        setUploadingSig(false);
-      };
-      reader.readAsDataURL(signatureFile);
+      const downloadURL = await uploadFileToCloudinaryOrFirebase(
+        signatureFile, 
+        schoolId, 
+        `schools/${schoolId}/hr/signature_${Date.now()}`
+      );
+      
+      const schoolRef = doc(db, 'schools', schoolId);
+      await updateDoc(schoolRef, {
+        'hrConfig.authorizedSignature': downloadURL
+      });
+      
+      setSchoolDetails(prev => ({
+        ...prev,
+        hrConfig: { ...(prev?.hrConfig || {}), authorizedSignature: downloadURL }
+      }));
+      
+      toast.success("Signature uploaded successfully!");
+      setSignatureFile(null);
+      setUploadingSig(false);
     } catch (err) {
       console.error("Signature upload failed", err);
       toast.error("Failed to upload signature.");
@@ -474,6 +475,14 @@ export default function HRPayrollManagement() {
                     <option>Pending</option>
                     <option>Payslip Released</option>
                   </select>
+                </div>
+
+                <div className="pt-6 border-t border-slate-100 mt-6">
+                  <CustomFieldsRenderer
+                    moduleKey="hr-payroll"
+                    customData={formData.customData}
+                    onChange={(k, v) => setFormData(prev => ({...prev, customData: {...(prev.customData || {}), [k]: v}}))}
+                  />
                 </div>
 
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 mt-6 shadow-sm">

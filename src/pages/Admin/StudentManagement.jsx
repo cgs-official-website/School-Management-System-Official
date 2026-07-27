@@ -4,13 +4,15 @@ import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubColl
 import { getDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
 import { storage } from '../../firebase/config';
 import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye, LuTrash2 as Trash } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import ConfirmModal from '../../components/ConfirmModal';
-
+import ImageCropper from '../../components/ImageCropper';
+import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 export default function StudentManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
@@ -33,7 +35,12 @@ export default function StudentManagement() {
   });
   const [customData, setCustomData] = useState({});
   const [formSchema, setFormSchema] = useState([]);
-
+  const [photoFile, setPhotoFile] = useState(null);
+  
+  // Crop state
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [tempImageFile, setTempImageFile] = useState(null);
+  const [cropTarget, setCropTarget] = useState(''); // 'add' or 'edit'
   // Upload Modal State
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedStudentForUpload, setSelectedStudentForUpload] = useState(null);
@@ -48,6 +55,7 @@ export default function StudentManagement() {
   const [editCustomData, setEditCustomData] = useState({});
   const [editErrors, setEditErrors] = useState({});
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
+  const [editPhotoFile, setEditPhotoFile] = useState(null);
 
   // Assign Modal State
   const [assignModalOpen, setAssignModalOpen] = useState(false);
@@ -105,7 +113,18 @@ export default function StudentManagement() {
       try {
         const snap = await getDoc(doc(db, `schools/${schoolId}/formSchemas/students`));
         if (snap.exists()) {
-          setFormSchema(snap.data().fields || []);
+          const data = snap.data();
+          let allFields = [];
+          if (data.sections) {
+            data.sections.forEach(sec => {
+              if (sec.fields) {
+                allFields = allFields.concat(sec.fields);
+              }
+            });
+          } else if (data.fields) {
+            allFields = data.fields;
+          }
+          setFormSchema(allFields);
         }
       } catch (err) {
         console.error("Error fetching schema:", err);
@@ -138,9 +157,21 @@ export default function StudentManagement() {
 
     setSaving(true);
     try {
+      let photoUrl = '';
+      if (photoFile) {
+        const safeStudentName = `${formData.firstName} ${formData.lastName}`.replace(/[^a-z0-9]/gi, '_').trim();
+        const safeSchoolName = schoolName.replace(/[^a-z0-9]/gi, '_').trim();
+        const safeFileName = photoFile.name.replace(/[^a-z0-9.]/gi, '_');
+        const storagePath = `${safeSchoolName}/Students/${safeStudentName}/photo_${safeFileName}`;
+        photoUrl = await uploadFileToCloudinaryOrFirebase(photoFile, schoolId, storagePath);
+      }
+
+      const uploadedCustomData = await uploadCustomDataFiles(customData, schoolId, 'students');
+
       await addSubDocument(schoolId, 'students', {
         ...formData,
-        customData,
+        customData: uploadedCustomData || {},
+        photoUrl,
         createdAt: new Date().toISOString()
       });
       
@@ -152,6 +183,7 @@ export default function StudentManagement() {
         tuitionFee: '', hostelFee: '', bookFee: '', otherFee: '', totalFee: ''
       });
       setCustomData({});
+      setPhotoFile(null);
       setShowForm(false);
     } catch (error) {
       console.error("Error creating student:", error);
@@ -291,10 +323,8 @@ export default function StudentManagement() {
 
       // STRICT PATH: [SchoolName]/Students/[StudentName]/[FileName]
       const storagePath = `${safeSchoolName}/Students/${safeStudentName}/${safeFileName}`;
-      const fileRef = ref(storage, storagePath);
-
-      await uploadBytes(fileRef, uploadFile);
-      const downloadUrl = await getDownloadURL(fileRef);
+      
+      const downloadUrl = await uploadFileToCloudinaryOrFirebase(uploadFile, schoolId, storagePath);
 
       await updateSubDocument(schoolId, 'students', selectedStudentForUpload.id, {
         attachmentUrl: downloadUrl,
@@ -484,17 +514,19 @@ export default function StudentManagement() {
     }
 
     setEditErrors(errors);
-    return Object.keys(errors).length === 0;
+    return errors;
   };
 
   // Save changes
   const handleSaveStudentEdit = async () => {
-    if (!validateEditStudent()) {
-      toast.error("Please resolve the validation errors.");
+    const errors = validateEditStudent();
+    if (Object.keys(errors).length > 0) {
+      toast.error(Object.values(errors)[0] || "Please resolve the validation errors.");
       return;
     }
 
     try {
+      setSaving(true);
       const cleanedData = {};
       const fieldsToSave = [
         'firstName', 'lastName', 'middleName', 'admissionNumber', 'dob', 'gender',
@@ -597,9 +629,26 @@ export default function StudentManagement() {
         }
       }
 
+      let newPhotoUrl = selectedStudentToView.photoUrl || '';
+      if (editPhotoFile) {
+        const safeStudentName = `${cleanedData.firstName} ${cleanedData.lastName}`.replace(/[^a-z0-9]/gi, '_').trim();
+        const safeSchoolName = schoolName.replace(/[^a-z0-9]/gi, '_').trim();
+        const safeFileName = editPhotoFile.name.replace(/[^a-z0-9.]/gi, '_');
+        const storagePath = `${safeSchoolName}/Students/${safeStudentName}/photo_${safeFileName}`;
+        newPhotoUrl = await uploadFileToCloudinaryOrFirebase(editPhotoFile, schoolId, storagePath);
+        modifiedFields.push({
+          fieldName: 'Profile Photo',
+          previousValue: selectedStudentToView.photoUrl ? 'Existing Photo' : 'No Photo',
+          updatedValue: 'New Photo Uploaded'
+        });
+      }
+
+      const uploadedCustomData = await uploadCustomDataFiles(editCustomData, schoolId, 'students');
+
       const updateData = {
         ...cleanedData,
-        customData: editCustomData,
+        customData: uploadedCustomData || {},
+        photoUrl: newPhotoUrl,
         lastUpdatedBy: userProfile?.name || userProfile?.email || 'Unknown User',
         lastUpdatedAt: new Date().toISOString()
       };
@@ -617,9 +666,12 @@ export default function StudentManagement() {
       };
       setSelectedStudentToView(updatedStudentObj);
       setIsEditMode(false);
+      setEditPhotoFile(null);
     } catch (e) {
       console.error(e);
       toast.error("Failed to save changes.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -704,6 +756,26 @@ export default function StudentManagement() {
             <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
               <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-3 mb-4">Personal Information</h3>
               <div className="grid md:grid-cols-3 gap-6">
+                <div className="md:col-span-3">
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Profile Photo (JPG/PNG)</label>
+                  <input type="file" accept="image/png, image/jpeg" onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      setTempImageFile(URL.createObjectURL(e.target.files[0]));
+                      setCropTarget('add');
+                      setCropModalOpen(true);
+                      e.target.value = null; // Reset input
+                    }
+                  }} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  {photoFile && (
+                    <div className="mt-2 text-sm text-slate-600 flex items-center gap-3">
+                      <img src={URL.createObjectURL(photoFile)} alt="Preview" className="w-12 h-12 rounded-full object-cover border shadow-sm" />
+                      <div className="flex flex-col">
+                        <span className="truncate font-medium">{photoFile.name}</span>
+                        <button type="button" onClick={() => setPhotoFile(null)} className="text-red-500 hover:text-red-700 font-bold self-start mt-0.5 px-2 py-1 rounded-md bg-red-50 text-xs">Remove</button>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1">First Name *</label>
                   <input type="text" required value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
@@ -854,55 +926,14 @@ export default function StudentManagement() {
               </div>
             </div>
 
-            {formSchema.length > 0 && (
-              <div className="pt-6 mt-6 border-t border-slate-100">
-                <h3 className="text-lg font-bold text-slate-900 mb-4">Additional Details</h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {formSchema.map(field => (
-                    <div key={field.id}>
-                      {field.type !== 'checkbox' && (
-                        <label className="block text-sm font-semibold text-slate-700 mb-1">
-                          {field.label} {field.required && <span className="text-red-500">*</span>}
-                        </label>
-                      )}
-                      
-                      {field.type === 'select' ? (
-                        <select
-                          required={field.required}
-                          value={customData[field.id] || ''}
-                          onChange={e => setCustomData({...customData, [field.id]: e.target.value})}
-                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
-                        >
-                          <option value="">Select...</option>
-                          {field.options && field.options.split(',').map(opt => (
-                            <option key={opt.trim()} value={opt.trim()}>{opt.trim()}</option>
-                          ))}
-                        </select>
-                      ) : field.type === 'checkbox' ? (
-                        <label className="flex items-center gap-3 mt-1 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            required={field.required}
-                            checked={customData[field.id] || false}
-                            onChange={e => setCustomData({...customData, [field.id]: e.target.checked})}
-                            className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
-                          />
-                          <span className="text-sm font-semibold text-slate-700">{field.label} {field.required && <span className="text-red-500">*</span>}</span>
-                        </label>
-                      ) : (
-                        <input
-                          type={field.type}
-                          required={field.required}
-                          value={customData[field.id] || ''}
-                          onChange={e => setCustomData({...customData, [field.id]: e.target.value})}
-                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <div className="pt-6 mt-6 border-t border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">Additional Details</h3>
+              <CustomFieldsRenderer
+                moduleKey="students"
+                customData={customData}
+                onChange={(k, v) => setCustomData(prev => ({...prev, [k]: v}))}
+              />
+            </div>
 
             <div className="pt-4 border-t border-slate-100 flex justify-end gap-3">
               <button 
@@ -913,9 +944,14 @@ export default function StudentManagement() {
               </button>
               <button 
                 type="submit" disabled={saving || classes.length === 0}
-                className="px-8 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors"
+                className="px-8 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
               >
-                {saving ? 'Saving...' : 'Admit Student'}
+                {saving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Saving...
+                  </>
+                ) : 'Admit Student'}
               </button>
             </div>
           </form>
@@ -1012,8 +1048,12 @@ export default function StudentManagement() {
                     <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="p-4 pl-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 shrink-0 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm">
-                            {student.firstName.charAt(0)}{student.lastName.charAt(0)}
+                          <div className="w-10 h-10 shrink-0 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm overflow-hidden border border-primary-200">
+                            {student.photoUrl ? (
+                              <img src={student.photoUrl} alt="Avatar" className="w-full h-full object-cover" />
+                            ) : (
+                              <>{student.firstName.charAt(0)}{student.lastName.charAt(0)}</>
+                            )}
                           </div>
                           <div className="font-semibold text-slate-900 leading-snug">
                             {student.firstName} {student.lastName}
@@ -1171,7 +1211,12 @@ export default function StudentManagement() {
                 disabled={uploading || !uploadFile}
                 className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
               >
-                {uploading ? 'Uploading...' : 'Upload File'}
+                {uploading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Uploading...
+                  </>
+                ) : 'Upload File'}
               </button>
             </div>
           </div>
@@ -1193,8 +1238,12 @@ export default function StudentManagement() {
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
-                <div className="w-16 h-16 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-2xl shrink-0">
-                  {selectedStudentToView.firstName?.charAt(0) || ''}{selectedStudentToView.lastName?.charAt(0) || ''}
+                <div className="w-16 h-16 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-2xl shrink-0 overflow-hidden border-2 border-white shadow-sm">
+                  {selectedStudentToView.photoUrl ? (
+                    <img src={selectedStudentToView.photoUrl} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <>{selectedStudentToView.firstName?.charAt(0) || ''}{selectedStudentToView.lastName?.charAt(0) || ''}</>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-xl font-bold text-slate-900 truncate">
@@ -1452,23 +1501,14 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Schema / Custom Fields */}
-                  {formSchema.length > 0 && selectedStudentToView.customData && (
-                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
-                      <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Additional Details</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        {formSchema.map(field => {
-                          let val = selectedStudentToView.customData[field.id];
-                          if (field.type === 'checkbox') val = val ? 'Yes' : 'No';
-                          return (
-                            <div key={`view_${field.id}`}>
-                              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{field.label}</label>
-                              <p className="text-slate-950 font-semibold">{val || '—'}</p>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Additional Details</h4>
+                    <CustomFieldsRenderer
+                      moduleKey="students"
+                      customData={selectedStudentToView.customData || {}}
+                      readOnly={true}
+                    />
+                  </div>
 
                   {/* System & Metadata Information */}
                   <div className="bg-slate-100/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-500 space-y-1">
@@ -1486,6 +1526,31 @@ export default function StudentManagement() {
                   <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
                     <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Personal Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="sm:col-span-3">
+                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Profile Photo (JPG/PNG)</label>
+                        <input type="file" accept="image/png, image/jpeg" onChange={(e) => {
+                          if (e.target.files && e.target.files.length > 0) {
+                            setTempImageFile(URL.createObjectURL(e.target.files[0]));
+                            setCropTarget('edit');
+                            setCropModalOpen(true);
+                            e.target.value = null;
+                          }
+                        }} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500" />
+                        {editPhotoFile ? (
+                          <div className="mt-2 text-xs text-slate-600 flex items-center gap-3">
+                            <img src={URL.createObjectURL(editPhotoFile)} alt="Preview" className="w-10 h-10 rounded-full object-cover border shadow-sm" />
+                            <div className="flex flex-col justify-center">
+                              <span className="truncate font-medium">{editPhotoFile.name}</span>
+                              <button type="button" onClick={() => setEditPhotoFile(null)} className="text-red-500 hover:text-red-700 font-bold self-start mt-0.5 px-2 py-1 rounded-md bg-red-50 text-xs">Remove</button>
+                            </div>
+                          </div>
+                        ) : selectedStudentToView.photoUrl && (
+                           <div className="mt-2 text-xs text-slate-600 flex items-center gap-3">
+                             <img src={selectedStudentToView.photoUrl} alt="Current profile" className="w-10 h-10 rounded-full object-cover border shadow-sm" />
+                             <span className="font-medium">Current photo</span>
+                           </div>
+                        )}
+                      </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">First Name *</label>
                         <input
@@ -1958,56 +2023,15 @@ export default function StudentManagement() {
                     </div>
                   </div>
 
-                  {/* Schema / Custom Fields Edit */}
-                  {formSchema.length > 0 && (
-                    <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-                      <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Additional Details</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {formSchema.map(field => (
-                          <div key={`edit_${field.id}`}>
-                            {field.type !== 'checkbox' && (
-                              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                                {field.label} {field.required && <span className="text-red-500">*</span>}
-                              </label>
-                            )}
-                            
-                            {field.type === 'select' ? (
-                              <select
-                                required={field.required}
-                                value={editCustomData[field.id] || ''}
-                                onChange={e => setEditCustomData({ ...editCustomData, [field.id]: e.target.value })}
-                                className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
-                              >
-                                <option value="">Select...</option>
-                                {field.options && field.options.split(',').map(opt => (
-                                  <option key={opt.trim()} value={opt.trim()}>{opt.trim()}</option>
-                                ))}
-                              </select>
-                            ) : field.type === 'checkbox' ? (
-                              <label className="flex items-center gap-3 mt-2 cursor-pointer select-none">
-                                <input
-                                  type="checkbox"
-                                  required={field.required}
-                                  checked={editCustomData[field.id] || false}
-                                  onChange={e => setEditCustomData({ ...editCustomData, [field.id]: e.target.checked })}
-                                  className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
-                                />
-                                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">{field.label} {field.required && <span className="text-red-500">*</span>}</span>
-                              </label>
-                            ) : (
-                              <input
-                                type={field.type}
-                                required={field.required}
-                                value={editCustomData[field.id] || ''}
-                                onChange={e => setEditCustomData({ ...editCustomData, [field.id]: e.target.value })}
-                                className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
-                              />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  {/* Custom Fields Edit */}
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Additional Details</h4>
+                    <CustomFieldsRenderer
+                      moduleKey="students"
+                      customData={editCustomData}
+                      onChange={(k, v) => setEditCustomData(prev => ({...prev, [k]: v}))}
+                    />
+                  </div>
 
                   {/* Read-Only System Metadata Section in Edit Mode */}
                   <div className="bg-slate-100/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-400 space-y-1 select-none">
@@ -2032,9 +2056,15 @@ export default function StudentManagement() {
                   </button>
                   <button 
                     onClick={handleSaveStudentEdit}
-                    className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors shadow-sm"
+                    disabled={saving}
+                    className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    Save
+                    {saving ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Saving...
+                      </>
+                    ) : 'Save'}
                   </button>
                 </>
               ) : (
@@ -2146,6 +2176,26 @@ export default function StudentManagement() {
         cancelText="Cancel"
         type="danger"
       />
+
+      {/* Image Cropper Modal */}
+      {cropModalOpen && tempImageFile && (
+        <ImageCropper
+          imageSrc={tempImageFile}
+          onCropComplete={(croppedFile) => {
+            if (cropTarget === 'add') {
+              setPhotoFile(croppedFile);
+            } else if (cropTarget === 'edit') {
+              setEditPhotoFile(croppedFile);
+            }
+            setCropModalOpen(false);
+            setTempImageFile(null);
+          }}
+          onCancel={() => {
+            setCropModalOpen(false);
+            setTempImageFile(null);
+          }}
+        />
+      )}
 
     </div>
   );
