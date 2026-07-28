@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentsByClass, getAttendance, saveAttendance, subscribeToStudentsByClass, subscribeToAttendance, getAttendanceForClass } from '../../firebase/firestore';
+import { getStudentsByClass, getAttendance, saveAttendance, subscribeToStudentsByClass, subscribeToAttendance, getAttendanceForClass, getAttendanceSettings } from '../../firebase/firestore';
 import { getDoc, doc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle, LuSave as Save, LuUsers as Users, LuFileDown, LuX } from 'react-icons/lu';
@@ -29,6 +29,37 @@ export default function Attendance() {
   const [reportStats, setReportStats] = useState({});
 
   const [showExportModal, setShowExportModal] = useState(false);
+
+  // --- SOP Cutoff & Alerting State ---
+  const [cutoffTime, setCutoffTime] = useState('09:30');
+  const [isPastCutoff, setIsPastCutoff] = useState(false);
+  const [hasExistingRecord, setHasExistingRecord] = useState(false);
+
+  useEffect(() => {
+    if (!schoolId) return;
+    getAttendanceSettings(schoolId).then(settings => {
+      if (settings && settings.cutoffTime) {
+        setCutoffTime(settings.cutoffTime);
+      }
+    });
+  }, [schoolId]);
+
+  useEffect(() => {
+    if (!cutoffTime || selectedDate !== today) {
+      setIsPastCutoff(false);
+      return;
+    }
+    const checkCutoff = () => {
+      const now = new Date();
+      const [h, m] = cutoffTime.split(':').map(Number);
+      const cutoffDate = new Date();
+      cutoffDate.setHours(h, m, 0, 0);
+      setIsPastCutoff(now > cutoffDate);
+    };
+    checkCutoff();
+    const interval = setInterval(checkCutoff, 60000);
+    return () => clearInterval(interval);
+  }, [cutoffTime, selectedDate, today]);
 
   const dailyFieldsList = [
     { key: 'admissionNo', label: 'Admission No' },
@@ -97,14 +128,17 @@ export default function Attendance() {
     const unsub = subscribeToAttendance(schoolId, classId, attendanceKey, (existingRecord) => {
       const newRecords = {};
       if (existingRecord && existingRecord.records) {
+        setHasExistingRecord(true);
         // Load existing statuses
         students.forEach(student => {
           newRecords[student.id] = existingRecord.records[student.id] || 'Present';
         });
       } else {
-        // Default everyone to Present
+        setHasExistingRecord(false);
+        // Default everyone to Present, or Late if past cutoff
+        const defaultStatus = isPastCutoff ? 'Late' : 'Present';
         students.forEach(student => {
-          newRecords[student.id] = 'Present';
+          newRecords[student.id] = defaultStatus;
         });
       }
       setAttendanceRecords(newRecords);
@@ -112,7 +146,7 @@ export default function Attendance() {
     });
 
     return () => unsub();
-  }, [selectedDate, students, schoolId, classId, viewMode]);
+  }, [selectedDate, students, schoolId, classId, viewMode, isPastCutoff]);
 
   useEffect(() => {
     if (viewMode === 'daily' || !schoolId || !classId) return;
@@ -360,6 +394,16 @@ export default function Attendance() {
           )}
         </div>
       </div>
+
+      {viewMode === 'daily' && isPastCutoff && !hasExistingRecord && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl flex items-start gap-3 animate-fade-in-down">
+          <AlertCircle size={20} className="text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-bold text-sm">Attendance not marked — past cutoff ({cutoffTime})</p>
+            <p className="text-xs text-amber-700 mt-0.5">New marks will default to Late. Teachers can still mark attendance manually.</p>
+          </div>
+        </div>
+      )}
 
       {successMsg && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl flex items-center gap-3 animate-fade-in-down">

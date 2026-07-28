@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, getNotices, subscribeToSubCollection, subscribeToNotices, subscribeToInvoices, cleanupOldChatAudio } from '../../firebase/firestore';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import ConfirmModal from '../../components/ConfirmModal';
+import toast from 'react-hot-toast';
 import { 
   LuUsers as Users, 
   LuGraduationCap as GraduationCap, 
@@ -17,7 +18,8 @@ import {
   LuUser as User,
   LuCheck as Check,
   LuCopy as Copy,
-  LuTrash2 as Trash2
+  LuTrash2 as Trash2,
+  LuCircleAlert as AlertCircle
 } from 'react-icons/lu';
 import { 
   FiSettings as Settings,
@@ -57,6 +59,7 @@ export default function AdminOverview() {
   const [recentNotices, setRecentNotices] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [pendingAttendanceAlerts, setPendingAttendanceAlerts] = useState([]);
   const [isInviteDropdownOpen, setIsInviteDropdownOpen] = useState(false);
   const [copiedRole, setCopiedRole] = useState(null);
   const dropdownRef = useRef(null);
@@ -132,11 +135,24 @@ export default function AdminOverview() {
     }
   };
 
+  const handleDismissAlert = async (alertId) => {
+    try {
+      await updateDoc(doc(db, `schools/${schoolId}/notifications`, alertId), {
+        read: true,
+        resolvedAt: new Date().toISOString()
+      });
+      toast.success("Alert dismissed successfully");
+    } catch (error) {
+      console.error("Error dismissing alert:", error);
+      toast.error("Failed to dismiss alert");
+    }
+  };
+
   useEffect(() => {
     if (!schoolId) return;
 
     setLoading(true);
-    let studentsUnsub, staffUnsub, classesUnsub, noticesUnsub, invoicesUnsub, payrollUnsub, calendarUnsub;
+    let studentsUnsub, staffUnsub, classesUnsub, noticesUnsub, invoicesUnsub, payrollUnsub, calendarUnsub, alertsUnsub;
 
     studentsUnsub = subscribeToSubCollection(schoolId, 'students', (data) => {
       setStats(prev => ({ ...prev, students: data.length }));
@@ -178,6 +194,23 @@ export default function AdminOverview() {
       setSystemStatus(prev => ({ ...prev, activeEvents: upcoming }));
     });
 
+    // Subscriptions for pending attendance alerts
+    const alertsQuery = query(
+      collection(db, `schools/${schoolId}/notifications`),
+      where('type', '==', 'attendance_pending'),
+      where('read', '==', false),
+      orderBy('createdAt', 'desc')
+    );
+    alertsUnsub = onSnapshot(alertsQuery, (snapshot) => {
+      const alerts = [];
+      snapshot.forEach(docSnap => {
+        alerts.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      setPendingAttendanceAlerts(alerts);
+    }, (error) => {
+      console.error("Error fetching pending attendance alerts:", error);
+    });
+
     return () => {
       if (studentsUnsub) studentsUnsub();
       if (staffUnsub) staffUnsub();
@@ -186,6 +219,7 @@ export default function AdminOverview() {
       if (invoicesUnsub) invoicesUnsub();
       if (payrollUnsub) payrollUnsub();
       if (calendarUnsub) calendarUnsub();
+      if (alertsUnsub) alertsUnsub();
     };
   }, [schoolId]);
 
@@ -316,6 +350,38 @@ export default function AdminOverview() {
       )}
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {/* Pending Attendance Alerts */}
+        {pendingAttendanceAlerts.length > 0 && (
+          <div className="col-span-1 rounded-xl bg-white shadow-sm border border-red-200 overflow-hidden">
+            <div className="border-b border-red-100 px-6 py-4 bg-red-50/55 flex items-center justify-between">
+              <h2 className="text-base font-bold text-red-800 flex items-center gap-2">
+                <AlertCircle className="text-red-600" size={20} /> Pending Attendance
+              </h2>
+              <span className="bg-red-100 text-red-800 text-xs px-2.5 py-0.5 rounded-full font-black">
+                {pendingAttendanceAlerts.length}
+              </span>
+            </div>
+            <div className="p-6 space-y-4 max-h-[380px] overflow-y-auto divide-y divide-slate-50">
+              {pendingAttendanceAlerts.map((alert) => (
+                <div key={alert.id} className="flex items-start justify-between gap-4 pt-3 first:pt-0">
+                  <div>
+                    <p className="font-bold text-slate-800 text-sm">{alert.message}</p>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Cutoff Date: <span className="font-semibold text-slate-700">{alert.date}</span>
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleDismissAlert(alert.id)}
+                    className="text-xs font-bold text-slate-500 hover:text-red-600 hover:bg-red-50/80 px-2 py-1 rounded-lg transition-colors shrink-0"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Recent Notices */}
         {config.widgets.recentNotices !== false && (
           <div className="col-span-1 rounded-xl bg-white shadow-sm border border-slate-200">

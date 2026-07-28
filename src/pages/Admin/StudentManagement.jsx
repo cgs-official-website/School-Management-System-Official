@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { getDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getDoc, doc, deleteDoc, onSnapshot, query, where, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
@@ -82,6 +82,65 @@ export default function StudentManagement() {
   const [genderFilter, setGenderFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // --- Attendance History states ---
+  const [studentStats, setStudentStats] = useState(null);
+  const [studentHistory, setStudentHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    if (!schoolId || !selectedStudentToView || !viewStudentModalOpen) {
+      setStudentStats(null);
+      setStudentHistory([]);
+      return;
+    }
+    
+    const statsRef = doc(db, `schools/${schoolId}/attendanceStats`, selectedStudentToView.id);
+    const unsubStats = onSnapshot(statsRef, (snap) => {
+      if (snap.exists()) {
+        setStudentStats(snap.data());
+      } else {
+        setStudentStats(null);
+      }
+    });
+
+    setLoadingHistory(true);
+    const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+    const q = query(
+      collection(db, `schools/${schoolId}/attendance`),
+      where('classId', '==', selectedStudentToView.classId)
+    );
+
+    getDocs(q).then((snap) => {
+      const history = [];
+      snap.forEach(docSnap => {
+        const docId = docSnap.id;
+        const dateStr = docId.split('_').slice(1).join('_'); // e.g. YYYY-MM-DD or YYYY-MM-DD_FN
+        if (dateStr.startsWith(currentMonth)) {
+          const records = docSnap.data().records || {};
+          const status = records[selectedStudentToView.id];
+          if (status) {
+            history.push({
+              id: docId,
+              date: dateStr.split('_')[0],
+              session: dateStr.split('_')[1] || 'Standard',
+              status
+            });
+          }
+        }
+      });
+      history.sort((a, b) => b.date.localeCompare(a.date));
+      setStudentHistory(history);
+      setLoadingHistory(false);
+    }).catch(err => {
+      console.error("Error loading student attendance history:", err);
+      setLoadingHistory(false);
+    });
+
+    return () => {
+      unsubStats();
+    };
+  }, [schoolId, selectedStudentToView, viewStudentModalOpen]);
 
   useEffect(() => {
     if (!schoolId) return;
@@ -1524,6 +1583,72 @@ export default function StudentManagement() {
                       customData={selectedStudentToView.customData || {}}
                       readOnly={true}
                     />
+                  </div>
+
+                  {/* Attendance Analytics */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60 space-y-6">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-200/80">Attendance Analytics</h4>
+                    {studentStats ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Running Rate</p>
+                          <span className={`inline-block mt-2 text-xl font-black px-2.5 py-0.5 rounded-full border ${
+                            studentStats.attendancePercentage >= 75 ? 'bg-green-50 text-green-700 border-green-200' :
+                            studentStats.attendancePercentage >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                            'bg-red-50 text-red-700 border-red-200'
+                          }`}>
+                            {studentStats.attendancePercentage}%
+                          </span>
+                        </div>
+                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Days</p>
+                          <p className="text-xl font-extrabold text-slate-800 mt-2">{studentStats.totalDays}</p>
+                        </div>
+                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Present / Late</p>
+                          <p className="text-xl font-extrabold text-slate-800 mt-2">
+                            <span className="text-green-600">{studentStats.presentDays}</span>
+                            <span className="text-slate-300 font-light mx-1">/</span>
+                            <span className="text-amber-600">{studentStats.lateDays}</span>
+                          </p>
+                        </div>
+                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Absences</p>
+                          <p className="text-xl font-extrabold text-red-600 mt-2">{studentStats.absentDays}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-400 italic">No running statistics compiled yet for this student.</p>
+                    )}
+
+                    <div>
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">This Month's Daily Log</h5>
+                      {loadingHistory ? (
+                        <div className="flex justify-center py-4">
+                          <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-600 border-t-transparent"></div>
+                        </div>
+                      ) : studentHistory.length === 0 ? (
+                        <p className="text-xs text-slate-400 italic">No daily logs found for the current month.</p>
+                      ) : (
+                        <div className="max-h-[200px] overflow-y-auto border border-slate-200/60 rounded-xl divide-y divide-slate-100 bg-white">
+                          {studentHistory.map((item, idx) => (
+                            <div key={idx} className="flex justify-between items-center px-4 py-2.5 text-xs">
+                              <div>
+                                <span className="font-bold text-slate-800">{new Date(item.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                                <span className="text-slate-400 ml-2 font-medium">({item.session})</span>
+                              </div>
+                              <span className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border text-[10px] ${
+                                item.status === 'Present' ? 'bg-green-50 text-green-700 border-green-100' :
+                                item.status === 'Absent' ? 'bg-red-50 text-red-700 border-red-100' :
+                                'bg-amber-50 text-amber-700 border-amber-100'
+                              }`}>
+                                {item.status}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* System & Metadata Information */}

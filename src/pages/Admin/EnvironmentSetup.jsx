@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSchool, updateSchool, subscribeToFeeCollectionPeriods, createFeeCollectionPeriod, updateFeeCollectionPeriod, deleteFeeCollectionPeriod } from '../../firebase/firestore';
-import { doc, getDoc } from 'firebase/firestore';
+import { getSchool, updateSchool, subscribeToFeeCollectionPeriods, createFeeCollectionPeriod, updateFeeCollectionPeriod, deleteFeeCollectionPeriod, getAttendanceSettings, saveAttendanceSettings, subscribeToLeaveApprovalRules, createLeaveApprovalRule, updateLeaveApprovalRule, deleteLeaveApprovalRule } from '../../firebase/firestore';
+import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuSave as Save, LuBuilding2 as Building2, LuMapPin as MapPin, LuPhone as Phone, LuGlobe as Globe, LuImage as ImageIcon, LuPalette as Palette, LuCalendar as Calendar, LuCircleCheck as CheckCircle2, LuSettings as Settings, LuPlus as Plus, LuPencil as Pencil, LuTrash as Trash, LuX as X, LuIndianRupee as IndianRupee } from 'react-icons/lu';
+import { LuSave as Save, LuBuilding2 as Building2, LuMapPin as MapPin, LuPhone as Phone, LuGlobe as Globe, LuImage as ImageIcon, LuPalette as Palette, LuCalendar as Calendar, LuCircleCheck as CheckCircle2, LuSettings as Settings, LuPlus as Plus, LuPencil as Pencil, LuTrash as Trash, LuX as X, LuIndianRupee as IndianRupee, LuClock as Clock, LuTriangleAlert as AlertTriangle, LuUserCheck as UserCheck } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
 export default function EnvironmentSetup() {
@@ -38,6 +38,24 @@ export default function EnvironmentSetup() {
   const [periodForm, setPeriodForm] = useState({ name: '', code: '', displayOrder: '', description: '', status: 'active' });
   const [savingPeriod, setSavingPeriod] = useState(false);
 
+  // --- Attendance Settings State ---
+  const [attendanceConfig, setAttendanceConfig] = useState({
+    cutoffTime: '09:30',
+    lateThreshold: '09:30',
+    absenteeThreshold: 2,
+    workingHoursStart: '09:00',
+    workingHoursEnd: '16:00'
+  });
+  const [savingAttendance, setSavingAttendance] = useState(false);
+
+  // --- Leave Approval Rules State ---
+  const [leaveRules, setLeaveRules] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [showLeaveRuleModal, setShowLeaveRuleModal] = useState(false);
+  const [editingLeaveRule, setEditingLeaveRule] = useState(null);
+  const [leaveRuleForm, setLeaveRuleForm] = useState({ minDays: '', maxDays: '', roleId: '', order: '' });
+  const [savingLeaveRule, setSavingLeaveRule] = useState(false);
+
   useEffect(() => {
     if (schoolId) fetchSchoolData();
   }, [schoolId]);
@@ -47,6 +65,42 @@ export default function EnvironmentSetup() {
     if (!schoolId) return;
     const unsub = subscribeToFeeCollectionPeriods(schoolId, setPeriods);
     return () => unsub();
+  }, [schoolId]);
+
+  // Subscribe to leave approval rules in real-time
+  useEffect(() => {
+    if (!schoolId) return;
+    const unsub = subscribeToLeaveApprovalRules(schoolId, setLeaveRules);
+    return () => unsub();
+  }, [schoolId]);
+
+  // Fetch roles list for dropdown
+  const fetchRolesList = async () => {
+    if (!schoolId) return;
+    try {
+      const rolesRef = collection(db, `schools/${schoolId}/roles`);
+      const snapshot = await getDocs(rolesRef);
+      const rolesData = [];
+      snapshot.forEach(doc => {
+        rolesData.push({ id: doc.id, name: doc.id });
+      });
+      if (rolesData.length === 0) {
+        const DEFAULT_ROLES = [
+          'Correspondent', 'Principal', 'Vice Principal', 'Subject Wise Head',
+          'Class Incharge', 'Staffs', 'Administrative Officer', 'Finance Department',
+          'Library', 'Canteen', 'Transport', 'Janitors', 'Hostel', 'Inventory', 'Security'
+        ];
+        setRoles(DEFAULT_ROLES.map(r => ({ id: r, name: r })));
+      } else {
+        setRoles(rolesData);
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (schoolId) fetchRolesList();
   }, [schoolId]);
 
   // --- Fee Period Handlers ---
@@ -110,6 +164,110 @@ export default function EnvironmentSetup() {
     }
   };
 
+  // --- Attendance Settings Handlers ---
+  const handleSaveAttendanceConfig = async (e) => {
+    e.preventDefault();
+    setSavingAttendance(true);
+    try {
+      await saveAttendanceSettings(schoolId, attendanceConfig);
+      toast.success('Attendance settings updated successfully.');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save attendance settings.');
+    } finally {
+      setSavingAttendance(false);
+    }
+  };
+
+  // --- Leave Approval Rules Handlers ---
+  const openAddLeaveRule = () => {
+    setEditingLeaveRule(null);
+    setLeaveRuleForm({ minDays: '', maxDays: '', roleId: roles[0]?.id || '', order: leaveRules.length + 1 });
+    setShowLeaveRuleModal(true);
+  };
+
+  const openEditLeaveRule = (rule) => {
+    setEditingLeaveRule(rule);
+    setLeaveRuleForm({
+      minDays: rule.minDays,
+      maxDays: rule.maxDays === null || rule.maxDays === undefined ? '' : rule.maxDays,
+      roleId: rule.roleId,
+      order: rule.order || 1
+    });
+    setShowLeaveRuleModal(true);
+  };
+
+  const handleSaveLeaveRule = async (e) => {
+    e.preventDefault();
+    if (leaveRuleForm.minDays === '' || !leaveRuleForm.roleId) {
+      toast.error('Please fill in all required fields.');
+      return;
+    }
+    setSavingLeaveRule(true);
+    try {
+      const payload = {
+        minDays: Number(leaveRuleForm.minDays),
+        maxDays: leaveRuleForm.maxDays === '' ? null : Number(leaveRuleForm.maxDays),
+        roleId: leaveRuleForm.roleId,
+        order: Number(leaveRuleForm.order) || 1
+      };
+      if (editingLeaveRule) {
+        await updateLeaveApprovalRule(schoolId, editingLeaveRule.id, payload);
+        toast.success('Leave rule updated successfully.');
+      } else {
+        await createLeaveApprovalRule(schoolId, payload);
+        toast.success('Leave rule added successfully.');
+      }
+      setShowLeaveRuleModal(false);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to save leave rule.');
+    } finally {
+      setSavingLeaveRule(false);
+    }
+  };
+
+  const handleDeleteLeaveRule = async (rule) => {
+    if (!window.confirm('Delete this leave approval rule?')) return;
+    try {
+      await deleteLeaveApprovalRule(schoolId, rule.id);
+      toast.success('Leave rule deleted.');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to delete leave rule.');
+    }
+  };
+
+  const getLeaveRulesWarnings = () => {
+    const warnings = [];
+    if (leaveRules.length === 0) return warnings;
+
+    const coversOneDay = leaveRules.some(r => {
+      const min = Number(r.minDays);
+      const max = r.maxDays === null || r.maxDays === undefined ? Infinity : Number(r.maxDays);
+      return min <= 1 && max >= 1;
+    });
+    if (!coversOneDay) {
+      warnings.push("No leave approval rule covers 1-day leaves.");
+    }
+
+    const sorted = [...leaveRules].sort((a, b) => Number(a.minDays) - Number(b.minDays));
+    for (let i = 0; i < sorted.length - 1; i++) {
+      const currentMin = Number(sorted[i].minDays);
+      const currentMax = sorted[i].maxDays === null || sorted[i].maxDays === undefined ? Infinity : Number(sorted[i].maxDays);
+      const nextMin = Number(sorted[i+1].minDays);
+      const nextMax = sorted[i+1].maxDays === null || sorted[i+1].maxDays === undefined ? Infinity : Number(sorted[i+1].maxDays);
+
+      if (currentMax >= nextMin) {
+        warnings.push(`Overlap detected: Band [${currentMin} - ${currentMax === Infinity ? 'and above' : currentMax}] overlaps with Band [${nextMin} - ${nextMax === Infinity ? 'and above' : nextMax}].`);
+      } else if (currentMax < nextMin - 1) {
+        warnings.push(`Gap detected: Gaps exist between Band [${currentMin} - ${currentMax}] and Band [${nextMin} - ${nextMax === Infinity ? 'and above' : nextMax}]. Days ${currentMax + 1} to ${nextMin - 1} are not covered.`);
+      }
+    }
+
+    return warnings;
+  };
+
   const fetchSchoolData = async () => {
     try {
       const data = await getSchool(schoolId);
@@ -125,6 +283,18 @@ export default function EnvironmentSetup() {
         if (data.customData) {
           setCustomData(data.customData);
         }
+      }
+
+      // Fetch Attendance Settings
+      const attSettings = await getAttendanceSettings(schoolId);
+      if (attSettings) {
+        setAttendanceConfig({
+          cutoffTime: attSettings.cutoffTime || '09:30',
+          lateThreshold: attSettings.lateThreshold || attSettings.cutoffTime || '09:30',
+          absenteeThreshold: attSettings.absenteeThreshold !== undefined ? Number(attSettings.absenteeThreshold) : 2,
+          workingHoursStart: attSettings.workingHoursStart || '09:00',
+          workingHoursEnd: attSettings.workingHoursEnd || '16:00'
+        });
       }
 
       // Fetch Schema
@@ -488,6 +658,137 @@ export default function EnvironmentSetup() {
           )}
         </section>
 
+        {/* Attendance Settings (SOP alignment) */}
+        <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
+            <Clock className="text-primary-600" size={24} />
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">Attendance Configuration</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Configure school timings, thresholds, and thresholds for automated flags.</p>
+            </div>
+          </div>
+          <form onSubmit={handleSaveAttendanceConfig} className="p-8 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Working Hours Start</label>
+                <input
+                  type="time" required
+                  value={attendanceConfig.workingHoursStart}
+                  onChange={(e) => setAttendanceConfig({ ...attendanceConfig, workingHoursStart: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Working Hours End</label>
+                <input
+                  type="time" required
+                  value={attendanceConfig.workingHoursEnd}
+                  onChange={(e) => setAttendanceConfig({ ...attendanceConfig, workingHoursEnd: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Cutoff Time (Late after this)</label>
+                <input
+                  type="time" required
+                  value={attendanceConfig.cutoffTime}
+                  onChange={(e) => setAttendanceConfig({ ...attendanceConfig, cutoffTime: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Absentee Threshold (Absences/Month before Flag)</label>
+                <input
+                  type="number" required min="1"
+                  value={attendanceConfig.absenteeThreshold}
+                  onChange={(e) => setAttendanceConfig({ ...attendanceConfig, absenteeThreshold: Number(e.target.value) })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end pt-4">
+              <button
+                type="submit"
+                disabled={savingAttendance}
+                className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-sm transition-colors flex items-center gap-2 disabled:opacity-60"
+              >
+                <Save size={18} /> {savingAttendance ? 'Saving...' : 'Save Settings'}
+              </button>
+            </div>
+          </form>
+        </section>
+
+        {/* Leave Approval Rules builder */}
+        <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <UserCheck className="text-primary-600" size={24} />
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">Leave Approval Rules</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Build a custom multi-level leave approval ladder by duration bands.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={openAddLeaveRule}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-semibold text-sm hover:bg-primary-700 transition-colors"
+            >
+              <Plus size={16} /> Add Band
+            </button>
+          </div>
+
+          {/* Validation Warnings */}
+          {getLeaveRulesWarnings().length > 0 && (
+            <div className="mx-8 mt-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-1">
+              <div className="flex items-center gap-2 text-amber-800 font-bold text-sm">
+                <AlertTriangle size={16} />
+                <span>Configuration Warnings (Non-blocking):</span>
+              </div>
+              <ul className="list-disc list-inside text-xs text-amber-700 pl-2 space-y-1">
+                {getLeaveRulesWarnings().map((w, idx) => (
+                  <li key={idx}>{w}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {leaveRules.length === 0 ? (
+            <div className="p-12 text-center text-slate-400">
+              <UserCheck className="mx-auto mb-3 opacity-30" size={40} />
+              <p className="font-semibold text-sm text-slate-500">No leave approval rules configured.</p>
+              <p className="text-xs mt-1">Leaves will trigger manual routing to general admins until rules are added.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-100">
+              {leaveRules.map((rule) => (
+                <div key={rule.id} className="flex items-center justify-between px-6 py-4 hover:bg-slate-50/60 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-black text-sm shrink-0">
+                      {rule.order || '—'}
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-900">
+                        {rule.minDays} {rule.maxDays === null ? 'and above' : `to ${rule.maxDays}`} Days
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Route to Role: <span className="font-semibold text-indigo-600">{rule.roleId}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button type="button" onClick={() => openEditLeaveRule(rule)} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                      <Pencil size={15} />
+                    </button>
+                    <button type="button" onClick={() => handleDeleteLeaveRule(rule)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                      <Trash size={15} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
       </div>
 
       {/* Period Modal */}
@@ -544,6 +845,72 @@ export default function EnvironmentSetup() {
                 <button type="button" onClick={() => setShowPeriodModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" disabled={savingPeriod} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60">
                   {savingPeriod ? 'Saving...' : editingPeriod ? 'Update Period' : 'Add Period'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Leave Approval Rule Modal */}
+      {showLeaveRuleModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-lg font-bold text-slate-900">{editingLeaveRule ? 'Edit Approval Rule' : 'Add Leave Approval Band'}</h3>
+              <button type="button" onClick={() => setShowLeaveRuleModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full"><X size={18} /></button>
+            </div>
+            <form onSubmit={handleSaveLeaveRule} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Min Days <span className="text-red-500">*</span></label>
+                  <input
+                    type="number" required min="1"
+                    value={leaveRuleForm.minDays}
+                    onChange={(e) => setLeaveRuleForm(p => ({ ...p, minDays: e.target.value }))}
+                    placeholder="e.g. 1"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Max Days (blank for +)</label>
+                  <input
+                    type="number" min={leaveRuleForm.minDays || 1}
+                    value={leaveRuleForm.maxDays}
+                    onChange={(e) => setLeaveRuleForm(p => ({ ...p, maxDays: e.target.value }))}
+                    placeholder="e.g. 3"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Route to Role <span className="text-red-500">*</span></label>
+                <select
+                  required
+                  value={leaveRuleForm.roleId}
+                  onChange={(e) => setLeaveRuleForm(p => ({ ...p, roleId: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                >
+                  <option value="">Select role...</option>
+                  {roles.map(r => (
+                    <option key={r.id} value={r.id}>{r.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Evaluation Order (Priority)</label>
+                <input
+                  type="number" min="1"
+                  value={leaveRuleForm.order}
+                  onChange={(e) => setLeaveRuleForm(p => ({ ...p, order: e.target.value }))}
+                  placeholder="e.g. 1"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <button type="button" onClick={() => setShowLeaveRuleModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
+                <button type="submit" disabled={savingLeaveRule} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60">
+                  {savingLeaveRule ? 'Saving...' : editingLeaveRule ? 'Update Rule' : 'Add Rule'}
                 </button>
               </div>
             </form>
