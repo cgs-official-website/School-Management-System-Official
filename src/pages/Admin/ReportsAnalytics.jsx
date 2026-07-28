@@ -1,9 +1,9 @@
 import React from 'react';
-import { LuChartBar, LuTrendingUp, LuUsers, LuDollarSign, LuGraduationCap } from 'react-icons/lu';
+import { LuChartBar, LuTrendingUp, LuUsers, LuIndianRupee, LuGraduationCap } from 'react-icons/lu';
 
 export default function ReportsAnalytics() {
   const metrics = [
-    { title: 'Total Revenue (YTD)', value: '₹1,240,500', trend: '+14%', icon: LuDollarSign, color: 'bg-emerald-500' },
+    { title: 'Total Revenue (YTD)', value: '₹1,240,500', trend: '+14%', icon: LuIndianRupee, color: 'bg-emerald-500' },
     { title: 'Student Enrollment', value: '3,250', trend: '+5%', icon: LuUsers, color: 'bg-blue-500' },
     { title: 'Average Attendance', value: '94.2%', trend: '-1.2%', icon: LuTrendingUp, color: 'bg-indigo-500' },
     { title: 'Graduation Rate', value: '98.5%', trend: '+0.5%', icon: LuGraduationCap, color: 'bg-purple-500' },

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, createFeeStructure, getInvoices, markInvoicePaid, subscribeToSubCollection, subscribeToInvoices, subscribeToFeeCollectionPeriods } from '../../firebase/firestore';
 import { LuCreditCard as CreditCard, LuPlus as Plus, LuCircleCheck as CheckCircle2, LuSearch as Search, LuX as X, LuReceipt as Receipt, LuIndianRupee as DollarSign, LuTrendingUp as TrendingUp, LuTriangleAlert as AlertTriangle, LuFilter as Filter } from 'react-icons/lu';
@@ -184,7 +184,7 @@ export default function FeeManagement() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Expected</p>
-            <p className="text-2xl font-black text-slate-900">â‚¹{stats.expected.toLocaleString()}</p>
+            <p className="text-2xl font-black text-slate-900">₹{stats.expected.toLocaleString()}</p>
           </div>
         </div>
         
@@ -194,7 +194,7 @@ export default function FeeManagement() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Collected Revenue</p>
-            <p className="text-2xl font-black text-slate-900">â‚¹{stats.collected.toLocaleString()}</p>
+            <p className="text-2xl font-black text-slate-900">₹{stats.collected.toLocaleString()}</p>
           </div>
         </div>
         
@@ -204,7 +204,7 @@ export default function FeeManagement() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Outstanding</p>
-            <p className="text-2xl font-black text-slate-900">â‚¹{stats.outstanding.toLocaleString()}</p>
+            <p className="text-2xl font-black text-slate-900">₹{stats.outstanding.toLocaleString()}</p>
           </div>
         </div>
       </div>
@@ -302,7 +302,7 @@ export default function FeeManagement() {
                         )}
                       </td>
                       <td className="p-4 font-mono font-bold text-slate-700">
-                        â‚¹{inv.amount.toLocaleString()}
+                        ₹{inv.amount.toLocaleString()}
                       </td>
                       <td className="p-4">
                         {inv.status === 'Paid' ? (
@@ -393,7 +393,7 @@ export default function FeeManagement() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Amount (â‚¹)</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Amount (₹)</label>
                     <input 
                       type="number" required min="0" step="0.01"
                       value={newFee.amount}
