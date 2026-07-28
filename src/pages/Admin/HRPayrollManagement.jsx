@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, X, Search, Filter, Edit, Trash2, Download, Settings, UploadCloud, Printer, FileText } from 'lucide-react';
-import { LuBriefcase, LuIndianRupee } from 'react-icons/lu';
+import { LuBriefcase, LuIndianRupee, LuCircleDollarSign } from 'react-icons/lu';
 import ConfirmModal from '../../components/ConfirmModal';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, addSubDocument, updateSubDocument, deleteSubDocument } from '../../firebase/firestore';
