@@ -34,6 +34,7 @@ export default function ClassRoster() {
   const [todayDate] = useState(new Date().toISOString().split('T')[0]); // YYYY-MM-DD
 
   const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
   const [selectedFields, setSelectedFields] = useState({
     admissionNumber: true,
     firstName: true,
@@ -102,8 +103,10 @@ export default function ClassRoster() {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Class Roster");
     
-    const className = classDetails ? `${classDetails.name}_Section_${classDetails.section}` : "Class_Roster";
-    XLSX.writeFile(workbook, `${className}_Students.xlsx`);
+    const rawName = exportFileName.trim() || (classDetails ? `${classDetails.name}_Section_${classDetails.section}_Students` : "Class_Roster_Students");
+    const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
+    
+    XLSX.writeFile(workbook, finalFileName);
     setShowExportModal(false);
     toast.success("Student details exported successfully!");
   };
@@ -276,7 +279,11 @@ export default function ClassRoster() {
           </div>
           
           <button
-            onClick={() => setShowExportModal(true)}
+            onClick={() => {
+              const defaultName = classDetails ? `${classDetails.name}_Section_${classDetails.section}_Students` : "Class_Roster_Students";
+              setExportFileName(defaultName);
+              setShowExportModal(true);
+            }}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
           >
             <LuFileDown size={18} />
@@ -388,6 +395,21 @@ export default function ClassRoster() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* File Name Input */}
+              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="e.g. Class_Roster_Students"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                  />
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                </div>
+              </div>
+
               {/* Select All / Deselect All Controls */}
               <div className="flex gap-3">
                 <button

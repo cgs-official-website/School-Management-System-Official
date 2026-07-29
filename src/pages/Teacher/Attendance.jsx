@@ -29,6 +29,7 @@ export default function Attendance() {
   const [reportStats, setReportStats] = useState({});
 
   const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
 
   // --- SOP Cutoff & Alerting State ---
   const [cutoffTime, setCutoffTime] = useState('09:30');
@@ -326,7 +327,11 @@ export default function Attendance() {
 
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
-      XLSX.writeFile(wb, fileName);
+      
+      const rawName = exportFileName.trim() || fileName.replace(/\.xlsx$/i, '');
+      const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
+      
+      XLSX.writeFile(wb, finalFileName);
       setShowExportModal(false);
       toast.success('Attendance exported successfully!');
     } catch (error) {
@@ -349,13 +354,32 @@ export default function Attendance() {
   }
 
   return (
-    <div className="p-8 max-w-5xl mx-auto pb-24">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto h-full flex flex-col">
+      {/* Banner */}
+      <div className="relative bg-gradient-to-br from-primary-600 to-indigo-700 rounded-3xl p-6 md:p-8 text-white overflow-hidden shadow-lg mb-8 shrink-0">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-primary-500/20 rounded-full blur-2xl translate-y-1/2"></div>
+        
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/20 mb-4 backdrop-blur-sm">
+              <CheckSquare size={14} /> My Assigned Class
+            </span>
+            <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-tight">
+              Attendance Manager
+            </h1>
+            <p className="text-slate-300 text-lg flex items-center gap-2">
+              {classDetails ? `${classDetails.name} - Section ${classDetails.section}` : 'Loading Class...'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Attendance</h1>
-          <p className="text-slate-500 mt-1">
-            {classDetails ? `${classDetails.name} - Section ${classDetails.section}` : 'Loading...'}
-          </p>
+          <h2 className="text-2xl font-bold text-slate-900">Mark Attendance</h2>
+          <p className="text-slate-500 mt-1">Select date/session to register or view class attendance statistics.</p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50/50 p-2 rounded-2xl border border-slate-100">
@@ -421,7 +445,14 @@ export default function Attendance() {
           </div>
           <div className="flex items-center gap-2">
             <button 
-              onClick={() => setShowExportModal(true)}
+              onClick={() => {
+                const className = classDetails ? `${classDetails.name}-${classDetails.section}` : 'class';
+                const defaultName = viewMode === 'daily' 
+                  ? `Attendance_${className}_${selectedDate}_${selectedSession}` 
+                  : `Attendance_${className}_${viewMode === 'weekly' ? 'Weekly' : viewMode === 'monthly' ? 'Monthly' : 'Term'}_Report`;
+                setExportFileName(defaultName);
+                setShowExportModal(true);
+              }}
               disabled={loading || students.length === 0}
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98] disabled:opacity-50"
             >
@@ -588,6 +619,21 @@ export default function Attendance() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* File Name Input */}
+              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="e.g. Attendance_Report"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                  />
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                </div>
+              </div>
+
               {/* Select All / Deselect All Controls */}
               <div className="flex gap-3">
                 <button

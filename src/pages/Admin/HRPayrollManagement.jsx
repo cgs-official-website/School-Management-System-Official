@@ -12,6 +12,7 @@ import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 export default function HRPayrollManagement() {
   const { userProfile } = useAuth();
@@ -28,6 +29,87 @@ export default function HRPayrollManagement() {
   const [confirmModalState, setConfirmModalState] = useState({ isOpen: false, idToDelete: null });
   const [formData, setFormData] = useState({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0, esiCalculated: 0, customData: {} });
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Export states
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
+  const [selectedFields, setSelectedFields] = useState({
+    name: true,
+    role: true,
+    month: true,
+    baseSalary: true,
+    deductions: true,
+    netPay: true,
+    status: true
+  });
+
+  const availableFieldsList = [
+    { key: 'name', label: 'Staff Name' },
+    { key: 'role', label: 'Role' },
+    { key: 'month', label: 'Month' },
+    { key: 'baseSalary', label: 'Base Salary' },
+    { key: 'deductions', label: 'Deductions' },
+    { key: 'netPay', label: 'Net Pay' },
+    { key: 'status', label: 'Status' }
+  ];
+
+  const handleFieldToggle = (fieldKey) => {
+    setSelectedFields(prev => ({ ...prev, [fieldKey]: !prev[fieldKey] }));
+  };
+
+  const handleSelectAll = (selectVal) => {
+    const updated = {};
+    availableFieldsList.forEach(field => {
+      updated[field.key] = selectVal;
+    });
+    setSelectedFields(updated);
+  };
+
+  const handleExport = () => {
+    if (payrolls.length === 0) {
+      toast.error("No payroll data available to export.");
+      return;
+    }
+
+    const activeFields = Object.keys(selectedFields).filter(k => selectedFields[k]);
+    if (activeFields.length === 0) {
+      toast.error("Please select at least one column to export.");
+      return;
+    }
+
+    const exportData = payrolls.map((payroll, index) => {
+      const row = { "S.No": index + 1 };
+      
+      if (selectedFields.name) row["Staff Name"] = payroll.name || '';
+      if (selectedFields.role) row["Role"] = payroll.role || '';
+      if (selectedFields.month) row["Month"] = payroll.month || '';
+      if (selectedFields.baseSalary) row["Base Salary"] = payroll.baseSalary || 0;
+      if (selectedFields.deductions) row["Deductions"] = payroll.deductions || 0;
+      if (selectedFields.netPay) row["Net Pay"] = (payroll.baseSalary - payroll.deductions) || 0;
+      if (selectedFields.status) row["Status"] = payroll.status || 'Pending';
+      
+      return row;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payroll Report");
+    
+    const rawName = exportFileName.trim() || "HR_Payroll_Report";
+    const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
+    
+    XLSX.writeFile(workbook, finalFileName);
+    setShowExportModal(false);
+    toast.success("Payroll report exported successfully!");
+  };
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const [signatureFile, setSignatureFile] = useState(null);
   const [uploadingSig, setUploadingSig] = useState(false);
@@ -127,8 +209,8 @@ export default function HRPayrollManagement() {
     }
 
     try {
-      const uploadedCustomData = await uploadCustomDataFiles(formData.customData, schoolId, 'hr-payroll');
-      const finalFormData = { ...formData, customData: uploadedCustomData };
+      const uploadedCustomData = await uploadCustomDataFiles(formData.customData || {}, schoolId, 'hr-payroll');
+      const finalFormData = { ...formData, customData: uploadedCustomData || {} };
 
       if (formData.id) {
         await updateSubDocument(schoolId, 'payroll', formData.id, finalFormData);
@@ -213,6 +295,11 @@ export default function HRPayrollManagement() {
 
   const filteredPayrolls = payrolls.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.role.toLowerCase().includes(searchTerm.toLowerCase()));
 
+  const totalPages = Math.ceil(filteredPayrolls.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentPayrolls = filteredPayrolls.slice(indexOfFirstItem, indexOfLastItem);
+
   const handlePrint = () => {
     window.print();
   };
@@ -284,11 +371,14 @@ export default function HRPayrollManagement() {
           >
             <Settings size={20} /> Settings
           </button>
-          <button className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm">
+          <button 
+            onClick={() => { setExportFileName('HR_Payroll_Report'); setShowExportModal(true); }}
+            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm cursor-pointer"
+          >
             <Download size={20} /> Export Report
           </button>
           <button 
-            onClick={() => { setFormData({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0, esiCalculated: 0 }); setShowModal(true); }}
+            onClick={() => { setFormData({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0, esiCalculated: 0, customData: {} }); setShowModal(true); }}
             className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-xl hover:bg-primary-700 transition-all font-medium shadow-sm"
           >
             <Plus size={20} /> Add Record
@@ -333,32 +423,31 @@ export default function HRPayrollManagement() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse min-w-[900px]">
+        <div className="flex-1 overflow-auto custom-scrollbar">          <table className="w-full text-left border-collapse table-fixed">
             <thead className="bg-slate-50 sticky top-0 z-10">
               <tr>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Staff Name</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Role</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Month</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Base Salary</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Deductions</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Net Pay</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Status</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200 text-right">Actions</th>
+                <th className="w-[22%] min-w-[150px] p-4 font-semibold text-slate-600 border-b border-slate-200">Staff Name</th>
+                <th className="w-[13%] min-w-[100px] p-4 font-semibold text-slate-600 border-b border-slate-200">Role</th>
+                <th className="w-[13%] min-w-[100px] p-4 font-semibold text-slate-600 border-b border-slate-200">Month</th>
+                <th className="w-[13%] min-w-[100px] p-4 font-semibold text-slate-600 border-b border-slate-200">Base Salary</th>
+                <th className="w-[13%] min-w-[100px] p-4 font-semibold text-slate-600 border-b border-slate-200">Deductions</th>
+                <th className="w-[13%] min-w-[100px] p-4 font-semibold text-slate-600 border-b border-slate-200">Net Pay</th>
+                <th className="w-[13%] min-w-[100px] p-4 font-semibold text-slate-600 border-b border-slate-200">Status</th>
+                <th className="w-[100px] min-w-[100px] p-4 font-semibold text-slate-600 border-b border-slate-200 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredPayrolls.map((payroll) => {
+              {currentPayrolls.map((payroll) => {
                 const netPay = payroll.baseSalary - payroll.deductions;
                 return (
                   <tr key={payroll.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-4 font-bold text-slate-900">{payroll.name}</td>
-                    <td className="p-4 text-slate-600 font-medium">{payroll.role}</td>
-                    <td className="p-4 text-slate-600 font-medium">{payroll.month}</td>
-                    <td className="p-4 text-slate-700">₹{payroll.baseSalary.toLocaleString()}</td>
-                    <td className="p-4 text-red-600">-₹{payroll.deductions.toLocaleString()}</td>
-                    <td className="p-4 font-bold text-emerald-600">₹{netPay.toLocaleString()}</td>
-                    <td className="p-4">
+                    <td className="p-4 font-bold text-slate-900 truncate" title={payroll.name}>{payroll.name}</td>
+                    <td className="p-4 text-slate-600 font-medium truncate" title={payroll.role}>{payroll.role}</td>
+                    <td className="p-4 text-slate-600 font-medium truncate" title={payroll.month}>{payroll.month}</td>
+                    <td className="p-4 text-slate-700 truncate">₹{payroll.baseSalary.toLocaleString()}</td>
+                    <td className="p-4 text-red-600 truncate">-₹{payroll.deductions.toLocaleString()}</td>
+                    <td className="p-4 font-bold text-emerald-600 truncate">₹{netPay.toLocaleString()}</td>
+                    <td className="p-4 truncate">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
                         payroll.status === 'Paid' ? 'bg-emerald-100 text-emerald-700' : 
                         payroll.status === 'Payslip Released' ? 'bg-purple-100 text-purple-700' : 
@@ -368,21 +457,21 @@ export default function HRPayrollManagement() {
                       </span>
                     </td>
                     <td className="p-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1">
                         {payroll.status === 'Payslip Released' && (
                           <button 
                             onClick={() => setShowPayslipModal(payroll)}
-                            className="p-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                             title="Download Payslip"
                           >
-                            <FileText size={18} />
+                            <FileText size={16} />
                           </button>
                         )}
-                        <button onClick={() => { setFormData(payroll); setShowModal(true); }} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
-                          <Edit size={18} />
+                        <button onClick={() => { setFormData(payroll); setShowModal(true); }} className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors" title="Edit">
+                          <Edit size={16} />
                         </button>
-                        <button onClick={() => handleDeleteClick(payroll.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                          <Trash2 size={18} />
+                        <button onClick={() => handleDeleteClick(payroll.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>
@@ -399,6 +488,49 @@ export default function HRPayrollManagement() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-slate-100 bg-slate-50/30 flex flex-col sm:flex-row gap-4 items-center justify-between shrink-0">
+            <span className="text-sm font-semibold text-slate-500">
+              Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredPayrolls.length)} of {filteredPayrolls.length} records
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Previous
+              </button>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => {
+                  const isCurrent = page === currentPage;
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
+                        isCurrent
+                          ? 'bg-primary-600 text-white shadow-md shadow-primary-600/10'
+                          : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Add / Edit Payroll Modal */}
@@ -711,6 +843,99 @@ export default function HRPayrollManagement() {
                 </div>
 
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Export Payroll Report</h3>
+                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* File Name Input */}
+              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="e.g. HR_Payroll_Report"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold text-black bg-white"
+                  />
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                </div>
+              </div>
+
+              {/* Select All / Deselect All Controls */}
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(true)}
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                >
+                  Select All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectAll(false)}
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                >
+                  Deselect All
+                </button>
+              </div>
+
+              {/* Checkbox Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {availableFieldsList.map(field => (
+                  <label 
+                    key={field.key}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors text-black font-semibold text-sm"
+                  >
+                    <input 
+                      type="checkbox"
+                      checked={selectedFields[field.key]}
+                      onChange={() => handleFieldToggle(field.key)}
+                      className="rounded text-primary-600 focus:ring-primary-500 h-4.5 w-4.5 border-slate-300"
+                    />
+                    <span>{field.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+              <button 
+                type="button"
+                onClick={() => setShowExportModal(false)}
+                className="px-5 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-150 rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                type="button"
+                onClick={handleExport}
+                className="px-6 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
+              >
+                Export Excel
+              </button>
             </div>
           </div>
         </div>

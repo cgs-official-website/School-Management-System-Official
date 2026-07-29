@@ -50,6 +50,7 @@ export default function InventoryManagement() {
   const [showStockModal, setShowStockModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
   const [confirmDeleteState, setConfirmDeleteState] = useState({ isOpen: false, type: '', id: null, name: '' });
 
   // Form states
@@ -367,6 +368,8 @@ export default function InventoryManagement() {
       "Last Updated Date": i.updatedAt ? new Date(i.updatedAt).toLocaleString() : ''
     }));
 
+    const rawName = exportFileName.trim() || `inventory_products_${new Date().toISOString().slice(0,10)}`;
+    
     if (format === 'csv') {
       const headers = ["ID Number", "Product Name", "Category", "Current Stock", "Created Date", "Last Updated Date"];
       const csvContent = [
@@ -385,13 +388,17 @@ export default function InventoryManagement() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `inventory_products_${new Date().toISOString().slice(0,10)}.csv`);
+      
+      const finalFileName = rawName.toLowerCase().endsWith('.csv') ? rawName : `${rawName}.csv`;
+      link.setAttribute("download", finalFileName);
       link.click();
     } else {
       const worksheet = XLSX.utils.json_to_sheet(rows);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Inventory Products");
-      XLSX.writeFile(workbook, `inventory_products_${new Date().toISOString().slice(0,10)}.xlsx`);
+      
+      const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
+      XLSX.writeFile(workbook, finalFileName);
     }
 
     logAudit('Bulk Export', {
@@ -670,7 +677,7 @@ export default function InventoryManagement() {
           )}
 
            <button 
-            onClick={() => setShowExportModal(true)}
+            onClick={() => { setExportFileName('inventory_products_' + new Date().toISOString().slice(0,10)); setShowExportModal(true); }}
             className="flex items-center gap-2 border border-slate-200 bg-white text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
           >
             <Download size={18} /> Bulk Export
@@ -1319,6 +1326,20 @@ export default function InventoryManagement() {
             </div>
             
             <div className="p-6 space-y-4">
+              {/* File Name Input */}
+              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="e.g. inventory_products"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                  />
+                </div>
+              </div>
+
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm space-y-1">
                 <span className="block font-bold text-slate-700">Export Summary Scope</span>
                 <span className="block text-xs text-slate-500">

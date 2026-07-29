@@ -21,6 +21,7 @@ export default function HomeworkManagement() {
   const [selectedHomework, setSelectedHomework] = useState(null);
 
   const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
   const [selectedFields, setSelectedFields] = useState({
     studentName: true,
     admissionNumber: true,
@@ -78,8 +79,10 @@ export default function HomeworkManagement() {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Submissions");
     
-    const hwTitle = selectedHomework ? selectedHomework.title.replace(/\s+/g, '_') : "Homework";
-    XLSX.writeFile(workbook, `${hwTitle}_Submissions.xlsx`);
+    const rawName = exportFileName.trim() || (selectedHomework ? selectedHomework.title.replace(/\s+/g, '_') : "Homework") + "_Submissions";
+    const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
+    
+    XLSX.writeFile(workbook, finalFileName);
     setShowExportModal(false);
     toast.success("Submissions roster exported successfully!");
   };
@@ -280,102 +283,93 @@ export default function HomeworkManagement() {
       {/* Create Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50">
-          <div className="bg-white rounded-3xl w-full max-w-2xl flex flex-col max-h-[90vh] overflow-hidden shadow-2xl animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">Assign Homework</h2>
+          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h2 className="text-xl font-bold text-slate-900">New Homework Assignment</h2>
               <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X size={24} />
               </button>
             </div>
-            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
-              <div className="p-6 space-y-6 flex-1">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Title</label>
-                <input 
-                  type="text" 
-                  required
-                  value={newHomework.title}
-                  onChange={e => setNewHomework({...newHomework, title: e.target.value})}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
-                  placeholder="e.g. Algebra Worksheet"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Description</label>
-                <textarea 
-                  required
-                  rows="3"
-                  value={newHomework.description}
-                  onChange={e => setNewHomework({...newHomework, description: e.target.value})}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
-                  placeholder="Instructions for the students..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Remarks (Optional)</label>
-                <input 
-                  type="text"
-                  value={newHomework.remarks}
-                  onChange={e => setNewHomework({...newHomework, remarks: e.target.value})}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
-                  placeholder="e.g. Bring formula notebooks tomorrow, refer pg. 45"
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Class</label>
-                  <select 
+            <form onSubmit={handleCreateSubmit}>
+              <div className="p-6 space-y-4">
+                <div className="space-y-1">
+                  <label className="text-sm font-bold text-slate-700">Homework Title</label>
+                  <input
+                    type="text"
                     required
-                    value={newHomework.classId}
-                    onChange={e => setNewHomework({...newHomework, classId: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="">Select Class</option>
-                    {classes.map(c => (
-                      <option key={c.id} value={c.id}>{c.name} - Section {c.section}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Subject</label>
-                  <select 
-                    required
-                    value={newHomework.subject}
-                    onChange={e => setNewHomework({...newHomework, subject: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
-                  >
-                    <option value="">Select Subject</option>
-                    {subjects.map(s => (
-                      <option key={s.id} value={s.name}>{s.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Due Date</label>
-                  <input 
-                    type="date" 
-                    required
-                    value={newHomework.dueDate}
-                    onChange={e => setNewHomework({...newHomework, dueDate: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                    value={newHomework.title}
+                    onChange={(e) => setNewHomework({ ...newHomework, title: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-bold text-slate-700">Description</label>
+                  <textarea
+                    rows="3"
+                    value={newHomework.description}
+                    onChange={(e) => setNewHomework({ ...newHomework, description: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-bold text-slate-700">Class ID</label>
+                    <input
+                      type="text"
+                      required
+                      value={newHomework.classId}
+                      onChange={(e) => setNewHomework({ ...newHomework, classId: e.target.value })}
+                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-bold text-slate-700">Subject</label>
+                    <input
+                      type="text"
+                      required
+                      value={newHomework.subject}
+                      onChange={(e) => setNewHomework({ ...newHomework, subject: e.target.value })}
+                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-bold text-slate-700">Due Date</label>
+                    <input
+                      type="date"
+                      required
+                      value={newHomework.dueDate}
+                      onChange={(e) => setNewHomework({ ...newHomework, dueDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-bold text-slate-700">Max Marks</label>
+                    <input
+                      type="number"
+                      required
+                      value={newHomework.maxMarks}
+                      onChange={(e) => setNewHomework({ ...newHomework, maxMarks: parseInt(e.target.value) })}
+                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-                <button 
-                  type="button" 
+              <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+                <button
+                  type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-50 rounded-xl"
+                  className="px-5 py-2 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-100 font-bold"
                 >
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={creating}
-                  className="px-5 py-2.5 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 disabled:opacity-50"
+                  className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold shadow-md shadow-primary-600/10 transition-colors"
                 >
-                  {creating ? 'Assigning...' : 'Assign Homework'}
+                  {creating ? 'Creating...' : 'Create Assignment'}
                 </button>
               </div>
             </form>
@@ -447,7 +441,11 @@ export default function HomeworkManagement() {
               </div>
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setShowExportModal(true)}
+                  onClick={() => {
+                    const defaultName = selectedHomework ? selectedHomework.title.replace(/\s+/g, '_') : 'Homework';
+                    setExportFileName(`${defaultName}_Submissions`);
+                    setShowExportModal(true);
+                  }}
                   className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
                 >
                   <FileDown size={18} />
@@ -511,6 +509,21 @@ export default function HomeworkManagement() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* File Name Input */}
+              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="e.g. Homework_Submissions"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                  />
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                </div>
+              </div>
+
               {/* Select All / Deselect All Controls */}
               <div className="flex gap-3">
                 <button
