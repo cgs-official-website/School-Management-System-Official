@@ -313,24 +313,36 @@ export default function HomeworkManagement() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-sm font-bold text-slate-700">Class ID</label>
-                    <input
-                      type="text"
+                    <label className="text-sm font-bold text-slate-700">Class</label>
+                    <select
                       required
                       value={newHomework.classId}
                       onChange={(e) => setNewHomework({ ...newHomework, classId: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                    />
+                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white text-sm font-semibold"
+                    >
+                      <option value="">Select a Class</option>
+                      {classes.map(c => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} - Section {c.section}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="space-y-1">
                     <label className="text-sm font-bold text-slate-700">Subject</label>
-                    <input
-                      type="text"
+                    <select
                       required
                       value={newHomework.subject}
                       onChange={(e) => setNewHomework({ ...newHomework, subject: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
-                    />
+                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white text-sm font-semibold"
+                    >
+                      <option value="">Select a Subject</option>
+                      {subjects.map(s => (
+                        <option key={s.id} value={s.name}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
