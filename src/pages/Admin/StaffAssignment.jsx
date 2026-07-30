@@ -35,6 +35,7 @@ export default function StaffAssignment() {
 
   // Upload Modal State
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [selectedStaffForUpload, setSelectedStaffForUpload] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -240,6 +241,7 @@ export default function StaffAssignment() {
   const handleUpload = async () => {
     if (!uploadFile) return;
     setUploading(true);
+    setUploadModalOpen(false);
 
     // BULK IMPORT LOGIC
       const loadingToastId = toast.loading("Processing bulk import...");
