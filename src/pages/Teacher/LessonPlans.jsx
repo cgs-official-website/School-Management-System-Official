@@ -330,7 +330,7 @@ export default function LessonPlans() {
       {showModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
           <form 
-            onSubmit={handleSubmit}
+            onSubmit={handleFormSubmit}
             className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
