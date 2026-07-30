@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getStudentsByClass, getAttendance, saveAttendance, subscribeToStudentsByClass, subscribeToAttendance, getAttendanceForClass, getAttendanceSettings } from '../../firebase/firestore';
 import { getDoc, doc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle, LuSave as Save, LuUsers as Users, LuFileDown, LuX } from 'react-icons/lu';
+import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle, LuSave as Save, LuUsers as Users, LuFileDown, LuX, LuSquareCheck as CheckSquare } from 'react-icons/lu';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 
