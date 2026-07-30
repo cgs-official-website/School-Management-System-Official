@@ -21,6 +21,7 @@ const LandingPage = lazy(() => import('./pages/LandingPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const SchoolRegistration = lazy(() => import('./pages/SchoolRegistration'));
+const PublicLeadForm = lazy(() => import('./pages/PublicLeadForm'));
 
 // Super Admin Workflow
 const SuperAdminDashboard = lazy(() => import('./pages/SuperAdminDashboard'));
@@ -62,6 +63,7 @@ const AdminAttendance = lazy(() => import('./pages/Admin/Attendance'));
 const AdminHomework = lazy(() => import('./pages/Admin/AdminHomework'));
 const CustomModuleView = lazy(() => import('./pages/Admin/CustomModuleView'));
 const ChatMonitor = lazy(() => import('./pages/Admin/ChatMonitor'));
+const LeadsManagement = lazy(() => import('./pages/Admin/LeadsManagement'));
 
 // Teacher
 const TeacherRegistration = lazy(() => import('./pages/TeacherRegistration'));
@@ -99,6 +101,7 @@ const ParentGrades = lazy(() => import('./pages/Parent/Grades'));
 const ParentAttendance = lazy(() => import('./pages/Parent/Attendance'));
 const ParentPerformance = lazy(() => import('./pages/Parent/Performance'));
 const ParentPTM = lazy(() => import('./pages/Parent/PTM'));
+const ParentChat = lazy(() => import('./pages/Parent/Chat'));
 
 import { Toaster } from 'react-hot-toast';
 
@@ -155,6 +158,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/register" element={<SchoolRegistration />} />
+            <Route path="/leads/form/:schoolId/:formId" element={<PublicLeadForm />} />
             
             {/* Super Admin Routes */}
             <Route 
@@ -212,6 +216,7 @@ function App() {
               <Route path="homework" element={<AdminHomework />} />
               <Route path="custom/:moduleId" element={<CustomModuleView />} />
               <Route path="leaves" element={<AdminLeaves />} />
+              <Route path="leads" element={<LeadsManagement />} />
             </Route>
 
             {/* Teacher Routes */}
@@ -263,6 +268,7 @@ function App() {
               <Route path="calendar" element={<ParentCalendar />} />
               <Route path="canteen" element={<ParentCanteen />} />
               <Route path="leaves" element={<ParentLeaves />} />
+              <Route path="chat" element={<ParentChat />} />
             </Route>
 
             {/* Fallback */}

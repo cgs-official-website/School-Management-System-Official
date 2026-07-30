@@ -6,24 +6,25 @@ import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 
 export default function TeacherTimetable() {
-  const { userProfile } = useAuth();
+  const { userProfile, currentUser } = useAuth();
   const schoolId = userProfile?.schoolId;
 
   const [currentWeek, setCurrentWeek] = useState('This Week');
   const [viewType, setViewType] = useState('subject'); // 'subject' or 'class'
   const [isClassTeacher, setIsClassTeacher] = useState(false);
   const [classTimetable, setClassTimetable] = useState({
-    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: []
   });
   const [subjectTimetable, setSubjectTimetable] = useState({
-    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: []
   });
   const [schedule, setSchedule] = useState({
-    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: []
   });
   const [loading, setLoading] = useState(true);
 
   const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
   const [selectedFields, setSelectedFields] = useState({
     time: true,
     subject: true,
@@ -85,16 +86,18 @@ export default function TeacherTimetable() {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Weekly Timetable");
     
-    const fileName = viewType === 'class' ? "My_Class_Timetable" : "My_Subject_Timetable";
-    XLSX.writeFile(workbook, `${fileName}.xlsx`);
+    const rawName = exportFileName.trim() || (viewType === 'class' ? "My_Class_Timetable" : "My_Subject_Timetable");
+    const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
+    
+    XLSX.writeFile(workbook, finalFileName);
     setShowExportModal(false);
     toast.success("Timetable exported successfully!");
   };
 
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   useEffect(() => {
-    if (!schoolId || !userProfile) return;
+    if (!schoolId) return;
 
     let teachersData = [];
     let classesData = [];
@@ -106,8 +109,9 @@ export default function TeacherTimetable() {
 
       // Find current teacher by email or userId
       const currentTeacher = teachersData.find(t => 
-        (t.userId && (userProfile.uid || userProfile.id) && t.userId === (userProfile.uid || userProfile.id)) || 
-        (t.email && userProfile.email && t.email.trim().toLowerCase() === userProfile.email.trim().toLowerCase())
+        (t.userId && currentUser && t.userId === currentUser.uid) || 
+        (t.email && currentUser && t.email.trim().toLowerCase() === currentUser.email.trim().toLowerCase()) ||
+        (t.email && userProfile?.email && t.email.trim().toLowerCase() === userProfile.email.trim().toLowerCase())
       );
       const teacherId = currentTeacher?.id;
 
@@ -122,8 +126,8 @@ export default function TeacherTimetable() {
         classMap[c.id] = `${c.name} - Section ${c.section}`;
       });
 
-      const newSubjectSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
-      let newClassSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
+      const newSubjectSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [] };
+      let newClassSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [] };
       let hasClass = !!currentTeacher?.assignedClassId;
 
       timetablesData.forEach(classTimetable => {
@@ -150,17 +154,13 @@ export default function TeacherTimetable() {
         }
 
         // 2. Fill Subject Teacher Timetable
-        // A teacher teaches a subject if:
-        // - They are assigned as Subject Teacher for this class (subjectClassIds array)
-        // OR - Their teacherId matches the slot's teacherId
-        // OR - Their name matches the slot's teacher name
-        const isSubjectClass = currentTeacher?.subjectClassIds?.includes(classId);
-
         days.forEach(day => {
           const daySlots = scheduleData[day] || [];
           daySlots.forEach(slot => {
-            const matchesId = slot.teacherId === teacherId;
-            const matchesName = !slot.teacherId && currentTeacher && slot.teacher === (currentTeacher.name || `${currentTeacher.firstName} ${currentTeacher.lastName}`);
+            const matchesId = slot.teacherId && slot.teacherId === teacherId;
+            const matchesName = currentTeacher && slot.teacher && (
+              slot.teacher.trim().toLowerCase() === (currentTeacher.name || `${currentTeacher.firstName} ${currentTeacher.lastName || ''}`).trim().toLowerCase()
+            );
             
             if (matchesId || matchesName) {
               // Ensure we don't duplicate slots if both conditions are somehow met
@@ -215,7 +215,7 @@ export default function TeacherTimetable() {
       classesUnsub();
       timetablesUnsub();
     };
-  }, [schoolId, userProfile]);
+  }, [schoolId, userProfile, currentUser]);
 
   useEffect(() => {
     if (viewType === 'class' && isClassTeacher) {
@@ -257,7 +257,15 @@ export default function TeacherTimetable() {
             {currentWeek}
           </div>
           <button
-            onClick={() => setShowExportModal(true)}
+            onClick={() => {
+              const hasData = Object.values(schedule).some(slots => slots && slots.length > 0);
+              if (!hasData) {
+                toast.error("No timetable data available to export.");
+                return;
+              }
+              setExportFileName(viewType === 'class' ? "My_Class_Timetable" : "My_Subject_Timetable");
+              setShowExportModal(true);
+            }}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
           >
             <LuFileDown size={18} />
@@ -325,6 +333,21 @@ export default function TeacherTimetable() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* File Name Input */}
+              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="e.g. My_Class_Timetable"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                  />
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                </div>
+              </div>
+
               {/* Select All / Deselect All Controls */}
               <div className="flex gap-3">
                 <button

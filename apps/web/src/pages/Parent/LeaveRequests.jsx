@@ -296,12 +296,19 @@ export default function LeaveRequests() {
                           className="sr-only" 
                           onChange={(e) => {
                             const file = e.target.files[0];
-                            if (file) setSelectedFile(file);
+                            if (file) {
+                              if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                                toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+                                e.target.value = '';
+                                return;
+                              }
+                              setSelectedFile(file);
+                            }
                           }}
                         />
                       </label>
                     </div>
-                    <p className="text-xs text-slate-500">PDF, PNG, JPG up to 10MB</p>
+                    <p className="text-xs text-slate-500">PDF, PNG, JPG up to 3MB</p>
                     {selectedFile && (
                       <div className="mt-2 p-2 bg-slate-100/80 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 flex items-center justify-between gap-3">
                         <span className="truncate max-w-[200px]">{selectedFile.name}</span>

@@ -365,6 +365,11 @@ export default function ResourceSharing() {
                           onChange={(e) => {
                             const file = e.target.files[0];
                             if (file) {
+                              if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                                toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+                                e.target.value = '';
+                                return;
+                              }
                               setSelectedFile(file);
                               if (!formData.title) {
                                 setFormData(prev => ({ ...prev, title: file.name.substring(0, file.name.lastIndexOf('.')) || file.name }));
@@ -374,7 +379,7 @@ export default function ResourceSharing() {
                         />
                       </label>
                     </div>
-                    <p className="text-xs text-slate-500">Any file up to 20MB</p>
+                    <p className="text-xs text-slate-500">Any file up to 3MB</p>
                     {selectedFile && (
                       <div className="mt-2 p-2 bg-slate-100/80 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 flex items-center justify-between gap-3">
                         <span className="truncate max-w-[200px]">{selectedFile.name}</span>

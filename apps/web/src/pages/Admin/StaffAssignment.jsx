@@ -4,8 +4,9 @@ import { getSubCollection, updateSubDocument, addSubDocument, subscribeToSubColl
 import { getDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter, LuLink as LinkIcon, LuCopy as CopyIcon, LuTrash2 as Trash } from 'react-icons/lu';
+import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter, LuLink as LinkIcon, LuCopy as CopyIcon, LuTrash2 as Trash, LuFileDown as FileDown } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -13,6 +14,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import ConfirmModal from '../../components/ConfirmModal';
+import FilePreviewModal from '../../components/FilePreviewModal';
 
 export default function StaffAssignment() {
   const { userProfile } = useAuth();
@@ -22,6 +24,7 @@ export default function StaffAssignment() {
   const [classes, setClasses] = useState([]);
   const [schoolName, setSchoolName] = useState('');
   const [loading, setLoading] = useState(true);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   // Assignment Modal State
   const [assignModalOpen, setAssignModalOpen] = useState(false);
@@ -37,6 +40,26 @@ export default function StaffAssignment() {
   const [uploading, setUploading] = useState(false);
 
   const [confirmDeleteState, setConfirmDeleteState] = useState({ isOpen: false, id: null, name: '' });
+
+  // Export State
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
+  const [selectedFields, setSelectedFields] = useState({
+    name: true,
+    email: true,
+    role: true,
+    assignedClass: true,
+    subjectClasses: true,
+    mobile: true,
+    qualification: true
+  });
+
+  const handleFieldToggle = (field) => {
+    setSelectedFields(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
+  };
 
   const handleDeleteStaff = async (staffId) => {
     try {
@@ -216,11 +239,7 @@ export default function StaffAssignment() {
     setAssignModalOpen(true);
   };
 
-  const openUploadModal = (staffMember) => {
-    setSelectedStaffForUpload(staffMember);
-    setUploadFile(null);
-    setUploadModalOpen(true);
-  };
+
 
   const handleAssign = async () => {
     setSaving(true);
@@ -242,9 +261,9 @@ export default function StaffAssignment() {
   const handleUpload = async () => {
     if (!uploadFile) return;
     setUploading(true);
+    setUploadModalOpen(false);
 
-    if (!selectedStaffForUpload) {
-      // BULK IMPORT LOGIC
+    // BULK IMPORT LOGIC
       const loadingToastId = toast.loading("Processing bulk import...");
       try {
         const reader = new FileReader();
@@ -294,14 +313,9 @@ export default function StaffAssignment() {
                 lastName = parts.slice(1).join(' ') || parts[0];
               }
 
+              // Fallbacks to avoid undefined / skip failures
+              if (!firstName) firstName = 'Staff';
               const email = getField(row, 'email address', 'email', 'emailaddress', 'email_address', 'mail');
-              
-              // Skip rows that are missing required fields
-              if (!firstName || !email) {
-                console.warn(`[Bulk Import] Row ${i + 1} skipped:`, { firstName, lastName, email }, row);
-                skippedCount++;
-                continue;
-              }
 
               // Map all Excel columns to Firestore fields
               const staffData = {
@@ -375,35 +389,6 @@ export default function StaffAssignment() {
         toast.error("Failed to process file.", { id: loadingToastId });
         setUploading(false);
       }
-      return;
-    }
-
-    try {
-      const safeSchoolName = schoolName.replace(/[^a-z0-9]/gi, '_').trim();
-      const staffName = selectedStaffForUpload.name || selectedStaffForUpload.firstName || 'Teacher';
-      const safeStaffName = staffName.replace(/[^a-z0-9]/gi, '_').trim();
-      const safeFileName = uploadFile.name.replace(/[^a-z0-9.]/gi, '_');
-
-      // STRICT PATH: [SchoolName]/Teachers/[TeacherName]/[FileName]
-      const storagePath = `${safeSchoolName}/Teachers/${safeStaffName}/${safeFileName}`;
-      const fileRef = ref(storage, storagePath);
-
-      await uploadBytes(fileRef, uploadFile);
-      const downloadUrl = await getDownloadURL(fileRef);
-
-      await updateSubDocument(schoolId, 'teachers', selectedStaffForUpload.id, {
-        attachmentUrl: downloadUrl,
-        attachmentName: uploadFile.name
-      });
-
-      setUploadModalOpen(false);
-      fetchData(); // Refresh to show new attachment
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      toast.error("Failed to upload document.");
-    } finally {
-      setUploading(false);
-    }
   };
 
   const handleSaveStaffEdit = async () => {
@@ -418,15 +403,23 @@ export default function StaffAssignment() {
     if (editStaffData.aadharNumber?.trim() && !/^\d{12}$/.test(editStaffData.aadharNumber.trim())) {
       errors.aadharNumber = 'Aadhaar number must be 12 digits';
     }
-    // Check for duplicate email/staffId (excluding self)
-    const isDupEmail = staff.some(s => s.id !== selectedStaffToView.id && s.email?.toLowerCase() === editStaffData.email?.trim().toLowerCase());
+    // Check for duplicate email/staffId (excluding self, ONLY if changed)
+    const currentEmail = (editStaffData.email || '').trim().toLowerCase();
+    const originalEmail = (selectedStaffToView.email || '').trim().toLowerCase();
+    const emailChanged = currentEmail !== originalEmail;
+    const isDupEmail = emailChanged && currentEmail !== '' && staff.some(s => s.id !== selectedStaffToView.id && (s.email || '').trim().toLowerCase() === currentEmail);
     if (isDupEmail) errors.email = 'Email already in use by another staff member';
-    const isDupId = editStaffData.staffId?.trim() && staff.some(s => s.id !== selectedStaffToView.id && s.staffId?.toLowerCase() === editStaffData.staffId.trim().toLowerCase());
+    
+    const currentStaffId = (editStaffData.staffId || '').trim().toLowerCase();
+    const originalStaffId = (selectedStaffToView.staffId || '').trim().toLowerCase();
+    const staffIdChanged = currentStaffId !== originalStaffId;
+    const isDupId = staffIdChanged && currentStaffId !== '' && staff.some(s => s.id !== selectedStaffToView.id && (s.staffId || '').trim().toLowerCase() === currentStaffId);
     if (isDupId) errors.staffId = 'Staff ID already in use';
 
     setEditStaffErrors(errors);
     if (Object.keys(errors).length > 0) {
-      toast.error('Please fix the highlighted errors.');
+      setAddStaffActiveTab('Personal Info');
+      toast.error('Please fix the highlighted errors in Personal Info.');
       return;
     }
 
@@ -443,15 +436,15 @@ export default function StaffAssignment() {
 
       for (const cat of docCategories) {
         const newFiles = editStaffDocFiles[cat] || [];
-        if (newFiles.length > 0) {
-          const existingDocs = selectedStaffToView[cat] || [];
+        const existingDocs = editStaffData[cat] || []; // Use editStaffData since it can be modified (files deleted)
+        
+        // If there are new files to upload, or if the user deleted an existing file:
+        if (newFiles.length > 0 || (editStaffData[cat] !== undefined && editStaffData[cat].length !== (selectedStaffToView[cat] || []).length)) {
           const uploadedDocs = [];
           for (const file of newFiles) {
             const safeFileName = file.name.replace(/[^a-z0-9.]/gi, '_');
             const storagePath = `${safeSchoolName}/Teachers/${staffName}/${cat}/${safeFileName}`;
-            const fileRef = ref(storage, storagePath);
-            await uploadBytes(fileRef, file);
-            const url = await getDownloadURL(fileRef);
+            const url = await uploadFileToCloudinaryOrFirebase(file, schoolId, storagePath);
             uploadedDocs.push({ name: file.name, url });
           }
           docUpdates[cat] = [...existingDocs, ...uploadedDocs];
@@ -515,7 +508,7 @@ export default function StaffAssignment() {
       toast.success('Staff details updated successfully.');
     } catch (err) {
       console.error(err);
-      toast.error('Failed to save changes.');
+      toast.error(err.message || 'Failed to save changes.');
     } finally {
       setSavingStaffEdit(false);
     }
@@ -594,9 +587,7 @@ export default function StaffAssignment() {
   };
 
   const uploadStaffFile = async (file, path) => {
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
+    return await uploadFileToCloudinaryOrFirebase(file, schoolId, path);
   };
 
   const uploadAllDocuments = async (staffIdOrEmail) => {
@@ -714,7 +705,7 @@ export default function StaffAssignment() {
       setAddStaffActiveTab('Personal');
     } catch (error) {
       console.error("Error adding staff:", error);
-      toast.error("Failed to add staff member.", { id: progressToastId });
+      toast.error(error.message || "Failed to add staff member.", { id: progressToastId });
     } finally {
       setAddingStaff(false);
     }
@@ -727,56 +718,39 @@ export default function StaffAssignment() {
   };
 
   const exportToExcel = () => {
-    const exportData = staff.map(member => ({
-      'Name': member.name || `${member.firstName} ${member.lastName}`,
-      'Email': member.email,
-      'Role': member.role || 'Staffs',
-      'Assigned Class': getClassName(member.assignedClassId),
-      'Subject Classes': (member.subjectClassIds || []).map(getClassName).join(', ')
-    }));
+    if (staff.length === 0) {
+      toast.error("No staff data available to export.");
+      return;
+    }
+
+    const activeFields = Object.keys(selectedFields).filter(k => selectedFields[k]);
+    if (activeFields.length === 0) {
+      toast.error("Please select at least one column to export.");
+      return;
+    }
+
+    const exportData = staff.map((member, index) => {
+      const row = { "S.No": index + 1 };
+      if (selectedFields.name) row["Name"] = member.name || `${member.firstName} ${member.lastName}`.trim();
+      if (selectedFields.email) row["Email"] = member.email || '';
+      if (selectedFields.role) row["Role"] = member.role || 'Staffs';
+      if (selectedFields.assignedClass) row["Assigned Class"] = getClassName(member.assignedClassId);
+      if (selectedFields.subjectClasses) row["Subject Classes"] = (member.subjectClassIds || []).map(getClassName).join(', ');
+      if (selectedFields.mobile) row["Mobile"] = member.mobileNumber || '';
+      if (selectedFields.qualification) row["Highest Qualification"] = member.highestQualification || '';
+      return row;
+    });
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Staff");
-    XLSX.writeFile(workbook, "Staff_Directory.xlsx");
-  };
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    
-    // Add School Name Header
-    doc.setFontSize(20);
-    doc.setTextColor(15, 23, 42); // slate-900
-    doc.text(schoolName, 14, 22);
-    
-    doc.setFontSize(14);
-    doc.setTextColor(100, 116, 139); // slate-500
-    doc.text("Staff Directory", 14, 30);
-    
-    const tableColumn = ["Name", "Email", "Role", "Class Tr. Of", "Subject Tr. Of"];
-    const tableRows = [];
+    const rawName = exportFileName.trim() || "Staff_Directory";
+    const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
 
-    staff.forEach(member => {
-      const rowData = [
-        member.name || `${member.firstName} ${member.lastName}`,
-        member.email || 'N/A',
-        (member.role || 'Staffs').toUpperCase(),
-        getClassName(member.assignedClassId),
-        (member.subjectClassIds || []).map(getClassName).join(', ')
-      ];
-      tableRows.push(rowData);
-    });
-
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 40,
-      theme: 'grid',
-      styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [59, 130, 246] }, // Primary Blue
-    });
-
-    doc.save("Staff_Directory.pdf");
+    XLSX.writeFile(workbook, finalFileName);
+    setShowExportModal(false);
+    toast.success("Staff directory exported successfully!");
   };
 
   const filteredStaff = staff.filter(member => {
@@ -828,16 +802,17 @@ export default function StaffAssignment() {
         </div>
         <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
           <button 
-            onClick={() => exportToExcel()}
-            className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl font-medium hover:bg-emerald-100 shadow-sm flex items-center gap-2 transition-colors border border-emerald-200"
+            onClick={() => {
+              if (staff.length === 0) {
+                toast.error("No staff data available to export.");
+                return;
+              }
+              setExportFileName('Staff_Directory');
+              setShowExportModal(true);
+            }}
+            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
           >
-            <FileSpreadsheet size={18} /> Export Excel
-          </button>
-          <button 
-            onClick={() => exportToPDF()}
-            className="px-4 py-2 bg-rose-50 text-rose-700 rounded-xl font-medium hover:bg-rose-100 shadow-sm flex items-center gap-2 transition-colors border border-rose-200"
-          >
-            <FileText size={18} /> Export PDF
+            <FileDown size={18} /> Export
           </button>
           <button 
               onClick={() => {
@@ -1001,14 +976,13 @@ export default function StaffAssignment() {
                 <th className="p-4 pl-6">Staff Name</th>
                 <th className="p-4">Contact</th>
                 <th className="p-4">Class Assignments</th>
-                <th className="p-4">Attachment</th>
                 <th className="p-4 pr-6 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-sm">
               {paginatedStaff.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-12 text-center text-slate-500">
+                  <td colSpan="4" className="p-12 text-center text-slate-500">
                     <ShieldCheck size={48} className="mx-auto mb-4 text-slate-300" />
                     <p className="text-lg font-medium text-slate-900 mb-1">No staff members found</p>
                     <p>Generate a teacher invite link to start onboarding your faculty.</p>
@@ -1056,15 +1030,6 @@ export default function StaffAssignment() {
                           )}
                         </div>
                       </td>
-                      <td className="p-4">
-                        {member.attachmentUrl ? (
-                          <a href={member.attachmentUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-colors tooltip-trigger" title={member.attachmentName}>
-                            <ExternalLink size={12} /> View Doc
-                          </a>
-                        ) : (
-                          <span className="text-slate-400 text-xs italic">No attachment</span>
-                        )}
-                      </td>
                       <td className="p-4 pr-6 text-right">
                         <div className="flex justify-end gap-2">
                           {!member.userId && (
@@ -1094,13 +1059,6 @@ export default function StaffAssignment() {
                             title="View Details"
                           >
                             <Eye size={18} />
-                          </button>
-                          <button 
-                            onClick={() => openUploadModal(member)}
-                            className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                            title="Upload Document"
-                          >
-                            <UploadCloud size={18} />
                           </button>
                            <button 
                              onClick={() => setConfirmDeleteState({ isOpen: true, id: member.id, name: member.name || `${member.firstName} ${member.lastName}` })}
@@ -1944,10 +1902,20 @@ export default function StaffAssignment() {
                         multiple
                         accept=".pdf, image/*"
                         onChange={(e) => {
+                          const selected = Array.from(e.target.files);
+                          const validFiles = [];
+                          selected.forEach(file => {
+                            if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                              toast.error(`File "${file.name}" exceeds the 3MB limit.`);
+                            } else {
+                              validFiles.push(file);
+                            }
+                          });
                           setAddStaffFiles(prev => ({
                             ...prev,
-                            [key]: [...(prev[key] || []), ...Array.from(e.target.files)]
+                            [key]: [...(prev[key] || []), ...validFiles]
                           }));
+                          e.target.value = '';
                         }}
                         className="text-sm"
                       />
@@ -1965,9 +1933,10 @@ export default function StaffAssignment() {
                                     return { ...prev, [key]: list };
                                   });
                                 }}
-                                className="text-red-500 hover:text-red-700 font-bold px-2"
+                                className="text-red-500 hover:text-red-700 font-bold px-2 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                title="Remove Document"
                               >
-                                Remove
+                                <Trash size={16} />
                               </button>
                             </div>
                           ))}
@@ -2189,7 +2158,7 @@ export default function StaffAssignment() {
                         { key: 'govtIdDocument', label: 'Government ID Document' },
                         { key: 'salarySlips', label: 'Salary Slips' }
                       ].map(({ key, label }) => {
-                        const existingFiles = selectedStaffToView[key] || [];
+                        const existingFiles = editStaffData[key] || selectedStaffToView[key] || [];
                         const newFiles = editStaffDocFiles[key] || [];
                         return (
                           <div key={key} className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
@@ -2197,18 +2166,30 @@ export default function StaffAssignment() {
 
                             {/* Existing uploaded files */}
                             {existingFiles.length > 0 && (
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                              <div className="grid grid-cols-1 gap-2 mb-3">
                                 {existingFiles.map((file, idx) => (
-                                  <a
-                                    key={idx}
-                                    href={file.url}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg hover:bg-indigo-50 transition-colors text-xs font-semibold text-indigo-600"
-                                  >
-                                    <ExternalLink size={12} />
-                                    <span className="truncate">{file.name}</span>
-                                  </a>
+                                  <div key={idx} className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-2 text-xs">
+                                    <button
+                                      type="button"
+                                      onClick={() => setPreviewUrl(file.url)}
+                                      className="flex items-center gap-2 hover:bg-indigo-50 transition-colors font-semibold text-indigo-600 text-left flex-1 min-w-0"
+                                    >
+                                      <Eye size={14} className="shrink-0" />
+                                      <span className="truncate">{file.name}</span>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newList = [...existingFiles];
+                                        newList.splice(idx, 1);
+                                        setEditStaffData(prev => ({ ...prev, [key]: newList }));
+                                      }}
+                                      className="text-red-500 hover:text-red-700 font-bold px-3 shrink-0 border-l border-slate-100 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                      title="Delete Document"
+                                    >
+                                      <Trash size={16} />
+                                    </button>
+                                  </div>
                                 ))}
                               </div>
                             )}
@@ -2228,9 +2209,10 @@ export default function StaffAssignment() {
                                           return { ...prev, [key]: list };
                                         });
                                       }}
-                                      className="text-red-500 hover:text-red-700 font-bold px-2 ml-2 shrink-0"
+                                      className="text-red-500 hover:text-red-700 font-bold px-2 ml-2 shrink-0 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                      title="Remove Document"
                                     >
-                                      Remove
+                                      <Trash size={16} />
                                     </button>
                                   </div>
                                 ))}
@@ -2248,9 +2230,17 @@ export default function StaffAssignment() {
                                 className="hidden"
                                 onChange={e => {
                                   const selected = Array.from(e.target.files);
+                                  const validFiles = [];
+                                  selected.forEach(file => {
+                                    if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                                      toast.error(`File "${file.name}" exceeds the 3MB limit.`);
+                                    } else {
+                                      validFiles.push(file);
+                                    }
+                                  });
                                   setEditStaffDocFiles(prev => ({
                                     ...prev,
-                                    [key]: [...(prev[key] || []), ...selected]
+                                    [key]: [...(prev[key] || []), ...validFiles]
                                   }));
                                   e.target.value = '';
                                 }}
@@ -2510,16 +2500,15 @@ export default function StaffAssignment() {
                         {files.length > 0 ? (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {files.map((file, idx) => (
-                              <a
+                              <button
                                 key={idx}
-                                href={file.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-xs font-semibold text-indigo-600"
+                                type="button"
+                                onClick={() => setPreviewUrl(file.url)}
+                                className="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-xs font-semibold text-indigo-600 text-left"
                               >
-                                <ExternalLink size={14} />
+                                <Eye size={14} />
                                 <span className="truncate">{file.name}</span>
-                              </a>
+                              </button>
                             ))}
                           </div>
                         ) : (
@@ -2555,7 +2544,11 @@ export default function StaffAssignment() {
                 <>
                   <button
                     onClick={() => {
-                      setEditStaffData({ ...selectedStaffToView });
+                      setEditStaffData({ 
+                        ...selectedStaffToView,
+                        firstName: selectedStaffToView.firstName || selectedStaffToView.name?.split(' ')[0] || '',
+                        lastName: selectedStaffToView.lastName || selectedStaffToView.name?.split(' ').slice(1).join(' ') || ''
+                      });
                       setEditStaffErrors({});
                       setEditStaffDocFiles({});
                       setAddStaffActiveTab('Personal Info');
@@ -2588,6 +2581,93 @@ export default function StaffAssignment() {
         cancelText="Cancel"
         type="danger"
       />
+
+      {/* Export Columns & Filename Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50 animate-fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up border border-slate-100">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Export Staff Directory</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Customize file settings and select columns to export.</p>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* File Name Input */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Export File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    placeholder="Enter file name"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all pr-12 font-medium"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 px-2 py-1 rounded-md">.xlsx</span>
+                </div>
+              </div>
+
+              {/* Columns Selection */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Select Columns to Include</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { key: 'name', label: 'Name' },
+                    { key: 'email', label: 'Email' },
+                    { key: 'role', label: 'Role' },
+                    { key: 'assignedClass', label: 'Assigned Class' },
+                    { key: 'subjectClasses', label: 'Subject Classes' },
+                    { key: 'mobile', label: 'Mobile' },
+                    { key: 'qualification', label: 'Highest Qualification' }
+                  ].map(({ key, label }) => (
+                    <label 
+                      key={key} 
+                      className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all ${
+                        selectedFields[key] 
+                          ? 'border-primary-200 bg-primary-50/30 text-primary-900 font-semibold' 
+                          : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedFields[key]}
+                        onChange={() => handleFieldToggle(key)}
+                        className="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4 w-4"
+                      />
+                      <span className="text-xs">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors text-sm"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={exportToExcel}
+                className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-sm transition-colors flex items-center gap-2 text-sm"
+              >
+                <Download size={18} />
+                Generate Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -41,6 +41,7 @@ export const allNavItems = [
   { name: 'Reports & Analytics', path: '/admin/reports', icon: BarChart2, moduleKey: 'reports' },
   { name: 'API Integrations', path: '/admin/api', icon: Key, moduleKey: 'api' },
   { name: 'Registration Links', path: '/admin/links', icon: LinkIcon, moduleKey: 'links' },
+  { name: 'Leads', path: '/admin/leads', icon: Users, moduleKey: 'leads' },
   { name: 'Billing & Plan', path: '/admin/billing', icon: CreditCard, moduleKey: 'billing' },
   { name: 'Custom Modules', path: '/admin/form-builder', icon: Settings, moduleKey: 'form-builder' },
   { name: 'Roles & Permissions', path: '/admin/roles', icon: Shield, moduleKey: 'roles' },
@@ -55,7 +56,7 @@ export default function AdminDashboard() {
   const [schoolData, setSchoolData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState(['Classes & Sections']); // Default expand if needed
+  const [expandedMenus, setExpandedMenus] = useState([]); // Default empty, route-driven
   const [customNavItems, setCustomNavItems] = useState([]);
   const [sidebarOrder, setSidebarOrder] = useState([]);
 
@@ -136,6 +137,27 @@ export default function AdminDashboard() {
     setIsSidebarOpen(false);
   }, [location.pathname]);
 
+  // Route synchronization for submenus (Accordion style)
+  useEffect(() => {
+    const combined = [...allNavItems, ...customNavItems];
+    let activeParentName = null;
+
+    combined.forEach(item => {
+      if (item.subItems && item.subItems.length > 0) {
+        const matchesSubItem = item.subItems.some(sub => location.pathname === sub.path);
+        if (matchesSubItem) {
+          activeParentName = item.name;
+        }
+      }
+    });
+
+    if (activeParentName) {
+      setExpandedMenus([activeParentName]);
+    } else {
+      setExpandedMenus([]);
+    }
+  }, [location.pathname, customNavItems]);
+
   useEffect(() => {
     const matchedItem = allNavItems.find(item => location.pathname === item.path);
     if (matchedItem && matchedItem.moduleKey) {
@@ -169,7 +191,7 @@ export default function AdminDashboard() {
     if (item.moduleKey === 'inventory' && schoolData.schoolType === 'College') return true;
     
     // Core modules bypass school subscription check
-    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api', 'homework', 'leaves'];
+    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api', 'homework', 'leaves', 'leads'];
     if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
        return false;
     }
@@ -243,8 +265,8 @@ export default function AdminDashboard() {
                 if (hasSubItems) {
                   setExpandedMenus(prev => 
                     prev.includes(item.name) 
-                      ? prev.filter(name => name !== item.name)
-                      : [...prev, item.name]
+                      ? []
+                      : [item.name]
                   );
                 }
               };
@@ -342,7 +364,7 @@ export default function AdminDashboard() {
       {/* Main Content Area Wrapper */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden gap-4 relative">
         <TopNavbar 
-          schoolName={schoolData?.schoolName || 'Admin Portal'} 
+          schoolName={schoolData?.name || schoolData?.schoolName || 'Admin Portal'} 
           schoolLogo={schoolData?.branding?.logoUrl}
           toggleSidebar={() => setIsSidebarOpen(true)} 
           navItems={navItems}

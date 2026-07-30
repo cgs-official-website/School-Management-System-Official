@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // TODO: Replace with your actual Firebase config
@@ -20,7 +20,10 @@ let app, auth, db, storage;
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
-  db = getFirestore(app);
+  // Initialize Firestore with offline persistence enabled across multiple tabs
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
   storage = getStorage(app);
 } catch (error) {
   console.warn("Firebase not properly configured. Please update src/firebase/config.js with your credentials.");

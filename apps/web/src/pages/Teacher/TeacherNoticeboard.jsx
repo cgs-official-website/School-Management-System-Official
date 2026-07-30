@@ -79,9 +79,10 @@ export default function TeacherNoticeboard() {
       unsubClasses();
       unsubStudents();
     };
-  }, [schoolId, activeTab, classId]);
+  }, [schoolId, activeTab, classId, currentUser, userProfile]);
 
   const markUnreadAsViewed = (noticesList) => {
+    if (!currentUser?.uid || !userProfile) return;
     noticesList.forEach(notice => {
       const alreadyViewed = notice.viewedBy?.some(v => v.uid === currentUser.uid);
       if (!alreadyViewed) {
@@ -125,7 +126,8 @@ export default function TeacherNoticeboard() {
       setEditingNotice(null);
       setNewNotice({ title: '', message: '', audience: 'all', priority: 'normal', sendWhatsApp: false, targetStudentIds: [] });
     } catch (error) {
-      toast.error(`Failed to ${editingNotice ? 'update' : 'create'} notice.`);
+      console.error("Error saving notice:", error);
+      toast.error(`Failed to ${editingNotice ? 'update' : 'create'} notice: ${error.message}`);
     } finally {
       setCreating(false);
     }

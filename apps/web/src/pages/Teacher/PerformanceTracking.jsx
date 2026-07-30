@@ -23,6 +23,7 @@ export default function PerformanceTracking() {
   const [updatingId, setUpdatingId] = useState(null);
 
   const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
 
   const availableFieldsList = [
     { key: 'admissionNo', label: 'Admission No' },
@@ -246,7 +247,14 @@ export default function PerformanceTracking() {
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={() => setShowExportModal(true)}
+            onClick={() => {
+              if (students.length === 0) {
+                toast.error("No student data available to export.");
+                return;
+              }
+              setExportFileName('Student_Performance_Report');
+              setShowExportModal(true);
+            }}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
           >
             <LuDownload size={18} /> Export
@@ -369,6 +377,21 @@ export default function PerformanceTracking() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* File Name Input */}
+              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="e.g. Student_Performance_Report"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                  />
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                </div>
+              </div>
+
               {/* Select All / Deselect All Controls */}
               <div className="flex gap-3">
                 <button

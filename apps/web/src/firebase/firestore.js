@@ -286,8 +286,51 @@ export const updateSchool = async (schoolId, updateData) => {
 // --- General Functions for Subcollections (Classes, Students, Staff, etc) ---
 export const addSubDocument = async (schoolId, subCollection, data) => {
   try {
+    let finalData = { ...data };
+
+    if (subCollection === 'leaves') {
+      let requiredApproverRoleId = null;
+      let needsManualRouting = false;
+
+      try {
+        let duration = 0;
+        if (data.startDate && data.endDate) {
+          const start = new Date(data.startDate);
+          const end = new Date(data.endDate);
+          const diffTime = Math.abs(end - start);
+          duration = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Inclusive day count
+        }
+
+        const rulesRef = collection(db, `schools/${schoolId}/config/leaveApprovalRules/rules`);
+        const rulesSnap = await getDocs(rulesRef);
+        const rules = [];
+        rulesSnap.forEach(doc => rules.push({ id: doc.id, ...doc.data() }));
+
+        // Find matching band where minDays <= duration <= maxDays (or Infinity if null)
+        const matchingRule = rules.find(r => {
+          const min = Number(r.minDays);
+          const max = r.maxDays === null || r.maxDays === undefined ? Infinity : Number(r.maxDays);
+          return duration >= min && duration <= max;
+        });
+
+        if (matchingRule) {
+          requiredApproverRoleId = matchingRule.roleId;
+        } else {
+          needsManualRouting = true;
+        }
+      } catch (err) {
+        console.warn("Failed to evaluate leave approval rules, defaulting to manual routing:", err);
+        needsManualRouting = true;
+      }
+
+      finalData.requiredApproverRoleId = requiredApproverRoleId;
+      if (needsManualRouting) {
+        finalData.needsManualRouting = true;
+      }
+    }
+
     const docRef = await addDoc(collection(db, `schools/${schoolId}/${subCollection}`), {
-      ...data,
+      ...finalData,
       createdAt: new Date().toISOString()
     });
     return docRef.id;
@@ -407,6 +450,34 @@ export const saveAttendance = async (schoolId, classId, dateString, teacherId, r
       records,
       updatedAt: new Date().toISOString()
     }, { merge: true });
+
+    // Auto-resolve any pending notifications for this class + date
+    try {
+      const todayStr = dateString.split('_')[0];
+      const notifsRef = collection(db, `schools/${schoolId}/notifications`);
+      const q = query(
+        notifsRef,
+        where('type', '==', 'attendance_pending'),
+        where('classId', '==', classId),
+        where('date', '==', todayStr),
+        where('read', '==', false)
+      );
+      const notifsSnap = await getDocs(q);
+      if (!notifsSnap.empty) {
+        const batch = writeBatch(db);
+        notifsSnap.forEach(docSnap => {
+          batch.update(docSnap.ref, { read: true, resolvedAt: new Date().toISOString() });
+        });
+        await batch.commit();
+      }
+
+      // Recompute stats for the school dashboard
+      recomputeDashboardStats(schoolId, todayStr);
+      // Update student-specific running stats and monthly absentee flags
+      updateStudentRunningStatsAndFlags(schoolId, classId, dateString, records);
+    } catch (e) {
+      console.warn("Failed to auto-resolve pending attendance notifications or recompute stats:", e);
+    }
   } catch (error) {
     console.error("Error saving attendance:", error);
     throw error;
@@ -634,10 +705,56 @@ export const checkParentRegistration = async (schoolId, studentId) => {
   }
 };
 
+// --- Fee Collection Periods ---
+export const subscribeToFeeCollectionPeriods = (schoolId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/feeCollectionPeriods`),
+    orderBy('displayOrder', 'asc')
+  );
+  return onSnapshot(q, (snapshot) => {
+    const periods = [];
+    snapshot.forEach((doc) => periods.push({ id: doc.id, ...doc.data() }));
+    callback(periods);
+  });
+};
+
+export const createFeeCollectionPeriod = async (schoolId, periodData) => {
+  try {
+    return await addDoc(collection(db, `schools/${schoolId}/feeCollectionPeriods`), {
+      ...periodData,
+      createdAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Error creating fee collection period:', error);
+    throw error;
+  }
+};
+
+export const updateFeeCollectionPeriod = async (schoolId, periodId, data) => {
+  try {
+    await updateDoc(doc(db, `schools/${schoolId}/feeCollectionPeriods`, periodId), {
+      ...data,
+      updatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Error updating fee collection period:', error);
+    throw error;
+  }
+};
+
+export const deleteFeeCollectionPeriod = async (schoolId, periodId) => {
+  try {
+    await deleteDoc(doc(db, `schools/${schoolId}/feeCollectionPeriods`, periodId));
+  } catch (error) {
+    console.error('Error deleting fee collection period:', error);
+    throw error;
+  }
+};
+
 // --- Fee Management Operations ---
 export const createFeeStructure = async (schoolId, feeData) => {
   try {
-    // 1. Create the Fee Structure document
+    // 1. Create the Fee Structure document (includes collectionPeriodId/Name if provided)
     const feeRef = await addDoc(collection(db, `schools/${schoolId}/feeStructures`), {
       ...feeData,
       createdAt: new Date().toISOString()
@@ -647,6 +764,7 @@ export const createFeeStructure = async (schoolId, feeData) => {
     const students = await getStudentsByClass(schoolId, feeData.classId);
 
     // 3. Batch create invoices for all students in the class
+    // Each invoice now carries collectionPeriodId & collectionPeriodName for filtering
     const batch = writeBatch(db);
     students.forEach(student => {
       const invoiceRef = doc(collection(db, `schools/${schoolId}/invoices`));
@@ -657,6 +775,9 @@ export const createFeeStructure = async (schoolId, feeData) => {
         amount: Number(feeData.amount),
         dueDate: feeData.dueDate,
         status: 'Pending',
+        // Collection period – null for legacy records, populated for new ones
+        collectionPeriodId: feeData.collectionPeriodId || null,
+        collectionPeriodName: feeData.collectionPeriodName || 'General',
         customData: feeData.customData || {},
         createdAt: new Date().toISOString()
       });
@@ -1432,4 +1553,246 @@ export const getChatsForTeacher = async (schoolId, teacherId) => {
   const q = query(collection(db, `schools/${schoolId}/chats`), where("teacherId", "==", teacherId));
   const snap = await getDocs(q);
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+};
+
+// --- SOP Attendance Settings & Leave Approval Rules ---
+export const getAttendanceSettings = async (schoolId) => {
+  try {
+    const docRef = doc(db, `schools/${schoolId}/config`, 'attendanceSettings');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
+    return null;
+  } catch (error) {
+    console.error("Error getting attendance settings:", error);
+    throw error;
+  }
+};
+
+export const saveAttendanceSettings = async (schoolId, settings) => {
+  try {
+    const docRef = doc(db, `schools/${schoolId}/config`, 'attendanceSettings');
+    await setDoc(docRef, settings, { merge: true });
+  } catch (error) {
+    console.error("Error saving attendance settings:", error);
+    throw error;
+  }
+};
+
+export const subscribeToLeaveApprovalRules = (schoolId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/config/leaveApprovalRules/rules`),
+    orderBy('order', 'asc')
+  );
+  return onSnapshot(q, (snapshot) => {
+    const rules = [];
+    snapshot.forEach((doc) => {
+      rules.push({ id: doc.id, ...doc.data() });
+    });
+    callback(rules);
+  }, (error) => {
+    console.error("Error subscribing to leave approval rules:", error);
+  });
+};
+
+export const createLeaveApprovalRule = async (schoolId, ruleData) => {
+  try {
+    const docRef = await addDoc(collection(db, `schools/${schoolId}/config/leaveApprovalRules/rules`), {
+      ...ruleData,
+      createdAt: new Date().toISOString()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating leave approval rule:", error);
+    throw error;
+  }
+};
+
+export const updateLeaveApprovalRule = async (schoolId, ruleId, ruleData) => {
+  try {
+    const docRef = doc(db, `schools/${schoolId}/config/leaveApprovalRules/rules`, ruleId);
+    await updateDoc(docRef, {
+      ...ruleData,
+      updatedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("Error updating leave approval rule:", error);
+    throw error;
+  }
+};
+
+export const deleteLeaveApprovalRule = async (schoolId, ruleId) => {
+  try {
+    const docRef = doc(db, `schools/${schoolId}/config/leaveApprovalRules/rules`, ruleId);
+    await deleteDoc(docRef);
+  } catch (error) {
+    console.error("Error deleting leave approval rule:", error);
+    throw error;
+  }
+};
+
+export const recomputeDashboardStats = async (schoolId, dateStr) => {
+  try {
+    const classesRef = collection(db, `schools/${schoolId}/classes`);
+    const classesSnap = await getDocs(classesRef);
+    const classesList = classesSnap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+
+    const notificationsRef = collection(db, `schools/${schoolId}/notifications`);
+    const qPending = query(
+      notificationsRef,
+      where('type', '==', 'attendance_pending'),
+      where('date', '==', dateStr),
+      where('read', '==', false)
+    );
+    const pendingSnap = await getDocs(qPending);
+    const classesPending = pendingSnap.docs.map(docSnap => docSnap.data().classId);
+
+    const schoolWide = { total: 0, present: 0, absent: 0, late: 0, percentage: 100 };
+    const byGrade = {};
+    const bySection = {};
+    let classesMarked = 0;
+
+    for (const cls of classesList) {
+      const classId = cls.id;
+      const gradeId = cls.grade || 'unspecified';
+
+      if (!byGrade[gradeId]) {
+        byGrade[gradeId] = { total: 0, present: 0, absent: 0, late: 0, percentage: 100 };
+      }
+
+      bySection[classId] = { total: 0, present: 0, absent: 0, late: 0, percentage: 100, gradeId, name: cls.name, section: cls.section };
+
+      const docIdStandard = `${classId}_${dateStr}`;
+      const docIdFN = `${classId}_${dateStr}_FN`;
+
+      const [snapStd, snapFN] = await Promise.all([
+        getDoc(doc(db, `schools/${schoolId}/attendance`, docIdStandard)),
+        getDoc(doc(db, `schools/${schoolId}/attendance`, docIdFN))
+      ]);
+
+      const attSnap = snapStd.exists() ? snapStd : snapFN.exists() ? snapFN : null;
+
+      if (attSnap) {
+        classesMarked++;
+        const attData = attSnap.data();
+        const records = attData.records || {};
+
+        Object.entries(records).forEach(([studentId, status]) => {
+          schoolWide.total++;
+          if (status === 'Present') schoolWide.present++;
+          if (status === 'Absent') schoolWide.absent++;
+          if (status === 'Late') schoolWide.late++;
+
+          byGrade[gradeId].total++;
+          if (status === 'Present') byGrade[gradeId].present++;
+          if (status === 'Absent') byGrade[gradeId].absent++;
+          if (status === 'Late') byGrade[gradeId].late++;
+
+          bySection[classId].total++;
+          if (status === 'Present') bySection[classId].present++;
+          if (status === 'Absent') bySection[classId].absent++;
+          if (status === 'Late') bySection[classId].late++;
+        });
+      }
+    }
+
+    const calcPercentage = (s) => {
+      if (s.total === 0) return 100;
+      return Math.round(((s.present + s.late) / s.total) * 100);
+    };
+
+    schoolWide.percentage = calcPercentage(schoolWide);
+    Object.keys(byGrade).forEach(gId => {
+      byGrade[gId].percentage = calcPercentage(byGrade[gId]);
+    });
+    Object.keys(bySection).forEach(cId => {
+      bySection[cId].percentage = calcPercentage(bySection[cId]);
+    });
+
+    const statsRef = doc(db, `schools/${schoolId}/dashboardStats`, dateStr);
+    await setDoc(statsRef, {
+      date: dateStr,
+      schoolWide,
+      byGrade,
+      bySection,
+      classesMarked,
+      classesTotal: classesList.length,
+      classesPending,
+      lastUpdated: new Date().toISOString()
+    }, { merge: true });
+
+  } catch (error) {
+    console.error("Error in recomputeDashboardStats:", error);
+  }
+};
+
+export const updateStudentRunningStatsAndFlags = async (schoolId, classId, dateString, records) => {
+  try {
+    const currentMonthStr = dateString.split('_')[0].slice(0, 7); // YYYY-MM
+    
+    // Fetch threshold settings
+    const settingsSnap = await getDoc(doc(db, `schools/${schoolId}/config`, 'attendanceSettings'));
+    const threshold = settingsSnap.exists() ? (settingsSnap.data().absenteeThreshold || 2) : 2;
+
+    // Fetch all attendance documents for this class to compute running counts
+    const attendanceRef = collection(db, `schools/${schoolId}/attendance`);
+    const q = query(attendanceRef, where('classId', '==', classId));
+    const attSnap = await getDocs(q);
+    const attendanceDocs = attSnap.docs.map(d => d.data());
+
+    for (const studentId of Object.keys(records)) {
+      let totalDays = 0;
+      let presentDays = 0;
+      let absentDays = 0;
+      let lateDays = 0;
+      let currentMonthAbsents = 0;
+
+      attendanceDocs.forEach(att => {
+        const studentStatus = att.records ? att.records[studentId] : null;
+        if (studentStatus) {
+          totalDays++;
+          if (studentStatus === 'Present') presentDays++;
+          if (studentStatus === 'Absent') {
+            absentDays++;
+            const attDate = att.date ? att.date.split('_')[0] : '';
+            if (attDate.startsWith(currentMonthStr)) {
+              currentMonthAbsents++;
+            }
+          }
+          if (studentStatus === 'Late') lateDays++;
+        }
+      });
+
+      if (totalDays > 0) {
+        const attendancePercentage = Number((((presentDays + lateDays) / totalDays) * 100).toFixed(1));
+        
+        await setDoc(doc(db, `schools/${schoolId}/attendanceStats`, studentId), {
+          studentId,
+          totalDays,
+          presentDays,
+          absentDays,
+          lateDays,
+          attendancePercentage,
+          academicYear: '2026-27',
+          lastUpdated: new Date().toISOString()
+        }, { merge: true });
+      }
+
+      const flagRef = doc(db, `schools/${schoolId}/absenteeFlags`, `${studentId}_${currentMonthStr}`);
+      if (currentMonthAbsents >= threshold) {
+        await setDoc(flagRef, {
+          studentId,
+          classId,
+          month: currentMonthStr,
+          absentCount: currentMonthAbsents,
+          flaggedAt: new Date().toISOString()
+        }, { merge: true });
+      } else {
+        await deleteDoc(flagRef).catch(() => {});
+      }
+    }
+  } catch (error) {
+    console.error("Error in updateStudentRunningStatsAndFlags:", error);
+  }
 };

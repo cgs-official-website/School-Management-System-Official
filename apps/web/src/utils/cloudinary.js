@@ -13,6 +13,12 @@ export const uploadFileToCloudinaryOrFirebase = async (file, schoolId, firebaseF
   if (!file) throw new Error("No file provided for upload");
   if (!schoolId) throw new Error("schoolId is required to fetch upload configuration");
 
+  // Enforce 3MB limit (3 * 1024 * 1024 = 3145728 bytes)
+  const isAudio = file.type && file.type.startsWith('audio/');
+  if (file.size > 3145728 && !isAudio) {
+    throw new Error(`File "${file.name}" exceeds the 3MB size limit. Please upload a smaller file.`);
+  }
+
   try {
     // 1. Fetch School Configuration
     const schoolDoc = await getDoc(doc(db, 'schools', schoolId));

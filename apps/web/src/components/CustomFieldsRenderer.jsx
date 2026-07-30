@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import { useAuth } from '../context/AuthContext';
-import { LuPaperclip, LuExternalLink } from 'react-icons/lu';
+import { LuPaperclip, LuExternalLink, LuEye } from 'react-icons/lu';
+import FilePreviewModal from './FilePreviewModal';
+import { toast } from 'react-hot-toast';
 
 export default function CustomFieldsRenderer({ moduleKey, customData, onChange, readOnly = false }) {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   useEffect(() => {
     if (schoolId && moduleKey) {
@@ -78,9 +81,13 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                       <div className="text-slate-900 font-medium">
                         {field.type === 'checkbox' ? (value ? 'Yes' : 'No') : field.type === 'file' ? (
                           value ? (
-                            <a href={value} target="_blank" rel="noreferrer" className="text-primary-600 hover:underline flex items-center gap-1">
-                              <LuExternalLink size={14} /> View File
-                            </a>
+                            <button
+                              type="button"
+                              onClick={() => setPreviewUrl(value)}
+                              className="text-primary-600 hover:underline flex items-center gap-1"
+                            >
+                              <LuEye size={14} /> Preview & Download
+                            </button>
                           ) : 'N/A'
                         ) : (value || 'N/A')}
                       </div>
@@ -158,7 +165,17 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                             <input
                               type="file"
                               required={field.required && !value}
-                              onChange={(e) => onChange(field.id, e.target.files[0])}
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                  if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                                    toast.error(`File "${file.name}" exceeds the 3MB limit.`);
+                                    e.target.value = '';
+                                    return;
+                                  }
+                                  onChange(field.id, file);
+                                }
+                              }}
                               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                             />
                             {value instanceof File && (
@@ -167,9 +184,13 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                               </span>
                             )}
                             {!(value instanceof File) && value && typeof value === 'string' && (
-                              <a href={value} target="_blank" rel="noreferrer" className="text-xs text-primary-600 flex items-center gap-1 hover:underline">
-                                <LuExternalLink /> View Current File
-                              </a>
+                              <button
+                                type="button"
+                                onClick={() => setPreviewUrl(value)}
+                                className="text-xs text-primary-600 flex items-center gap-1 hover:underline text-left"
+                              >
+                                <LuEye size={14} /> Preview Current File
+                              </button>
                             )}
                           </div>
                         )}
@@ -182,6 +203,13 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
           </div>
         );
       })}
+
+      {/* File Preview Modal */}
+      <FilePreviewModal 
+        isOpen={!!previewUrl} 
+        fileUrl={previewUrl} 
+        onClose={() => setPreviewUrl(null)} 
+      />
     </div>
   );
 }

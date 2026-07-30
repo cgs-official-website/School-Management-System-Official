@@ -68,8 +68,14 @@ export default function SchoolRegistration() {
   };
 
   const handleFileChange = (e, name) => {
-    if (e.target.files[0]) {
-      setFiles({ ...files, [name]: e.target.files[0] });
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+        toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+        e.target.value = '';
+        return;
+      }
+      setFiles({ ...files, [name]: file });
     }
   };
 
@@ -220,7 +226,7 @@ export default function SchoolRegistration() {
   ];
 
   // Pricing calculations
-  const pricePerUserPerMonth = 12;
+  const pricePerUserPerMonth = 26;
   const yearlyDiscountRate = 0.10; // 10%
   const numUsers = parseInt(formData.userCount, 10) || 0;
   const isCalculatorInvalid = numUsers <= 0 || calculatorError !== '';
@@ -409,7 +415,7 @@ export default function SchoolRegistration() {
                         </div>
                         <div className="flex justify-between items-center">
                           <span>Base Rate:</span>
-                          <span className="font-bold text-slate-800">₹12 / user / month</span>
+                          <span className="font-bold text-slate-800">₹26 / user / month</span>
                         </div>
                         {formData.billingCycle === 'yearly' && !isCalculatorInvalid && (
                           <div className="flex justify-between items-center text-primary-600">
@@ -569,7 +575,7 @@ export default function SchoolRegistration() {
                           </div>
                         </div>
                         <ul className="space-y-2 text-sm text-slate-600">
-                          <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Calculated price based on ₹12 / user / month</li>
+                          <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Calculated price based on ₹26 / user / month</li>
                           <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Billing Cycle: {formData.billingCycle === 'monthly' ? 'Monthly' : 'Yearly (10% Discount applied)'}</li>
                           {selectedPlanDetails && (
                             <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Base Tier: {selectedPlanDetails.name}</li>

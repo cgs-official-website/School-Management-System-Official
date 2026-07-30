@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentsByClass, getAttendance, saveAttendance, subscribeToStudentsByClass, subscribeToAttendance, getAttendanceForClass } from '../../firebase/firestore';
+import { getStudentsByClass, getAttendance, saveAttendance, subscribeToStudentsByClass, subscribeToAttendance, getAttendanceForClass, getAttendanceSettings } from '../../firebase/firestore';
 import { getDoc, doc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle, LuSave as Save, LuUsers as Users, LuFileDown, LuX } from 'react-icons/lu';
+import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuCircleX as XCircle, LuCircleAlert as AlertCircle, LuSave as Save, LuUsers as Users, LuFileDown, LuX, LuSquareCheck as CheckSquare } from 'react-icons/lu';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 
@@ -29,6 +29,38 @@ export default function Attendance() {
   const [reportStats, setReportStats] = useState({});
 
   const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
+
+  // --- SOP Cutoff & Alerting State ---
+  const [cutoffTime, setCutoffTime] = useState('09:30');
+  const [isPastCutoff, setIsPastCutoff] = useState(false);
+  const [hasExistingRecord, setHasExistingRecord] = useState(false);
+
+  useEffect(() => {
+    if (!schoolId) return;
+    getAttendanceSettings(schoolId).then(settings => {
+      if (settings && settings.cutoffTime) {
+        setCutoffTime(settings.cutoffTime);
+      }
+    });
+  }, [schoolId]);
+
+  useEffect(() => {
+    if (!cutoffTime || selectedDate !== today) {
+      setIsPastCutoff(false);
+      return;
+    }
+    const checkCutoff = () => {
+      const now = new Date();
+      const [h, m] = cutoffTime.split(':').map(Number);
+      const cutoffDate = new Date();
+      cutoffDate.setHours(h, m, 0, 0);
+      setIsPastCutoff(now > cutoffDate);
+    };
+    checkCutoff();
+    const interval = setInterval(checkCutoff, 60000);
+    return () => clearInterval(interval);
+  }, [cutoffTime, selectedDate, today]);
 
   const dailyFieldsList = [
     { key: 'admissionNo', label: 'Admission No' },
@@ -97,14 +129,17 @@ export default function Attendance() {
     const unsub = subscribeToAttendance(schoolId, classId, attendanceKey, (existingRecord) => {
       const newRecords = {};
       if (existingRecord && existingRecord.records) {
+        setHasExistingRecord(true);
         // Load existing statuses
         students.forEach(student => {
           newRecords[student.id] = existingRecord.records[student.id] || 'Present';
         });
       } else {
-        // Default everyone to Present
+        setHasExistingRecord(false);
+        // Default everyone to Present, or Late if past cutoff
+        const defaultStatus = isPastCutoff ? 'Late' : 'Present';
         students.forEach(student => {
-          newRecords[student.id] = 'Present';
+          newRecords[student.id] = defaultStatus;
         });
       }
       setAttendanceRecords(newRecords);
@@ -112,7 +147,7 @@ export default function Attendance() {
     });
 
     return () => unsub();
-  }, [selectedDate, students, schoolId, classId, viewMode]);
+  }, [selectedDate, students, schoolId, classId, viewMode, isPastCutoff]);
 
   useEffect(() => {
     if (viewMode === 'daily' || !schoolId || !classId) return;
@@ -292,7 +327,11 @@ export default function Attendance() {
 
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Attendance');
-      XLSX.writeFile(wb, fileName);
+      
+      const rawName = exportFileName.trim() || fileName.replace(/\.xlsx$/i, '');
+      const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
+      
+      XLSX.writeFile(wb, finalFileName);
       setShowExportModal(false);
       toast.success('Attendance exported successfully!');
     } catch (error) {
@@ -315,13 +354,32 @@ export default function Attendance() {
   }
 
   return (
-    <div className="p-8 max-w-5xl mx-auto pb-24">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto h-full flex flex-col">
+      {/* Banner */}
+      <div className="relative bg-gradient-to-br from-primary-600 to-indigo-700 rounded-3xl p-6 md:p-8 text-white overflow-hidden shadow-lg mb-8 shrink-0">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-primary-500/20 rounded-full blur-2xl translate-y-1/2"></div>
+        
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-white border border-white/20 mb-4 backdrop-blur-sm">
+              <CheckSquare size={14} /> My Assigned Class
+            </span>
+            <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-tight">
+              Attendance Manager
+            </h1>
+            <p className="text-slate-300 text-lg flex items-center gap-2">
+              {classDetails ? `${classDetails.name} - Section ${classDetails.section}` : 'Loading Class...'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Attendance</h1>
-          <p className="text-slate-500 mt-1">
-            {classDetails ? `${classDetails.name} - Section ${classDetails.section}` : 'Loading...'}
-          </p>
+          <h2 className="text-2xl font-bold text-slate-900">Mark Attendance</h2>
+          <p className="text-slate-500 mt-1">Select date/session to register or view class attendance statistics.</p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50/50 p-2 rounded-2xl border border-slate-100">
@@ -361,6 +419,16 @@ export default function Attendance() {
         </div>
       </div>
 
+      {viewMode === 'daily' && isPastCutoff && !hasExistingRecord && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl flex items-start gap-3 animate-fade-in-down">
+          <AlertCircle size={20} className="text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-bold text-sm">Attendance not marked — past cutoff ({cutoffTime})</p>
+            <p className="text-xs text-amber-700 mt-0.5">New marks will default to Late. Teachers can still mark attendance manually.</p>
+          </div>
+        </div>
+      )}
+
       {successMsg && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-800 rounded-xl flex items-center gap-3 animate-fade-in-down">
           <CheckCircle2 size={20} className="text-green-600" />
@@ -377,7 +445,18 @@ export default function Attendance() {
           </div>
           <div className="flex items-center gap-2">
             <button 
-              onClick={() => setShowExportModal(true)}
+              onClick={() => {
+                if (students.length === 0) {
+                  toast.error("No student data available to export.");
+                  return;
+                }
+                const className = classDetails ? `${classDetails.name}-${classDetails.section}` : 'class';
+                const defaultName = viewMode === 'daily' 
+                  ? `Attendance_${className}_${selectedDate}_${selectedSession}` 
+                  : `Attendance_${className}_${viewMode === 'weekly' ? 'Weekly' : viewMode === 'monthly' ? 'Monthly' : 'Term'}_Report`;
+                setExportFileName(defaultName);
+                setShowExportModal(true);
+              }}
               disabled={loading || students.length === 0}
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98] disabled:opacity-50"
             >
@@ -544,6 +623,21 @@ export default function Attendance() {
 
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* File Name Input */}
+              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="e.g. Attendance_Report"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                  />
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                </div>
+              </div>
+
               {/* Select All / Deselect All Controls */}
               <div className="flex gap-3">
                 <button

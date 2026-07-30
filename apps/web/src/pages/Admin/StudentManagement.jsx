@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { getDoc, doc, deleteDoc } from 'firebase/firestore';
+import { getDoc, doc, deleteDoc, onSnapshot, query, where, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, getDownloadURL } from 'firebase/storage';
 import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye, LuTrash2 as Trash } from 'react-icons/lu';
+import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye, LuTrash2 as Trash, LuDownload as Download, LuFileDown as FileDown } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -65,6 +65,66 @@ export default function StudentManagement() {
 
   const [confirmDeleteState, setConfirmDeleteState] = useState({ isOpen: false, id: null, name: '' });
 
+  // Export State
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
+  const [selectedFields, setSelectedFields] = useState({
+    name: true,
+    admissionNumber: true,
+    classSection: true,
+    dob: true,
+    gender: true,
+    parentName: true,
+    parentPhone: true,
+    parentEmail: true,
+    homeAddress: true
+  });
+
+  const handleFieldToggle = (field) => {
+    setSelectedFields(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
+  };
+
+  const handleExport = () => {
+    if (filteredStudents.length === 0) {
+      toast.error("No student data available to export.");
+      return;
+    }
+
+    const activeFields = Object.keys(selectedFields).filter(k => selectedFields[k]);
+    if (activeFields.length === 0) {
+      toast.error("Please select at least one column to export.");
+      return;
+    }
+
+    const exportData = filteredStudents.map((student, index) => {
+      const row = { "S.No": index + 1 };
+      if (selectedFields.name) row["Student Name"] = `${student.firstName} ${student.lastName}`.trim();
+      if (selectedFields.admissionNumber) row["Admission Number"] = student.admissionNumber || '';
+      if (selectedFields.classSection) row["Class & Section"] = getClassName(student.classId);
+      if (selectedFields.dob) row["Date of Birth"] = student.dob || '';
+      if (selectedFields.gender) row["Gender"] = student.gender || '';
+      if (selectedFields.parentName) row["Parent Name"] = student.parentName || '';
+      if (selectedFields.parentPhone) row["Parent Phone"] = student.parentPhone || '';
+      if (selectedFields.parentEmail) row["Parent Email"] = student.parentEmail || '';
+      if (selectedFields.homeAddress) row["Home Address"] = student.homeAddress || '';
+      return row;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
+
+    const rawName = exportFileName.trim() || "Student_Directory";
+    const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
+
+    XLSX.writeFile(workbook, finalFileName);
+    setShowExportModal(false);
+    toast.success("Student directory exported successfully!");
+  };
+
   const handleDeleteStudent = async (studentId) => {
     try {
       await deleteDoc(doc(db, `schools/${schoolId}/students`, studentId));
@@ -82,6 +142,65 @@ export default function StudentManagement() {
   const [genderFilter, setGenderFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // --- Attendance History states ---
+  const [studentStats, setStudentStats] = useState(null);
+  const [studentHistory, setStudentHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  useEffect(() => {
+    if (!schoolId || !selectedStudentToView || !viewStudentModalOpen) {
+      setStudentStats(null);
+      setStudentHistory([]);
+      return;
+    }
+    
+    const statsRef = doc(db, `schools/${schoolId}/attendanceStats`, selectedStudentToView.id);
+    const unsubStats = onSnapshot(statsRef, (snap) => {
+      if (snap.exists()) {
+        setStudentStats(snap.data());
+      } else {
+        setStudentStats(null);
+      }
+    });
+
+    setLoadingHistory(true);
+    const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+    const q = query(
+      collection(db, `schools/${schoolId}/attendance`),
+      where('classId', '==', selectedStudentToView.classId)
+    );
+
+    getDocs(q).then((snap) => {
+      const history = [];
+      snap.forEach(docSnap => {
+        const docId = docSnap.id;
+        const dateStr = docId.split('_').slice(1).join('_'); // e.g. YYYY-MM-DD or YYYY-MM-DD_FN
+        if (dateStr.startsWith(currentMonth)) {
+          const records = docSnap.data().records || {};
+          const status = records[selectedStudentToView.id];
+          if (status) {
+            history.push({
+              id: docId,
+              date: dateStr.split('_')[0],
+              session: dateStr.split('_')[1] || 'Standard',
+              status
+            });
+          }
+        }
+      });
+      history.sort((a, b) => b.date.localeCompare(a.date));
+      setStudentHistory(history);
+      setLoadingHistory(false);
+    }).catch(err => {
+      console.error("Error loading student attendance history:", err);
+      setLoadingHistory(false);
+    });
+
+    return () => {
+      unsubStats();
+    };
+  }, [schoolId, selectedStudentToView, viewStudentModalOpen]);
 
   useEffect(() => {
     if (!schoolId) return;
@@ -726,6 +845,19 @@ export default function StudentManagement() {
         <div className="flex gap-3">
           <button 
             onClick={() => {
+              if (filteredStudents.length === 0) {
+                toast.error("No student data available to export.");
+                return;
+              }
+              setExportFileName('Student_Directory');
+              setShowExportModal(true);
+            }}
+            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
+          >
+            <FileDown size={18} /> Export
+          </button>
+          <button 
+            onClick={() => {
               setUploadFile(null);
               setSelectedStudentForUpload(null);
               setUploadModalOpen(true);
@@ -760,7 +892,14 @@ export default function StudentManagement() {
                   <label className="block text-sm font-semibold text-slate-700 mb-1">Profile Photo (JPG/PNG)</label>
                   <input type="file" accept="image/png, image/jpeg" onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
-                      setTempImageFile(URL.createObjectURL(e.target.files[0]));
+                      const file = e.target.files[0];
+                      if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                        toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+                        e.target.value = '';
+                        return;
+                      }
+                      setTempImageFile(URL.createObjectURL(file));
+                      setNewStudent({ ...newStudent, photo: file });
                       setCropTarget('add');
                       setCropModalOpen(true);
                       e.target.value = null; // Reset input
@@ -1097,7 +1236,6 @@ export default function StudentManagement() {
                           <button 
                             onClick={() => openUploadModal(student)}
                             className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                            title="Upload Document"
                           >
                             <UploadCloud size={18} />
                           </button>
@@ -1181,7 +1319,17 @@ export default function StudentManagement() {
                 <input 
                   type="file" 
                   accept={selectedStudentForUpload ? "image/*, .pdf" : ".xlsx, .csv"}
-                  onChange={(e) => setUploadFile(e.target.files[0])}
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                        toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+                        e.target.value = '';
+                        return;
+                      }
+                      setUploadFile(file);
+                    }
+                  }}
                   className="absolute inset-0 opacity-0 cursor-pointer z-10" 
                 />
                 <UploadCloud size={32} className={`mx-auto mb-3 ${uploadFile ? 'text-green-500' : 'text-slate-400 group-hover:text-primary-500'}`} />
@@ -1510,6 +1658,72 @@ export default function StudentManagement() {
                     />
                   </div>
 
+                  {/* Attendance Analytics */}
+                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60 space-y-6">
+                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-200/80">Attendance Analytics</h4>
+                    {studentStats ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Running Rate</p>
+                          <span className={`inline-block mt-2 text-xl font-black px-2.5 py-0.5 rounded-full border ${
+                            studentStats.attendancePercentage >= 75 ? 'bg-green-50 text-green-700 border-green-200' :
+                            studentStats.attendancePercentage >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                            'bg-red-50 text-red-700 border-red-200'
+                          }`}>
+                            {studentStats.attendancePercentage}%
+                          </span>
+                        </div>
+                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Days</p>
+                          <p className="text-xl font-extrabold text-slate-800 mt-2">{studentStats.totalDays}</p>
+                        </div>
+                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Present / Late</p>
+                          <p className="text-xl font-extrabold text-slate-800 mt-2">
+                            <span className="text-green-600">{studentStats.presentDays}</span>
+                            <span className="text-slate-300 font-light mx-1">/</span>
+                            <span className="text-amber-600">{studentStats.lateDays}</span>
+                          </p>
+                        </div>
+                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Absences</p>
+                          <p className="text-xl font-extrabold text-red-600 mt-2">{studentStats.absentDays}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-400 italic">No running statistics compiled yet for this student.</p>
+                    )}
+
+                    <div>
+                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">This Month's Daily Log</h5>
+                      {loadingHistory ? (
+                        <div className="flex justify-center py-4">
+                          <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-600 border-t-transparent"></div>
+                        </div>
+                      ) : studentHistory.length === 0 ? (
+                        <p className="text-xs text-slate-400 italic">No daily logs found for the current month.</p>
+                      ) : (
+                        <div className="max-h-[200px] overflow-y-auto border border-slate-200/60 rounded-xl divide-y divide-slate-100 bg-white">
+                          {studentHistory.map((item, idx) => (
+                            <div key={idx} className="flex justify-between items-center px-4 py-2.5 text-xs">
+                              <div>
+                                <span className="font-bold text-slate-800">{new Date(item.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                                <span className="text-slate-400 ml-2 font-medium">({item.session})</span>
+                              </div>
+                              <span className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border text-[10px] ${
+                                item.status === 'Present' ? 'bg-green-50 text-green-700 border-green-100' :
+                                item.status === 'Absent' ? 'bg-red-50 text-red-700 border-red-100' :
+                                'bg-amber-50 text-amber-700 border-amber-100'
+                              }`}>
+                                {item.status}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
                   {/* System & Metadata Information */}
                   <div className="bg-slate-100/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-500 space-y-1">
                     <p>Student ID: <span className="font-mono font-semibold text-slate-700">{selectedStudentToView.id}</span></p>
@@ -1530,7 +1744,14 @@ export default function StudentManagement() {
                         <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Profile Photo (JPG/PNG)</label>
                         <input type="file" accept="image/png, image/jpeg" onChange={(e) => {
                           if (e.target.files && e.target.files.length > 0) {
-                            setTempImageFile(URL.createObjectURL(e.target.files[0]));
+                            const file = e.target.files[0];
+                            if (file.size > 3145728 && !file.type.startsWith('audio/')) {
+                              toast.error(`File "${file.name}" exceeds the 3MB size limit.`);
+                              e.target.value = '';
+                              return;
+                            }
+                            setTempImageFile(URL.createObjectURL(file));
+                            setEditStudentData({ ...editStudentData, photo: file });
                             setCropTarget('edit');
                             setCropModalOpen(true);
                             e.target.value = null;
@@ -2195,6 +2416,94 @@ export default function StudentManagement() {
             setTempImageFile(null);
           }}
         />
+      )}
+
+      {/* Export Columns & Filename Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50 animate-fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up border border-slate-100">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Export Student Directory</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Customize file settings and select columns to export.</p>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* File Name Input */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Export File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    placeholder="Enter file name"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all pr-12 font-medium"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 px-2 py-1 rounded-md">.xlsx</span>
+                </div>
+              </div>
+
+              {/* Columns Selection */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Select Columns to Include</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { key: 'name', label: 'Student Name' },
+                    { key: 'admissionNumber', label: 'Admission No.' },
+                    { key: 'classSection', label: 'Class & Section' },
+                    { key: 'dob', label: 'Date of Birth' },
+                    { key: 'gender', label: 'Gender' },
+                    { key: 'parentName', label: 'Parent Name' },
+                    { key: 'parentPhone', label: 'Parent Phone' },
+                    { key: 'parentEmail', label: 'Parent Email' },
+                    { key: 'homeAddress', label: 'Home Address' }
+                  ].map(({ key, label }) => (
+                    <label 
+                      key={key} 
+                      className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all ${
+                        selectedFields[key] 
+                          ? 'border-primary-200 bg-primary-50/30 text-primary-900 font-semibold' 
+                          : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedFields[key]}
+                        onChange={() => handleFieldToggle(key)}
+                        className="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4 w-4"
+                      />
+                      <span className="text-xs">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors text-sm"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleExport}
+                className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-sm transition-colors flex items-center gap-2 text-sm"
+              >
+                <Download size={18} />
+                Generate Excel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
     </div>
