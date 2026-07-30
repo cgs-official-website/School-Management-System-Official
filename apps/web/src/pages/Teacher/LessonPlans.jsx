@@ -128,8 +128,8 @@ export default function LessonPlans() {
   const handleOpenCreate = () => {
     setEditingPlan(null);
     setFormData({
-      class: classes.length > 0 ? `${classes[0].name} - Section ${classes[0].section}` : '',
-      subject: subjects.length > 0 ? subjects[0].name : '',
+      class: '',
+      subject: '',
       topic: '',
       date: '',
       status: 'draft'
@@ -357,6 +357,7 @@ export default function LessonPlans() {
                     onChange={(e) => setFormData({ ...formData, class: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                   >
+                    <option value="">Select a Class</option>
                     {classes.map(c => (
                       <option key={c.id} value={`${c.name} - Section ${c.section}`}>
                         {c.name} - Section {c.section}
@@ -382,6 +383,7 @@ export default function LessonPlans() {
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                   >
+                    <option value="">Select a Subject</option>
                     {subjects.map(s => (
                       <option key={s.id} value={s.name}>
                         {s.name}
