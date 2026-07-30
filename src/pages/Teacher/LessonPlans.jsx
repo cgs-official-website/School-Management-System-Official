@@ -128,8 +128,8 @@ export default function LessonPlans() {
   const handleOpenCreate = () => {
     setEditingPlan(null);
     setFormData({
-      class: '',
-      subject: '',
+      class: classes.length > 0 ? `${classes[0].name} - Section ${classes[0].section}` : '',
+      subject: subjects.length > 0 ? subjects[0].name : '',
       topic: '',
       date: '',
       status: 'draft'
