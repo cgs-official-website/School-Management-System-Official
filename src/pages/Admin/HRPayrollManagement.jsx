@@ -372,7 +372,14 @@ export default function HRPayrollManagement() {
             <Settings size={20} /> Settings
           </button>
           <button 
-            onClick={() => { setExportFileName('HR_Payroll_Report'); setShowExportModal(true); }}
+            onClick={() => {
+              if (payrolls.length === 0) {
+                toast.error("No payroll data available to export.");
+                return;
+              }
+              setExportFileName('HR_Payroll_Report'); 
+              setShowExportModal(true); 
+            }}
             className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm cursor-pointer"
           >
             <Download size={20} /> Export Report

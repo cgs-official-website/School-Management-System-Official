@@ -247,7 +247,14 @@ export default function PerformanceTracking() {
         </div>
         <div className="flex gap-3">
           <button 
-            onClick={() => { setExportFileName('Student_Performance_Report'); setShowExportModal(true); }}
+            onClick={() => {
+              if (students.length === 0) {
+                toast.error("No student data available to export.");
+                return;
+              }
+              setExportFileName('Student_Performance_Report');
+              setShowExportModal(true);
+            }}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
           >
             <LuDownload size={18} /> Export

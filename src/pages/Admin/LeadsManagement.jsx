@@ -241,6 +241,10 @@ export default function LeadsManagement() {
 
   // Setup Available columns dynamically for XLSX exporting
   const handleOpenExportModal = () => {
+    if (filteredLeads.length === 0) {
+      toast.error("No lead data available to export.");
+      return;
+    }
     // Determine unique field labels from the filtered leads
     const customKeys = new Set();
     filteredLeads.forEach(lead => {

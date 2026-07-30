@@ -446,6 +446,10 @@ export default function Attendance() {
           <div className="flex items-center gap-2">
             <button 
               onClick={() => {
+                if (students.length === 0) {
+                  toast.error("No student data available to export.");
+                  return;
+                }
                 const className = classDetails ? `${classDetails.name}-${classDetails.section}` : 'class';
                 const defaultName = viewMode === 'daily' 
                   ? `Attendance_${className}_${selectedDate}_${selectedSession}` 

@@ -280,6 +280,10 @@ export default function ClassRoster() {
           
           <button
             onClick={() => {
+              if (students.length === 0) {
+                toast.error("No student data available to export.");
+                return;
+              }
               const defaultName = classDetails ? `${classDetails.name}_Section_${classDetails.section}_Students` : "Class_Roster_Students";
               setExportFileName(defaultName);
               setShowExportModal(true);

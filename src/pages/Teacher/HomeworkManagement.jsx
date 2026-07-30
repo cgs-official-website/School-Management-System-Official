@@ -442,6 +442,10 @@ export default function HomeworkManagement() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => {
+                    if (classStudents.length === 0) {
+                      toast.error("No student data available to export.");
+                      return;
+                    }
                     const defaultName = selectedHomework ? selectedHomework.title.replace(/\s+/g, '_') : 'Homework';
                     setExportFileName(`${defaultName}_Submissions`);
                     setShowExportModal(true);

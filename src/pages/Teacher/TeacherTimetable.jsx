@@ -260,7 +260,15 @@ export default function TeacherTimetable() {
             {currentWeek}
           </div>
           <button
-            onClick={() => { setExportFileName(viewType === 'class' ? "My_Class_Timetable" : "My_Subject_Timetable"); setShowExportModal(true); }}
+            onClick={() => {
+              const hasData = Object.values(schedule).some(slots => slots && slots.length > 0);
+              if (!hasData) {
+                toast.error("No timetable data available to export.");
+                return;
+              }
+              setExportFileName(viewType === 'class' ? "My_Class_Timetable" : "My_Subject_Timetable");
+              setShowExportModal(true);
+            }}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
           >
             <LuFileDown size={18} />

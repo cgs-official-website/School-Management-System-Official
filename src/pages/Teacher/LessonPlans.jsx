@@ -234,7 +234,14 @@ export default function LessonPlans() {
             <LuPlus size={18} /> New Plan
           </button>
           <button
-            onClick={() => { setExportFileName('My_Lesson_Plans'); setShowExportModal(true); }}
+            onClick={() => {
+              if (plans.length === 0) {
+                toast.error("No lesson plan data available to export.");
+                return;
+              }
+              setExportFileName('My_Lesson_Plans');
+              setShowExportModal(true);
+            }}
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
           >
             <LuFileDown size={18} />

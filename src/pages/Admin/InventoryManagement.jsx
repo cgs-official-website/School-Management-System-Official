@@ -677,7 +677,14 @@ export default function InventoryManagement() {
           )}
 
            <button 
-            onClick={() => { setExportFileName('inventory_products_' + new Date().toISOString().slice(0,10)); setShowExportModal(true); }}
+            onClick={() => {
+              if (items.length === 0) {
+                toast.error("No inventory data available to export.");
+                return;
+              }
+              setExportFileName('inventory_products_' + new Date().toISOString().slice(0,10));
+              setShowExportModal(true);
+            }}
             className="flex items-center gap-2 border border-slate-200 bg-white text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
           >
             <Download size={18} /> Bulk Export

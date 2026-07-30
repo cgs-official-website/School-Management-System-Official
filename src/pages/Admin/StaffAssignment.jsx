@@ -6,7 +6,7 @@ import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter, LuLink as LinkIcon, LuCopy as CopyIcon, LuTrash2 as Trash } from 'react-icons/lu';
+import { LuSearch as Search, LuShieldCheck as ShieldCheck, LuMail as Mail, LuUsers as Users, LuCircleCheck as CheckCircle2, LuX as X, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuDownload as Download, LuFileSpreadsheet as FileSpreadsheet, LuUserPlus as UserPlus, LuEye as Eye, LuFilter as Filter, LuLink as LinkIcon, LuCopy as CopyIcon, LuTrash2 as Trash, LuFileDown as FileDown } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -40,6 +40,26 @@ export default function StaffAssignment() {
   const [uploading, setUploading] = useState(false);
 
   const [confirmDeleteState, setConfirmDeleteState] = useState({ isOpen: false, id: null, name: '' });
+
+  // Export State
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportFileName, setExportFileName] = useState('');
+  const [selectedFields, setSelectedFields] = useState({
+    name: true,
+    email: true,
+    role: true,
+    assignedClass: true,
+    subjectClasses: true,
+    mobile: true,
+    qualification: true
+  });
+
+  const handleFieldToggle = (field) => {
+    setSelectedFields(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
+  };
 
   const handleDeleteStaff = async (staffId) => {
     try {
@@ -293,14 +313,9 @@ export default function StaffAssignment() {
                 lastName = parts.slice(1).join(' ') || parts[0];
               }
 
+              // Fallbacks to avoid undefined / skip failures
+              if (!firstName) firstName = 'Staff';
               const email = getField(row, 'email address', 'email', 'emailaddress', 'email_address', 'mail');
-              
-              // Skip rows that are missing required fields
-              if (!firstName || !email) {
-                console.warn(`[Bulk Import] Row ${i + 1} skipped:`, { firstName, lastName, email }, row);
-                skippedCount++;
-                continue;
-              }
 
               // Map all Excel columns to Firestore fields
               const staffData = {
@@ -703,56 +718,39 @@ export default function StaffAssignment() {
   };
 
   const exportToExcel = () => {
-    const exportData = staff.map(member => ({
-      'Name': member.name || `${member.firstName} ${member.lastName}`,
-      'Email': member.email,
-      'Role': member.role || 'Staffs',
-      'Assigned Class': getClassName(member.assignedClassId),
-      'Subject Classes': (member.subjectClassIds || []).map(getClassName).join(', ')
-    }));
+    if (staff.length === 0) {
+      toast.error("No staff data available to export.");
+      return;
+    }
+
+    const activeFields = Object.keys(selectedFields).filter(k => selectedFields[k]);
+    if (activeFields.length === 0) {
+      toast.error("Please select at least one column to export.");
+      return;
+    }
+
+    const exportData = staff.map((member, index) => {
+      const row = { "S.No": index + 1 };
+      if (selectedFields.name) row["Name"] = member.name || `${member.firstName} ${member.lastName}`.trim();
+      if (selectedFields.email) row["Email"] = member.email || '';
+      if (selectedFields.role) row["Role"] = member.role || 'Staffs';
+      if (selectedFields.assignedClass) row["Assigned Class"] = getClassName(member.assignedClassId);
+      if (selectedFields.subjectClasses) row["Subject Classes"] = (member.subjectClassIds || []).map(getClassName).join(', ');
+      if (selectedFields.mobile) row["Mobile"] = member.mobileNumber || '';
+      if (selectedFields.qualification) row["Highest Qualification"] = member.highestQualification || '';
+      return row;
+    });
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Staff");
-    XLSX.writeFile(workbook, "Staff_Directory.xlsx");
-  };
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    
-    // Add School Name Header
-    doc.setFontSize(20);
-    doc.setTextColor(15, 23, 42); // slate-900
-    doc.text(schoolName, 14, 22);
-    
-    doc.setFontSize(14);
-    doc.setTextColor(100, 116, 139); // slate-500
-    doc.text("Staff Directory", 14, 30);
-    
-    const tableColumn = ["Name", "Email", "Role", "Class Tr. Of", "Subject Tr. Of"];
-    const tableRows = [];
+    const rawName = exportFileName.trim() || "Staff_Directory";
+    const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
 
-    staff.forEach(member => {
-      const rowData = [
-        member.name || `${member.firstName} ${member.lastName}`,
-        member.email || 'N/A',
-        (member.role || 'Staffs').toUpperCase(),
-        getClassName(member.assignedClassId),
-        (member.subjectClassIds || []).map(getClassName).join(', ')
-      ];
-      tableRows.push(rowData);
-    });
-
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 40,
-      theme: 'grid',
-      styles: { fontSize: 10, cellPadding: 5 },
-      headStyles: { fillColor: [59, 130, 246] }, // Primary Blue
-    });
-
-    doc.save("Staff_Directory.pdf");
+    XLSX.writeFile(workbook, finalFileName);
+    setShowExportModal(false);
+    toast.success("Staff directory exported successfully!");
   };
 
   const filteredStaff = staff.filter(member => {
@@ -804,16 +802,17 @@ export default function StaffAssignment() {
         </div>
         <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
           <button 
-            onClick={() => exportToExcel()}
-            className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl font-medium hover:bg-emerald-100 shadow-sm flex items-center gap-2 transition-colors border border-emerald-200"
+            onClick={() => {
+              if (staff.length === 0) {
+                toast.error("No staff data available to export.");
+                return;
+              }
+              setExportFileName('Staff_Directory');
+              setShowExportModal(true);
+            }}
+            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
           >
-            <FileSpreadsheet size={18} /> Export Excel
-          </button>
-          <button 
-            onClick={() => exportToPDF()}
-            className="px-4 py-2 bg-rose-50 text-rose-700 rounded-xl font-medium hover:bg-rose-100 shadow-sm flex items-center gap-2 transition-colors border border-rose-200"
-          >
-            <FileText size={18} /> Export PDF
+            <FileDown size={18} /> Export
           </button>
           <button 
               onClick={() => {
@@ -2583,11 +2582,92 @@ export default function StaffAssignment() {
         type="danger"
       />
 
-      <FilePreviewModal 
-        isOpen={!!previewUrl} 
-        fileUrl={previewUrl} 
-        onClose={() => setPreviewUrl(null)} 
-      />
+      {/* Export Columns & Filename Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50 animate-fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up border border-slate-100">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Export Staff Directory</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Customize file settings and select columns to export.</p>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* File Name Input */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Export File Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={exportFileName}
+                    onChange={(e) => setExportFileName(e.target.value)}
+                    placeholder="Enter file name"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all pr-12 font-medium"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 px-2 py-1 rounded-md">.xlsx</span>
+                </div>
+              </div>
+
+              {/* Columns Selection */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Select Columns to Include</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { key: 'name', label: 'Name' },
+                    { key: 'email', label: 'Email' },
+                    { key: 'role', label: 'Role' },
+                    { key: 'assignedClass', label: 'Assigned Class' },
+                    { key: 'subjectClasses', label: 'Subject Classes' },
+                    { key: 'mobile', label: 'Mobile' },
+                    { key: 'qualification', label: 'Highest Qualification' }
+                  ].map(({ key, label }) => (
+                    <label 
+                      key={key} 
+                      className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all ${
+                        selectedFields[key] 
+                          ? 'border-primary-200 bg-primary-50/30 text-primary-900 font-semibold' 
+                          : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedFields[key]}
+                        onChange={() => handleFieldToggle(key)}
+                        className="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4 w-4"
+                      />
+                      <span className="text-xs">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors text-sm"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={exportToExcel}
+                className="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl shadow-sm transition-colors flex items-center gap-2 text-sm"
+              >
+                <Download size={18} />
+                Generate Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
