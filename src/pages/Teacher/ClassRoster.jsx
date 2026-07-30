@@ -6,11 +6,13 @@ import { db } from '../../firebase/config';
 import { LuUsers as Users, LuSearch as Search, LuGraduationCap as GraduationCap, LuMail as Mail, LuCircleCheck as CheckCircle2, LuBus, LuUserCheck, LuUserX, LuUser, LuUserRound, LuFileDown, LuX } from 'react-icons/lu';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function ClassRoster() {
   const { userProfile, currentUser } = useAuth();
   const schoolId = userProfile?.schoolId;
   const [classId, setClassId] = useState(userProfile?.assignedClassId || null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!schoolId || !currentUser?.uid) return;
@@ -244,7 +246,10 @@ export default function ClassRoster() {
           <div className="text-3xl font-black text-slate-900">{girlsCount}</div>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div 
+          onClick={() => navigate('/teacher/attendance')}
+          className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-primary-200 transition-all hover:bg-slate-50/50"
+        >
           <div className="flex justify-between items-start mb-2">
             <span className="text-slate-500 font-medium text-sm">Today's Attendance</span>
             <div className="flex gap-2">

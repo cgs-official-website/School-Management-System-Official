@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToGlobalNotices, subscribeToClassNotices, markNoticeAsViewed } from '../../firebase/firestore';
 import { LuBell as Bell, LuMegaphone as Megaphone, LuUsers as Users, LuTriangleAlert as AlertTriangle } from 'react-icons/lu';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 
 export default function ParentNoticeboard() {
   const { userProfile, currentUser } = useAuth();
@@ -13,6 +15,30 @@ export default function ParentNoticeboard() {
   const [globalNotices, setGlobalNotices] = useState([]);
   const [classNotices, setClassNotices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [resolvedClassId, setResolvedClassId] = useState(null);
+
+  useEffect(() => {
+    if (!schoolId || !studentId) {
+      setResolvedClassId(classId || null);
+      return;
+    }
+
+    const fetchActiveStudentClass = async () => {
+      try {
+        const studentDoc = await getDoc(doc(db, `schools/${schoolId}/students`, studentId));
+        if (studentDoc.exists()) {
+          setResolvedClassId(studentDoc.data().classId || classId || null);
+        } else {
+          setResolvedClassId(classId || null);
+        }
+      } catch (err) {
+        console.error("Failed to dynamically resolve student classId:", err);
+        setResolvedClassId(classId || null);
+      }
+    };
+
+    fetchActiveStudentClass();
+  }, [schoolId, studentId, classId]);
 
   useEffect(() => {
     if (!schoolId) return;
@@ -27,8 +53,8 @@ export default function ParentNoticeboard() {
         setLoading(false);
         markUnreadAsViewed(data);
       });
-    } else if (activeTab === 'class' && classId) {
-      unsubClass = subscribeToClassNotices(schoolId, classId, (data) => {
+    } else if (activeTab === 'class' && resolvedClassId) {
+      unsubClass = subscribeToClassNotices(schoolId, resolvedClassId, (data) => {
         // filter out notices meant only for students, and filter specific_parents notices
         const filtered = data.filter(n => {
           if (n.audience === 'students') return false;
@@ -49,9 +75,10 @@ export default function ParentNoticeboard() {
       unsubGlobal();
       unsubClass();
     };
-  }, [schoolId, activeTab, classId]);
+  }, [schoolId, activeTab, resolvedClassId, currentUser, userProfile]);
 
   const markUnreadAsViewed = (noticesList) => {
+    if (!currentUser?.uid || !userProfile) return;
     noticesList.forEach(notice => {
       const alreadyViewed = notice.viewedBy?.some(v => v.uid === currentUser.uid);
       if (!alreadyViewed) {
@@ -59,7 +86,7 @@ export default function ParentNoticeboard() {
           uid: currentUser.uid,
           name: userProfile.name || `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || 'Parent',
           role: 'parent',
-          classId: classId || ''
+          classId: resolvedClassId || classId || ''
         });
       }
     });

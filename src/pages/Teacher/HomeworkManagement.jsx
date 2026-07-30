@@ -290,7 +290,7 @@ export default function HomeworkManagement() {
                 <X size={24} />
               </button>
             </div>
-            <form onSubmit={handleCreateSubmit}>
+            <form onSubmit={handleCreate}>
               <div className="p-6 space-y-4">
                 <div className="space-y-1">
                   <label className="text-sm font-bold text-slate-700">Homework Title</label>

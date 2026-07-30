@@ -79,9 +79,10 @@ export default function TeacherNoticeboard() {
       unsubClasses();
       unsubStudents();
     };
-  }, [schoolId, activeTab, classId]);
+  }, [schoolId, activeTab, classId, currentUser, userProfile]);
 
   const markUnreadAsViewed = (noticesList) => {
+    if (!currentUser?.uid || !userProfile) return;
     noticesList.forEach(notice => {
       const alreadyViewed = notice.viewedBy?.some(v => v.uid === currentUser.uid);
       if (!alreadyViewed) {
