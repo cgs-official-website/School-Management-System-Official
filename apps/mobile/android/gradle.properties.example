@@ -1,8 +1,0 @@
-# Keystore Configuration
-# Copy this file to gradle.properties (which is gitignored) and fill in your actual values.
-# To generate a keystore: keytool -genkeypair -v -storetype PKCS12 -keystore release.keystore -alias zuna-key -keyalg RSA -keysize 2048 -validity 10000
-
-MYAPP_UPLOAD_STORE_FILE=release.keystore
-MYAPP_UPLOAD_KEY_ALIAS=zuna-key
-MYAPP_UPLOAD_STORE_PASSWORD=your_keystore_password
-MYAPP_UPLOAD_KEY_PASSWORD=your_key_password
