@@ -6,20 +6,20 @@ import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 
 export default function TeacherTimetable() {
-  const { userProfile } = useAuth();
+  const { userProfile, currentUser } = useAuth();
   const schoolId = userProfile?.schoolId;
 
   const [currentWeek, setCurrentWeek] = useState('This Week');
   const [viewType, setViewType] = useState('subject'); // 'subject' or 'class'
   const [isClassTeacher, setIsClassTeacher] = useState(false);
   const [classTimetable, setClassTimetable] = useState({
-    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: []
   });
   const [subjectTimetable, setSubjectTimetable] = useState({
-    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: []
   });
   const [schedule, setSchedule] = useState({
-    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: []
+    Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: []
   });
   const [loading, setLoading] = useState(true);
 
@@ -94,10 +94,10 @@ export default function TeacherTimetable() {
     toast.success("Timetable exported successfully!");
   };
 
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   useEffect(() => {
-    if (!schoolId || !userProfile) return;
+    if (!schoolId) return;
 
     let teachersData = [];
     let classesData = [];
@@ -109,8 +109,9 @@ export default function TeacherTimetable() {
 
       // Find current teacher by email or userId
       const currentTeacher = teachersData.find(t => 
-        (t.userId && (userProfile.uid || userProfile.id) && t.userId === (userProfile.uid || userProfile.id)) || 
-        (t.email && userProfile.email && t.email.trim().toLowerCase() === userProfile.email.trim().toLowerCase())
+        (t.userId && currentUser && t.userId === currentUser.uid) || 
+        (t.email && currentUser && t.email.trim().toLowerCase() === currentUser.email.trim().toLowerCase()) ||
+        (t.email && userProfile?.email && t.email.trim().toLowerCase() === userProfile.email.trim().toLowerCase())
       );
       const teacherId = currentTeacher?.id;
 
@@ -125,8 +126,8 @@ export default function TeacherTimetable() {
         classMap[c.id] = `${c.name} - Section ${c.section}`;
       });
 
-      const newSubjectSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
-      let newClassSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [] };
+      const newSubjectSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [] };
+      let newClassSchedule = { Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [] };
       let hasClass = !!currentTeacher?.assignedClassId;
 
       timetablesData.forEach(classTimetable => {
@@ -153,17 +154,13 @@ export default function TeacherTimetable() {
         }
 
         // 2. Fill Subject Teacher Timetable
-        // A teacher teaches a subject if:
-        // - They are assigned as Subject Teacher for this class (subjectClassIds array)
-        // OR - Their teacherId matches the slot's teacherId
-        // OR - Their name matches the slot's teacher name
-        const isSubjectClass = currentTeacher?.subjectClassIds?.includes(classId);
-
         days.forEach(day => {
           const daySlots = scheduleData[day] || [];
           daySlots.forEach(slot => {
-            const matchesId = slot.teacherId === teacherId;
-            const matchesName = !slot.teacherId && currentTeacher && slot.teacher === (currentTeacher.name || `${currentTeacher.firstName} ${currentTeacher.lastName}`);
+            const matchesId = slot.teacherId && slot.teacherId === teacherId;
+            const matchesName = currentTeacher && slot.teacher && (
+              slot.teacher.trim().toLowerCase() === (currentTeacher.name || `${currentTeacher.firstName} ${currentTeacher.lastName || ''}`).trim().toLowerCase()
+            );
             
             if (matchesId || matchesName) {
               // Ensure we don't duplicate slots if both conditions are somehow met
@@ -218,7 +215,7 @@ export default function TeacherTimetable() {
       classesUnsub();
       timetablesUnsub();
     };
-  }, [schoolId, userProfile]);
+  }, [schoolId, userProfile, currentUser]);
 
   useEffect(() => {
     if (viewType === 'class' && isClassTeacher) {
