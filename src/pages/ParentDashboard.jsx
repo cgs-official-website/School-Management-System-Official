@@ -6,7 +6,7 @@ import { findStudentByAdmission, linkStudentToParent } from '../firebase/firesto
 import { getDoc, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
-import { LuCircleUser as UserCircle, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuCreditCard as CreditCard, LuLink as LinkIcon, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuCoffee as Coffee, LuBuilding2 as Building2, LuTrendingUp as TrendingUp, LuCalendarClock as CalendarClock } from 'react-icons/lu';
+import { LuCircleUser as UserCircle, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuCreditCard as CreditCard, LuLink as LinkIcon, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuCoffee as Coffee, LuBuilding2 as Building2, LuTrendingUp as TrendingUp, LuCalendarClock as CalendarClock, LuMessageSquare as MessageSquare } from 'react-icons/lu';
 import useSchoolBranding from '../hooks/useSchoolBranding';
 import { useNotifications } from '../context/NotificationContext';
 
@@ -102,6 +102,7 @@ export default function ParentDashboard() {
     { name: 'Report Card', path: '/parent/grades', icon: GraduationCap },
     { name: 'Fees & Payments', path: '/parent/fees', icon: CreditCard, moduleKey: 'fees' },
     { name: 'Leave Requests', path: '/parent/leaves', icon: Calendar },
+    { name: 'Messages', path: '/parent/chat', icon: MessageSquare, moduleKey: 'chat' }
   ];
 
   if (loading) {
