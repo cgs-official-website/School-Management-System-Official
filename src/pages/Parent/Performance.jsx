@@ -20,7 +20,10 @@ export default function Performance() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!schoolId || !studentId || !classId) return;
+    if (!schoolId || !studentId || !classId) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     let unsubAttendance, unsubAssessments;

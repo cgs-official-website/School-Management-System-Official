@@ -76,6 +76,16 @@ export default function TransportManagement() {
       return;
     }
     if (!newRoute.name || !newRoute.capacity) return;
+
+    if (newRoute.driverPhone) {
+      const cleanPhone = newRoute.driverPhone.replace(/[\s\-\(\)]/g, '');
+      const phoneRegex = /^(?:\+?91|0)?[1-9]\d{9}$/;
+      if (!phoneRegex.test(cleanPhone)) {
+        toast.error("Please enter a valid 10-digit driver phone number.");
+        return;
+      }
+    }
+
     setCreating(true);
 
     try {
@@ -390,6 +400,7 @@ export default function TransportManagement() {
                       type="tel" required
                       value={newRoute.driverPhone}
                       onChange={(e) => setNewRoute({...newRoute, driverPhone: e.target.value})}
+                      placeholder="e.g. 9876543210"
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                     />
                   </div>
