@@ -29,6 +29,7 @@ import {
 } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function LeadsManagement() {
   const { userProfile } = useAuth();
@@ -38,6 +39,7 @@ export default function LeadsManagement() {
   const [leads, setLeads] = useState([]);
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, formId: null, formTitle: '' });
 
   // Leads Filter & Search states
   const [searchTerm, setSearchTerm] = useState('');
@@ -193,8 +195,20 @@ export default function LeadsManagement() {
   };
 
   // Form builder: delete form configuration
-  const handleDeleteForm = async (formId) => {
-    if (!window.confirm('Are you sure you want to delete this form? Leads submitted through it will not be deleted.')) return;
+  const handleDeleteFormClick = (formId, title) => {
+    setConfirmModal({
+      isOpen: true,
+      formId,
+      formTitle: title
+    });
+  };
+
+  const handleConfirmDeleteForm = async () => {
+    const { formId } = confirmModal;
+    if (!formId) return;
+
+    setConfirmModal({ isOpen: false, formId: null, formTitle: '' });
+
     try {
       await deleteDoc(doc(db, `schools/${schoolId}/leadForms`, formId));
       toast.success('Form deleted.');
@@ -579,7 +593,7 @@ export default function LeadsManagement() {
                         <LuPencilLine size={13} /> Edit
                       </button>
                       <button
-                        onClick={() => handleDeleteForm(f.id)}
+                        onClick={() => handleDeleteFormClick(f.id, f.title)}
                         className="p-1.5 bg-white border border-slate-200 hover:bg-red-50 hover:text-red-600 text-slate-400 rounded-lg text-xs font-semibold flex items-center gap-1 ml-auto cursor-pointer"
                       >
                         <LuTrash2 size={13} />
@@ -928,6 +942,17 @@ export default function LeadsManagement() {
           </div>
         </div>
       )}
+      {/* Confirm Delete Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, formId: null, formTitle: '' })}
+        onConfirm={handleConfirmDeleteForm}
+        title="Delete Custom Form"
+        message={`Are you sure you want to delete the form "${confirmModal.formTitle}"? Leads submitted through it will not be deleted.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }

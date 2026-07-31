@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LuLifeBuoy, LuSearch, LuMessageSquare, LuCircleCheck, LuClock, LuX, LuSend, LuTrash2, LuUser } from 'react-icons/lu';
 import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import ConfirmModal from '../../components/ConfirmModal';
 
 const zunaConfig = {
   apiKey: "AIzaSyAzEP2LTXsGvCsFyxITkgoon_2AL4yGKyo",
@@ -23,6 +24,7 @@ export default function SupportTickets() {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [submittingReply, setSubmittingReply] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, ticketId: null });
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -173,8 +175,18 @@ export default function SupportTickets() {
     }
   };
 
-  const handleDeleteTicket = async (ticketId) => {
-    if (!window.confirm('Are you sure you want to delete this ticket?')) return;
+  const handleDeleteTicketClick = (ticketId) => {
+    setConfirmModal({
+      isOpen: true,
+      ticketId
+    });
+  };
+
+  const handleConfirmDeleteTicket = async () => {
+    const { ticketId } = confirmModal;
+    if (!ticketId) return;
+
+    setConfirmModal({ isOpen: false, ticketId: null });
 
     const target = tickets.find(t => t.id === ticketId);
     const targetDocId = target?.firestoreDocId || ticketId;
@@ -368,7 +380,7 @@ export default function SupportTickets() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleDeleteTicket(selectedTicket.id)}
+                  onClick={() => handleDeleteTicketClick(selectedTicket.id)}
                   className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"
                   title="Delete Ticket"
                 >
@@ -445,6 +457,17 @@ export default function SupportTickets() {
           </div>
         </div>
       )}
+      {/* Confirm Delete Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, ticketId: null })}
+        onConfirm={handleConfirmDeleteTicket}
+        title="Delete Support Ticket"
+        message="Are you sure you want to delete this support ticket? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }

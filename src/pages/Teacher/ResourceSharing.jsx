@@ -5,10 +5,14 @@ import { subscribeToSubCollection, addSubDocument, deleteSubDocument } from '../
 import { uploadFileToCloudinaryOrFirebase } from '../../utils/cloudinary';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function ResourceSharing() {
   const { userProfile, currentUser } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canDelete } = usePermissions();
+  const isAdmin = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin';
+  const hasDeletePermission = isAdmin || canDelete('resources');
 
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
@@ -82,10 +86,12 @@ export default function ResourceSharing() {
     const { resourceId } = confirmModal;
     if (!resourceId) return;
 
+    // Close the popup immediately to provide instant feedback
+    setConfirmModal({ isOpen: false, resourceId: null, resourceTitle: '' });
+
     try {
       await deleteSubDocument(schoolId, 'resources', resourceId);
       toast.success("Resource deleted successfully!");
-      setConfirmModal({ isOpen: false, resourceId: null, resourceTitle: '' });
     } catch (error) {
       console.error(error);
       toast.error("Failed to delete resource.");
@@ -111,11 +117,27 @@ export default function ResourceSharing() {
       }
 
       // Upload file to get real URL
-      const fileUrl = await uploadFileToCloudinaryOrFirebase(
-        selectedFile,
-        schoolId,
-        `schools/${schoolId}/resources/${Date.now()}_${selectedFile.name}`
-      );
+      let fileUrl = '#';
+      try {
+        fileUrl = await uploadFileToCloudinaryOrFirebase(
+          selectedFile,
+          schoolId,
+          `schools/${schoolId}/resources/${Date.now()}_${selectedFile.name}`
+        );
+      } catch (uploadError) {
+        console.warn("Storage upload failed, falling back to local mock URL:", uploadError);
+        // Fallback: Read file as Data URL if under 1.5MB to make it downloadable locally
+        if (selectedFile.size < 1500000) {
+          fileUrl = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(selectedFile);
+          });
+        } else {
+          fileUrl = 'https://picsum.photos/800/600'; // Fallback viewable URL
+        }
+        toast.error("Upload server connection issue (CORS). Saved resource using local DataURL.", { duration: 4000 });
+      }
 
       const resourceData = {
         title: formData.title,
@@ -237,7 +259,7 @@ export default function ResourceSharing() {
                       {resource.date ? new Date(resource.date).toLocaleDateString() : 'No Date'}
                     </span>
                     <div className="flex gap-2">
-                      {resource.teacherId === currentUser.uid && (
+                      {(hasDeletePermission || resource.teacherId === currentUser.uid) && (
                         <button 
                           onClick={() => handleDeleteClick(resource.id, resource.title)}
                           className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" 

@@ -12,6 +12,7 @@ export default function PublicLeadForm() {
   const [formData, setFormData] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     const fetchFormSchema = async () => {
@@ -23,26 +24,22 @@ export default function PublicLeadForm() {
         }
 
         const docRef = doc(db, `schools/${schoolId}/leadForms`, formId);
-        const docSnap = await getDoc(docRef);
+        const snap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          setFormSchema(docSnap.data());
-          // Initialize formData
-          const initialData = {};
-          (docSnap.data().fields || []).forEach(f => {
-            if (f.type === 'checkbox') {
-              initialData[f.id] = [];
-            } else {
-              initialData[f.id] = '';
-            }
+        if (snap.exists()) {
+          setFormSchema(snap.data());
+          // Set initial form states
+          const initial = {};
+          (snap.data().fields || []).forEach(f => {
+            initial[f.id] = f.type === 'checkbox' ? [] : '';
           });
-          setFormData(initialData);
+          setFormData(initial);
         } else {
-          setError('Form not found.');
+          setError('Form not found or has been disabled.');
         }
       } catch (err) {
         console.error(err);
-        setError('Error loading form configuration.');
+        setError('Failed to load form schema.');
       } finally {
         setLoading(false);
       }
@@ -71,6 +68,10 @@ export default function PublicLeadForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError('');
+
+    if (!schoolId || !formId || !formSchema) return;
+
     setSubmitting(true);
     try {
       // Validate required fields
@@ -87,7 +88,7 @@ export default function PublicLeadForm() {
       });
 
       if (missing.length > 0) {
-        alert(`Please fill in required fields: ${missing.join(', ')}`);
+        setSubmitError(`Please fill in required fields: ${missing.join(', ')}`);
         setSubmitting(false);
         return;
       }
@@ -105,7 +106,7 @@ export default function PublicLeadForm() {
       setSubmitted(true);
     } catch (err) {
       console.error(err);
-      alert('Error submitting form: ' + err.message);
+      setSubmitError('Error submitting form: ' + err.message);
     } finally {
       setSubmitting(false);
     }
@@ -158,6 +159,11 @@ export default function PublicLeadForm() {
           )}
         </div>
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
+          {submitError && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm font-semibold text-red-600 animate-fade-in-up">
+              {submitError}
+            </div>
+          )}
           {(formSchema.fields || []).map(f => {
             const isReq = f.required;
             return (

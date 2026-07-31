@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { subscribeToStudentPTMs, updatePTM } from '../../firebase/firestore';
 import { LuCalendarClock, LuCalendarCheck, LuCircleCheck, LuClock, LuVideo, LuMapPin, LuCircleX, LuUsers } from 'react-icons/lu';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function PTM() {
   const { userProfile } = useAuth();
@@ -11,6 +12,7 @@ export default function PTM() {
 
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, meetingId: null });
 
   useEffect(() => {
     if (!schoolId || !studentId) return;
@@ -34,14 +36,24 @@ export default function PTM() {
     }
   };
 
-  const handleCancel = async (meetingId) => {
-    if (window.confirm('Are you sure you want to cancel this meeting?')) {
-      try {
-        await updatePTM(schoolId, meetingId, { status: 'cancelled' });
-        toast.success('Meeting cancelled');
-      } catch (error) {
-        toast.error('Failed to cancel meeting');
-      }
+  const handleCancelClick = (meetingId) => {
+    setConfirmModal({
+      isOpen: true,
+      meetingId
+    });
+  };
+
+  const handleConfirmCancel = async () => {
+    const { meetingId } = confirmModal;
+    if (!meetingId) return;
+
+    setConfirmModal({ isOpen: false, meetingId: null });
+
+    try {
+      await updatePTM(schoolId, meetingId, { status: 'cancelled' });
+      toast.success('Meeting cancelled');
+    } catch (error) {
+      toast.error('Failed to cancel meeting');
     }
   };
 
@@ -111,7 +123,7 @@ export default function PTM() {
                   <span className="px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-bold rounded-lg">Upcoming</span>
                   
                   {meeting.status !== 'cancelled' && (
-                    <button onClick={() => handleCancel(meeting.id)} className="text-sm font-bold text-red-600 hover:text-red-700">Cancel</button>
+                    <button onClick={() => handleCancelClick(meeting.id)} className="text-sm font-bold text-red-600 hover:text-red-700">Cancel</button>
                   )}
                 </div>
               </div>
@@ -168,6 +180,17 @@ export default function PTM() {
           </section>
         )}
       </div>
+      {/* Confirm Cancel Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, meetingId: null })}
+        onConfirm={handleConfirmCancel}
+        title="Cancel Meeting"
+        message="Are you sure you want to cancel this meeting?"
+        confirmText="Cancel Meeting"
+        cancelText="Go Back"
+        type="danger"
+      />
     </div>
   );
 }

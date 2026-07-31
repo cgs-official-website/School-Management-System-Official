@@ -5,6 +5,7 @@ import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuSave as Save, LuBuilding2 as Building2, LuMapPin as MapPin, LuPhone as Phone, LuGlobe as Globe, LuImage as ImageIcon, LuPalette as Palette, LuCalendar as Calendar, LuCircleCheck as CheckCircle2, LuSettings as Settings, LuPlus as Plus, LuPencil as Pencil, LuTrash as Trash, LuX as X, LuIndianRupee as IndianRupee, LuClock as Clock, LuTriangleAlert as AlertTriangle, LuUserCheck as UserCheck } from 'react-icons/lu';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function EnvironmentSetup() {
   const { userProfile, updateProfileData } = useAuth(); // Assume we can refresh auth context
@@ -13,6 +14,7 @@ export default function EnvironmentSetup() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: null, message: '', title: '' });
 
   const [formData, setFormData] = useState({
     name: '',
@@ -144,14 +146,20 @@ export default function EnvironmentSetup() {
     }
   };
 
-  const handleDeletePeriod = async (p) => {
-    if (!window.confirm(`Delete period "${p.name}"? This will NOT affect existing invoices.`)) return;
-    try {
-      await deleteFeeCollectionPeriod(schoolId, p.id);
-      toast.success('Period deleted.');
-    } catch (err) {
-      toast.error('Failed to delete period.');
-    }
+  const handleDeletePeriod = (p) => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Delete Period",
+      message: `Delete period "${p.name}"? This will NOT affect existing invoices.`,
+      onConfirm: async () => {
+        try {
+          await deleteFeeCollectionPeriod(schoolId, p.id);
+          toast.success('Period deleted.');
+        } catch (err) {
+          toast.error('Failed to delete period.');
+        }
+      }
+    });
   };
 
   const handleTogglePeriodStatus = async (p) => {
@@ -227,15 +235,21 @@ export default function EnvironmentSetup() {
     }
   };
 
-  const handleDeleteLeaveRule = async (rule) => {
-    if (!window.confirm('Delete this leave approval rule?')) return;
-    try {
-      await deleteLeaveApprovalRule(schoolId, rule.id);
-      toast.success('Leave rule deleted.');
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to delete leave rule.');
-    }
+  const handleDeleteLeaveRule = (rule) => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Delete Leave Rule",
+      message: 'Delete this leave approval rule?',
+      onConfirm: async () => {
+        try {
+          await deleteLeaveApprovalRule(schoolId, rule.id);
+          toast.success('Leave rule deleted.');
+        } catch (err) {
+          console.error(err);
+          toast.error('Failed to delete leave rule.');
+        }
+      }
+    });
   };
 
   const getLeaveRulesWarnings = () => {

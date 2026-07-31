@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, updateSubDocument } from '../../firebase/firestore';
 import toast from 'react-hot-toast';
 import usePermissions from '../../hooks/usePermissions';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function LeaveManagement() {
   const { userProfile } = useAuth();
@@ -17,6 +18,7 @@ export default function LeaveManagement() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending');
   const [selectedLeave, setSelectedLeave] = useState(null);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, leaveId: null, newStatus: '' });
 
   useEffect(() => {
     if (!schoolId) return;
@@ -34,12 +36,23 @@ export default function LeaveManagement() {
     };
   }, [schoolId]);
 
-  const handleStatusUpdate = async (leaveId, newStatus) => {
+  const handleStatusUpdateClick = (leaveId, newStatus) => {
     if (!hasEditPermission) {
       toast.error("You do not have permission to approve/reject leave requests.");
       return;
     }
-    if (!window.confirm(`Are you sure you want to mark this request as ${newStatus}?`)) return;
+    setConfirmModal({
+      isOpen: true,
+      leaveId,
+      newStatus
+    });
+  };
+
+  const handleConfirmStatusUpdate = async () => {
+    const { leaveId, newStatus } = confirmModal;
+    if (!leaveId) return;
+
+    setConfirmModal({ isOpen: false, leaveId: null, newStatus: '' });
 
     try {
       await updateSubDocument(schoolId, 'leaves', leaveId, { status: newStatus });
@@ -282,7 +295,7 @@ export default function LeaveManagement() {
                   {hasEditPermission && (
                     <button
                       type="button"
-                      onClick={() => handleStatusUpdate(selectedLeave.id, 'Rejected')}
+                      onClick={() => handleStatusUpdateClick(selectedLeave.id, 'Rejected')}
                       className="px-5 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
                     >
                       <LuX size={18} />
@@ -292,7 +305,7 @@ export default function LeaveManagement() {
                   {hasEditPermission && (
                     <button
                       type="button"
-                      onClick={() => handleStatusUpdate(selectedLeave.id, 'Approved')}
+                      onClick={() => handleStatusUpdateClick(selectedLeave.id, 'Approved')}
                       className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-1.5"
                     >
                       <LuCheck size={18} />
@@ -322,6 +335,17 @@ export default function LeaveManagement() {
           </div>
         </div>
       )}
+      {/* Confirm Status Update Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, leaveId: null, newStatus: '' })}
+        onConfirm={handleConfirmStatusUpdate}
+        title="Update Leave Request Status"
+        message={`Are you sure you want to mark this leave request as "${confirmModal.newStatus}"?`}
+        confirmText="Confirm"
+        cancelText="Cancel"
+        type={confirmModal.newStatus === 'Approved' ? 'info' : 'danger'}
+      />
     </div>
   );
 }

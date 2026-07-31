@@ -5,6 +5,7 @@ import { subscribeToSubCollection, addSubDocument, updateSubDocument, deleteSubD
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import usePermissions from '../../hooks/usePermissions';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function LessonPlans() {
   const { userProfile, currentUser } = useAuth();
@@ -18,6 +19,7 @@ export default function LessonPlans() {
   const [searchTerm, setSearchTerm] = useState('');
   const [plans, setPlans] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, planId: null, planTopic: '' });
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -154,8 +156,20 @@ export default function LessonPlans() {
     setShowModal(true);
   };
 
-  const handleDelete = async (planId) => {
-    if (!window.confirm("Are you sure you want to delete this lesson plan?")) return;
+  const handleDeleteClick = (planId, topic) => {
+    setConfirmModal({
+      isOpen: true,
+      planId,
+      planTopic: topic
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    const { planId } = confirmModal;
+    if (!planId) return;
+
+    setConfirmModal({ isOpen: false, planId: null, planTopic: '' });
+
     try {
       await deleteSubDocument(schoolId, 'lesson_plans', planId);
       toast.success("Lesson plan deleted successfully!");
@@ -573,6 +587,17 @@ export default function LessonPlans() {
           </div>
         </div>
       )}
+      {/* Confirm Delete Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, planId: null, planTopic: '' })}
+        onConfirm={handleConfirmDelete}
+        title="Delete Lesson Plan"
+        message={`Are you sure you want to delete the lesson plan "${confirmModal.planTopic}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }
