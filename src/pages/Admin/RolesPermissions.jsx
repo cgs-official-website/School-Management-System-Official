@@ -30,6 +30,12 @@ const CORE_MODULES = [
   { id: 'subjects', label: 'Subject Management' },
   { id: 'students', label: 'Student Directory' },
   { id: 'staff', label: 'Staff Management' },
+  { id: 'chats', label: 'Chat & Messaging' },
+  { id: 'homework', label: 'Homework Management' },
+  { id: 'leaves', label: 'Leave Requests' },
+  { id: 'lesson_plans', label: 'Lesson Plans' },
+  { id: 'resources', label: 'Resource Sharing' },
+  { id: 'ptm', label: 'PTM Scheduler' }
 ];
 
 // All modules available for approval by superadmin (Sync with TenantManagement)
@@ -51,7 +57,15 @@ const ALL_AVAILABLE_MODULES = [
   { id: 'alumni', label: 'Alumni Management' },
   { id: 'documents', label: 'Document Management' },
   { id: 'branches', label: 'Multi-Branch Management' },
-  { id: 'reports', label: 'Reports & Analytics' }
+  { id: 'reports', label: 'Reports & Analytics' },
+  { id: 'chats', label: 'Chat & Messaging' },
+  { id: 'homework', label: 'Homework Management' },
+  { id: 'leaves', label: 'Leave Requests' },
+  { id: 'leads', label: 'Leads Management' },
+  { id: 'form-builder', label: 'Custom Forms / Form Builder' },
+  { id: 'lesson_plans', label: 'Lesson Plans' },
+  { id: 'resources', label: 'Resource Sharing' },
+  { id: 'ptm', label: 'PTM Scheduler' }
 ];
 
 const ADMIN_PANEL_MODULES = [
