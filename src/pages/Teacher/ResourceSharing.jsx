@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { LuFolderDown, LuSearch, LuPlus, LuFileText, LuLink, LuVideo, LuImage, LuTrash2, LuDownload, LuExternalLink, LuX } from 'react-icons/lu';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, addSubDocument, deleteSubDocument } from '../../firebase/firestore';
+import { uploadFileToCloudinaryOrFirebase } from '../../utils/cloudinary';
 import toast from 'react-hot-toast';
 
 export default function ResourceSharing() {
@@ -97,24 +98,31 @@ export default function ResourceSharing() {
         }
       }
 
+      // Upload file to get real URL
+      const fileUrl = await uploadFileToCloudinaryOrFirebase(
+        selectedFile,
+        schoolId,
+        `schools/${schoolId}/resources/${Date.now()}_${selectedFile.name}`
+      );
+
       const resourceData = {
         title: formData.title,
         type: formData.type,
         class: formData.class,
         subject: formData.subject,
-        url: '#',
+        url: fileUrl,
         size: sizeStr,
         date: new Date().toISOString(),
         teacherId: currentUser.uid
       };
 
       await addSubDocument(schoolId, 'resources', resourceData);
-      toast.success("Resource uploaded successfully (mock file saved)!");
+      toast.success("Resource uploaded successfully!");
       setSelectedFile(null);
       setShowModal(false);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to save resource.");
+      toast.error(error.message || "Failed to save resource.");
     } finally {
       setSubmitting(false);
     }
@@ -227,7 +235,13 @@ export default function ResourceSharing() {
                         </button>
                       )}
                       <a 
-                        href={resource.url} 
+                        href={resource.url || '#'} 
+                        onClick={(e) => {
+                          if (!resource.url || resource.url === '#') {
+                            e.preventDefault();
+                            toast.error("This resource does not have a valid download link.");
+                          }
+                        }}
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
