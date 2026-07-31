@@ -231,7 +231,10 @@ export default function StaffAssignment() {
         rolesData.push(doc.id);
       });
       if (rolesData.length > 0) {
-        setAllRoles(rolesData);
+        setAllRoles(prev => {
+          const combined = new Set([...prev, ...rolesData]);
+          return Array.from(combined);
+        });
       }
     }).catch(err => console.error("Error fetching custom roles:", err));
 
@@ -1548,39 +1551,62 @@ export default function StaffAssignment() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="col-span-1 sm:col-span-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 mt-2">
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Assigned Roles *</label>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[160px] overflow-y-auto custom-scrollbar p-2 bg-white rounded-xl border border-slate-200">
+                    <div className="col-span-1 sm:col-span-3">
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Assigned Roles *</label>
+                      <select
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val) {
+                            const currentRoles = newStaff.roles || (newStaff.role ? [newStaff.role] : ['Staffs']);
+                            if (!currentRoles.includes(val)) {
+                              const updated = [...currentRoles, val];
+                              setNewStaff({
+                                ...newStaff,
+                                roles: updated,
+                                role: updated[0] || 'Staffs'
+                              });
+                            }
+                          }
+                          e.target.value = ''; // reset selection
+                        }}
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm cursor-pointer"
+                      >
+                        <option value="">-- Choose a role to add --</option>
                         {allRoles.map(roleOption => {
                           const currentRoles = newStaff.roles || (newStaff.role ? [newStaff.role] : ['Staffs']);
-                          const isChecked = currentRoles.includes(roleOption);
+                          const isAssigned = currentRoles.includes(roleOption);
                           return (
-                            <label key={roleOption} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1 rounded-lg transition-colors">
-                              <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={(e) => {
-                                  let updated;
-                                  if (e.target.checked) {
-                                    updated = [...currentRoles, roleOption];
-                                  } else {
-                                    updated = currentRoles.filter(r => r !== roleOption);
-                                    if (updated.length === 0) updated = ['Staffs']; // keep at least one
-                                  }
-                                  setNewStaff({
-                                    ...newStaff,
-                                    roles: updated,
-                                    role: updated[0] || 'Staffs'
-                                  });
-                                }}
-                                className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4 cursor-pointer"
-                              />
-                              <span className="text-sm font-semibold text-slate-700">{roleOption}</span>
-                            </label>
+                            <option key={roleOption} value={roleOption} disabled={isAssigned}>
+                              {roleOption} {isAssigned ? '(Already added)' : ''}
+                            </option>
                           );
                         })}
+                      </select>
+                      
+                      {/* Render assigned roles as tags */}
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {(newStaff.roles || (newStaff.role ? [newStaff.role] : ['Staffs'])).map(role => (
+                          <span key={role} className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold rounded-xl uppercase tracking-wider">
+                            {role}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const currentRoles = newStaff.roles || (newStaff.role ? [newStaff.role] : ['Staffs']);
+                                let updated = currentRoles.filter(r => r !== role);
+                                if (updated.length === 0) updated = ['Staffs']; // fallback to default
+                                setNewStaff({
+                                  ...newStaff,
+                                  roles: updated,
+                                  role: updated[0] || 'Staffs'
+                                });
+                              }}
+                              className="text-indigo-400 hover:text-indigo-650 focus:outline-none"
+                            >
+                              <X size={14} />
+                            </button>
+                          </span>
+                        ))}
                       </div>
-                      <p className="text-[10px] text-slate-400 mt-1 font-bold">Select all roles that apply. Permissions will be merged dynamically.</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Assign Class (Optional)</label>
@@ -2150,39 +2176,62 @@ export default function StaffAssignment() {
                             <input type="text" value={editStaffData[field] || ''} onChange={e => setEditStaffData({...editStaffData, [field]: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                           </div>
                         ))}
-                        <div className="col-span-1 sm:col-span-2 bg-slate-50 p-4 rounded-2xl border border-slate-200 mt-2">
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Assigned Roles *</label>
-                          <div className="grid grid-cols-2 gap-3 max-h-[160px] overflow-y-auto custom-scrollbar p-2 bg-white rounded-xl border border-slate-200">
+                        <div className="col-span-1 sm:col-span-2">
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Assigned Roles *</label>
+                          <select
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val) {
+                                const currentRoles = editStaffData.roles || (editStaffData.role ? [editStaffData.role] : ['Staffs']);
+                                if (!currentRoles.includes(val)) {
+                                  const updated = [...currentRoles, val];
+                                  setEditStaffData({
+                                    ...editStaffData,
+                                    roles: updated,
+                                    role: updated[0] || 'Staffs'
+                                  });
+                                }
+                              }
+                              e.target.value = '';
+                            }}
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+                          >
+                            <option value="">-- Choose a role to add --</option>
                             {allRoles.map(roleOption => {
                               const currentRoles = editStaffData.roles || (editStaffData.role ? [editStaffData.role] : ['Staffs']);
-                              const isChecked = currentRoles.includes(roleOption);
+                              const isAssigned = currentRoles.includes(roleOption);
                               return (
-                                <label key={roleOption} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1 rounded-lg transition-colors">
-                                  <input
-                                    type="checkbox"
-                                    checked={isChecked}
-                                    onChange={(e) => {
-                                      let updated;
-                                      if (e.target.checked) {
-                                        updated = [...currentRoles, roleOption];
-                                      } else {
-                                        updated = currentRoles.filter(r => r !== roleOption);
-                                        if (updated.length === 0) updated = ['Staffs']; // keep at least one
-                                      }
-                                      setEditStaffData({
-                                        ...editStaffData,
-                                        roles: updated,
-                                        role: updated[0] || 'Staffs'
-                                      });
-                                    }}
-                                    className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4 cursor-pointer"
-                                  />
-                                  <span className="text-sm font-semibold text-slate-700">{roleOption}</span>
-                                </label>
+                                <option key={roleOption} value={roleOption} disabled={isAssigned}>
+                                  {roleOption} {isAssigned ? '(Already added)' : ''}
+                                </option>
                               );
                             })}
+                          </select>
+
+                          {/* Render assigned roles as tags */}
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {(editStaffData.roles || (editStaffData.role ? [editStaffData.role] : ['Staffs'])).map(role => (
+                              <span key={role} className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold rounded-xl uppercase tracking-wider">
+                                {role}
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const currentRoles = editStaffData.roles || (editStaffData.role ? [editStaffData.role] : ['Staffs']);
+                                    let updated = currentRoles.filter(r => r !== role);
+                                    if (updated.length === 0) updated = ['Staffs'];
+                                    setEditStaffData({
+                                      ...editStaffData,
+                                      roles: updated,
+                                      role: updated[0] || 'Staffs'
+                                    });
+                                  }}
+                                  className="text-indigo-400 hover:text-indigo-650 focus:outline-none"
+                                >
+                                  <X size={14} />
+                                </button>
+                              </span>
+                            ))}
                           </div>
-                          <p className="text-[10px] text-slate-400 mt-1 font-bold">Select all roles that apply. Permissions will be merged dynamically.</p>
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Staff Type</label>
