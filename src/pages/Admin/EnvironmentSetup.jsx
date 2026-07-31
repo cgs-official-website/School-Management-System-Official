@@ -32,6 +32,14 @@ export default function EnvironmentSetup() {
   });
   const [customData, setCustomData] = useState({});
   const [formSchema, setFormSchema] = useState([]);
+  const [termTypes, setTermTypes] = useState([
+    'Semester',
+    'Annual',
+    'Trimester_TN',
+    'Quarterly_HalfYearly_Annual'
+  ]);
+  const [showCustomTermInput, setShowCustomTermInput] = useState(false);
+  const [customTermName, setCustomTermName] = useState('');
 
   // --- Fee Collection Periods State ---
   const [periods, setPeriods] = useState([]);
@@ -294,6 +302,15 @@ export default function EnvironmentSetup() {
           branding: data.branding || { logoUrl: '', primaryColor: '#f59e0b' },
           academicConfig: data.academicConfig || { currentYear: '2026-2027', termType: 'Semester' }
         });
+        if (data.academicConfig?.termType) {
+          const loadedType = data.academicConfig.termType;
+          setTermTypes(prev => {
+            if (!prev.includes(loadedType)) {
+              return [...prev, loadedType];
+            }
+            return prev;
+          });
+        }
         if (data.customData) {
           setCustomData(data.customData);
         }
@@ -542,14 +559,63 @@ export default function EnvironmentSetup() {
               <label className="block text-sm font-semibold text-slate-700 mb-1">Term Type</label>
               <select 
                 value={formData.academicConfig.termType}
-                onChange={(e) => setFormData({...formData, academicConfig: { ...formData.academicConfig, termType: e.target.value }})}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === 'ADD_NEW') {
+                    setShowCustomTermInput(true);
+                  } else {
+                    setFormData({...formData, academicConfig: { ...formData.academicConfig, termType: value }});
+                  }
+                }}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               >
-                <option value="Trimester_TN">Term I, Term II, Term III</option>
-                <option value="Quarterly_HalfYearly_Annual">Quarterly, Half Yearly, Annual</option>
-                <option value="Semester">Semesters (2 terms)</option>
-                <option value="Annual">Annual (1 term)</option>
+                {termTypes.map(type => {
+                  let displayName = type;
+                  if (type === 'Trimester_TN') displayName = 'Term I, Term II, Term III';
+                  else if (type === 'Quarterly_HalfYearly_Annual') displayName = 'Quarterly, Half Yearly, Annual';
+                  else if (type === 'Semester') displayName = 'Semesters (2 terms)';
+                  else if (type === 'Annual') displayName = 'Annual (1 term)';
+                  return <option key={type} value={type}>{displayName}</option>;
+                })}
+                <option value="ADD_NEW" className="text-primary-650 font-extrabold text-blue-600">+ Add custom type...</option>
               </select>
+
+              {showCustomTermInput && (
+                <div className="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-3 animate-fade-in">
+                  <input
+                    type="text"
+                    placeholder="Enter new term type..."
+                    value={customTermName}
+                    onChange={(e) => setCustomTermName(e.target.value)}
+                    className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 bg-white outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const trimmed = customTermName.trim();
+                      if (trimmed) {
+                        setTermTypes(prev => [...prev, trimmed]);
+                        setFormData({...formData, academicConfig: { ...formData.academicConfig, termType: trimmed }});
+                        setCustomTermName('');
+                        setShowCustomTermInput(false);
+                      }
+                    }}
+                    className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer"
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowCustomTermInput(false);
+                      setCustomTermName('');
+                    }}
+                    className="px-3 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -711,7 +777,7 @@ export default function EnvironmentSetup() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Absentee Threshold (Absences/Month before Flag)</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Absentee Threshold For Students (Absences/Month before Flag)</label>
                 <input
                   type="number" required min="1"
                   value={attendanceConfig.absenteeThreshold}
