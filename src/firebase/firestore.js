@@ -1772,3 +1772,36 @@ export const updateStudentRunningStatsAndFlags = async (schoolId, classId, dateS
     console.error("Error in updateStudentRunningStatsAndFlags:", error);
   }
 };
+
+export const subscribeToAssessmentsByClass = (schoolId, classId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/assessments`),
+    where("classId", "==", classId)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const assessments = [];
+    snapshot.forEach((doc) => {
+      assessments.push({ id: doc.id, ...doc.data() });
+    });
+    assessments.sort((a, b) => new Date(b.date) - new Date(a.date));
+    callback(assessments);
+  }, (error) => {
+    console.error("Error subscribing to assessments:", error);
+  });
+};
+
+export const subscribeToAttendanceForClass = (schoolId, classId, callback) => {
+  const q = query(
+    collection(db, `schools/${schoolId}/attendance`),
+    where("classId", "==", classId)
+  );
+  return onSnapshot(q, (snapshot) => {
+    const attendance = [];
+    snapshot.forEach((doc) => {
+      attendance.push({ id: doc.id, ...doc.data() });
+    });
+    callback(attendance);
+  }, (error) => {
+    console.error("Error subscribing to attendance for class:", error);
+  });
+};
