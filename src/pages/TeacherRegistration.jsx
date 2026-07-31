@@ -116,7 +116,9 @@ export default function TeacherRegistration() {
       }
 
       // Register the auth account
-      const user = await registerUser(formData.email, formData.password, 'teacher', {
+      const isTeaching = teacherData.staff_type === 'teaching' || teacherData.role === 'teacher';
+      const userRole = isTeaching ? 'teacher' : 'staff';
+      const user = await registerUser(formData.email, formData.password, userRole, {
         name: formData.name,
         schoolId: schoolId
       });
@@ -129,7 +131,7 @@ export default function TeacherRegistration() {
         ...customFieldsData
       });
 
-      navigate('/teacher');
+      navigate(userRole === 'teacher' ? '/teacher' : '/admin');
     } catch (err) {
       console.error(err);
       setError("Registration failed. Please try again.");
