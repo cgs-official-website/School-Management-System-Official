@@ -117,7 +117,10 @@ export default function TeacherRegistration() {
 
       // Register the auth account
       const isTeaching = teacherData.staff_type === 'teaching' || teacherData.role === 'teacher';
-      const userRole = isTeaching ? 'teacher' : 'staff';
+      let userRole = isTeaching ? 'teacher' : 'staff';
+      if (teacherData.role === 'admin') {
+        userRole = 'admin';
+      }
       const user = await registerUser(formData.email, formData.password, userRole, {
         name: formData.name,
         schoolId: schoolId

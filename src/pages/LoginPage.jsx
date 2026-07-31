@@ -20,11 +20,20 @@ export default function LoginPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (currentUser && userProfile) {
-      redirectBasedOnRole(userProfile.role);
+      redirectBasedOnRole(userProfile.role, userProfile.loginPanel);
     }
   }, [currentUser, userProfile, navigate]);
 
-  const redirectBasedOnRole = (role) => {
+  const redirectBasedOnRole = (role, loginPanel) => {
+    if (loginPanel === 'teacher') {
+      navigate('/teacher');
+      return;
+    }
+    if (loginPanel === 'admin') {
+      navigate('/admin');
+      return;
+    }
+
     const r = role?.toLowerCase();
     switch (r) {
       case 'superadmin': navigate('/superadmin'); break;
@@ -62,7 +71,7 @@ export default function LoginPage() {
       if (profile) {
         setSuccess(true);
         setTimeout(() => {
-          redirectBasedOnRole(profile.role);
+          redirectBasedOnRole(profile.role, profile.loginPanel);
         }, 600); // Wait for success animation
       } else {
         setError("User profile not found. Please contact support.");

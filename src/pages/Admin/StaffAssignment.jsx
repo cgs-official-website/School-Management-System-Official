@@ -1528,6 +1528,7 @@ export default function StaffAssignment() {
                         onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value })}
                         className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
                       >
+                        <option value="admin">Admin</option>
                         <option value="Correspondent">Correspondent</option>
                         <option value="Principal">Principal</option>
                         <option value="Vice Principal">Vice Principal</option>
@@ -2116,7 +2117,7 @@ export default function StaffAssignment() {
                         <div>
                           <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Role</label>
                           <select value={editStaffData.role || 'Staffs'} onChange={e => setEditStaffData({...editStaffData, role: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                            {['Correspondent','Principal','Vice Principal','Subject Wise Head','Class Incharge','Staffs','Administrative Officer','Finance Department','Library','Canteen','Transport','Janitors','Hostel','Inventory','Security'].map(r => <option key={r}>{r}</option>)}
+                            {['admin','Correspondent','Principal','Vice Principal','Subject Wise Head','Class Incharge','Staffs','Administrative Officer','Finance Department','Library','Canteen','Transport','Janitors','Hostel','Inventory','Security'].map(r => <option key={r}>{r}</option>)}
                           </select>
                         </div>
                         <div>

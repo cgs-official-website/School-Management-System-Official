@@ -54,6 +54,17 @@ const ALL_AVAILABLE_MODULES = [
   { id: 'reports', label: 'Reports & Analytics' }
 ];
 
+const ADMIN_PANEL_MODULES = [
+  'classes', 'subjects', 'students', 'staff', 'timetables', 'transport', 'library', 'exams',
+  'noticeboard', 'hr-payroll', 'attendance', 'calendar', 'fees', 'hostel', 'inventory',
+  'health', 'complaints', 'alumni', 'documents', 'branches', 'reports', 'form-builder', 'api', 'links', 'leads', 'billing'
+];
+
+const TEACHER_PANEL_MODULES = [
+  'noticeboard', 'calendar', 'timetables', 'lesson_plans', 'resources', 'attendance',
+  'homework', 'performance', 'ptm', 'exams', 'chats', 'hr-payroll', 'leaves'
+];
+
 export default function RolesPermissions() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
@@ -65,6 +76,7 @@ export default function RolesPermissions() {
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: null, message: '', title: '' });
 
   const [permissions, setPermissions] = useState({}); // { [role]: { [moduleKey]: { read, create, edit, delete } } }
+  const [loginPanels, setLoginPanels] = useState({}); // { [role]: 'admin' | 'teacher' }
   const [displayModules, setDisplayModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -88,16 +100,20 @@ export default function RolesPermissions() {
         const snapshot = await getDocs(rolesRef);
         
         const fetchedPerms = {};
+        const fetchedPanels = {};
         const customRoles = new Set();
         
         snapshot.forEach(doc => {
-          fetchedPerms[doc.id] = doc.data().permissions || {};
+          const data = doc.data();
+          fetchedPerms[doc.id] = data.permissions || {};
+          fetchedPanels[doc.id] = data.loginPanel || 'admin';
           if (!DEFAULT_ROLES.includes(doc.id)) {
             customRoles.add(doc.id);
           }
         });
         
         setPermissions(fetchedPerms);
+        setLoginPanels(fetchedPanels);
         setRolesList([...DEFAULT_ROLES, ...Array.from(customRoles)]);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -206,11 +222,13 @@ export default function RolesPermissions() {
     setSaving(true);
     try {
       const rolePerms = permissions[activeRole] || {};
+      const activePanel = loginPanels[activeRole] || 'admin';
       const roleDocRef = doc(db, `schools/${schoolId}/roles`, activeRole);
       
       await setDoc(roleDocRef, {
         name: activeRole,
         permissions: rolePerms,
+        loginPanel: activePanel,
         updatedAt: new Date().toISOString()
       }, { merge: true });
 
@@ -314,6 +332,17 @@ export default function RolesPermissions() {
               <h2 className="text-xl font-bold text-slate-900">{activeRole} Permissions</h2>
               <p className="text-xs text-slate-500 mt-1">Select the modules and actions this role can access.</p>
             </div>
+            <div className="flex items-center gap-3">
+              <label className="text-sm font-semibold text-slate-600">Target Login Panel:</label>
+              <select
+                value={loginPanels[activeRole] || 'admin'}
+                onChange={e => setLoginPanels(prev => ({ ...prev, [activeRole]: e.target.value }))}
+                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-sm font-medium focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="admin">Admin Panel</option>
+                <option value="teacher">Teacher Panel</option>
+              </select>
+            </div>
           </div>
           
           <div className="flex-1 overflow-y-auto custom-scrollbar p-0">
@@ -329,12 +358,25 @@ export default function RolesPermissions() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm">
-                {displayModules.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className="p-8 text-center text-slate-500">No modules available to configure.</td>
-                  </tr>
-                ) : (
-                  displayModules.map(module => {
+                {(() => {
+                  const activePanel = loginPanels[activeRole] || 'admin';
+                  const filtered = displayModules.filter(module => {
+                    if (activePanel === 'teacher') {
+                      return TEACHER_PANEL_MODULES.includes(module.id);
+                    } else {
+                      return ADMIN_PANEL_MODULES.includes(module.id);
+                    }
+                  });
+
+                  if (filtered.length === 0) {
+                    return (
+                      <tr>
+                        <td colSpan="6" className="p-8 text-center text-slate-500">No modules available to configure.</td>
+                      </tr>
+                    );
+                  }
+
+                  return filtered.map(module => {
                     const p = activeRolePerms[module.id] || { read: false, create: false, edit: false, delete: false };
                     const isAll = p.read && p.create && p.edit && p.delete;
 
@@ -396,9 +438,9 @@ export default function RolesPermissions() {
                           </button>
                         </td>
                       </tr>
-                    )
-                  })
-                )}
+                    );
+                  });
+                })()}
               </tbody>
             </table>
           </div>

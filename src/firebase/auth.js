@@ -88,7 +88,7 @@ export const getUserProfile = async (uid) => {
       }
       
       // If the user is a teacher/staff, dynamically fetch their assignedClassId and resolve their profile role
-      if (data.role === 'teacher' && data.schoolId) {
+      if ((data.role === 'teacher' || data.role === 'staff') && data.schoolId) {
         const teacherQuery = query(collection(db, `schools/${data.schoolId}/teachers`), where("userId", "==", uid));
         const snap = await getDocs(teacherQuery);
         if (!snap.empty) {
@@ -101,6 +101,16 @@ export const getUserProfile = async (uid) => {
             data.role = 'staff';
             // Update users document in the background to persist migration
             setDoc(doc(db, "users", uid), { role: 'staff' }, { merge: true }).catch(console.error);
+          }
+
+          // Fetch the role config document to get loginPanel setting
+          const resolvedRole = teacherData.role || (isTeaching ? 'teacher' : 'staff');
+          if (resolvedRole) {
+            const roleDocRef = doc(db, `schools/${data.schoolId}/roles`, resolvedRole);
+            const roleSnap = await getDoc(roleDocRef);
+            if (roleSnap.exists()) {
+              data.loginPanel = roleSnap.data().loginPanel || null;
+            }
           }
         }
       }
