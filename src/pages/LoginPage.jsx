@@ -25,13 +25,12 @@ export default function LoginPage() {
   }, [currentUser, userProfile, navigate]);
 
   const redirectBasedOnRole = (role) => {
-    switch (role) {
+    const r = role?.toLowerCase();
+    switch (r) {
       case 'superadmin': navigate('/superadmin'); break;
-      case 'admin':
-      case 'staff': navigate('/admin'); break;
       case 'teacher': navigate('/teacher'); break;
       case 'parent': navigate('/parent'); break;
-      default: navigate('/');
+      default: navigate('/admin');
     }
   };
 

@@ -21,7 +21,13 @@ const ProtectedRoute = ({ children, allowedRoles, moduleKey }) => {
 
   // If roles are specified, check if user has required role
   if (allowedRoles && allowedRoles.length > 0) {
-    if (!userProfile || !allowedRoles.includes(userProfile.role)) {
+    if (!userProfile) return <Navigate to="/unauthorized" replace />;
+    
+    const userRole = userProfile.role?.toLowerCase();
+    const isCustomStaff = userRole !== 'teacher' && userRole !== 'parent' && userRole !== 'student' && userRole !== 'superadmin' && userRole !== 'admin';
+    const effectiveRole = isCustomStaff ? 'staff' : userRole;
+    
+    if (!allowedRoles.includes(effectiveRole)) {
       return <Navigate to="/unauthorized" replace />;
     }
   }
