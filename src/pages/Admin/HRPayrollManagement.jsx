@@ -13,10 +13,15 @@ import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function HRPayrollManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('hr-payroll');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('hr-payroll');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('hr-payroll');
 
   const [payrolls, setPayrolls] = useState([]);
   const [teachers, setTeachers] = useState([]);
@@ -194,6 +199,14 @@ export default function HRPayrollManagement() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (formData.id && !hasEditPermission) {
+      toast.error("You do not have permission to edit payroll records.");
+      return;
+    }
+    if (!formData.id && !hasCreatePermission) {
+      toast.error("You do not have permission to create payroll records.");
+      return;
+    }
     if (!formData.teacherId) {
       toast.error("Please select a staff member");
       return;
@@ -232,10 +245,15 @@ export default function HRPayrollManagement() {
   };
 
   const handleDeleteClick = (id) => {
+    if (!hasDeletePermission) return;
     setConfirmModalState({ isOpen: true, idToDelete: id });
   };
 
   const executeDelete = async () => {
+    if (!hasDeletePermission) {
+      toast.error("You do not have permission to delete payroll records.");
+      return;
+    }
     const id = confirmModalState.idToDelete;
     if (!id) return;
     try {
@@ -365,12 +383,14 @@ export default function HRPayrollManagement() {
           <p className="text-slate-500 mt-1">Manage staff salaries, deductions, and payslips.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setShowSettingsModal(true)}
-            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm"
-          >
-            <Settings size={20} /> Settings
-          </button>
+          {hasEditPermission && (
+            <button 
+              onClick={() => setShowSettingsModal(true)}
+              className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm"
+            >
+              <Settings size={20} /> Settings
+            </button>
+          )}
           <button 
             onClick={() => {
               if (payrolls.length === 0) {
@@ -384,12 +404,14 @@ export default function HRPayrollManagement() {
           >
             <Download size={20} /> Export Report
           </button>
-          <button 
-            onClick={() => { setFormData({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0, esiCalculated: 0, customData: {} }); setShowModal(true); }}
-            className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-xl hover:bg-primary-700 transition-all font-medium shadow-sm"
-          >
-            <Plus size={20} /> Add Record
-          </button>
+          {hasCreatePermission && (
+            <button 
+              onClick={() => { setFormData({ teacherId: '', name: '', role: '', baseSalary: 0, deductions: 0, status: 'Pending', pfCalculated: 0, esiCalculated: 0, customData: {} }); setShowModal(true); }}
+              className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-xl hover:bg-primary-700 transition-all font-medium shadow-sm"
+            >
+              <Plus size={20} /> Add Record
+            </button>
+          )}
         </div>
       </div>
       
@@ -474,12 +496,16 @@ export default function HRPayrollManagement() {
                             <FileText size={16} />
                           </button>
                         )}
-                        <button onClick={() => { setFormData(payroll); setShowModal(true); }} className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors" title="Edit">
-                          <Edit size={16} />
-                        </button>
-                        <button onClick={() => handleDeleteClick(payroll.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
-                          <Trash2 size={16} />
-                        </button>
+                        {hasEditPermission && (
+                          <button onClick={() => { setFormData(payroll); setShowModal(true); }} className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors" title="Edit">
+                            <Edit size={16} />
+                          </button>
+                        )}
+                        {hasDeletePermission && (
+                          <button onClick={() => handleDeleteClick(payroll.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

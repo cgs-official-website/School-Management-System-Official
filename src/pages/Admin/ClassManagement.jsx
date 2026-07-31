@@ -24,6 +24,10 @@ const mockClasses = [
 export default function ClassManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('classes');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('classes');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('classes');
 
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
@@ -85,6 +89,14 @@ export default function ClassManagement() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    if (editingId && !hasEditPermission) {
+      toast.error("You do not have permission to edit classes.");
+      return;
+    }
+    if (!editingId && !hasCreatePermission) {
+      toast.error("You do not have permission to create classes.");
+      return;
+    }
     if (!formData.name.trim() || !formData.section.trim()) return;
 
     const normalizedName = formData.name.trim();
@@ -129,6 +141,7 @@ export default function ClassManagement() {
   };
 
   const handleEditClick = (cls) => {
+    if (!hasEditPermission) return;
     setEditingId(cls.id);
     setFormData({ name: cls.name, section: cls.section });
     setShowForm(true);
@@ -136,10 +149,15 @@ export default function ClassManagement() {
   };
 
   const handleDeleteClick = (classId) => {
+    if (!hasDeletePermission) return;
     setConfirmModalState({ isOpen: true, classId });
   };
 
   const executeDelete = async () => {
+    if (!hasDeletePermission) {
+      toast.error("You do not have permission to delete classes.");
+      return;
+    }
     const classId = confirmModalState.classId;
     if (!classId) return;
     
@@ -169,18 +187,20 @@ export default function ClassManagement() {
           <h1 className="text-3xl font-bold text-slate-900">Class & Section Management</h1>
           <p className="text-slate-500 mt-1">Define the academic structure of your institution.</p>
         </div>
-        <button 
-          onClick={() => { 
-            setShowForm(!showForm); 
-            if (showForm) { 
-              setEditingId(null); 
-              setFormData({name: '', section: ''}); 
-            } 
-          }}
-          className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
-        >
-          {showForm ? 'Cancel' : <><Plus size={18} /> Create New Class</>}
-        </button>
+        {hasCreatePermission && (
+          <button 
+            onClick={() => { 
+              setShowForm(!showForm); 
+              if (showForm) { 
+                setEditingId(null); 
+                setFormData({name: '', section: ''}); 
+              } 
+            }}
+            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+          >
+            {showForm ? 'Cancel' : <><Plus size={18} /> Create New Class</>}
+          </button>
+        )}
       </div>
 
       {showForm && (
@@ -239,16 +259,18 @@ export default function ClassManagement() {
           {classes.map((cls) => (
             <div 
               key={cls.id} 
-              onClick={() => handleEditClick(cls)}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow relative group cursor-pointer"
+              onClick={() => hasEditPermission && handleEditClick(cls)}
+              className={`bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow relative group ${hasEditPermission ? 'cursor-pointer' : 'cursor-default'}`}
             >
-              <button 
-                onClick={(e) => { e.stopPropagation(); handleDeleteClick(cls.id); }}
-                className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 z-10"
-                title="Delete Class"
-              >
-                <Trash2 size={18} />
-              </button>
+              {hasDeletePermission && (
+                <button 
+                  onClick={(e) => { e.stopPropagation(); handleDeleteClick(cls.id); }}
+                  className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 z-10"
+                  title="Delete Class"
+                >
+                  <Trash2 size={18} />
+                </button>
+              )}
 
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center">

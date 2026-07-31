@@ -3,10 +3,15 @@ import { LuCheck, LuX, LuCalendar, LuUser, LuClock, LuDownload, LuFileText, LuIn
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, updateSubDocument } from '../../firebase/firestore';
 import toast from 'react-hot-toast';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function LeaveManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('leaves');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('leaves');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('leaves');
 
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,6 +35,10 @@ export default function LeaveManagement() {
   }, [schoolId]);
 
   const handleStatusUpdate = async (leaveId, newStatus) => {
+    if (!hasEditPermission) {
+      toast.error("You do not have permission to approve/reject leave requests.");
+      return;
+    }
     if (!window.confirm(`Are you sure you want to mark this request as ${newStatus}?`)) return;
 
     try {
@@ -268,24 +277,31 @@ export default function LeaveManagement() {
 
             {/* Footer */}
             <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
-              {selectedLeave.status === 'Pending' ? (
+               {selectedLeave.status === 'Pending' ? (
                 <>
-                  <button
-                    type="button"
-                    onClick={() => handleStatusUpdate(selectedLeave.id, 'Rejected')}
-                    className="px-5 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
-                  >
-                    <LuX size={18} />
-                    Reject Leave
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleStatusUpdate(selectedLeave.id, 'Approved')}
-                    className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-1.5"
-                  >
-                    <LuCheck size={18} />
-                    Approve Leave
-                  </button>
+                  {hasEditPermission && (
+                    <button
+                      type="button"
+                      onClick={() => handleStatusUpdate(selectedLeave.id, 'Rejected')}
+                      className="px-5 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
+                    >
+                      <LuX size={18} />
+                      Reject Leave
+                    </button>
+                  )}
+                  {hasEditPermission && (
+                    <button
+                      type="button"
+                      onClick={() => handleStatusUpdate(selectedLeave.id, 'Approved')}
+                      className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-1.5"
+                    >
+                      <LuCheck size={18} />
+                      Approve Leave
+                    </button>
+                  )}
+                  {!hasEditPermission && (
+                    <p className="text-slate-500 font-semibold text-sm italic">View only access</p>
+                  )}
                 </>
               ) : (
                 <div className="w-full flex items-center justify-between">

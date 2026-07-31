@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase/config';
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, doc, onSnapshot } from 'firebase/firestore';
 
 export default function usePermissions() {
   const { userProfile, currentUser } = useAuth();
@@ -11,76 +11,81 @@ export default function usePermissions() {
   useEffect(() => {
     let isMounted = true;
 
-    const fetchPermissions = async () => {
-      if (!userProfile || !currentUser) {
-        if (isMounted) {
-          setPermissions(null);
-          setLoading(false);
+    if (!userProfile || !currentUser) {
+      if (isMounted) {
+        setPermissions(null);
+        setLoading(false);
+      }
+      return;
+    }
+
+    // If School Admin, they have full access
+    if (userProfile.role === 'admin') {
+      if (isMounted) {
+        setPermissions('ALL');
+        setLoading(false);
+      }
+      return;
+    }
+
+    const schoolId = userProfile.schoolId;
+    if (!schoolId) {
+      if (isMounted) {
+        setPermissions({});
+        setLoading(false);
+      }
+      return;
+    }
+
+    let roleUnsub = null;
+
+    // 1. Listen to the staff document in real-time to find their actual assigned role
+    const staffRef = collection(db, `schools/${schoolId}/teachers`);
+    const q = query(staffRef, where("userId", "==", currentUser.uid));
+    
+    const staffUnsub = onSnapshot(q, (staffSnap) => {
+      let actualRole = userProfile.role; // fallback
+      
+      if (!staffSnap.empty) {
+        const staffData = staffSnap.docs[0].data();
+        if (staffData.role) {
+          actualRole = staffData.role;
         }
-        return;
       }
 
-      // If School Admin, they have full access
-      if (userProfile.role === 'admin') {
+      // Cleanup previous role listener if it exists
+      if (roleUnsub) roleUnsub();
+
+      // 2. Listen to the permissions for that role in real-time
+      const roleDocRef = doc(db, `schools/${schoolId}/roles`, actualRole);
+      roleUnsub = onSnapshot(roleDocRef, (roleSnap) => {
         if (isMounted) {
-          setPermissions('ALL'); // Special keyword for full access
-          setLoading(false);
-        }
-        return;
-      }
-
-      // If they are a staff member (usually registered with role 'teacher' or 'staff' in users collection)
-      try {
-        const schoolId = userProfile.schoolId;
-        if (!schoolId) {
-          if (isMounted) {
-            setPermissions({});
-            setLoading(false);
-          }
-          return;
-        }
-
-        // 1. Get the staff document to find their actual assigned role
-        const staffRef = collection(db, `schools/${schoolId}/teachers`);
-        const q = query(staffRef, where("userId", "==", currentUser.uid));
-        const staffSnap = await getDocs(q);
-        
-        let actualRole = userProfile.role; // fallback
-        
-        if (!staffSnap.empty) {
-          const staffData = staffSnap.docs[0].data();
-          if (staffData.role) {
-            actualRole = staffData.role;
-          }
-        }
-
-        // 2. Fetch the permissions for that role
-        const roleDocRef = doc(db, `schools/${schoolId}/roles`, actualRole);
-        const roleSnap = await getDoc(roleDocRef);
-
-        if (roleSnap.exists()) {
-          if (isMounted) {
+          if (roleSnap.exists()) {
             setPermissions(roleSnap.data().permissions || {});
-          }
-        } else {
-          // If no specific permissions found, default to nothing or basic based on role?
-          // Defaulting to empty permissions if not defined by admin.
-          if (isMounted) {
+          } else {
             setPermissions({});
           }
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching permissions:", error);
-        if (isMounted) setPermissions({});
-      } finally {
-        if (isMounted) setLoading(false);
+      }, (error) => {
+        console.error("Error listening to role permissions:", error);
+        if (isMounted) {
+          setPermissions({});
+          setLoading(false);
+        }
+      });
+    }, (error) => {
+      console.error("Error listening to staff role:", error);
+      if (isMounted) {
+        setPermissions({});
+        setLoading(false);
       }
-    };
-
-    fetchPermissions();
+    });
 
     return () => {
       isMounted = false;
+      if (staffUnsub) staffUnsub();
+      if (roleUnsub) roleUnsub();
     };
   }, [userProfile, currentUser]);
 

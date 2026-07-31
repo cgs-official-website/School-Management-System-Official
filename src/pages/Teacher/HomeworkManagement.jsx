@@ -5,10 +5,15 @@ import { LuPlus as Plus, LuUpload as Upload, LuFileText as FileText, LuSearch as
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { TableSkeleton } from '../../components/Skeleton';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function HomeworkManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('homework');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('homework');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('homework');
 
   const [classes, setClasses] = useState([]);
   const [subjects, setSubjects] = useState([]);
@@ -218,20 +223,24 @@ export default function HomeworkManagement() {
           <p className="text-slate-500 mt-1">Assign tasks and evaluate student progress.</p>
         </div>
         <div className="flex gap-3">
-          <button 
-            onClick={() => setShowExcelModal(true)}
-            className="flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2.5 rounded-xl hover:bg-emerald-200 transition-colors font-semibold"
-          >
-            <Upload size={18} />
-            Evaluate via Excel
-          </button>
-          <button 
-            onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl hover:bg-primary-700 transition-colors font-semibold shadow-sm shadow-primary-600/20"
-          >
-            <Plus size={18} />
-            Assign Homework
-          </button>
+          {hasCreatePermission && (
+            <button 
+              onClick={() => setShowExcelModal(true)}
+              className="flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2.5 rounded-xl hover:bg-emerald-200 transition-colors font-semibold"
+            >
+              <Upload size={18} />
+              Evaluate via Excel
+            </button>
+          )}
+          {hasCreatePermission && (
+            <button 
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl hover:bg-primary-700 transition-colors font-semibold shadow-sm shadow-primary-600/20"
+            >
+              <Plus size={18} />
+              Assign Homework
+            </button>
+          )}
         </div>
       </div>
 

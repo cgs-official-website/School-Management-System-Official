@@ -13,10 +13,15 @@ import * as XLSX from 'xlsx';
 import ConfirmModal from '../../components/ConfirmModal';
 import ImageCropper from '../../components/ImageCropper';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
+import usePermissions from '../../hooks/usePermissions';
+
 export default function StudentManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
-  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || userProfile?.role?.toLowerCase() === 'staff';
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('students');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('students');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('students');
 
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -856,22 +861,26 @@ export default function StudentManagement() {
           >
             <FileDown size={18} /> Export
           </button>
-          <button 
-            onClick={() => {
-              setUploadFile(null);
-              setSelectedStudentForUpload(null);
-              setUploadModalOpen(true);
-            }}
-            className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl font-medium hover:bg-emerald-200 shadow-sm flex items-center gap-2 transition-colors"
-          >
-            <UploadCloud size={18} /> Bulk Import
-          </button>
-          <button 
-            onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
-          >
-            {showForm ? 'Cancel Admission' : <><UserPlus size={18} /> New Admission</>}
-          </button>
+          {hasCreatePermission && (
+            <button 
+              onClick={() => {
+                setUploadFile(null);
+                setSelectedStudentForUpload(null);
+                setUploadModalOpen(true);
+              }}
+              className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl font-medium hover:bg-emerald-200 shadow-sm flex items-center gap-2 transition-colors"
+            >
+              <UploadCloud size={18} /> Bulk Import
+            </button>
+          )}
+          {hasCreatePermission && (
+            <button 
+              onClick={() => setShowForm(!showForm)}
+              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+            >
+              {showForm ? 'Cancel Admission' : <><UserPlus size={18} /> New Admission</>}
+            </button>
+          )}
         </div>
       </div>
 
@@ -1239,13 +1248,15 @@ export default function StudentManagement() {
                           >
                             <UploadCloud size={18} />
                           </button>
-                           <button 
-                             onClick={() => setConfirmDeleteState({ isOpen: true, id: student.id, name: `${student.firstName} ${student.lastName}` })}
-                             className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                             title="Delete Student"
-                           >
-                             <Trash size={18} />
-                           </button>
+                          {hasDeletePermission && (
+                            <button 
+                              onClick={() => setConfirmDeleteState({ isOpen: true, id: student.id, name: `${student.firstName} ${student.lastName}` })}
+                              className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Delete Student"
+                            >
+                              <Trash size={18} />
+                            </button>
+                          )}
                            <button 
                              onClick={() => openAssignModal(student)}
                              className="px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"

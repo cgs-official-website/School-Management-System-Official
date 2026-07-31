@@ -190,33 +190,33 @@ function App() {
             >
               <Route index element={<AdminOverview />} />
               <Route path="setup" element={<EnvironmentSetup />} />
-              <Route path="form-builder" element={<FormBuilder />} />
-              <Route path="subjects" element={<SubjectManagement />} />
-              <Route path="classes" element={<ClassManagement />} />
-              <Route path="students" element={<StudentManagement />} />
-              <Route path="attendance" element={<AdminAttendance />} />
-              <Route path="staff" element={<StaffAssignment />} />
+              <Route path="form-builder" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="form-builder"><FormBuilder /></ProtectedRoute>} />
+              <Route path="subjects" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="subjects"><SubjectManagement /></ProtectedRoute>} />
+              <Route path="classes" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="classes"><ClassManagement /></ProtectedRoute>} />
+              <Route path="students" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="students"><StudentManagement /></ProtectedRoute>} />
+              <Route path="attendance" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="attendance"><AdminAttendance /></ProtectedRoute>} />
+              <Route path="staff" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="staff"><StaffAssignment /></ProtectedRoute>} />
               <Route path="links" element={<LinkGenerator />} />
-              <Route path="fees" element={<FeeManagement />} />
-              <Route path="timetables" element={<TimetableManagement />} />
-              <Route path="transport" element={<TransportManagement />} />
-              <Route path="library" element={<LibraryManagement />} />
-              <Route path="exams" element={<ExamManagement />} />
-              <Route path="notices" element={<Noticeboard />} />
-              <Route path="chats" element={<ChatMonitor />} />
+              <Route path="fees" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="fees"><FeeManagement /></ProtectedRoute>} />
+              <Route path="timetables" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="timetables"><TimetableManagement /></ProtectedRoute>} />
+              <Route path="transport" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="transport"><TransportManagement /></ProtectedRoute>} />
+              <Route path="library" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="library"><LibraryManagement /></ProtectedRoute>} />
+              <Route path="exams" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="exams"><ExamManagement /></ProtectedRoute>} />
+              <Route path="notices" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="noticeboard"><Noticeboard /></ProtectedRoute>} />
+              <Route path="chats" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="chats"><ChatMonitor /></ProtectedRoute>} />
               <Route path="api" element={<APIIntegrations />} />
               <Route path="billing" element={<BillingDashboard />} />
               <Route path="upgrade" element={<UpgradePlan />} />
-              <Route path="calendar" element={<AdminCalendar />} />
-              <Route path="inventory" element={<InventoryManagement />} />
-              <Route path="inventory/audit-logs" element={<InventoryAuditLogs />} />
-              <Route path="hr-payroll" element={<HRPayrollManagement />} />
-              <Route path="reports" element={<ReportsAnalytics />} />
+              <Route path="calendar" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="calendar"><AdminCalendar /></ProtectedRoute>} />
+              <Route path="inventory" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="inventory"><InventoryManagement /></ProtectedRoute>} />
+              <Route path="inventory/audit-logs" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="inventory"><InventoryAuditLogs /></ProtectedRoute>} />
+              <Route path="hr-payroll" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="hr-payroll"><HRPayrollManagement /></ProtectedRoute>} />
+              <Route path="reports" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="reports"><ReportsAnalytics /></ProtectedRoute>} />
               <Route path="roles" element={<RolesPermissions />} />
-              <Route path="homework" element={<AdminHomework />} />
+              <Route path="homework" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="homework"><AdminHomework /></ProtectedRoute>} />
               <Route path="custom/:moduleId" element={<CustomModuleView />} />
-              <Route path="leaves" element={<AdminLeaves />} />
-              <Route path="leads" element={<LeadsManagement />} />
+              <Route path="leaves" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="leaves"><AdminLeaves /></ProtectedRoute>} />
+              <Route path="leads" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="leads"><LeadsManagement /></ProtectedRoute>} />
             </Route>
 
             {/* Teacher Routes */}
@@ -231,19 +231,19 @@ function App() {
             >
               <Route index element={<ClassRoster />} />
               <Route path="profile" element={<ProfileSetup />} />
-              <Route path="attendance" element={<Attendance />} />
-              <Route path="chat" element={<TeacherChat />} />
-              <Route path="homework" element={<HomeworkManagement />} />
-              <Route path="grades" element={<Grades />} />
-              <Route path="notices" element={<TeacherNoticeboard />} />
-              <Route path="calendar" element={<TeacherCalendar />} />
-              <Route path="timetable" element={<TeacherTimetable />} />
-              <Route path="lesson-plans" element={<LessonPlans />} />
-              <Route path="performance" element={<PerformanceTracking />} />
-              <Route path="resources" element={<ResourceSharing />} />
-              <Route path="ptm" element={<PTMScheduler />} />
-              <Route path="salary" element={<MySalary />} />
-              <Route path="leaves" element={<TeacherLeaves />} />
+              <Route path="attendance" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="attendance"><Attendance /></ProtectedRoute>} />
+              <Route path="chat" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="chats"><TeacherChat /></ProtectedRoute>} />
+              <Route path="homework" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="homework"><HomeworkManagement /></ProtectedRoute>} />
+              <Route path="grades" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="exams"><Grades /></ProtectedRoute>} />
+              <Route path="notices" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="noticeboard"><TeacherNoticeboard /></ProtectedRoute>} />
+              <Route path="calendar" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="calendar"><TeacherCalendar /></ProtectedRoute>} />
+              <Route path="timetable" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="timetables"><TeacherTimetable /></ProtectedRoute>} />
+              <Route path="lesson-plans" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="lesson_plans"><LessonPlans /></ProtectedRoute>} />
+              <Route path="performance" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="performance"><PerformanceTracking /></ProtectedRoute>} />
+              <Route path="resources" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="resources"><ResourceSharing /></ProtectedRoute>} />
+              <Route path="ptm" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="ptm"><PTMScheduler /></ProtectedRoute>} />
+              <Route path="salary" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="hr-payroll"><MySalary /></ProtectedRoute>} />
+              <Route path="leaves" element={<ProtectedRoute allowedRoles={['teacher']} moduleKey="leaves"><TeacherLeaves /></ProtectedRoute>} />
               <Route path="profile" element={<ProfileSetup />} />
             </Route>
 

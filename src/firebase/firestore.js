@@ -1204,34 +1204,6 @@ export const subscribeToStudentsByClass = (schoolId, classId, callback) => {
   });
 };
 
-export const subscribeToAssessmentsByClass = (schoolId, classId, callback) => {
-  const q = query(
-    collection(db, `schools/${schoolId}/assessments`),
-    where("classId", "==", classId)
-  );
-  return onSnapshot(q, (snapshot) => {
-    const data = [];
-    snapshot.forEach((doc) => {
-      data.push({ id: doc.id, ...doc.data() });
-    });
-    data.sort((a, b) => new Date(b.date) - new Date(a.date));
-    callback(data);
-  });
-};
-
-export const subscribeToAttendanceForClass = (schoolId, classId, callback) => {
-  const q = query(
-    collection(db, `schools/${schoolId}/attendance`),
-    where("classId", "==", classId)
-  );
-  return onSnapshot(q, (snapshot) => {
-    const records = [];
-    snapshot.forEach((doc) => {
-      records.push({ id: doc.id, ...doc.data() });
-    });
-    callback(records);
-  });
-};
 
 export const subscribeToAllSchools = (callback) => {
   const q = query(collection(db, "schools"), orderBy("createdAt", "desc"));

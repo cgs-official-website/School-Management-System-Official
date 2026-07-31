@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
+import usePermissions from '../../hooks/usePermissions';
 
 const mockStudents = [
   { id: 's1', name: 'Alice Smith', email: 'alice@example.com' },
@@ -100,6 +101,10 @@ export default function LibraryManagement() {
 
   const handleAddBook = async (e) => {
     e.preventDefault();
+    if (!hasCreatePermission) {
+      toast.error("You do not have permission to add books.");
+      return;
+    }
     setAddingBook(true);
     try {
       const uploadedCustomData = await uploadCustomDataFiles(newBook.customData, schoolId, 'library');
@@ -120,6 +125,10 @@ export default function LibraryManagement() {
 
   const handleIssueBook = async (e) => {
     e.preventDefault();
+    if (!hasEditPermission) {
+      toast.error("You do not have permission to issue books.");
+      return;
+    }
     if (!issueData.bookId || !issueData.studentId || !issueData.dueDate) return;
     
     // Check if available
@@ -144,10 +153,18 @@ export default function LibraryManagement() {
   };
 
   const handleReturnBookClick = (issueId, bookId) => {
+    if (!hasEditPermission) {
+      toast.error("You do not have permission to return books.");
+      return;
+    }
     setConfirmModalState({ isOpen: true, issueId, bookId });
   };
 
   const executeReturnBook = async () => {
+    if (!hasEditPermission) {
+      toast.error("You do not have permission to return books.");
+      return;
+    }
     const { issueId, bookId } = confirmModalState;
     if (!issueId || !bookId) return;
     try {
@@ -202,18 +219,22 @@ export default function LibraryManagement() {
           <p className="text-slate-500 mt-1">Manage book inventory, issuing, and returns.</p>
         </div>
         <div className="flex gap-3">
-          <button 
-            onClick={() => setShowIssueModal(true)}
-            className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 shadow-sm flex items-center gap-2 transition-colors"
-          >
-            <Library size={18} /> Issue Book
-          </button>
-          <button 
-            onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
-          >
-            <Plus size={18} /> Add New Book
-          </button>
+          {hasEditPermission && (
+            <button 
+              onClick={() => setShowIssueModal(true)}
+              className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 shadow-sm flex items-center gap-2 transition-colors"
+            >
+              <Library size={18} /> Issue Book
+            </button>
+          )}
+          {hasCreatePermission && (
+            <button 
+              onClick={() => setShowAddModal(true)}
+              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+            >
+              <Plus size={18} /> Add New Book
+            </button>
+          )}
         </div>
       </div>
 
@@ -349,12 +370,14 @@ export default function LibraryManagement() {
                               <CheckCircle2 size={14} /> Returned
                             </span>
                           ) : (
-                            <button 
-                              onClick={() => handleReturnBookClick(issue.id, issue.bookId)}
-                              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-lg transition-colors inline-flex items-center gap-1.5"
-                            >
-                              <Undo2 size={14} /> Mark Returned
-                            </button>
+                            hasEditPermission && (
+                              <button 
+                                onClick={() => handleReturnBookClick(issue.id, issue.bookId)}
+                                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-lg transition-colors inline-flex items-center gap-1.5"
+                              >
+                                <Undo2 size={14} /> Mark Returned
+                              </button>
+                            )
                           )}
                         </td>
                       </tr>

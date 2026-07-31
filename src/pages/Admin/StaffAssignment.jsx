@@ -15,10 +15,15 @@ import 'jspdf-autotable';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import ConfirmModal from '../../components/ConfirmModal';
 import FilePreviewModal from '../../components/FilePreviewModal';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function StaffAssignment() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('staff');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('staff');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('staff');
 
   const [staff, setStaff] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -814,7 +819,8 @@ export default function StaffAssignment() {
           >
             <FileDown size={18} /> Export
           </button>
-          <button 
+          {hasCreatePermission && (
+            <button 
               onClick={() => {
                 setAddStaffActiveTab('Personal');
                 setAddStaffModalOpen(true);
@@ -823,16 +829,19 @@ export default function StaffAssignment() {
             >
               <UserPlus size={18} /> Add Staff
             </button>
-          <button 
-            onClick={() => {
-              setUploadFile(null);
-              setSelectedStaffForUpload(null);
-              setUploadModalOpen(true);
-            }}
-            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
-          >
-            <UploadCloud size={18} /> Bulk Import
-          </button>
+          )}
+          {hasCreatePermission && (
+            <button 
+              onClick={() => {
+                setUploadFile(null);
+                setSelectedStaffForUpload(null);
+                setUploadModalOpen(true);
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+            >
+              <UploadCloud size={18} /> Bulk Import
+            </button>
+          )}
         </div>
       </div>
 
@@ -1060,19 +1069,23 @@ export default function StaffAssignment() {
                           >
                             <Eye size={18} />
                           </button>
-                           <button 
-                             onClick={() => setConfirmDeleteState({ isOpen: true, id: member.id, name: member.name || `${member.firstName} ${member.lastName}` })}
-                             className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                             title="Delete Staff Member"
-                           >
-                             <Trash size={18} />
-                           </button>
-                           <button 
-                             onClick={() => openAssignModal(member)}
-                             className="px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors"
-                           >
-                             {isAssigned ? 'Edit' : 'Assign'}
-                           </button>
+                            {hasDeletePermission && (
+                              <button 
+                                onClick={() => setConfirmDeleteState({ isOpen: true, id: member.id, name: member.name || `${member.firstName} ${member.lastName}` })}
+                                className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Delete Staff Member"
+                              >
+                                <Trash size={18} />
+                              </button>
+                            )}
+                            {hasEditPermission && (
+                              <button 
+                                onClick={() => openAssignModal(member)}
+                                className="px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors"
+                              >
+                                {isAssigned ? 'Edit' : 'Assign'}
+                              </button>
+                            )}
                         </div>
                       </td>
                     </tr>

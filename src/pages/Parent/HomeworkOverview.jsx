@@ -63,9 +63,26 @@ export default function HomeworkOverview() {
         return;
       }
 
+      let classDocSnap = null;
+      let humanReadableClassName = "";
+      try {
+        const classDocRef = doc(db, `schools/${schoolId}/classes`, resolvedClassId);
+        classDocSnap = await getDoc(classDocRef);
+        if (classDocSnap.exists()) {
+          const classData = classDocSnap.data();
+          humanReadableClassName = `${classData.name} - Section ${classData.section}`;
+        }
+      } catch (err) {
+        console.error("Failed to fetch class details for fallback:", err);
+      }
+
       unsub = subscribeToSubCollection(schoolId, 'homeworks', async (hwData) => {
-        // Filter by the student's class
-        const classHw = hwData.filter(hw => hw.classId === resolvedClassId);
+        // Filter by the student's class (match either true Firestore docId or human readable class format fallbacks)
+        const classHw = hwData.filter(hw => 
+          hw.classId === resolvedClassId ||
+          (humanReadableClassName && hw.classId === humanReadableClassName) ||
+          (classDocSnap?.exists() && hw.classId === classDocSnap.data().name)
+        );
         
         // Fetch statuses for this student for all these homeworks
         const statuses = {};

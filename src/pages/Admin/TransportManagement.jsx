@@ -9,10 +9,15 @@ import ConfirmModal from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function TransportManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('transport');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('transport');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('transport');
 
   const [routes, setRoutes] = useState([]);
   const [students, setStudents] = useState([]); // All students to populate assign list
@@ -62,6 +67,14 @@ export default function TransportManagement() {
 
   const handleCreateRoute = async (e) => {
     e.preventDefault();
+    if (newRoute.id && !hasEditPermission) {
+      toast.error("You do not have permission to edit transport routes.");
+      return;
+    }
+    if (!newRoute.id && !hasCreatePermission) {
+      toast.error("You do not have permission to create transport routes.");
+      return;
+    }
     if (!newRoute.name || !newRoute.capacity) return;
     setCreating(true);
 
@@ -95,6 +108,10 @@ export default function TransportManagement() {
   };
 
   const handleDeleteRoute = async () => {
+    if (!hasDeletePermission) {
+      toast.error("You do not have permission to delete transport routes.");
+      return;
+    }
     if (!confirmDeleteState.id) return;
     try {
       await deleteSubDocument(schoolId, 'transportRoutes', confirmDeleteState.id);
@@ -108,6 +125,10 @@ export default function TransportManagement() {
 
   const handleAssignStudent = async (e) => {
     e.preventDefault();
+    if (!hasEditPermission) {
+      toast.error("You do not have permission to modify student assignments.");
+      return;
+    }
     if (!activeRouteId || !selectedStudentId) return;
     
     // Capacity Check
@@ -135,6 +156,10 @@ export default function TransportManagement() {
   };
 
   const handleUnassignStudent = async (routeId, studentId) => {
+    if (!hasEditPermission) {
+      toast.error("You do not have permission to modify student assignments.");
+      return;
+    }
     if (!schoolId || !routeId || !studentId) return;
     try {
       const batch = writeBatch(db);
@@ -167,6 +192,10 @@ export default function TransportManagement() {
 
   // Helper to open assign modal with context
   const openAssignModal = (routeId) => {
+    if (!hasEditPermission) {
+      toast.error("You do not have permission to modify student assignments.");
+      return;
+    }
     setActiveRouteId(routeId);
     setShowAssignModal(true);
   };
@@ -189,12 +218,17 @@ export default function TransportManagement() {
           <h1 className="text-3xl font-bold text-slate-900">Transport Management</h1>
           <p className="text-slate-500 mt-1">Manage bus routes, drivers, and student assignments.</p>
         </div>
-        <button 
-          onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
-        >
-          <Plus size={18} /> Add New Route
-        </button>
+        {hasCreatePermission && (
+          <button 
+            onClick={() => {
+              setNewRoute({ name: '', vehicleNumber: '', driverName: '', driverPhone: '', capacity: '', customData: {} });
+              setShowCreateModal(true);
+            }}
+            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+          >
+            <Plus size={18} /> Add New Route
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -223,20 +257,24 @@ export default function TransportManagement() {
                       >
                         <Eye size={18} />
                       </button>
-                      <button 
-                        onClick={() => { setNewRoute(route); setShowCreateModal(true); }}
-                        className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                        title="Edit Route"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button 
-                        onClick={() => setConfirmDeleteState({ isOpen: true, id: route.id, name: route.name })}
-                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        title="Delete Route"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                      {hasEditPermission && (
+                        <button 
+                          onClick={() => { setNewRoute(route); setShowCreateModal(true); }}
+                          className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                          title="Edit Route"
+                        >
+                          <Edit size={18} />
+                        </button>
+                      )}
+                      {hasDeletePermission && (
+                        <button 
+                          onClick={() => setConfirmDeleteState({ isOpen: true, id: route.id, name: route.name })}
+                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete Route"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
                     </div>
                   </div>
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-200/50 text-slate-700 rounded-lg text-xs font-mono font-bold tracking-wide">
@@ -271,15 +309,17 @@ export default function TransportManagement() {
                   </div>
                 </div>
 
-                <div className="p-4 border-t border-slate-100 bg-slate-50 mt-auto">
-                  <button 
-                    onClick={() => openAssignModal(route.id)}
-                    disabled={isFull}
-                    className="w-full py-2.5 bg-white text-slate-700 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 hover:border-primary-200 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isFull ? <><AlertTriangle size={16}/> Bus Full</> : <><Plus size={16}/> Assign Student</>}
-                  </button>
-                </div>
+                {hasEditPermission && (
+                  <div className="p-4 border-t border-slate-100 bg-slate-50 mt-auto">
+                    <button 
+                      onClick={() => openAssignModal(route.id)}
+                      disabled={isFull}
+                      className="w-full py-2.5 bg-white text-slate-700 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 hover:border-primary-200 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isFull ? <><AlertTriangle size={16}/> Bus Full</> : <><Plus size={16}/> Assign Student</>}
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })

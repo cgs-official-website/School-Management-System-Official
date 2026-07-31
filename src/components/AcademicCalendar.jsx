@@ -10,6 +10,7 @@ import { getSubCollection, addSubDocument, updateSubDocument, deleteSubDocument 
 import toast from 'react-hot-toast';
 import ConfirmModal from './ConfirmModal';
 import { LuPlus as Plus, LuX as X, LuCalendarDays as CalendarIcon, LuTrash2 as Trash2 } from 'react-icons/lu';
+import usePermissions from '../hooks/usePermissions';
 
 import enUS from 'date-fns/locale/en-US';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
@@ -24,11 +25,15 @@ const localizer = dateFnsLocalizer({
   startOfWeek,
   getDay,
   locales,
-});
+  });
 
 export default function AcademicCalendar({ isAdmin }) {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = isAdmin && (userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('calendar'));
+  const hasEditPermission = isAdmin && (userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('calendar'));
+  const hasDeletePermission = isAdmin && (userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('calendar'));
 
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -101,9 +106,17 @@ export default function AcademicCalendar({ isAdmin }) {
       }
       
       if (selectedEvent) {
+        if (!hasEditPermission) {
+          toast.error("You do not have permission to edit events.");
+          return;
+        }
         await updateSubDocument(schoolId, 'calendar', selectedEvent.id, eventData);
         toast.success("Event updated successfully!");
       } else {
+        if (!hasCreatePermission) {
+          toast.error("You do not have permission to create events.");
+          return;
+        }
         await addSubDocument(schoolId, 'calendar', eventData);
         toast.success("Event added to calendar!");
       }
@@ -120,6 +133,10 @@ export default function AcademicCalendar({ isAdmin }) {
 
   const handleDeleteEvent = () => {
     if (!selectedEvent || !isAdmin) return;
+    if (!hasDeletePermission) {
+      toast.error("You do not have permission to delete events.");
+      return;
+    }
     setConfirmModal({
       isOpen: true,
       title: "Delete Event",
@@ -143,6 +160,7 @@ export default function AcademicCalendar({ isAdmin }) {
 
   const handleSelectEvent = (event) => {
     if (!isAdmin) return;
+    if (!hasEditPermission && !hasDeletePermission) return;
     setSelectedEvent(event);
     setNewEvent({
       title: event.title,
@@ -156,6 +174,10 @@ export default function AcademicCalendar({ isAdmin }) {
   };
 
   const openNewEventModal = () => {
+    if (!hasCreatePermission) {
+      toast.error("You do not have permission to create events.");
+      return;
+    }
     setSelectedEvent(null);
     setNewEvent({ title: '', start: '', end: '', type: 'event', isCustomDates: false, customDates: [] });
     setShowModal(true);
@@ -168,7 +190,7 @@ export default function AcademicCalendar({ isAdmin }) {
           <CalendarIcon className="text-primary-600" />
           Academic Calendar
         </h2>
-        {isAdmin && (
+        {isAdmin && hasCreatePermission && (
           <button 
             onClick={openNewEventModal}
             className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm"

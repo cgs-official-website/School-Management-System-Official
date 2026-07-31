@@ -8,10 +8,12 @@ import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
 import useSchoolBranding from '../hooks/useSchoolBranding';
 import { useNotifications } from '../context/NotificationContext';
+import usePermissions from '../hooks/usePermissions';
 
 export default function TeacherDashboard() {
   const { currentUser, userProfile } = useAuth();
   const { unreadCounts, clearBadge } = useNotifications();
+  const { canRead, loading: permissionsLoading } = usePermissions();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -137,22 +139,27 @@ export default function TeacherDashboard() {
   const navItems = [
     { name: 'Dashboard', path: '/teacher', icon: Users, exact: true },
     { name: 'Noticeboard', path: '/teacher/notices', icon: Bell, moduleKey: 'noticeboard' },
-    { name: 'Calendar', path: '/teacher/calendar', icon: Calendar },
-    { name: 'Timetable', path: '/teacher/timetable', icon: LuCalendarDays },
-    { name: 'Lesson Plans', path: '/teacher/lesson-plans', icon: LuBookOpen },
-    { name: 'Resources', path: '/teacher/resources', icon: LuFolderDown },
-    { name: 'Attendance', path: '/teacher/attendance', icon: CheckSquare },
+    { name: 'Calendar', path: '/teacher/calendar', icon: Calendar, moduleKey: 'calendar' },
+    { name: 'Timetable', path: '/teacher/timetable', icon: LuCalendarDays, moduleKey: 'timetables' },
+    { name: 'Lesson Plans', path: '/teacher/lesson-plans', icon: LuBookOpen, moduleKey: 'lesson_plans' },
+    { name: 'Resources', path: '/teacher/resources', icon: LuFolderDown, moduleKey: 'resources' },
+    { name: 'Attendance', path: '/teacher/attendance', icon: CheckSquare, moduleKey: 'attendance' },
     { name: 'Homework', path: '/teacher/homework', icon: FileText, moduleKey: 'homework' },
-    { name: 'Performance', path: '/teacher/performance', icon: LuTrendingUp },
-    { name: 'PTM Scheduler', path: '/teacher/ptm', icon: LuCalendarClock },
-    { name: 'Grades & Exams', path: '/teacher/grades', icon: GraduationCap },
-    { name: 'Messages', path: '/teacher/chat', icon: MessageSquare },
-    { name: 'My Salary', path: '/teacher/salary', icon: LuBanknote },
-    { name: 'Leave Requests', path: '/teacher/leaves', icon: Calendar },
+    { name: 'Performance', path: '/teacher/performance', icon: LuTrendingUp, moduleKey: 'performance' },
+    { name: 'PTM Scheduler', path: '/teacher/ptm', icon: LuCalendarClock, moduleKey: 'ptm' },
+    { name: 'Grades & Exams', path: '/teacher/grades', icon: GraduationCap, moduleKey: 'exams' },
+    { name: 'Messages', path: '/teacher/chat', icon: MessageSquare, moduleKey: 'chats' },
+    { name: 'My Salary', path: '/teacher/salary', icon: LuBanknote, moduleKey: 'hr-payroll' },
+    { name: 'Leave Requests', path: '/teacher/leaves', icon: Calendar, moduleKey: 'leaves' },
     { name: 'Profile', path: '/teacher/profile', icon: UserIcon },
   ];
 
-  if (loading) {
+  const filteredNavItems = navItems.filter(item => {
+    if (!item.moduleKey) return true;
+    return canRead(item.moduleKey);
+  });
+
+  if (loading || (currentUser && userProfile && userProfile.role !== 'admin' && permissionsLoading)) {
     return (
       <div className="min-h-screen bg-slate-50 flex justify-center items-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
@@ -196,7 +203,7 @@ export default function TeacherDashboard() {
 
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
           <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-4">Menu</p>
-          {navItems.map((item) => (
+          {filteredNavItems.map((item) => (
             <NavLink
               key={item.name}
               to={item.path}

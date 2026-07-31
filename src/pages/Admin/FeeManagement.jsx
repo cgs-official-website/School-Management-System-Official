@@ -5,10 +5,15 @@ import { LuCreditCard as CreditCard, LuPlus as Plus, LuCircleCheck as CheckCircl
 import toast from 'react-hot-toast';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function FeeManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('fees');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('fees');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('fees');
 
   const [classes, setClasses] = useState([]);
   const [invoices, setInvoices] = useState([]);
@@ -91,8 +96,12 @@ export default function FeeManagement() {
     }));
   };
 
-  const handleCreateFee = async (e) => {
+  const handleCreate = async (e) => {
     e.preventDefault();
+    if (!hasCreatePermission) {
+      toast.error("You do not have permission to create fee structures.");
+      return;
+    }
     if (!newFee.name || !newFee.amount || !newFee.classId) return;
     setCreating(true);
 
@@ -121,6 +130,10 @@ export default function FeeManagement() {
   };
 
   const handleMarkPaid = async (invoiceId) => {
+    if (!hasEditPermission) {
+      toast.error("You do not have permission to record payments.");
+      return;
+    }
     try {
       await markInvoicePaid(schoolId, invoiceId);
       // Optimistically update local state - Handled by real-time listener
@@ -168,12 +181,14 @@ export default function FeeManagement() {
           <h1 className="text-3xl font-bold text-slate-900">Fee Management</h1>
           <p className="text-slate-500 mt-1">Track revenue and manage student payments.</p>
         </div>
-        <button 
-          onClick={() => setShowCreateModal(true)}
-          className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
-        >
-          <Plus size={18} /> Assign New Fee
-        </button>
+        {hasCreatePermission && (
+          <button 
+            onClick={() => setShowCreateModal(true)}
+            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+          >
+            <Plus size={18} /> Assign New Fee
+          </button>
+        )}
       </div>
 
       {/* Dashboard Stats */}
@@ -316,7 +331,7 @@ export default function FeeManagement() {
                         )}
                       </td>
                       <td className="p-4 pr-6 text-right">
-                        {inv.status === 'Pending' && (
+                        {inv.status === 'Pending' && hasEditPermission && (
                           <button 
                             onClick={() => handleMarkPaid(inv.id)}
                             className="px-4 py-2 bg-primary-50 text-primary-700 hover:bg-primary-600 hover:text-white rounded-xl font-bold transition-colors border border-primary-100 hover:border-primary-600 text-xs"

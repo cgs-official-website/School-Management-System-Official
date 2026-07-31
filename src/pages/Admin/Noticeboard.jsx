@@ -4,10 +4,15 @@ import { subscribeToGlobalNotices, subscribeToClassNotices, createNotice, delete
 import { LuBell as Bell, LuMegaphone as Megaphone, LuPlus as Plus, LuX as X, LuTrash2 as Trash2, LuUsers as Users, LuGraduationCap as GraduationCap, LuTriangleAlert as AlertTriangle, LuSend as Send, LuPencil as Edit, LuEye as Eye } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function Noticeboard() {
   const { userProfile, currentUser } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('noticeboard');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('noticeboard');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('noticeboard');
 
   const [activeTab, setActiveTab] = useState('global');
   const [globalNotices, setGlobalNotices] = useState([]);
@@ -143,7 +148,7 @@ export default function Noticeboard() {
           <p className="text-slate-500 mt-1">Broadcast global announcements and oversee class notices.</p>
         </div>
         
-        {activeTab === 'global' && (
+        {activeTab === 'global' && hasCreatePermission && (
           <button 
             onClick={() => {
               setEditingNotice(null);
@@ -245,20 +250,24 @@ export default function Noticeboard() {
                   </div>
                   
                   <div className="shrink-0 flex items-start md:items-center gap-2">
-                    <button 
-                      onClick={() => openEditModal(notice)}
-                      className="p-3 text-slate-400 hover:bg-slate-50 hover:text-slate-700 rounded-xl transition-colors tooltip-trigger"
-                      title="Edit Notice"
-                    >
-                      <Edit size={20} />
-                    </button>
-                    <button 
-                      onClick={() => setConfirmModalState({ isOpen: true, noticeId: notice.id })}
-                      className="p-3 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors tooltip-trigger"
-                      title="Delete Notice"
-                    >
-                      <Trash2 size={20} />
-                    </button>
+                    {hasEditPermission && (
+                      <button 
+                        onClick={() => openEditModal(notice)}
+                        className="p-3 text-slate-400 hover:bg-slate-50 hover:text-slate-700 rounded-xl transition-colors tooltip-trigger"
+                        title="Edit Notice"
+                      >
+                        <Edit size={20} />
+                      </button>
+                    )}
+                    {hasDeletePermission && (
+                      <button 
+                        onClick={() => setConfirmModalState({ isOpen: true, noticeId: notice.id })}
+                        className="p-3 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors tooltip-trigger"
+                        title="Delete Notice"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    )}
                   </div>
                 </div>
               );

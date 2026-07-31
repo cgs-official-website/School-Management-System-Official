@@ -8,10 +8,15 @@ import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function TimetableManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('timetables');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('timetables');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('timetables');
 
   const [classes, setClasses] = useState([]);
   const [teachers, setTeachers] = useState([]);
@@ -135,6 +140,7 @@ export default function TimetableManagement() {
   };
 
   const handleEditSlot = (day, slot) => {
+    if (!hasEditPermission) return;
     setActiveDay(day);
     setEditingSlotId(slot.id);
     setNewSlot({
@@ -148,10 +154,15 @@ export default function TimetableManagement() {
   };
 
   const handleDeleteClick = (day, slotId) => {
+    if (!hasDeletePermission) return;
     setConfirmModalState({ isOpen: true, day, slotId });
   };
 
   const executeDelete = () => {
+    if (!hasDeletePermission) {
+      toast.error("You do not have permission to delete periods.");
+      return;
+    }
     const { day, slotId } = confirmModalState;
     if (!day || !slotId) return;
     const newSchedule = { ...schedule };
@@ -162,6 +173,10 @@ export default function TimetableManagement() {
 
   const handleSaveTimetable = async () => {
     if (!selectedClassId) return;
+    if (!hasCreatePermission && !hasEditPermission) {
+      toast.error("You do not have permission to modify timetables.");
+      return;
+    }
     setSaving(true);
     try {
       const uploadedCustomData = await uploadCustomDataFiles(customData, schoolId, 'timetables');
@@ -203,13 +218,15 @@ export default function TimetableManagement() {
             ))}
           </select>
           
-          <button 
-            onClick={handleSaveTimetable}
-            disabled={!selectedClassId || saving}
-            className="px-6 py-2 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50 transition-colors whitespace-nowrap"
-          >
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
+          {(hasCreatePermission || hasEditPermission) && (
+            <button 
+              onClick={handleSaveTimetable}
+              disabled={!selectedClassId || saving}
+              className="px-6 py-2 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50 transition-colors whitespace-nowrap"
+            >
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -296,24 +313,26 @@ export default function TimetableManagement() {
             {daysOfWeek.map(day => (
               <div key={day} className="p-4 text-center font-bold text-slate-700 uppercase tracking-wider text-sm flex justify-between items-center md:block">
                 <span>{day}</span>
-                <button 
-                  onClick={() => { 
-                    setActiveDay(day); 
-                    setEditingSlotId(null);
-                    setNewSlot({
-                      startTime: '09:00',
-                      endTime: '10:00',
-                      subject: '',
-                      teacher: '',
-                      teacherId: ''
-                    });
-                    setShowAddModal(true); 
-                  }}
-                  className="md:mt-2 text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 p-1.5 md:mx-auto rounded-lg transition-colors flex items-center justify-center"
-                  title={`Add slot to ${day}`}
-                >
-                  <Plus size={16} />
-                </button>
+                {hasCreatePermission && (
+                  <button 
+                    onClick={() => { 
+                      setActiveDay(day); 
+                      setEditingSlotId(null);
+                      setNewSlot({
+                        startTime: '09:00',
+                        endTime: '10:00',
+                        subject: '',
+                        teacher: '',
+                        teacherId: ''
+                      });
+                      setShowAddModal(true); 
+                    }}
+                    className="md:mt-2 text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 p-1.5 md:mx-auto rounded-lg transition-colors flex items-center justify-center"
+                    title={`Add slot to ${day}`}
+                  >
+                    <Plus size={16} />
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -351,20 +370,24 @@ export default function TimetableManagement() {
 
                         {/* Edit and Delete Buttons (visible on hover) */}
                         <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all">
-                          <button 
-                            onClick={() => handleEditSlot(day, slot)}
-                            className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
-                            title="Edit Period"
-                          >
-                            <Edit2 size={14} />
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteClick(day, slot.id)}
-                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
-                            title="Delete Period"
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                          {hasEditPermission && (
+                            <button 
+                              onClick={() => handleEditSlot(day, slot)}
+                              className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
+                              title="Edit Period"
+                            >
+                              <Edit2 size={14} />
+                            </button>
+                          )}
+                          {hasDeletePermission && (
+                            <button 
+                              onClick={() => handleDeleteClick(day, slot.id)}
+                              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                              title="Delete Period"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))

@@ -4,10 +4,15 @@ import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, addSubDocument, updateSubDocument, deleteSubDocument } from '../../firebase/firestore';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import usePermissions from '../../hooks/usePermissions';
 
 export default function LessonPlans() {
   const { userProfile, currentUser } = useAuth();
   const schoolId = userProfile?.schoolId;
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('lesson_plans');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('lesson_plans');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('lesson_plans');
 
   const [activeTab, setActiveTab] = useState('upcoming');
   const [searchTerm, setSearchTerm] = useState('');
@@ -227,12 +232,14 @@ export default function LessonPlans() {
           <p className="text-slate-500 mt-1">Create, organize, and track your daily lesson plans.</p>
         </div>
         <div className="flex gap-3">
-          <button 
-            onClick={handleOpenCreate}
-            className="px-6 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2"
-          >
-            <LuPlus size={18} /> New Plan
-          </button>
+          {hasCreatePermission && (
+            <button 
+              onClick={handleOpenCreate}
+              className="px-6 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2"
+            >
+              <LuPlus size={18} /> New Plan
+            </button>
+          )}
           <button
             onClick={() => {
               if (plans.length === 0) {
@@ -305,12 +312,14 @@ export default function LessonPlans() {
                       <LuCalendar size={14} /> 
                       {plan.date ? new Date(plan.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) : 'No Date'}
                     </span>
-                    <button 
-                      onClick={() => handleOpenEdit(plan)}
-                      className="text-primary-600 hover:text-primary-700 font-bold opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      Edit Plan &rarr;
-                    </button>
+                    {hasEditPermission && (
+                      <button 
+                        onClick={() => handleOpenEdit(plan)}
+                        className="text-primary-600 hover:text-primary-700 font-bold opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        Edit Plan &rarr;
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -435,36 +444,37 @@ export default function LessonPlans() {
                 </select>
               </div>
             </div>
-
             {/* Modal Footer */}
             <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
-              <div>
-                {editingPlan && (
+              <div className="flex justify-between items-center w-full">
+                {editingPlan && hasDeletePermission ? (
                   <button
                     type="button"
-                    onClick={() => handleDelete(editingPlan.id)}
-                    className="px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded-xl text-sm font-bold transition-colors flex items-center gap-2"
+                    onClick={() => {
+                      setShowModal(false);
+                      handleDelete(editingPlan.id);
+                    }}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-700 rounded-xl text-sm font-bold hover:bg-red-100 transition-colors border border-red-200"
                   >
-                    <LuTrash size={16} />
-                    Delete
+                    <LuTrash size={16} /> Delete Plan
                   </button>
-                )}
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors disabled:opacity-50"
-                >
-                  {submitting ? 'Saving...' : 'Save Plan'}
-                </button>
+                ) : <div />}
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors disabled:opacity-50"
+                  >
+                    {submitting ? 'Saving...' : 'Save Plan'}
+                  </button>
+                </div>
               </div>
             </div>
           </form>
