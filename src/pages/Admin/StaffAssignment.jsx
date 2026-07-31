@@ -45,6 +45,11 @@ export default function StaffAssignment() {
   const [uploading, setUploading] = useState(false);
 
   const [confirmDeleteState, setConfirmDeleteState] = useState({ isOpen: false, id: null, name: '' });
+  const [allRoles, setAllRoles] = useState([
+    'Correspondent', 'Principal', 'Vice Principal', 'Subject Wise Head',
+    'Class Incharge', 'Staffs', 'Administrative Officer', 'Finance Department',
+    'Library', 'Canteen', 'Transport', 'Janitors', 'Hostel', 'Inventory', 'Security'
+  ]);
 
   // Export State
   const [showExportModal, setShowExportModal] = useState(false);
@@ -217,6 +222,18 @@ export default function StaffAssignment() {
       });
       setClasses(data);
     });
+
+    // Fetch custom roles list
+    const rolesRef = collection(db, `schools/${schoolId}/roles`);
+    getDocs(rolesRef).then(snapshot => {
+      const rolesData = [];
+      snapshot.forEach(doc => {
+        rolesData.push(doc.id);
+      });
+      if (rolesData.length > 0) {
+        setAllRoles(rolesData);
+      }
+    }).catch(err => console.error("Error fetching custom roles:", err));
 
     return () => {
       if (teachersUnsub) teachersUnsub();
@@ -485,7 +502,8 @@ export default function StaffAssignment() {
         subjectSpecialization: (editStaffData.subjectSpecialization || '').trim(),
         gradesClassesHandled: (editStaffData.gradesClassesHandled || '').trim(),
         professionalCertifications: (editStaffData.professionalCertifications || '').trim(),
-        role:             editStaffData.role || 'Staffs',
+        roles:            editStaffData.roles || (editStaffData.role ? [editStaffData.role] : ['Staffs']),
+        role:             (editStaffData.roles && editStaffData.roles.length > 0) ? editStaffData.roles[0] : (editStaffData.role || 'Staffs'),
         staff_type:       editStaffData.staff_type || 'teaching',
         status:           editStaffData.status || 'Active',
         // Sensitive — only updated if present
@@ -679,7 +697,9 @@ export default function StaffAssignment() {
         customData: uploadedCustomData || {},
         name: `${newStaff.firstName} ${newStaff.lastName || ''}`.trim(),
         employeeId: newStaff.staffId,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        roles: newStaff.roles || (newStaff.role ? [newStaff.role] : ['Staffs']),
+        role: (newStaff.roles && newStaff.roles.length > 0) ? newStaff.roles[0] : (newStaff.role || 'Staffs')
       };
 
       await addSubDocument(schoolId, 'teachers', staffDoc);
@@ -738,7 +758,10 @@ export default function StaffAssignment() {
       const row = { "S.No": index + 1 };
       if (selectedFields.name) row["Name"] = member.name || `${member.firstName} ${member.lastName}`.trim();
       if (selectedFields.email) row["Email"] = member.email || '';
-      if (selectedFields.role) row["Role"] = member.role || 'Staffs';
+      if (selectedFields.role) {
+        const currentRoles = member.roles || (member.role ? [member.role] : ['Staffs']);
+        row["Role"] = currentRoles.join(', ');
+      }
       if (selectedFields.assignedClass) row["Assigned Class"] = getClassName(member.assignedClassId);
       if (selectedFields.subjectClasses) row["Subject Classes"] = (member.subjectClassIds || []).map(getClassName).join(', ');
       if (selectedFields.mobile) row["Mobile"] = member.mobileNumber || '';
@@ -762,7 +785,8 @@ export default function StaffAssignment() {
     const name = member.name || `${member.firstName} ${member.lastName}`;
     const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase()) || 
            (member.email && member.email.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesRole = roleFilter === 'all' || (member.role || 'Staffs') === roleFilter;
+    const matchesRole = roleFilter === 'all' || 
+                         (member.roles || [member.role || 'Staffs']).includes(roleFilter);
     const matchesStatus = statusFilter === 'all' || (member.status || 'Active') === statusFilter;
     
     if (!(matchesSearch && matchesRole && matchesStatus)) return false;
@@ -779,7 +803,10 @@ export default function StaffAssignment() {
   const totalStaff = staff.length;
   const activeStaff = staff.filter(s => (s.status || 'Active') === 'Active').length;
   const teachingRoles = ['Correspondent', 'Principal', 'Vice Principal', 'Subject Wise Head', 'Class Incharge', 'Staffs'];
-  const teachingStaff = staff.filter(s => teachingRoles.includes(s.role || 'Staffs')).length;
+  const teachingStaff = staff.filter(s => {
+    const rolesList = s.roles || [s.role || 'Staffs'];
+    return rolesList.some(r => teachingRoles.includes(r));
+  }).length;
   const nonTeachingStaff = totalStaff - teachingStaff;
 
   // Pagination Logic
@@ -1521,30 +1548,39 @@ export default function StaffAssignment() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Role</label>
-                      <select
-                        value={newStaff.role}
-                        onChange={(e) => setNewStaff({ ...newStaff, role: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
-                      >
-                        <option value="admin">Admin</option>
-                        <option value="Correspondent">Correspondent</option>
-                        <option value="Principal">Principal</option>
-                        <option value="Vice Principal">Vice Principal</option>
-                        <option value="Subject Wise Head">Subject Wise Head</option>
-                        <option value="Class Incharge">Class Incharge</option>
-                        <option value="Staffs">Staffs</option>
-                        <option value="Administrative Officer">Administrative Officer</option>
-                        <option value="Finance Department">Finance Department</option>
-                        <option value="Library">Library</option>
-                        <option value="Canteen">Canteen</option>
-                        <option value="Transport">Transport</option>
-                        <option value="Janitors">Janitors</option>
-                        <option value="Hostel">Hostel</option>
-                        <option value="Inventory">Inventory</option>
-                        <option value="Security">Security</option>
-                      </select>
+                    <div className="col-span-1 sm:col-span-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 mt-2">
+                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Assigned Roles *</label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-h-[160px] overflow-y-auto custom-scrollbar p-2 bg-white rounded-xl border border-slate-200">
+                        {allRoles.map(roleOption => {
+                          const currentRoles = newStaff.roles || (newStaff.role ? [newStaff.role] : ['Staffs']);
+                          const isChecked = currentRoles.includes(roleOption);
+                          return (
+                            <label key={roleOption} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1 rounded-lg transition-colors">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={(e) => {
+                                  let updated;
+                                  if (e.target.checked) {
+                                    updated = [...currentRoles, roleOption];
+                                  } else {
+                                    updated = currentRoles.filter(r => r !== roleOption);
+                                    if (updated.length === 0) updated = ['Staffs']; // keep at least one
+                                  }
+                                  setNewStaff({
+                                    ...newStaff,
+                                    roles: updated,
+                                    role: updated[0] || 'Staffs'
+                                  });
+                                }}
+                                className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4 cursor-pointer"
+                              />
+                              <span className="text-sm font-semibold text-slate-700">{roleOption}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                      <p className="text-[10px] text-slate-400 mt-1 font-bold">Select all roles that apply. Permissions will be merged dynamically.</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Assign Class (Optional)</label>
@@ -2114,11 +2150,39 @@ export default function StaffAssignment() {
                             <input type="text" value={editStaffData[field] || ''} onChange={e => setEditStaffData({...editStaffData, [field]: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                           </div>
                         ))}
-                        <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Role</label>
-                          <select value={editStaffData.role || 'Staffs'} onChange={e => setEditStaffData({...editStaffData, role: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                            {['admin','Correspondent','Principal','Vice Principal','Subject Wise Head','Class Incharge','Staffs','Administrative Officer','Finance Department','Library','Canteen','Transport','Janitors','Hostel','Inventory','Security'].map(r => <option key={r}>{r}</option>)}
-                          </select>
+                        <div className="col-span-1 sm:col-span-2 bg-slate-50 p-4 rounded-2xl border border-slate-200 mt-2">
+                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Assigned Roles *</label>
+                          <div className="grid grid-cols-2 gap-3 max-h-[160px] overflow-y-auto custom-scrollbar p-2 bg-white rounded-xl border border-slate-200">
+                            {allRoles.map(roleOption => {
+                              const currentRoles = editStaffData.roles || (editStaffData.role ? [editStaffData.role] : ['Staffs']);
+                              const isChecked = currentRoles.includes(roleOption);
+                              return (
+                                <label key={roleOption} className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1 rounded-lg transition-colors">
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={(e) => {
+                                      let updated;
+                                      if (e.target.checked) {
+                                        updated = [...currentRoles, roleOption];
+                                      } else {
+                                        updated = currentRoles.filter(r => r !== roleOption);
+                                        if (updated.length === 0) updated = ['Staffs']; // keep at least one
+                                      }
+                                      setEditStaffData({
+                                        ...editStaffData,
+                                        roles: updated,
+                                        role: updated[0] || 'Staffs'
+                                      });
+                                    }}
+                                    className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4 cursor-pointer"
+                                  />
+                                  <span className="text-sm font-semibold text-slate-700">{roleOption}</span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                          <p className="text-[10px] text-slate-400 mt-1 font-bold">Select all roles that apply. Permissions will be merged dynamically.</p>
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Staff Type</label>
@@ -2283,7 +2347,11 @@ export default function StaffAssignment() {
                       <h3 className="text-xl font-bold text-slate-900">
                         {selectedStaffToView.name || `${selectedStaffToView.firstName} ${selectedStaffToView.lastName}`}
                       </h3>
-                      <p className="text-sm font-medium text-indigo-600 capitalize">{selectedStaffToView.role || 'Staffs'}</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {(selectedStaffToView.roles || [selectedStaffToView.role || 'Staffs']).map(r => (
+                          <span key={r} className="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-lg border border-indigo-150 uppercase tracking-wider">{r}</span>
+                        ))}
+                      </div>
                     </div>
                   </div>
 

@@ -39,32 +39,52 @@ export default function usePermissions() {
 
     let roleUnsub = null;
 
-    // 1. Listen to the staff document in real-time to find their actual assigned role
+    // 1. Listen to the staff document in real-time to find their actual assigned roles
     const staffRef = collection(db, `schools/${schoolId}/teachers`);
     const q = query(staffRef, where("userId", "==", currentUser.uid));
     
     const staffUnsub = onSnapshot(q, (staffSnap) => {
-      let actualRole = userProfile.role; // fallback
+      let assignedRoles = [];
       
       if (!staffSnap.empty) {
         const staffData = staffSnap.docs[0].data();
-        if (staffData.role) {
-          actualRole = staffData.role;
+        if (Array.isArray(staffData.roles) && staffData.roles.length > 0) {
+          assignedRoles = staffData.roles;
+        } else if (staffData.role) {
+          assignedRoles = [staffData.role];
         }
+      }
+
+      if (assignedRoles.length === 0) {
+        assignedRoles = [userProfile.role || 'Staffs'];
       }
 
       // Cleanup previous role listener if it exists
       if (roleUnsub) roleUnsub();
 
-      // 2. Listen to the permissions for that role in real-time
-      const roleDocRef = doc(db, `schools/${schoolId}/roles`, actualRole);
-      roleUnsub = onSnapshot(roleDocRef, (roleSnap) => {
+      // 2. Listen to all roles in real-time and merge permissions for assigned roles
+      const rolesColRef = collection(db, `schools/${schoolId}/roles`);
+      roleUnsub = onSnapshot(rolesColRef, (rolesSnap) => {
         if (isMounted) {
-          if (roleSnap.exists()) {
-            setPermissions(roleSnap.data().permissions || {});
-          } else {
-            setPermissions({});
-          }
+          const merged = {};
+          rolesSnap.forEach(roleDoc => {
+            const roleName = roleDoc.id;
+            if (assignedRoles.includes(roleName)) {
+              const roleData = roleDoc.data();
+              const rolePermissions = roleData.permissions || {};
+              Object.keys(rolePermissions).forEach(moduleKey => {
+                if (!merged[moduleKey]) {
+                  merged[moduleKey] = { read: false, create: false, edit: false, delete: false };
+                }
+                const perm = rolePermissions[moduleKey];
+                if (perm.read) merged[moduleKey].read = true;
+                if (perm.create) merged[moduleKey].create = true;
+                if (perm.edit) merged[moduleKey].edit = true;
+                if (perm.delete) merged[moduleKey].delete = true;
+              });
+            }
+          });
+          setPermissions(merged);
           setLoading(false);
         }
       }, (error) => {
