@@ -188,15 +188,15 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<AdminOverview />} />
-              <Route path="setup" element={<EnvironmentSetup />} />
+               <Route index element={<AdminOverview />} />
+              <Route path="setup" element={<ProtectedRoute allowedRoles={['admin']}><EnvironmentSetup /></ProtectedRoute>} />
               <Route path="form-builder" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="form-builder"><FormBuilder /></ProtectedRoute>} />
               <Route path="subjects" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="subjects"><SubjectManagement /></ProtectedRoute>} />
               <Route path="classes" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="classes"><ClassManagement /></ProtectedRoute>} />
               <Route path="students" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="students"><StudentManagement /></ProtectedRoute>} />
               <Route path="attendance" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="attendance"><AdminAttendance /></ProtectedRoute>} />
               <Route path="staff" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="staff"><StaffAssignment /></ProtectedRoute>} />
-              <Route path="links" element={<LinkGenerator />} />
+              <Route path="links" element={<ProtectedRoute allowedRoles={['admin']}><LinkGenerator /></ProtectedRoute>} />
               <Route path="fees" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="fees"><FeeManagement /></ProtectedRoute>} />
               <Route path="timetables" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="timetables"><TimetableManagement /></ProtectedRoute>} />
               <Route path="transport" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="transport"><TransportManagement /></ProtectedRoute>} />
@@ -204,15 +204,15 @@ function App() {
               <Route path="exams" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="exams"><ExamManagement /></ProtectedRoute>} />
               <Route path="notices" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="noticeboard"><Noticeboard /></ProtectedRoute>} />
               <Route path="chats" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="chats"><ChatMonitor /></ProtectedRoute>} />
-              <Route path="api" element={<APIIntegrations />} />
-              <Route path="billing" element={<BillingDashboard />} />
-              <Route path="upgrade" element={<UpgradePlan />} />
+              <Route path="api" element={<ProtectedRoute allowedRoles={['admin']}><APIIntegrations /></ProtectedRoute>} />
+              <Route path="billing" element={<ProtectedRoute allowedRoles={['admin']}><BillingDashboard /></ProtectedRoute>} />
+              <Route path="upgrade" element={<ProtectedRoute allowedRoles={['admin']}><UpgradePlan /></ProtectedRoute>} />
               <Route path="calendar" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="calendar"><AdminCalendar /></ProtectedRoute>} />
               <Route path="inventory" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="inventory"><InventoryManagement /></ProtectedRoute>} />
               <Route path="inventory/audit-logs" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="inventory"><InventoryAuditLogs /></ProtectedRoute>} />
               <Route path="hr-payroll" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="hr-payroll"><HRPayrollManagement /></ProtectedRoute>} />
               <Route path="reports" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="reports"><ReportsAnalytics /></ProtectedRoute>} />
-              <Route path="roles" element={<RolesPermissions />} />
+              <Route path="roles" element={<ProtectedRoute allowedRoles={['admin']}><RolesPermissions /></ProtectedRoute>} />
               <Route path="homework" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="homework"><AdminHomework /></ProtectedRoute>} />
               <Route path="custom/:moduleId" element={<CustomModuleView />} />
               <Route path="leaves" element={<ProtectedRoute allowedRoles={['admin', 'staff']} moduleKey="leaves"><AdminLeaves /></ProtectedRoute>} />
