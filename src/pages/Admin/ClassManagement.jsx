@@ -7,6 +7,7 @@ import { LuBookOpen as BookOpen, LuPlus as Plus, LuTrash2 as Trash2, LuUsers as 
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
+import usePermissions from '../../hooks/usePermissions';
 
 const mockClasses = [
   { id: 'm1', name: 'Grade 1', section: 'A' },

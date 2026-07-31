@@ -48,6 +48,11 @@ export default function LibraryManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
 
+  const { canCreate, canEdit, canDelete } = usePermissions();
+  const hasCreatePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canCreate('library');
+  const hasEditPermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canEdit('library');
+  const hasDeletePermission = userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin' || canDelete('library');
+
   const [activeTab, setActiveTab] = useState('inventory'); // 'inventory' | 'issued'
   const [books, setBooks] = useState([]);
   const [issuedBooks, setIssuedBooks] = useState([]);

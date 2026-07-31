@@ -1,5 +1,6 @@
 import React from 'react';
 import { LuChartBar, LuTrendingUp, LuUsers, LuIndianRupee, LuGraduationCap } from 'react-icons/lu';
+import * as XLSX from 'xlsx';
 
 export default function ReportsAnalytics() {
   const metrics = [
@@ -9,6 +10,51 @@ export default function ReportsAnalytics() {
     { title: 'Graduation Rate', value: '98.5%', trend: '+0.5%', icon: LuGraduationCap, color: 'bg-purple-500' },
   ];
 
+  const handleDownload = () => {
+    try {
+      const data = metrics.map(m => ({
+        Metric: m.title,
+        Value: m.value,
+        Trend: m.trend
+      }));
+
+      const revenueData = [
+        { Month: 'Jan', Revenue: '₹40,000' },
+        { Month: 'Feb', Revenue: '₹60,000' },
+        { Month: 'Mar', Revenue: '₹45,000' },
+        { Month: 'Apr', Revenue: '₹80,000' },
+        { Month: 'May', Revenue: '₹55,000' },
+        { Month: 'Jun', Revenue: '₹90,000' },
+        { Month: 'Jul', Revenue: '₹70,000' }
+      ];
+
+      const attendanceData = [
+        { Day: 'Mon', Attendance: '95%' },
+        { Day: 'Tue', Attendance: '92%' },
+        { Day: 'Wed', Attendance: '88%' },
+        { Day: 'Thu', Attendance: '96%' },
+        { Day: 'Fri', Attendance: '98%' },
+        { Day: 'Sat', Attendance: '90%' },
+        { Day: 'Sun', Attendance: '94%' }
+      ];
+
+      const wb = XLSX.utils.book_new();
+      
+      const wsMetrics = XLSX.utils.json_to_sheet(data);
+      XLSX.utils.book_append_sheet(wb, wsMetrics, "KPI Metrics");
+
+      const wsRevenue = XLSX.utils.json_to_sheet(revenueData);
+      XLSX.utils.book_append_sheet(wb, wsRevenue, "Revenue Overview");
+
+      const wsAttendance = XLSX.utils.json_to_sheet(attendanceData);
+      XLSX.utils.book_append_sheet(wb, wsAttendance, "Attendance Trends");
+
+      XLSX.writeFile(wb, "School_Performance_Report.xlsx");
+    } catch (error) {
+      console.error("Failed to export report:", error);
+    }
+  };
+
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto h-[calc(100vh-2rem)] flex flex-col overflow-y-auto custom-scrollbar">
       <div className="flex justify-between items-end mb-8 shrink-0">
@@ -16,7 +62,10 @@ export default function ReportsAnalytics() {
           <h1 className="text-3xl font-bold text-slate-900">Reports & Analytics</h1>
           <p className="text-slate-500 mt-1">Key performance metrics and school insights.</p>
         </div>
-        <button className="bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm">
+        <button 
+          onClick={handleDownload}
+          className="bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm active:scale-95"
+        >
           Download Full Report
         </button>
       </div>
