@@ -208,6 +208,10 @@ export default function AdminDashboard() {
   // Sort navItems based on global sidebarOrder
   if (sidebarOrder.length > 0) {
     navItems.sort((a, b) => {
+      // Dashboard always goes first
+      if (a.name === 'Dashboard') return -1;
+      if (b.name === 'Dashboard') return 1;
+
       // Use moduleKey or name for sorting lookup. Dashboard doesn't have a moduleKey in allNavItems.
       const keyA = a.moduleKey || a.name.toLowerCase().replace(/\s+/g, '-');
       const keyB = b.moduleKey || b.name.toLowerCase().replace(/\s+/g, '-');
