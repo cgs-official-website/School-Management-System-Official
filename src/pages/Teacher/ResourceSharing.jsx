@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, addSubDocument, deleteSubDocument } from '../../firebase/firestore';
 import { uploadFileToCloudinaryOrFirebase } from '../../utils/cloudinary';
 import toast from 'react-hot-toast';
+import ConfirmModal from '../../components/ConfirmModal';
 
 export default function ResourceSharing() {
   const { userProfile, currentUser } = useAuth();
@@ -18,6 +19,7 @@ export default function ResourceSharing() {
 
   // Modal & Form State
   const [showModal, setShowModal] = useState(false);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, resourceId: null, resourceTitle: '' });
   const [submitting, setSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [formData, setFormData] = useState({
@@ -68,12 +70,22 @@ export default function ResourceSharing() {
     setShowModal(true);
   };
 
-  const handleDelete = async (resourceId) => {
-    if (!window.confirm("Are you sure you want to delete this resource?")) return;
+  const handleDeleteClick = (resourceId, title) => {
+    setConfirmModal({
+      isOpen: true,
+      resourceId,
+      resourceTitle: title
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    const { resourceId } = confirmModal;
+    if (!resourceId) return;
 
     try {
       await deleteSubDocument(schoolId, 'resources', resourceId);
       toast.success("Resource deleted successfully!");
+      setConfirmModal({ isOpen: false, resourceId: null, resourceTitle: '' });
     } catch (error) {
       console.error(error);
       toast.error("Failed to delete resource.");
@@ -227,7 +239,7 @@ export default function ResourceSharing() {
                     <div className="flex gap-2">
                       {resource.teacherId === currentUser.uid && (
                         <button 
-                          onClick={() => handleDelete(resource.id)}
+                          onClick={() => handleDeleteClick(resource.id, resource.title)}
                           className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" 
                           title="Delete"
                         >
@@ -425,6 +437,17 @@ export default function ResourceSharing() {
           </form>
         </div>
       )}
+      {/* Confirm Delete Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal({ isOpen: false, resourceId: null, resourceTitle: '' })}
+        onConfirm={handleConfirmDelete}
+        title="Delete Resource"
+        message={`Are you sure you want to delete the resource "${confirmModal.resourceTitle}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }
