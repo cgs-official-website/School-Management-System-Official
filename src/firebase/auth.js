@@ -87,13 +87,21 @@ export const getUserProfile = async (uid) => {
         data.role = data.role.toLowerCase();
       }
       
-      // If the user is a teacher, dynamically fetch their assignedClassId from their school record
+      // If the user is a teacher/staff, dynamically fetch their assignedClassId and resolve their profile role
       if (data.role === 'teacher' && data.schoolId) {
         const teacherQuery = query(collection(db, `schools/${data.schoolId}/teachers`), where("userId", "==", uid));
         const snap = await getDocs(teacherQuery);
         if (!snap.empty) {
           const teacherData = snap.docs[0].data();
           data.assignedClassId = teacherData.assignedClassId || null;
+
+          // If they have a non-teaching staff role, migrate their system role to 'staff'
+          const isTeaching = teacherData.staff_type === 'teaching' || teacherData.role === 'teacher';
+          if (!isTeaching) {
+            data.role = 'staff';
+            // Update users document in the background to persist migration
+            setDoc(doc(db, "users", uid), { role: 'staff' }, { merge: true }).catch(console.error);
+          }
         }
       }
       
