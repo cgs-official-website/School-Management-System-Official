@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { subscribeToStudentsByClass, getTransportRoutes, getAttendance } from '../../firebase/firestore';
+import { subscribeToStudentsByClass, getTransportRoutes, subscribeToAttendance } from '../../firebase/firestore';
 import { getDoc, doc, onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuUsers as Users, LuSearch as Search, LuGraduationCap as GraduationCap, LuMail as Mail, LuCircleCheck as CheckCircle2, LuBus, LuUserCheck, LuUserX, LuUser, LuUserRound, LuFileDown, LuX } from 'react-icons/lu';
@@ -140,20 +140,31 @@ export default function ClassRoster() {
       setTransportRoutes(routes);
     }).catch(console.error);
 
-    // Fetch Today's Attendance
-    getAttendance(schoolId, classId, `${todayDate}_Morning`).then(record => {
+    // Subscribe to Today's Forenoon Attendance in real-time
+    let attendanceUnsub;
+    let fallbackUnsub;
+
+    attendanceUnsub = subscribeToAttendance(schoolId, classId, `${todayDate}_FN`, (record) => {
       if (record && record.records) {
         setAttendanceRecords(record.records);
       } else {
-        getAttendance(schoolId, classId, todayDate).then(rec => {
-           if (rec && rec.records) setAttendanceRecords(rec.records);
-        }).catch(console.error);
+        // Fallback: subscribe to today's date-only record
+        if (fallbackUnsub) fallbackUnsub();
+        fallbackUnsub = subscribeToAttendance(schoolId, classId, todayDate, (fallbackRecord) => {
+          if (fallbackRecord && fallbackRecord.records) {
+            setAttendanceRecords(fallbackRecord.records);
+          } else {
+            setAttendanceRecords({});
+          }
+        });
       }
-    }).catch(console.error);
+    });
 
     return () => {
       if (classUnsub) classUnsub();
       if (studentsUnsub) studentsUnsub();
+      if (attendanceUnsub) attendanceUnsub();
+      if (fallbackUnsub) fallbackUnsub();
     };
   }, [schoolId, classId, todayDate]);
 
@@ -369,10 +380,16 @@ export default function ClassRoster() {
                     <td className="p-4 pr-6 text-right">
                       {/* These actions will be wired up in subsequent modules */}
                       <div className="flex justify-end gap-2">
-                        <button className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 hover:border-primary-200 rounded-lg transition-colors">
+                        <button 
+                          onClick={() => navigate('/teacher/grades')}
+                          className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 hover:border-primary-200 rounded-lg transition-colors"
+                        >
                           Add Grade
                         </button>
-                        <button className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-green-700 hover:bg-green-50 border border-slate-200 hover:border-green-200 rounded-lg transition-colors">
+                        <button 
+                          onClick={() => navigate('/teacher/attendance')}
+                          className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-green-700 hover:bg-green-50 border border-slate-200 hover:border-green-200 rounded-lg transition-colors"
+                        >
                           Attendance
                         </button>
                       </div>
