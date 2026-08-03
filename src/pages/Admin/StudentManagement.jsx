@@ -1255,12 +1255,6 @@ export default function StudentManagement() {
                           >
                             <Eye size={18} />
                           </button>
-                          <button 
-                            onClick={() => openUploadModal(student)}
-                            className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                          >
-                            <UploadCloud size={18} />
-                          </button>
                           {hasDeletePermission && (
                             <button 
                               onClick={() => setConfirmDeleteState({ isOpen: true, id: student.id, name: `${student.firstName} ${student.lastName}` })}
