@@ -88,7 +88,8 @@ export default function LandingPage() {
     const unsub = subscribeToSubscriptionPlans((data) => {
       const order = ['base', 'standard', 'premium', 'enterprise'];
       const sortedPlans = [...data].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
-      setPlans(sortedPlans);
+      const visiblePlans = sortedPlans.filter(plan => plan.active !== false);
+      setPlans(visiblePlans);
     });
 
     return () => unsub();
@@ -330,7 +331,12 @@ export default function LandingPage() {
               </div>
             ) : (
               <div className="overflow-x-auto custom-scrollbar pb-8 pt-6 -mt-6 px-2 -mx-2">
-                <div className="min-w-[1000px] grid grid-cols-4 gap-4">
+                <div className={`min-w-[1000px] grid gap-8 justify-center ${
+                  plans.length === 1 ? 'grid-cols-1 max-w-md mx-auto' :
+                  plans.length === 2 ? 'grid-cols-2 max-w-3xl mx-auto' :
+                  plans.length === 3 ? 'grid-cols-3 max-w-5xl mx-auto' :
+                  'grid-cols-4'
+                }`}>
                   {plans.map((plan, idx) => {
                     const isPopular = plan.id === 'premium';
                     

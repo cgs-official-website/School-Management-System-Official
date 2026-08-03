@@ -28,8 +28,9 @@ export default function UpgradePlan() {
         getSubscriptionPlans(),
         getSchool(schoolId)
       ]);
-      // Sort plans by price
-      setPlans(allPlans.sort((a, b) => (a.pricePerUserPerYear || 0) - (b.pricePerUserPerYear || 0)));
+      // Filter out inactive plans and sort plans by price
+      const activePlans = allPlans.filter(plan => plan.active !== false);
+      setPlans(activePlans.sort((a, b) => (a.pricePerUserPerYear || 0) - (b.pricePerUserPerYear || 0)));
       setCurrentPlanId(schoolData?.planId);
     } catch (error) {
       console.error("Error fetching upgrade data:", error);

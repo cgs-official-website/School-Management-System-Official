@@ -1412,6 +1412,7 @@ export const initializeDefaultSubscriptionPlans = async () => {
       pricePerUserPerYear: 160,
       cloudStorageGB: 25,
       custom: false,
+      active: true,
       modules: { staffManagement: true, studentManagement: true, timetable: true, feeManagement: true, attendance: true, exams: false, library: false, transport: false, lms: false, apiIntegration: false }
     },
     {
@@ -1421,6 +1422,7 @@ export const initializeDefaultSubscriptionPlans = async () => {
       pricePerUserPerYear: 240,
       cloudStorageGB: 60,
       custom: false,
+      active: true,
       modules: { staffManagement: true, studentManagement: true, timetable: true, feeManagement: true, attendance: true, exams: true, library: true, transport: true, lms: false, apiIntegration: true }
     },
     {
@@ -1430,6 +1432,7 @@ export const initializeDefaultSubscriptionPlans = async () => {
       pricePerUserPerYear: 320,
       cloudStorageGB: 120,
       custom: false,
+      active: true,
       modules: { staffManagement: true, studentManagement: true, timetable: true, feeManagement: true, attendance: true, exams: true, library: true, transport: true, lms: true, apiIntegration: true }
     },
     {
@@ -1439,6 +1442,7 @@ export const initializeDefaultSubscriptionPlans = async () => {
       pricePerUserPerYear: 0,
       cloudStorageGB: 0,
       custom: true,
+      active: true,
       modules: { staffManagement: true, studentManagement: true, timetable: true, feeManagement: true, attendance: true, exams: true, library: true, transport: true, lms: true, apiIntegration: true }
     }
   ];

@@ -120,7 +120,13 @@ export default function PlanManagement() {
             <div key={plan.id} className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
               <div className={`p-6 border-b ${plan.id === 'premium' ? 'bg-primary-50 border-primary-100' : 'bg-slate-50 border-slate-100'}`}>
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-black text-slate-900 tracking-tight">{plan.name}</h3>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight">{plan.name}</h3>
+                    <div className="mt-1 flex items-center gap-1.5">
+                      <span className={`w-2 h-2 rounded-full ${plan.active !== false ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{plan.active !== false ? 'Active' : 'Inactive'}</span>
+                    </div>
+                  </div>
                   {plan.id === 'premium' && (
                     <span className="text-[10px] font-black uppercase tracking-wider bg-primary-600 text-white px-2.5 py-1 rounded-full">Popular</span>
                   )}
@@ -200,6 +206,18 @@ export default function PlanManagement() {
                     onChange={e => setCurrentPlan({...currentPlan, name: e.target.value})}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 font-medium text-slate-900"
                   />
+                </div>
+                
+                <div className="flex items-end">
+                  <label className="flex items-center gap-2 cursor-pointer p-3 rounded-xl border border-slate-200 hover:bg-slate-50 w-full">
+                    <input 
+                      type="checkbox"
+                      checked={currentPlan.active !== false}
+                      onChange={e => setCurrentPlan({...currentPlan, active: e.target.checked})}
+                      className="w-4 h-4 text-primary-600 focus:ring-primary-500 border-slate-300 rounded"
+                    />
+                    <span className="font-semibold text-sm text-slate-700">Active Status (Visible on Web)</span>
+                  </label>
                 </div>
                 
                 {!currentPlan.custom && (
