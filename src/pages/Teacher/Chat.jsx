@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getStudentsByClass, subscribeToMessages, sendMessage, checkParentRegistration, deleteChatMessage, updateChatRoomStatus, subscribeToChatRoom, getChatsForTeacher } from '../../firebase/firestore';
-import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuTrash2 as Trash2, LuCircleCheck as CheckCircle, LuClock as Clock, LuDownload as DownloadIcon } from 'react-icons/lu';
+import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuTrash2 as Trash2, LuCircleCheck as CheckCircle, LuClock as Clock, LuDownload as DownloadIcon, LuX as XIcon } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ChatInput from '../../components/ChatInput';
 import CustomAudioPlayer from '../../components/CustomAudioPlayer';
@@ -23,6 +23,25 @@ export default function TeacherChat() {
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: null, message: '' });
 
   const [linkedParentId, setLinkedParentId] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleDownload = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'chat_image.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Error downloading image:", err);
+      window.open(url, '_blank');
+    }
+  };
   const [parentName, setParentName] = useState('');
   const [chatRoomData, setChatRoomData] = useState(null);
   
@@ -138,9 +157,12 @@ export default function TeacherChat() {
         {msg.mediaUrl && (
           <div className="mb-1">
             {msg.mediaType === 'image' && (
-              <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer">
-                <img src={msg.mediaUrl} alt="Attachment" className="max-w-full h-auto max-h-48 rounded-lg object-contain bg-black/5" />
-              </a>
+              <button 
+                onClick={() => setPreviewImage(msg.mediaUrl)} 
+                className="focus:outline-none hover:opacity-90 transition-opacity text-left block"
+              >
+                <img src={msg.mediaUrl} alt="Attachment" className="max-w-full h-auto max-h-48 rounded-lg object-contain bg-black/5 cursor-zoom-in" />
+              </button>
             )}
             {msg.mediaType === 'audio' && (
               <CustomAudioPlayer src={msg.mediaUrl} isMe={isMe} />
@@ -365,6 +387,34 @@ export default function TeacherChat() {
         message={confirmModal.message}
         title="Delete Message"
       />
+
+      {previewImage && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center z-[9999] p-4 animate-fade-in">
+          <div className="absolute top-4 right-4 flex items-center gap-3">
+            <button
+              onClick={() => handleDownload(previewImage)}
+              className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors flex items-center justify-center backdrop-blur-sm"
+              title="Download Image"
+            >
+              <DownloadIcon size={22} />
+            </button>
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors flex items-center justify-center backdrop-blur-sm"
+              title="Close Preview"
+            >
+              <XIcon size={22} />
+            </button>
+          </div>
+          <div className="max-w-4xl max-h-[80vh] flex items-center justify-center">
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="max-w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
