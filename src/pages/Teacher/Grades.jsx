@@ -13,7 +13,7 @@ import {
 import { LuPlus as Plus, LuFileText as FileText, LuCircleCheck as CheckCircle2, LuSave as Save, LuX as X, LuBookOpen as BookOpen, LuGraduationCap as GraduationCap, LuPrinter as Printer } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 export default function Grades() {
   const { userProfile, currentUser } = useAuth();
@@ -230,7 +230,7 @@ export default function Grades() {
         }
       });
 
-      doc.autoTable({
+      autoTable(doc, {
         head: [tableColumn],
         body: tableRows,
         startY: 60,

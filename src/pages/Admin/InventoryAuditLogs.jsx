@@ -9,7 +9,7 @@ import { subscribeToSubCollection } from '../../firebase/firestore';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 export default function InventoryAuditLogs() {
   const navigate = useNavigate();
@@ -172,7 +172,7 @@ export default function InventoryAuditLogs() {
           l.remarks || '—'
         ]);
 
-        doc.autoTable({
+        autoTable(doc, {
           head: tableHeaders,
           body: tableRows,
           startY: 25,
