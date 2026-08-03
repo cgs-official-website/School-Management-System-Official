@@ -279,6 +279,12 @@ export default function LeaveManagement() {
                     href={selectedLeave.supportingDoc.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => {
+                      if (!selectedLeave.supportingDoc.url || selectedLeave.supportingDoc.url === '#') {
+                        e.preventDefault();
+                        toast.error("Document URL is invalid or not available.");
+                      }
+                    }}
                     className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-700 transition-colors"
                   >
                     <LuDownload size={14} />

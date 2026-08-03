@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { LuPlus, LuCalendar, LuFileText, LuClock, LuCircleCheck, LuCircleX, LuFolderDown, LuX } from 'react-icons/lu';
+import { LuPlus, LuCalendar, LuFileText, LuClock, LuCircleCheck, LuCircleX, LuFolderDown, LuX, LuDownload } from 'react-icons/lu';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, addSubDocument } from '../../firebase/firestore';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
+import { uploadFileToCloudinaryOrFirebase } from '../../utils/cloudinary';
 import toast from 'react-hot-toast';
 
 export default function LeaveRequests() {
@@ -93,10 +94,12 @@ export default function LeaveRequests() {
 
       let docInfo = null;
       if (selectedFile) {
+        const storagePath = `schools/${schoolId}/leaves/${linkedStudentId}_${Date.now()}_${selectedFile.name}`;
+        const uploadUrl = await uploadFileToCloudinaryOrFirebase(selectedFile, schoolId, storagePath);
         docInfo = {
           name: selectedFile.name,
           size: selectedFile.size > 1024 * 1024 ? (selectedFile.size / (1024 * 1024)).toFixed(1) + ' MB' : (selectedFile.size / 1024).toFixed(0) + ' KB',
-          url: '#' // Mock URL placeholder
+          url: uploadUrl
         };
       }
 
@@ -185,8 +188,25 @@ export default function LeaveRequests() {
 
                   {leave.supportingDoc && (
                     <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-500">
-                      <span className="truncate max-w-[150px]">{leave.supportingDoc.name}</span>
-                      <span className="text-slate-400 shrink-0">({leave.supportingDoc.size})</span>
+                      <div className="flex items-center gap-1 overflow-hidden mr-2">
+                        <span className="truncate max-w-[120px]">{leave.supportingDoc.name}</span>
+                        <span className="text-slate-400 shrink-0">({leave.supportingDoc.size})</span>
+                      </div>
+                      <a
+                        href={leave.supportingDoc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          if (!leave.supportingDoc.url || leave.supportingDoc.url === '#') {
+                            e.preventDefault();
+                            toast.error("Document URL is invalid or not available.");
+                          }
+                        }}
+                        className="text-primary-600 hover:text-primary-800 font-bold hover:underline flex items-center gap-0.5 shrink-0"
+                      >
+                        <LuDownload size={12} />
+                        Download
+                      </a>
                     </div>
                   )}
                 </div>
