@@ -347,7 +347,7 @@ export default function LandingPage() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: idx * 0.1 }}
-                        className={`rounded-3xl flex flex-col relative transition-all duration-300 ${
+                        className={`w-full max-w-[280px] mx-auto rounded-3xl flex flex-col relative transition-all duration-300 ${
                           isPopular 
                             ? 'bg-gradient-to-b from-[#2a1a35] to-[#1a1625] border-2 border-primary-400 shadow-[0_0_30px_rgba(229,189,223,0.15)] z-10' 
                             : 'bg-[#1a1625]/60 backdrop-blur-xl border border-primary-900/40 hover:border-primary-400/40 mt-4'
