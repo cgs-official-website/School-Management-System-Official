@@ -6,7 +6,7 @@ import { db } from '../../firebase/config';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye, LuTrash2 as Trash, LuDownload as Download, LuFileDown as FileDown } from 'react-icons/lu';
+import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye, LuTrash2 as Trash, LuDownload as Download, LuFileDown as FileDown, LuLink as LinkIcon } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -871,6 +871,19 @@ export default function StudentManagement() {
               className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl font-medium hover:bg-emerald-200 shadow-sm flex items-center gap-2 transition-colors"
             >
               <UploadCloud size={18} /> Bulk Import
+            </button>
+          )}
+          {hasCreatePermission && (
+            <button 
+              onClick={() => {
+                const parentLink = `${window.location.origin}/register/parent/${schoolId}`;
+                navigator.clipboard.writeText(parentLink);
+                toast.success("Parent registration link copied!");
+              }}
+              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+              title="Copy parent registration link to clipboard"
+            >
+              <LinkIcon size={18} /> Generate Link
             </button>
           )}
           {hasCreatePermission && (
