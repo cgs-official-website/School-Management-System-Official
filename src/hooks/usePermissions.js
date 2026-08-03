@@ -69,7 +69,8 @@ export default function usePermissions() {
           const merged = {};
           rolesSnap.forEach(roleDoc => {
             const roleName = roleDoc.id;
-            if (assignedRoles.includes(roleName)) {
+            const hasRole = assignedRoles.some(r => r.toLowerCase() === roleName.toLowerCase());
+            if (hasRole) {
               const roleData = roleDoc.data();
               const rolePermissions = roleData.permissions || {};
               Object.keys(rolePermissions).forEach(moduleKey => {

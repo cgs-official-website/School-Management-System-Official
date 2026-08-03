@@ -229,7 +229,7 @@ export default function FormBuilder() {
           await deleteDoc(doc(db, `schools/${schoolId}/formSchemas`, id));
           
           // 3. Delete all collection documents
-          const collectionRef = collection(db, `schools/${schoolId}/custom_${id}`);
+          const collectionRef = collection(db, `schools/${schoolId}/${id}_data`);
           const snapshot = await getDocs(collectionRef);
           
           // Batch delete (note: batch has a limit of 500, but we can iterate)

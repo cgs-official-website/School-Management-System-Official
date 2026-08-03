@@ -33,7 +33,7 @@ export default function ParentAttendance() {
         }
       });
       // Sort by date descending
-      records.sort((a, b) => new Date(b.date) - new Date(a.date));
+      records.sort((a, b) => new Date(b.date ? b.date.split('_')[0] : '') - new Date(a.date ? a.date.split('_')[0] : ''));
       setAttendanceRecords(records);
       setLoading(false);
     });
@@ -44,7 +44,7 @@ export default function ParentAttendance() {
   const filteredRecords = useMemo(() => {
     const now = new Date();
     return attendanceRecords.filter(record => {
-      const recordDate = new Date(record.date);
+      const recordDate = new Date(record.date ? record.date.split('_')[0] : '');
       if (filter === 'weekly') {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(now.getDate() - 7);
@@ -156,7 +156,7 @@ export default function ParentAttendance() {
                     <Calendar size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900">{new Date(record.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
+                    <h3 className="font-bold text-slate-900">{new Date(record.date ? record.date.split('_')[0] : '').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
                   </div>
                 </div>
                 <div className={`px-4 py-1.5 rounded-lg border font-bold text-sm flex items-center gap-2 ${getStatusColor(record.status)}`}>
