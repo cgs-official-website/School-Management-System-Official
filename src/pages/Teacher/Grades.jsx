@@ -10,10 +10,12 @@ import {
   subscribeToAssessmentsByClass,
   subscribeToExams
 } from '../../firebase/firestore';
-import { LuPlus as Plus, LuFileText as FileText, LuCircleCheck as CheckCircle2, LuSave as Save, LuX as X, LuBookOpen as BookOpen, LuGraduationCap as GraduationCap, LuPrinter as Printer } from 'react-icons/lu';
+import { LuPlus as Plus, LuFileText as FileText, LuCircleCheck as CheckCircle2, LuSave as Save, LuX as X, LuBookOpen as BookOpen, LuGraduationCap as GraduationCap, LuPrinter as Printer, LuSend as Send } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { db } from '../../firebase/config';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function Grades() {
   const { userProfile, currentUser } = useAuth();
@@ -261,6 +263,92 @@ export default function Grades() {
     doc.save("Class_Report_Cards.pdf");
   };
 
+  const [publishing, setPublishing] = useState(false);
+
+  const handlePublishReportCards = async () => {
+    if (students.length === 0 || assessments.length === 0) {
+      toast.error("Need students and assessments to publish report cards.");
+      return;
+    }
+    
+    setPublishing(true);
+    const loadingToast = toast.loading("Publishing report cards to parent portal...");
+    
+    try {
+      const defaultTemplate = {
+        themeColor: '#3b82f6',
+        header: {
+          title: 'CLASS PROGRESS REPORT',
+          subtitle: 'Continuous Assessment Summary',
+          showLogo: true,
+          showAddress: true,
+          showPhone: true,
+          showEmail: true
+        }
+      };
+
+      const batchPromises = students.map(async (student) => {
+        const studentId = student.id;
+        const examId = `class_assessments_${classId}`;
+        const docRef = doc(db, `schools/${schoolId}/students/${studentId}/report_cards`, examId);
+        
+        const marks = {};
+        let totalObtained = 0;
+        let totalMax = 0;
+        
+        assessments.forEach(assessment => {
+          const score = assessment.grades?.[studentId];
+          if (score !== undefined && score !== '') {
+            const numScore = Number(score);
+            totalObtained += numScore;
+            totalMax += Number(assessment.totalMarks);
+            marks[assessment.id] = {
+              title: assessment.title,
+              obtained: numScore,
+              max: assessment.totalMarks
+            };
+          } else {
+            marks[assessment.id] = {
+              title: assessment.title,
+              obtained: '-',
+              max: assessment.totalMarks
+            };
+          }
+        });
+        
+        const percentage = totalMax > 0 ? ((totalObtained / totalMax) * 100).toFixed(1) : '0.0';
+        
+        const reportCardDoc = {
+          examId,
+          examName: "Class Assessments Summary",
+          classId: classId,
+          className: classId,
+          studentId,
+          studentName: `${student.firstName} ${student.lastName}`,
+          marks,
+          totalObtained,
+          totalMax,
+          percentage,
+          publishedAt: new Date().toISOString(),
+          publishedBy: userProfile?.name || userProfile?.email || 'Class Teacher',
+          reportTemplate: defaultTemplate
+        };
+        
+        await setDoc(docRef, reportCardDoc);
+      });
+      
+      await Promise.all(batchPromises);
+      toast.dismiss(loadingToast);
+      toast.success("Report cards published to parent portal successfully!");
+    } catch (error) {
+      console.error("Error publishing report cards:", error);
+      toast.dismiss(loadingToast);
+      toast.error("Failed to publish report cards.");
+    } finally {
+      setPublishing(false);
+    }
+  };
+
 
   if (!classId) {
     return <div className="p-8 text-center text-slate-500">You must be assigned to a class to manage grades.</div>;
@@ -282,6 +370,13 @@ export default function Grades() {
           <p className="text-slate-500 mt-1">Create exams and log student performance.</p>
         </div>
         <div className="flex gap-3">
+          <button 
+            onClick={handlePublishReportCards}
+            disabled={publishing}
+            className="px-4 py-2 bg-green-50 text-green-700 rounded-xl font-medium hover:bg-green-100 shadow-sm flex items-center gap-2 transition-colors border border-green-200 disabled:opacity-50"
+          >
+            <Send size={18} className={publishing ? "animate-spin" : ""} /> {publishing ? "Publishing..." : "Publish to Parent Portal"}
+          </button>
           <button 
             onClick={generateReportCards}
             className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
