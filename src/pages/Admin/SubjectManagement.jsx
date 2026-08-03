@@ -46,8 +46,8 @@ export default function SubjectManagement() {
     });
 
     teacherUnsub = subscribeToSubCollection(schoolId, 'teachers', (data) => {
-      // Filter for Teaching Staff
-      const teachingStaff = data.filter(t => t.role?.toLowerCase() !== 'non-teaching');
+      // Filter for Teaching Staff using staff_type
+      const teachingStaff = data.filter(t => t.staff_type === 'teaching');
       setTeachers(teachingStaff);
     }, (error) => {
       console.error(error);

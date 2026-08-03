@@ -451,7 +451,20 @@ export default function TimetableManagement() {
                     <select
                       required
                       value={newSlot.subject}
-                      onChange={(e) => setNewSlot({...newSlot, subject: e.target.value})}
+                      onChange={(e) => {
+                        const subName = e.target.value;
+                        const subObj = subjects.find(s => s.name === subName);
+                        const allowedIds = subObj?.assignedTeacherIds || [];
+                        
+                        // If current teacher is not assigned to the new subject, reset the selection
+                        const keepTeacher = allowedIds.includes(newSlot.teacherId);
+                        setNewSlot({
+                          ...newSlot,
+                          subject: subName,
+                          teacherId: keepTeacher ? newSlot.teacherId : '',
+                          teacher: keepTeacher ? newSlot.teacher : ''
+                        });
+                      }}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                     >
                       <option value="">Select Subject...</option>
@@ -477,13 +490,25 @@ export default function TimetableManagement() {
                     }}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                   >
-                    <option value="">Select Teacher...</option>
-                    {teachers.map(t => {
-                      const displayName = t.name || `${t.firstName || ''} ${t.lastName || ''}`.trim();
-                      return (
-                        <option key={t.id} value={t.id}>{displayName || 'Unnamed Teacher'}</option>
-                      );
-                    })}
+                    {!newSlot.subject ? (
+                      <option value="">-- Select Subject First --</option>
+                    ) : (
+                      <>
+                        <option value="">Select Teacher...</option>
+                        {(() => {
+                          const selectedSubObj = subjects.find(s => s.name === newSlot.subject);
+                          const allowedTeacherIds = selectedSubObj?.assignedTeacherIds || [];
+                          return teachers
+                            .filter(t => allowedTeacherIds.includes(t.id))
+                            .map(t => {
+                              const displayName = t.name || `${t.firstName || ''} ${t.lastName || ''}`.trim();
+                              return (
+                                <option key={t.id} value={t.id}>{displayName || 'Unnamed Teacher'}</option>
+                              );
+                            });
+                        })()}
+                      </>
+                    )}
                   </select>
                 </div>
                 </div>
