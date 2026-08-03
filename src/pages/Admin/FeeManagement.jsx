@@ -360,7 +360,7 @@ export default function FeeManagement() {
               </button>
             </div>
 
-            <form onSubmit={handleCreateFee} className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+            <form onSubmit={handleCreate} className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
               <div className="p-6 space-y-6 flex-1">
 
                 {/* Collection Period Selector */}
