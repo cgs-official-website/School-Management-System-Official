@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { doc, getDoc, collection, getDocs, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, addDoc, updateDoc, deleteDoc, writeBatch, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuPlus, LuPencil, LuTrash2, LuLayoutGrid, LuX, LuSave, LuPaperclip, LuExternalLink } from 'react-icons/lu';
 import { uploadFileToCloudinaryOrFirebase } from '../../utils/cloudinary';
@@ -10,6 +10,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 
 export default function CustomModuleView() {
   const { moduleId } = useParams();
+  const navigate = useNavigate();
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
 
@@ -153,6 +154,56 @@ export default function CustomModuleView() {
     });
   };
 
+  const handleDeleteModule = () => {
+    setConfirmModal({
+      isOpen: true,
+      title: `Delete ${moduleMetadata?.name || 'Custom Module'}`,
+      message: `Are you sure you want to permanently delete this custom module, its form schema, and all stored records? This action cannot be undone.`,
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        try {
+          // 1. Delete module metadata document
+          await deleteDoc(doc(db, `schools/${schoolId}/customModules`, moduleId));
+
+          // 2. Delete form schema document
+          await deleteDoc(doc(db, `schools/${schoolId}/formSchemas`, moduleId));
+
+          // 3. Delete data collection documents
+          const dataRef = collection(db, `schools/${schoolId}/${moduleId}_data`);
+          const dataSnap = await getDocs(dataRef);
+          let batch = writeBatch(db);
+          let count = 0;
+          for (const d of dataSnap.docs) {
+            batch.delete(d.ref);
+            count++;
+            if (count >= 490) {
+              await batch.commit();
+              batch = writeBatch(db);
+              count = 0;
+            }
+          }
+          if (count > 0) {
+            await batch.commit();
+          }
+
+          // 4. Update global sidebar order setting
+          const sidebarRef = doc(db, `schools/${schoolId}/settings`, 'sidebar');
+          const sidebarSnap = await getDoc(sidebarRef);
+          if (sidebarSnap.exists() && sidebarSnap.data().order) {
+            const newOrder = sidebarSnap.data().order.filter(id => id !== moduleId);
+            await setDoc(sidebarRef, { order: newOrder }, { merge: true });
+          }
+
+          toast.success(`Module "${moduleMetadata?.name || 'Custom Module'}" deleted successfully.`);
+          navigate('/admin/form-builder');
+        } catch (error) {
+          console.error("Error deleting custom module:", error);
+          toast.error("Failed to delete custom module.");
+        }
+      }
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center p-12">
@@ -177,12 +228,20 @@ export default function CustomModuleView() {
           <p className="text-slate-500 mt-1">Manage data for this module</p>
         </div>
         
-        <button 
-          onClick={() => handleOpenModal()}
-          className="px-6 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm transition-colors flex items-center gap-2"
-        >
-          <LuPlus size={18} /> Add Record
-        </button>
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleDeleteModule}
+            className="px-4 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl font-bold transition-colors flex items-center gap-2"
+          >
+            <LuTrash2 size={18} /> Delete Module
+          </button>
+          <button 
+            onClick={() => handleOpenModal()}
+            className="px-6 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm transition-colors flex items-center gap-2"
+          >
+            <LuPlus size={18} /> Add Record
+          </button>
+        </div>
       </div>
 
       {!schema || schema.length === 0 ? (

@@ -36,6 +36,7 @@ graphify-out/
 secrets/
 *.p12
 *.pfx
+*.jsonl
 
 # Firebase Secrets
 .firebase/

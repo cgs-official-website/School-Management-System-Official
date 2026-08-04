@@ -452,7 +452,7 @@ export default function FormBuilder() {
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-2">
                         <button 
                           onClick={() => moveModule(idx, 'up')} 
                           disabled={idx === 0} 
@@ -472,10 +472,11 @@ export default function FormBuilder() {
                         {!mod.isCore && (
                           <button 
                             onClick={() => handleDeleteModule(mod.id)} 
-                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors ml-2"
-                            title="Delete Module"
+                            className="px-3 py-1.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl transition-colors ml-2 flex items-center gap-1.5 text-xs font-bold shadow-sm"
+                            title="Delete Custom Module"
                           >
-                            <Trash2 size={16}/>
+                            <Trash2 size={15}/>
+                            Delete
                           </button>
                         )}
                       </div>
@@ -499,13 +500,25 @@ export default function FormBuilder() {
                 <option key={m.id} value={m.id}>{m.name}</option>
               ))}
             </select>
-            <button 
-              onClick={handleSaveSchema}
-              disabled={savingSchema}
-              className="px-6 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2 whitespace-nowrap"
-            >
-              <Save size={18} /> {savingSchema ? 'Saving...' : 'Save Schema'}
-            </button>
+
+            <div className="flex items-center gap-3">
+              {customModules.some(m => m.id === activeModule) && (
+                <button 
+                  type="button"
+                  onClick={() => handleDeleteModule(activeModule)}
+                  className="px-4 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl font-bold transition-colors flex items-center gap-2 text-sm whitespace-nowrap"
+                >
+                  <Trash2 size={16} /> Delete Custom Module
+                </button>
+              )}
+              <button 
+                onClick={handleSaveSchema}
+                disabled={savingSchema}
+                className="px-6 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2 whitespace-nowrap"
+              >
+                <Save size={18} /> {savingSchema ? 'Saving...' : 'Save Schema'}
+              </button>
+            </div>
           </div>
 
           <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">

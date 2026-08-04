@@ -93,7 +93,7 @@ export default function LibraryManagement() {
       setIssuedBooks(data);
     });
 
-    studentsUnsub = subscribeToSubCollection(schoolId, 'users', (data) => {
+    studentsUnsub = subscribeToSubCollection(schoolId, 'students', (data) => {
       setStudents(data.length > 0 ? data : mockStudents);
     });
 
@@ -184,7 +184,9 @@ export default function LibraryManagement() {
 
   const getStudentName = (studentId) => {
     const s = students.find(s => s.id === studentId);
-    return s ? `${s.firstName} ${s.lastName} (${s.admissionNumber})` : 'Unknown Student';
+    if (!s) return 'Unknown Student';
+    const name = s.firstName ? `${s.firstName} ${s.lastName || ''}`.trim() : (s.name || 'Unknown Student');
+    return s.admissionNumber ? `${name} (${s.admissionNumber})` : name;
   };
 
   const getBookTitle = (bookId) => {
@@ -534,11 +536,15 @@ export default function LibraryManagement() {
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                   >
                     <option value="">Choose a student...</option>
-                    {students.map(s => (
-                      <option key={s.id} value={s.id}>
-                        {s.firstName} {s.lastName} ({s.admissionNumber})
-                      </option>
-                    ))}
+                    {students.map(s => {
+                      const displayName = s.firstName ? `${s.firstName} ${s.lastName || ''}`.trim() : (s.name || 'Student');
+                      const admInfo = s.admissionNumber ? ` (${s.admissionNumber})` : '';
+                      return (
+                        <option key={s.id} value={s.id}>
+                          {displayName}{admInfo}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
                 </div>

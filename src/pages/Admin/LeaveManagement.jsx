@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { LuCheck, LuX, LuCalendar, LuUser, LuClock, LuDownload, LuFileText, LuInbox } from 'react-icons/lu';
+import { LuCheck, LuX, LuCalendar, LuUser, LuClock, LuDownload, LuFileText, LuInbox, LuTrash2 } from 'react-icons/lu';
 import { useAuth } from '../../context/AuthContext';
-import { subscribeToSubCollection, updateSubDocument } from '../../firebase/firestore';
+import { subscribeToSubCollection, updateSubDocument, deleteSubDocument } from '../../firebase/firestore';
 import toast from 'react-hot-toast';
 import usePermissions from '../../hooks/usePermissions';
 import ConfirmModal from '../../components/ConfirmModal';
@@ -18,7 +18,14 @@ export default function LeaveManagement() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('pending');
   const [selectedLeave, setSelectedLeave] = useState(null);
-  const [confirmModal, setConfirmModal] = useState({ isOpen: false, leaveId: null, newStatus: '' });
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    leaveId: null,
+    actionType: 'status',
+    newStatus: '',
+    title: '',
+    message: ''
+  });
 
   useEffect(() => {
     if (!schoolId) return;
@@ -44,23 +51,46 @@ export default function LeaveManagement() {
     setConfirmModal({
       isOpen: true,
       leaveId,
-      newStatus
+      actionType: 'status',
+      newStatus,
+      title: 'Update Leave Request Status',
+      message: `Are you sure you want to mark this leave request as "${newStatus}"?`
     });
   };
 
-  const handleConfirmStatusUpdate = async () => {
-    const { leaveId, newStatus } = confirmModal;
+  const handleDeleteClick = (leaveId) => {
+    if (!hasDeletePermission) {
+      toast.error("You do not have permission to delete leave requests.");
+      return;
+    }
+    setConfirmModal({
+      isOpen: true,
+      leaveId,
+      actionType: 'delete',
+      newStatus: '',
+      title: 'Delete Leave Request',
+      message: 'Are you sure you want to permanently delete this leave request? This action cannot be undone.'
+    });
+  };
+
+  const handleConfirmAction = async () => {
+    const { leaveId, actionType, newStatus } = confirmModal;
     if (!leaveId) return;
 
-    setConfirmModal({ isOpen: false, leaveId: null, newStatus: '' });
+    setConfirmModal({ isOpen: false, leaveId: null, actionType: 'status', newStatus: '', title: '', message: '' });
 
     try {
-      await updateSubDocument(schoolId, 'leaves', leaveId, { status: newStatus });
-      toast.success(`Leave request ${newStatus.toLowerCase()} successfully!`);
+      if (actionType === 'delete') {
+        await deleteSubDocument(schoolId, 'leaves', leaveId);
+        toast.success("Leave request deleted successfully!");
+      } else {
+        await updateSubDocument(schoolId, 'leaves', leaveId, { status: newStatus });
+        toast.success(`Leave request ${newStatus.toLowerCase()} successfully!`);
+      }
       setSelectedLeave(null);
     } catch (error) {
       console.error(error);
-      toast.error(`Failed to update leave request.`);
+      toast.error(`Failed to process request.`);
     }
   };
 
@@ -295,62 +325,78 @@ export default function LeaveManagement() {
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
-               {selectedLeave.status === 'Pending' ? (
-                <>
-                  {hasEditPermission && (
-                    <button
-                      type="button"
-                      onClick={() => handleStatusUpdateClick(selectedLeave.id, 'Rejected')}
-                      className="px-5 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
-                    >
-                      <LuX size={18} />
-                      Reject Leave
-                    </button>
-                  )}
-                  {hasEditPermission && (
-                    <button
-                      type="button"
-                      onClick={() => handleStatusUpdateClick(selectedLeave.id, 'Approved')}
-                      className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-1.5"
-                    >
-                      <LuCheck size={18} />
-                      Approve Leave
-                    </button>
-                  )}
-                  {!hasEditPermission && (
-                    <p className="text-slate-500 font-semibold text-sm italic">View only access</p>
-                  )}
-                </>
-              ) : (
-                <div className="w-full flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-400 uppercase">Status:</span>
-                    {getStatusBadge(selectedLeave.status)}
-                  </div>
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-3 shrink-0">
+              <div>
+                {hasDeletePermission && (
                   <button
                     type="button"
-                    onClick={() => setSelectedLeave(null)}
-                    className="px-5 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+                    onClick={() => handleDeleteClick(selectedLeave.id)}
+                    className="px-4 py-2 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
                   >
-                    Close Details
+                    <LuTrash2 size={16} />
+                    Delete Request
                   </button>
-                </div>
-              )}
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                {selectedLeave.status === 'Pending' ? (
+                  <>
+                    {hasEditPermission && (
+                      <button
+                        type="button"
+                        onClick={() => handleStatusUpdateClick(selectedLeave.id, 'Rejected')}
+                        className="px-5 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
+                      >
+                        <LuX size={18} />
+                        Reject Leave
+                      </button>
+                    )}
+                    {hasEditPermission && (
+                      <button
+                        type="button"
+                        onClick={() => handleStatusUpdateClick(selectedLeave.id, 'Approved')}
+                        className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-1.5"
+                      >
+                        <LuCheck size={18} />
+                        Approve Leave
+                      </button>
+                    )}
+                    {!hasEditPermission && (
+                      <p className="text-slate-500 font-semibold text-sm italic">View only access</p>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-400 uppercase">Status:</span>
+                      {getStatusBadge(selectedLeave.status)}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedLeave(null)}
+                      className="px-5 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+                    >
+                      Close Details
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
       )}
-      {/* Confirm Status Update Modal */}
+      {/* Confirm Status / Delete Modal */}
       <ConfirmModal
         isOpen={confirmModal.isOpen}
-        onClose={() => setConfirmModal({ isOpen: false, leaveId: null, newStatus: '' })}
-        onConfirm={handleConfirmStatusUpdate}
-        title="Update Leave Request Status"
-        message={`Are you sure you want to mark this leave request as "${confirmModal.newStatus}"?`}
-        confirmText="Confirm"
+        onClose={() => setConfirmModal({ isOpen: false, leaveId: null, actionType: 'status', newStatus: '', title: '', message: '' })}
+        onConfirm={handleConfirmAction}
+        title={confirmModal.title || "Confirm Action"}
+        message={confirmModal.message || `Are you sure you want to process this leave request?`}
+        confirmText={confirmModal.actionType === 'delete' ? "Delete" : "Confirm"}
         cancelText="Cancel"
-        type={confirmModal.newStatus === 'Approved' ? 'info' : 'danger'}
+        type={confirmModal.actionType === 'delete' ? 'danger' : (confirmModal.newStatus === 'Approved' ? 'success' : 'danger')}
+        zIndex="z-[10000]"
       />
     </div>
   );

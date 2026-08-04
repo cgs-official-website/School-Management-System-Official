@@ -9,7 +9,8 @@ export default function ConfirmModal({
   message = "Are you sure you want to proceed?", 
   confirmText = "Confirm", 
   cancelText = "Cancel",
-  type = "danger" // "danger" | "warning" | "info"
+  type = "danger", // "danger" | "warning" | "info"
+  zIndex = "z-[10000]"
 }) {
   if (!isOpen) return null;
 
@@ -25,13 +26,21 @@ export default function ConfirmModal({
     info: {
       icon: "text-blue-600 bg-blue-100",
       button: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500",
+    },
+    success: {
+      icon: "text-green-600 bg-green-100",
+      button: "bg-green-600 hover:bg-green-700 focus:ring-green-500",
+    },
+    primary: {
+      icon: "text-primary-600 bg-primary-100",
+      button: "bg-primary-600 hover:bg-primary-700 focus:ring-primary-500",
     }
   };
 
   const theme = colors[type] || colors.danger;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200`}>
       <div 
         className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200"
         role="dialog"
