@@ -16,7 +16,8 @@ export const NotificationProvider = ({ children }) => {
     noticeboard: 0,
     homework: 0,
     complaints: 0,
-    leaves: 0
+    leaves: 0,
+    canteen: 0
   });
 
   const [lastViewed, setLastViewed] = useState({
@@ -32,7 +33,7 @@ export const NotificationProvider = ({ children }) => {
 
   useEffect(() => {
     if (!schoolId || !currentUser) {
-      setUnreadCounts({ noticeboard: 0, homework: 0, complaints: 0, leaves: 0 });
+      setUnreadCounts({ noticeboard: 0, homework: 0, complaints: 0, leaves: 0, canteen: 0 });
       return;
     }
 
@@ -121,6 +122,28 @@ export const NotificationProvider = ({ children }) => {
           setUnreadCounts(prev => ({ ...prev, leaves: count }));
         });
         unsubscribers.push(unsubLeaves);
+      }
+    }
+
+    // 5. Canteen Requests Listener (Admin/Staff/Teacher only)
+    if (role === 'admin' || role === 'staff' || role === 'teacher') {
+      try {
+        const canteenRef = collection(db, `schools/${schoolId}/canteen_requests`);
+        const q = query(canteenRef, where("status", "==", "Pending"));
+        const unsubCanteen = onSnapshot(q, (snapshot) => {
+          setUnreadCounts(prev => ({ ...prev, canteen: snapshot.size }));
+        });
+        unsubscribers.push(unsubCanteen);
+      } catch (e) {
+        const canteenRef = collection(db, `schools/${schoolId}/canteen_requests`);
+        const unsubCanteen = onSnapshot(canteenRef, (snapshot) => {
+          let count = 0;
+          snapshot.forEach((doc) => {
+            if (doc.data().status === 'Pending') count++;
+          });
+          setUnreadCounts(prev => ({ ...prev, canteen: count }));
+        });
+        unsubscribers.push(unsubCanteen);
       }
     }
 

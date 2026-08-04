@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LuBookOpen as BookOpen, LuUsers as Users, LuLogOut as LogOut, LuLayoutDashboard as LayoutDashboard, LuLink as LinkIcon, LuSettings as Settings, LuCreditCard as CreditCard, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuBus as Bus, LuLibrary as Library, LuFileText as FileText, LuBell as Bell, LuKey as Key, LuMenu as Menu, LuX as X, LuBuilding2 as Building2, LuCheck as CheckSquare, LuHouse as Home, LuPackage as PackageIcon, LuBriefcase as Briefcase, LuChartBar as BarChart2, LuHeartPulse as HeartPulse, LuCircleAlert as AlertCircle, LuFiles as Files, LuChevronDown as ChevronDown, LuChevronRight as ChevronRight, LuShield as Shield, LuLayoutGrid as LayoutGrid, LuMessageSquare as MessageSquare } from 'react-icons/lu';
+import { LuBookOpen as BookOpen, LuUsers as Users, LuLogOut as LogOut, LuLayoutDashboard as LayoutDashboard, LuLink as LinkIcon, LuSettings as Settings, LuCreditCard as CreditCard, LuGraduationCap as GraduationCap, LuCalendar as Calendar, LuBus as Bus, LuLibrary as Library, LuFileText as FileText, LuBell as Bell, LuKey as Key, LuMenu as Menu, LuX as X, LuBuilding2 as Building2, LuCheck as CheckSquare, LuHouse as Home, LuPackage as PackageIcon, LuBriefcase as Briefcase, LuChartBar as BarChart2, LuHeartPulse as HeartPulse, LuCircleAlert as AlertCircle, LuFiles as Files, LuChevronDown as ChevronDown, LuChevronRight as ChevronRight, LuShield as Shield, LuLayoutGrid as LayoutGrid, LuMessageSquare as MessageSquare, LuCoffee as Coffee } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
 import { useAuth } from '../context/AuthContext';
 import usePermissions from '../hooks/usePermissions';
@@ -13,6 +13,7 @@ import { useNotifications } from '../context/NotificationContext';
 export const allNavItems = [
   { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
   { name: 'Noticeboard', path: '/admin/notices', icon: Bell, moduleKey: 'noticeboard' },
+  { name: 'Canteen Requests', path: '/admin/canteen', icon: Coffee, moduleKey: 'canteen' },
   { name: 'Environment Setup', path: '/admin/setup', icon: Settings },
   { name: 'Staff Directory', path: '/admin/staff', icon: GraduationCap, moduleKey: 'staff' },
   { 
@@ -191,7 +192,7 @@ export default function AdminDashboard() {
     if (item.moduleKey === 'inventory' && schoolData.schoolType === 'College') return true;
     
     // Core modules bypass school subscription check
-    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api', 'homework', 'leaves', 'leads', 'reports'];
+    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api', 'homework', 'leaves', 'leads', 'reports', 'canteen', 'chats'];
     if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
        return false;
     }

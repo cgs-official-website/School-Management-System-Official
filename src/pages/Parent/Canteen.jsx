@@ -137,7 +137,13 @@ export default function Canteen() {
                   <td className="p-4 pl-6 font-medium text-slate-900">{req.date}</td>
                   <td className="p-4 text-slate-600">{req.mealType}</td>
                   <td className="p-4 pr-6 text-right">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${
+                      req.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                      req.status === 'Approved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                      req.status === 'Delivered' ? 'bg-green-50 text-green-700 border-green-200' :
+                      req.status === 'Cancelled' ? 'bg-red-50 text-red-700 border-red-200' :
+                      'bg-slate-100 text-slate-700 border-slate-200'
+                    }`}>
                       {req.status}
                     </span>
                   </td>
