@@ -100,19 +100,33 @@ export default function CanteenManagement() {
     }
   };
 
+  // Helper to extract YYYY-MM-DD string reliably
+  const getReqDateStr = (r) => {
+    if (r.date) return r.date;
+    if (r.timestamp) {
+      return new Date(r.timestamp).toLocaleDateString('en-CA');
+    }
+    if (r.createdAt) {
+      return new Date(r.createdAt).toLocaleDateString('en-CA');
+    }
+    return '';
+  };
+
   // Filter Logic
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = new Date().toLocaleDateString('en-CA');
 
   const filteredRequests = React.useMemo(() => {
     return requests
       .map(req => {
         const student = studentMap[req.studentId];
         const studentClass = student ? classMap[student.classId] : null;
+        const resolvedDateStr = getReqDateStr(req);
         return {
           ...req,
-          studentName: student?.name || 'Unknown Student',
+          studentName: student?.name || (student?.firstName ? `${student.firstName} ${student.lastName || ''}`.trim() : 'Unknown Student'),
           admissionNumber: student?.admissionNumber || 'N/A',
-          className: studentClass?.name || 'N/A'
+          className: studentClass ? `${studentClass.name} - Section ${studentClass.section}` : (student?.classId || 'N/A'),
+          resolvedDateStr
         };
       })
       .filter(req => {
@@ -130,23 +144,23 @@ export default function CanteenManagement() {
         // Date filter
         let matchesDate = true;
         if (dateFilter === 'Today') {
-          matchesDate = req.date === todayStr;
+          matchesDate = req.resolvedDateStr === todayStr;
         } else if (dateFilter === 'Past') {
-          matchesDate = req.date !== todayStr;
+          matchesDate = req.resolvedDateStr !== todayStr;
         }
 
         return matchesSearch && matchesStatus && matchesMeal && matchesDate;
       })
-      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      .sort((a, b) => new Date(b.timestamp || b.createdAt || 0) - new Date(a.timestamp || a.createdAt || 0));
   }, [requests, studentMap, classMap, searchQuery, statusFilter, mealFilter, dateFilter, todayStr]);
 
   // Summary Metrics
   const stats = React.useMemo(() => {
-    const todayReqs = requests.filter(r => r.date === todayStr);
+    const todayReqs = requests.filter(r => getReqDateStr(r) === todayStr);
     return {
       todayPending: todayReqs.filter(r => r.status === 'Pending').length,
       todayApproved: todayReqs.filter(r => r.status === 'Approved').length,
-      todayDelivered: todayReqs.filter(r => r.status === 'Delivered').length,
+      todayDelivered: todayReqs.filter(r => r.status === 'Delivered' || r.status === 'Completed').length,
       totalCount: requests.length
     };
   }, [requests, todayStr]);
@@ -187,7 +201,7 @@ export default function CanteenManagement() {
         </div>
 
         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm flex items-center gap-5">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+          <div className="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center font-bold">
             <Sparkles size={24} />
           </div>
           <div>
@@ -240,7 +254,7 @@ export default function CanteenManagement() {
                 <button
                   key={d}
                   onClick={() => setDateFilter(d)}
-                  className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all ${
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                     dateFilter === d 
                       ? 'bg-white text-slate-900 shadow-sm' 
                       : 'text-slate-500 hover:text-slate-850'

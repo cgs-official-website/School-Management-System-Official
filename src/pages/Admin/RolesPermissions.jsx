@@ -447,7 +447,7 @@ export default function RolesPermissions() {
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                               isAll 
                                 ? 'bg-slate-100 text-slate-500 hover:bg-slate-200' 
-                                : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+                                : 'bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200'
                             }`}
                           >
                             {isAll ? 'Clear All' : 'Select All'}

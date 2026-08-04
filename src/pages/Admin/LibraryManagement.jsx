@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import {
-  getBooks, 
-  addBook, 
-  getIssuedBooks, 
-  issueBook, 
-  returnBook, 
+  getBooks,
+  addBook,
+  getIssuedBooks,
+  issueBook,
+  returnBook,
   getSubCollection,
+  addSubDocument,
   subscribeToBooks,
   subscribeToIssuedBooks,
   subscribeToSubCollection
@@ -17,6 +18,10 @@ import ConfirmModal from '../../components/ConfirmModal';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
 import usePermissions from '../../hooks/usePermissions';
+
+const DEFAULT_CATEGORIES = [
+  'General'
+];
 
 const mockStudents = [
   { id: 's1', name: 'Alice Smith', email: 'alice@example.com' },
@@ -57,6 +62,11 @@ export default function LibraryManagement() {
   const [books, setBooks] = useState([]);
   const [issuedBooks, setIssuedBooks] = useState([]);
   const [students, setStudents] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [customCategories, setCustomCategories] = useState([]);
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [savingCategory, setSavingCategory] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Search/Filter
@@ -75,14 +85,26 @@ export default function LibraryManagement() {
 
   const [issuingBook, setIssuingBook] = useState(false);
   const [issueData, setIssueData] = useState({
-    bookId: '', studentId: '', dueDate: ''
+    bookId: '', classId: '', studentId: '', dueDate: ''
   });
+
+  const allCategories = Array.from(new Set([...DEFAULT_CATEGORIES, ...customCategories])).sort();
+
+  const filteredStudentsForIssue = issueData.classId
+    ? students.filter(s => 
+        s.classId === issueData.classId ||
+        s.class === issueData.classId ||
+        (classes.find(c => c.id === issueData.classId) && 
+          (s.className === `${classes.find(c => c.id === issueData.classId).name} - Section ${classes.find(c => c.id === issueData.classId).section}` ||
+           s.class === classes.find(c => c.id === issueData.classId).name))
+      )
+    : students;
 
   useEffect(() => {
     if (!schoolId) return;
 
     setLoading(true);
-    let booksUnsub, issuedBooksUnsub, studentsUnsub;
+    let booksUnsub, issuedBooksUnsub, studentsUnsub, categoriesUnsub, classesUnsub;
 
     booksUnsub = subscribeToBooks(schoolId, (data) => {
       setBooks(data.length > 0 ? data : mockBooks);
@@ -97,12 +119,48 @@ export default function LibraryManagement() {
       setStudents(data.length > 0 ? data : mockStudents);
     });
 
+    categoriesUnsub = subscribeToSubCollection(schoolId, 'libraryCategories', (data) => {
+      setCustomCategories(data.map(item => item.name || item.category).filter(Boolean));
+    });
+
+    classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      setClasses(data);
+    });
+
     return () => {
       if (booksUnsub) booksUnsub();
       if (issuedBooksUnsub) issuedBooksUnsub();
       if (studentsUnsub) studentsUnsub();
+      if (categoriesUnsub) categoriesUnsub();
+      if (classesUnsub) classesUnsub();
     };
   }, [schoolId]);
+
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    const trimmed = newCategoryName.trim();
+    if (!trimmed) {
+      toast.error("Please enter a category name.");
+      return;
+    }
+
+    setSavingCategory(true);
+    try {
+      await addSubDocument(schoolId, 'libraryCategories', {
+        name: trimmed,
+        createdAt: new Date().toISOString()
+      });
+      setNewBook(prev => ({ ...prev, category: trimmed }));
+      toast.success(`Category "${trimmed}" added!`);
+      setShowAddCategoryModal(false);
+      setNewCategoryName('');
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add category");
+    } finally {
+      setSavingCategory(false);
+    }
+  };
 
   const handleAddBook = async (e) => {
     e.preventDefault();
@@ -135,7 +193,7 @@ export default function LibraryManagement() {
       return;
     }
     if (!issueData.bookId || !issueData.studentId || !issueData.dueDate) return;
-    
+
     // Check if available
     const book = books.find(b => b.id === issueData.bookId);
     if (!book || book.availableQuantity <= 0) {
@@ -199,13 +257,13 @@ export default function LibraryManagement() {
   };
 
   // Filtered Lists
-  const filteredBooks = books.filter(b => 
-    b.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredBooks = books.filter(b =>
+    b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     b.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
     b.isbn.includes(searchTerm)
   );
 
-  const filteredIssued = issuedBooks.filter(issue => 
+  const filteredIssued = issuedBooks.filter(issue =>
     getBookTitle(issue.bookId).toLowerCase().includes(searchTerm.toLowerCase()) ||
     getStudentName(issue.studentId).toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -227,7 +285,7 @@ export default function LibraryManagement() {
         </div>
         <div className="flex gap-3">
           {hasEditPermission && (
-            <button 
+            <button
               onClick={() => setShowIssueModal(true)}
               className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 shadow-sm flex items-center gap-2 transition-colors"
             >
@@ -235,7 +293,7 @@ export default function LibraryManagement() {
             </button>
           )}
           {hasCreatePermission && (
-            <button 
+            <button
               onClick={() => setShowAddModal(true)}
               className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
             >
@@ -249,13 +307,13 @@ export default function LibraryManagement() {
         {/* Header Tabs & Search */}
         <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50 rounded-t-3xl">
           <div className="flex gap-2 p-1 bg-slate-200/50 rounded-xl">
-            <button 
+            <button
               onClick={() => setActiveTab('inventory')}
               className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'inventory' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             >
               Book Inventory ({books.length})
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('issued')}
               className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'issued' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             >
@@ -323,7 +381,7 @@ export default function LibraryManagement() {
                               </span>
                             </div>
                             <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                              <div 
+                              <div
                                 className={`h-full rounded-full ${isEmpty ? 'bg-red-500' : percentage > 50 ? 'bg-green-500' : 'bg-amber-500'}`}
                                 style={{ width: `${percentage}%` }}
                               ></div>
@@ -378,7 +436,7 @@ export default function LibraryManagement() {
                             </span>
                           ) : (
                             hasEditPermission && (
-                              <button 
+                              <button
                                 onClick={() => handleReturnBookClick(issue.id, issue.bookId)}
                                 className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-lg transition-colors inline-flex items-center gap-1.5"
                               >
@@ -415,20 +473,20 @@ export default function LibraryManagement() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-1">Book Title</label>
-                    <input 
+                    <input
                       type="text" required
                       value={newBook.title}
-                      onChange={(e) => setNewBook({...newBook, title: e.target.value})}
+                      onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-1">Author</label>
-                    <input 
+                    <input
                       type="text" required
                       value={newBook.author}
-                      onChange={(e) => setNewBook({...newBook, author: e.target.value})}
+                      onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                     />
                   </div>
@@ -437,37 +495,42 @@ export default function LibraryManagement() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-1">ISBN</label>
-                    <input 
+                    <input
                       type="text" required
                       value={newBook.isbn}
-                      onChange={(e) => setNewBook({...newBook, isbn: e.target.value})}
+                      onChange={(e) => setNewBook({ ...newBook, isbn: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono text-sm"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-1">Category</label>
-                    <select 
+                    <select
                       required
                       value={newBook.category}
-                      onChange={(e) => setNewBook({...newBook, category: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      onChange={(e) => {
+                        if (e.target.value === 'ADD_NEW') {
+                          setShowAddCategoryModal(true);
+                        } else {
+                          setNewBook({ ...newBook, category: e.target.value });
+                        }
+                      }}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
                     >
-                      <option value="">Select...</option>
-                      <option value="Science">Science</option>
-                      <option value="Fiction">Fiction</option>
-                      <option value="History">History</option>
-                      <option value="Mathematics">Mathematics</option>
-                      <option value="Reference">Reference</option>
+                      <option value="">Select Category...</option>
+                      {allCategories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                      <option value="ADD_NEW" className="font-semibold text-primary-600">+ Add New Category...</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1">Total Copies</label>
-                  <input 
+                  <input
                     type="number" min="1" required
                     value={newBook.totalQuantity}
-                    onChange={(e) => setNewBook({...newBook, totalQuantity: e.target.value})}
+                    onChange={(e) => setNewBook({ ...newBook, totalQuantity: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                   />
                 </div>
@@ -476,7 +539,7 @@ export default function LibraryManagement() {
                   <CustomFieldsRenderer
                     moduleKey="library"
                     customData={newBook.customData}
-                    onChange={(k, v) => setNewBook(prev => ({...prev, customData: {...(prev.customData || {}), [k]: v}}))}
+                    onChange={(k, v) => setNewBook(prev => ({ ...prev, customData: { ...(prev.customData || {}), [k]: v } }))}
                   />
                 </div>
               </div>
@@ -486,7 +549,51 @@ export default function LibraryManagement() {
                   Cancel
                 </button>
                 <button type="submit" disabled={addingBook} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">
-                  {addingBook ? 'Saving...' : 'Save Book'}
+                  {addingBook ? 'Cataloging...' : 'Add to Catalog'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Category Modal */}
+      {showAddCategoryModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4 sm:p-6">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h2 className="text-lg font-bold text-slate-900">Add New Library Category</h2>
+              <button onClick={() => setShowAddCategoryModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X size={20} />
+              </button>
+            </div>
+            <form onSubmit={handleAddCategory} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Category Name</label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="e.g. Biography & Memoir"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium"
+                />
+              </div>
+              <div className="pt-4 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddCategoryModal(false)}
+                  className="px-4 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingCategory}
+                  className="px-5 py-2 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm disabled:opacity-50"
+                >
+                  {savingCategory ? 'Saving...' : 'Add Category'}
                 </button>
               </div>
             </form>
@@ -509,53 +616,73 @@ export default function LibraryManagement() {
 
             <form onSubmit={handleIssueBook} className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
               <div className="p-6 space-y-6 flex-1">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-6">
                   <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Select Book</label>
-                  <select 
-                    required
-                    value={issueData.bookId}
-                    onChange={(e) => setIssueData({...issueData, bookId: e.target.value})}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
-                  >
-                    <option value="">Choose an available book...</option>
-                    {books.filter(b => b.availableQuantity > 0).map(b => (
-                      <option key={b.id} value={b.id}>
-                        {b.title} (Available: {b.availableQuantity})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Select Student</label>
-                  <select 
-                    required
-                    value={issueData.studentId}
-                    onChange={(e) => setIssueData({...issueData, studentId: e.target.value})}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
-                  >
-                    <option value="">Choose a student...</option>
-                    {students.map(s => {
-                      const displayName = s.firstName ? `${s.firstName} ${s.lastName || ''}`.trim() : (s.name || 'Student');
-                      const admInfo = s.admissionNumber ? ` (${s.admissionNumber})` : '';
-                      return (
-                        <option key={s.id} value={s.id}>
-                          {displayName}{admInfo}
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Select Book</label>
+                    <select
+                      required
+                      value={issueData.bookId}
+                      onChange={(e) => setIssueData({ ...issueData, bookId: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                    >
+                      <option value="">Choose an available book...</option>
+                      {books.filter(b => b.availableQuantity > 0).map(b => (
+                        <option key={b.id} value={b.id}>
+                          {b.title} (Available: {b.availableQuantity})
                         </option>
-                      );
-                    })}
-                  </select>
-                </div>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Select Class</label>
+                      <select
+                        value={issueData.classId}
+                        onChange={(e) => setIssueData({ ...issueData, classId: e.target.value, studentId: '' })}
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                      >
+                        <option value="">All Classes / Select Class...</option>
+                        {classes.map(c => (
+                          <option key={c.id} value={c.id}>
+                            {c.name} - Section {c.section}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1">Select Student</label>
+                      <select
+                        required
+                        value={issueData.studentId}
+                        onChange={(e) => setIssueData({ ...issueData, studentId: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                      >
+                        <option value="">
+                          {issueData.classId ? "Choose a student from this class..." : "Choose a student..."}
+                        </option>
+                        {filteredStudentsForIssue.map(s => {
+                          const displayName = s.firstName ? `${s.firstName} ${s.lastName || ''}`.trim() : (s.name || 'Student');
+                          const admInfo = s.admissionNumber ? ` (${s.admissionNumber})` : '';
+                          return (
+                            <option key={s.id} value={s.id}>
+                              {displayName}{admInfo}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1">Due Date</label>
-                  <input 
+                  <input
                     type="date" required
                     value={issueData.dueDate}
                     min={new Date().toISOString().split('T')[0]}
-                    onChange={(e) => setIssueData({...issueData, dueDate: e.target.value})}
+                    onChange={(e) => setIssueData({ ...issueData, dueDate: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
                   />
                 </div>
@@ -574,14 +701,14 @@ export default function LibraryManagement() {
         </div>
       )}
 
-      <ConfirmModal 
+      <ConfirmModal
         isOpen={confirmModalState.isOpen}
         onClose={() => setConfirmModalState({ isOpen: false, issueId: null, bookId: null })}
         onConfirm={executeReturnBook}
         title="Return Book"
         message="Mark this book as returned? This will update the inventory and the student's record."
         confirmText="Confirm"
-        type="info"
+        type="primary"
       />
     </div>
   );

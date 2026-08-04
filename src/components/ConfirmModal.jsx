@@ -24,8 +24,8 @@ export default function ConfirmModal({
       button: "bg-amber-600 hover:bg-amber-700 focus:ring-amber-500",
     },
     info: {
-      icon: "text-blue-600 bg-blue-100",
-      button: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500",
+      icon: "text-primary-600 bg-primary-100",
+      button: "bg-primary-600 hover:bg-primary-700 focus:ring-primary-500",
     },
     success: {
       icon: "text-green-600 bg-green-100",

@@ -202,7 +202,7 @@ export default function ParentGrades() {
   return (
     <div className="p-4 sm:p-8 max-w-5xl mx-auto pb-24">
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shadow-sm">
+        <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center shadow-sm">
           <Award size={24} />
         </div>
         <div>
@@ -228,7 +228,7 @@ export default function ParentGrades() {
             >
               <div>
                 <div className="flex justify-between items-start gap-4">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-primary-50 text-primary-700 border border-primary-100">
                     {report.className}
                   </span>
                   <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
@@ -248,7 +248,7 @@ export default function ParentGrades() {
               <div className="mt-6 pt-6 border-t border-slate-100 flex gap-3">
                 <button 
                   onClick={() => setSelectedReport(report)}
-                  className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors text-center text-sm shadow-sm"
+                  className="flex-1 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-colors text-center text-sm shadow-sm"
                 >
                   View Details
                 </button>

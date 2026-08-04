@@ -229,7 +229,7 @@ export default function Noticeboard() {
                         
                         <button 
                           onClick={() => openViewersModal(notice.viewedBy)}
-                          className="ml-auto flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-bold cursor-pointer transition-colors border border-blue-200"
+                          className="ml-auto flex items-center gap-1.5 px-3 py-1 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg text-xs font-bold cursor-pointer transition-colors border border-primary-200"
                         >
                           <Eye size={14} /> {viewsCount} {viewsCount === 1 ? 'View' : 'Views'}
                         </button>

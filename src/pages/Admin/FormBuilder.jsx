@@ -529,7 +529,7 @@ export default function FormBuilder() {
               </h2>
               <button 
                 onClick={addSection}
-                className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg font-bold hover:bg-indigo-100 transition-colors flex items-center gap-2 text-sm shadow-sm border border-indigo-100"
+                className="px-4 py-2 bg-primary-50 text-primary-700 rounded-lg font-bold hover:bg-primary-100 transition-colors flex items-center gap-2 text-sm shadow-sm border border-primary-100"
               >
                 <Plus size={16} /> Add Section
               </button>

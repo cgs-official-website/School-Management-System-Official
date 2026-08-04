@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { LuPlus as Plus, LuUpload as Upload, LuFileText as FileText, LuSearch as Search, LuX as X, LuCircleCheck as CheckCircle, LuFileDown as FileDown } from 'react-icons/lu';
+import { LuPlus as Plus, LuUpload as Upload, LuFileText as FileText, LuSearch as Search, LuX as X, LuCircleCheck as CheckCircle, LuFileDown as FileDown, LuCheck as Check } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { TableSkeleton } from '../../components/Skeleton';
@@ -100,6 +100,7 @@ export default function HomeworkManagement() {
     description: '',
     classId: '',
     subject: '',
+    selectedSubjects: [],
     dueDate: '',
     remarks: '',
   });
@@ -148,10 +149,22 @@ export default function HomeworkManagement() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    const chosenSubjects = newHomework.selectedSubjects.length > 0 
+      ? newHomework.selectedSubjects 
+      : (newHomework.subject ? [newHomework.subject] : []);
+
+    if (chosenSubjects.length === 0) {
+      toast.error("Please select at least one subject.");
+      return;
+    }
+
     setCreating(true);
     try {
+      const formattedSubject = chosenSubjects.join(', ');
       await addSubDocument(schoolId, 'homeworks', {
         ...newHomework,
+        subjects: chosenSubjects,
+        subject: formattedSubject,
         teacherId: userProfile.uid,
         teacherName: userProfile.name || 'Teacher',
         createdAt: new Date().toISOString(),
@@ -160,7 +173,7 @@ export default function HomeworkManagement() {
       });
       toast.success("Homework assigned successfully!");
       setShowCreateModal(false);
-      setNewHomework({ title: '', description: '', classId: '', subject: '', dueDate: '', remarks: '' });
+      setNewHomework({ title: '', description: '', classId: '', subject: '', selectedSubjects: [], dueDate: '', remarks: '' });
       // loadData(); - handled by real-time listener
     } catch (err) {
       console.error(err);
@@ -320,39 +333,83 @@ export default function HomeworkManagement() {
                     className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-sm font-bold text-slate-700">Class</label>
-                    <select
-                      required
-                      value={newHomework.classId}
-                      onChange={(e) => setNewHomework({ ...newHomework, classId: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white text-sm font-semibold"
-                    >
-                      <option value="">Select a Class</option>
-                      {classes.map(c => (
-                        <option key={c.id} value={c.id}>
-                          {c.name} - Section {c.section}
-                        </option>
-                      ))}
-                    </select>
+                <div className="space-y-1">
+                  <label className="text-sm font-bold text-slate-700">Class</label>
+                  <select
+                    required
+                    value={newHomework.classId}
+                    onChange={(e) => setNewHomework({ ...newHomework, classId: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white text-sm font-semibold"
+                  >
+                    <option value="">Select a Class</option>
+                    {classes.map(c => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} - Section {c.section}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <label className="text-sm font-bold text-slate-700">Select Subjects (Multiple)</label>
+                    <div className="flex items-center gap-2 text-xs">
+                      <button 
+                        type="button" 
+                        onClick={() => setNewHomework({ ...newHomework, selectedSubjects: subjects.map(s => s.name) })}
+                        className="text-primary-600 font-bold hover:underline"
+                      >
+                        Select All
+                      </button>
+                      <span className="text-slate-300">|</span>
+                      <button 
+                        type="button" 
+                        onClick={() => setNewHomework({ ...newHomework, selectedSubjects: [] })}
+                        className="text-slate-500 font-medium hover:underline"
+                      >
+                        Clear All
+                      </button>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-bold text-slate-700">Subject</label>
-                    <select
-                      required
-                      value={newHomework.subject}
-                      onChange={(e) => setNewHomework({ ...newHomework, subject: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white text-sm font-semibold"
-                    >
-                      <option value="">Select a Subject</option>
-                      {subjects.map(s => (
-                        <option key={s.id} value={s.name}>
-                          {s.name}
-                        </option>
-                      ))}
-                    </select>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-3 border border-slate-200 rounded-xl bg-slate-50/50 custom-scrollbar">
+                    {subjects.length === 0 ? (
+                      <span className="text-xs text-slate-400 font-semibold col-span-full">No subjects available</span>
+                    ) : (
+                      subjects.map(s => {
+                        const isChecked = newHomework.selectedSubjects.includes(s.name);
+                        return (
+                          <label
+                            key={s.id}
+                            className={`flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all ${
+                              isChecked
+                                ? 'bg-primary-50/80 border-primary-300 text-primary-900 font-bold'
+                                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100/70 font-semibold'
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={(e) => {
+                                const current = newHomework.selectedSubjects;
+                                const next = e.target.checked
+                                  ? [...current, s.name]
+                                  : current.filter(item => item !== s.name);
+                                setNewHomework({ ...newHomework, selectedSubjects: next });
+                              }}
+                              className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500 cursor-pointer"
+                            />
+                            <span className="text-sm truncate">{s.name}</span>
+                          </label>
+                        );
+                      })
+                    )}
                   </div>
+                  {newHomework.selectedSubjects.length > 0 && (
+                    <p className="text-xs font-semibold text-primary-700">
+                      Selected ({newHomework.selectedSubjects.length}): {newHomework.selectedSubjects.join(', ')}
+                    </p>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">

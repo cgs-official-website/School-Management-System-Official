@@ -379,7 +379,7 @@ export default function Grades() {
           </button>
           <button 
             onClick={generateReportCards}
-            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
+            className="px-4 py-2 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 shadow-sm flex items-center gap-2 transition-colors border border-primary-200"
           >
             <Printer size={18} /> Print Report Cards
           </button>
