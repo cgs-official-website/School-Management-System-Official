@@ -35,7 +35,8 @@ const CORE_MODULES = [
   { id: 'leaves', label: 'Leave Requests' },
   { id: 'lesson_plans', label: 'Lesson Plans' },
   { id: 'resources', label: 'Resource Sharing' },
-  { id: 'ptm', label: 'PTM Scheduler' }
+  { id: 'ptm', label: 'PTM Scheduler' },
+  { id: 'performance', label: 'Performance Tracking' }
 ];
 
 // All modules available for approval by superadmin (Sync with TenantManagement)
@@ -65,7 +66,8 @@ const ALL_AVAILABLE_MODULES = [
   { id: 'form-builder', label: 'Custom Forms / Form Builder' },
   { id: 'lesson_plans', label: 'Lesson Plans' },
   { id: 'resources', label: 'Resource Sharing' },
-  { id: 'ptm', label: 'PTM Scheduler' }
+  { id: 'ptm', label: 'PTM Scheduler' },
+  { id: 'performance', label: 'Performance Tracking' }
 ];
 
 const ADMIN_PANEL_MODULES = [
