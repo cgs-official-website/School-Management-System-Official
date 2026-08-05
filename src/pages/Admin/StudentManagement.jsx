@@ -22,6 +22,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import ImageCropper from '../../components/ImageCropper';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import usePermissions from '../../hooks/usePermissions';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function StudentManagement() {
   const { userProfile } = useAuth();
@@ -252,14 +253,7 @@ export default function StudentManagement() {
     });
 
     const unsubClasses = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      data.sort((a, b) => {
-        const nameCompare = a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
-        if (nameCompare === 0) {
-          return a.section.localeCompare(b.section, undefined, { numeric: true, sensitivity: 'base' });
-        }
-        return nameCompare;
-      });
-      setClasses(data);
+      setClasses(sortClassesAscending(data));
     });
 
     const unsubApplications = subscribeToSubCollection(schoolId, 'admissionApplications', (data) => {

@@ -18,6 +18,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
 import usePermissions from '../../hooks/usePermissions';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 const DEFAULT_CATEGORIES = [
   'General'
@@ -124,7 +125,7 @@ export default function LibraryManagement() {
     });
 
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      setClasses(data);
+      setClasses(sortClassesAscending(data));
     });
 
     return () => {

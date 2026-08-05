@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
 import usePermissions from '../../hooks/usePermissions';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function FeeManagement() {
   const { userProfile } = useAuth();
@@ -54,7 +55,9 @@ export default function FeeManagement() {
     setLoading(true);
     let classesUnsub, studentsUnsub, invoicesUnsub, periodsUnsub;
 
-    classesUnsub = subscribeToSubCollection(schoolId, 'classes', setClasses);
+    classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
+      setClasses(sortClassesAscending(data));
+    });
 
     studentsUnsub = subscribeToSubCollection(schoolId, 'students', (studentsData) => {
       const studentMap = {};

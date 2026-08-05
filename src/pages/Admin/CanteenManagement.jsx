@@ -16,6 +16,7 @@ import {
   LuRotateCcw as ResetIcon,
   LuCalendar as CalendarIcon
 } from 'react-icons/lu';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function CanteenManagement() {
   const { userProfile } = useAuth();
@@ -56,7 +57,7 @@ export default function CanteenManagement() {
     });
 
     const unsubClasses = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      setClasses(data);
+      setClasses(sortClassesAscending(data));
     });
 
     return () => {

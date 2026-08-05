@@ -388,6 +388,15 @@ export const getSubCollection = async (schoolId, subCollection) => {
     querySnapshot.forEach((doc) => {
       data.push({ id: doc.id, ...doc.data() });
     });
+    if (subCollection === 'classes') {
+      data.sort((a, b) => {
+        const nameCompare = (a.name || a.className || '').toString().trim().localeCompare((b.name || b.className || '').toString().trim(), undefined, { numeric: true, sensitivity: 'base' });
+        if (nameCompare === 0) {
+          return (a.section || '').toString().trim().localeCompare((b.section || '').toString().trim(), undefined, { numeric: true, sensitivity: 'base' });
+        }
+        return nameCompare;
+      });
+    }
     return data;
   } catch (error) {
     console.error(`Error getting ${subCollection}:`, error);
@@ -1198,6 +1207,15 @@ export const subscribeToSubCollection = (schoolId, subCollection, callback, onEr
     snapshot.forEach((doc) => {
       data.push({ id: doc.id, ...doc.data() });
     });
+    if (subCollection === 'classes') {
+      data.sort((a, b) => {
+        const nameCompare = (a.name || a.className || '').toString().trim().localeCompare((b.name || b.className || '').toString().trim(), undefined, { numeric: true, sensitivity: 'base' });
+        if (nameCompare === 0) {
+          return (a.section || '').toString().trim().localeCompare((b.section || '').toString().trim(), undefined, { numeric: true, sensitivity: 'base' });
+        }
+        return nameCompare;
+      });
+    }
     callback(data);
   }, (error) => {
     console.error(`Error subscribing to ${subCollection}:`, error);

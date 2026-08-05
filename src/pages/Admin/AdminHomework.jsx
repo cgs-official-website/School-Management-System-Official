@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, subscribeToSubCollection } from '../../firebase/firestore';
 import { LuFileText as FileText, LuSearch as Search, LuX as X, LuCircleCheck as CheckCircle, LuBookOpen as BookOpen } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function AdminHomework() {
   const { userProfile } = useAuth();
@@ -26,7 +27,7 @@ export default function AdminHomework() {
     let classesUnsub, hwUnsub;
 
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      setClasses(data);
+      setClasses(sortClassesAscending(data));
     });
 
     hwUnsub = subscribeToSubCollection(schoolId, 'homeworks', (data) => {

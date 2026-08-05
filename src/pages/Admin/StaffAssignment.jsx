@@ -16,6 +16,7 @@ import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import ConfirmModal from '../../components/ConfirmModal';
 import FilePreviewModal from '../../components/FilePreviewModal';
 import usePermissions from '../../hooks/usePermissions';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function StaffAssignment() {
   const { userProfile } = useAuth();
@@ -213,14 +214,7 @@ export default function StaffAssignment() {
     });
 
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      data.sort((a, b) => {
-        const nameCompare = (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' });
-        if (nameCompare === 0) {
-          return (a.section || '').localeCompare(b.section || '', undefined, { numeric: true, sensitivity: 'base' });
-        }
-        return nameCompare;
-      });
-      setClasses(data);
+      setClasses(sortClassesAscending(data));
     });
 
     // Fetch custom roles list

@@ -6,6 +6,7 @@ import { db } from '../../firebase/config';
 import { LuCalendar as CalendarIcon, LuCircleCheck as CheckCircle2, LuSave as Save, LuUsers as Users, LuCircleAlert as AlertCircle, LuLayoutDashboard as DashboardIcon, LuClipboardCheck as ClipboardIcon, LuChevronDown as ChevronDown, LuChevronUp as ChevronUp, LuTrendingUp as TrendIcon, LuDownload as DownloadIcon, LuFileSpreadsheet as ExcelIcon } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function Attendance() {
   const { userProfile, currentUser } = useAuth();
@@ -79,9 +80,10 @@ export default function Attendance() {
   useEffect(() => {
     if (!schoolId) return;
     const unsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      setClasses(data);
-      if (data.length > 0 && !selectedClassId) {
-        setSelectedClassId(data[0].id);
+      const sortedClasses = sortClassesAscending(data);
+      setClasses(sortedClasses);
+      if (sortedClasses.length > 0 && !selectedClassId) {
+        setSelectedClassId(sortedClasses[0].id);
       }
     });
     return () => unsub();
@@ -606,10 +608,14 @@ export default function Attendance() {
                     <h3 className="font-bold text-slate-900 text-lg">Grade & Section Breakdown</h3>
                   </div>
                   <div className="divide-y divide-slate-100">
-                    {Object.entries(scopedStats.byGrade || {}).map(([gradeId, gradeData]) => {
-                      const isExpanded = !!expandedGrades[gradeId];
-                      // Filter sections under this grade
-                      const sections = Object.values(scopedStats.bySection || {}).filter(s => s.gradeId === gradeId);
+                    {Object.entries(scopedStats.byGrade || {})
+                      .sort(([gradeA], [gradeB]) => gradeA.localeCompare(gradeB, undefined, { numeric: true, sensitivity: 'base' }))
+                      .map(([gradeId, gradeData]) => {
+                        const isExpanded = !!expandedGrades[gradeId];
+                        // Filter and sort sections under this grade in ascending order
+                        const sections = Object.values(scopedStats.bySection || {})
+                          .filter(s => s.gradeId === gradeId)
+                          .sort((a, b) => (a.section || '').toString().localeCompare((b.section || '').toString(), undefined, { numeric: true, sensitivity: 'base' }));
 
                       return (
                         <div key={gradeId} className="group">

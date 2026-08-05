@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import usePermissions from '../../hooks/usePermissions';
 import ConfirmModal from '../../components/ConfirmModal';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function LessonPlans() {
   const { userProfile, currentUser } = useAuth();
@@ -118,7 +119,7 @@ export default function LessonPlans() {
     });
 
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      setClasses(data.sort((a, b) => a.name.localeCompare(b.name)));
+      setClasses(sortClassesAscending(data));
     });
 
     subjectsUnsub = subscribeToSubCollection(schoolId, 'subjects', (data) => {

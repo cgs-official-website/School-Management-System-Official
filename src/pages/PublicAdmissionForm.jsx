@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Captcha from '../components/Captcha';
 import toast from 'react-hot-toast';
+import { sortClassesAscending } from '../utils/classSorting';
 
 export default function PublicAdmissionForm() {
   const { schoolId } = useParams();
@@ -94,8 +95,7 @@ export default function PublicAdmissionForm() {
         try {
           const classesSnap = await getDocs(collection(db, `schools/${schoolId}/classes`));
           const loadedClasses = classesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-          loadedClasses.sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true }));
-          setClasses(loadedClasses);
+          setClasses(sortClassesAscending(loadedClasses));
         } catch (clsErr) {
           console.warn("Could not load classes list for school:", clsErr);
         }

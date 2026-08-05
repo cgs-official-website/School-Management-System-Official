@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { TableSkeleton } from '../../components/Skeleton';
 import usePermissions from '../../hooks/usePermissions';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function HomeworkManagement() {
   const { userProfile } = useAuth();
@@ -114,7 +115,7 @@ export default function HomeworkManagement() {
     let classesUnsub, hwUnsub, subjectsUnsub;
 
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      setClasses(data);
+      setClasses(sortClassesAscending(data));
     });
 
     subjectsUnsub = subscribeToSubCollection(schoolId, 'subjects', (data) => {

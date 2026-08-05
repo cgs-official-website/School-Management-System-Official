@@ -9,6 +9,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
 import usePermissions from '../../hooks/usePermissions';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function TimetableManagement() {
   const { userProfile } = useAuth();
@@ -53,7 +54,7 @@ export default function TimetableManagement() {
     if (!schoolId) return;
     setLoading(true);
     const unsubClasses = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      setClasses(data);
+      setClasses(sortClassesAscending(data));
       setLoading(false);
     });
     const unsubTeachers = subscribeToSubCollection(schoolId, 'teachers', (data) => {

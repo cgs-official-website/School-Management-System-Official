@@ -17,6 +17,7 @@ import ReportTemplateBuilder from './ReportTemplateBuilder';
 import { doc, setDoc } from 'firebase/firestore';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 export default function ExamManagement() {
   const { userProfile } = useAuth();
@@ -74,7 +75,7 @@ export default function ExamManagement() {
     });
 
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      setClasses(data);
+      setClasses(sortClassesAscending(data));
     });
 
     return () => {

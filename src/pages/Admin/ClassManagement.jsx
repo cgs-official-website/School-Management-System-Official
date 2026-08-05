@@ -8,6 +8,7 @@ import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
 import usePermissions from '../../hooks/usePermissions';
+import { sortClassesAscending } from '../../utils/classSorting';
 
 const mockClasses = [
   { id: 'm1', name: 'Grade 1', section: 'A' },
@@ -53,15 +54,7 @@ export default function ClassManagement() {
     };
 
     const unsubscribeClasses = subscribeToSubCollection(schoolId, 'classes', (data) => {
-      // Sort naturally (Grade 2 before Grade 10)
-      data.sort((a, b) => {
-        const nameCompare = a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
-        if (nameCompare === 0) {
-          return a.section.localeCompare(b.section, undefined, { numeric: true, sensitivity: 'base' });
-        }
-        return nameCompare;
-      });
-      setClasses(data);
+      setClasses(sortClassesAscending(data));
       classesLoaded = true;
       checkLoading();
     });
