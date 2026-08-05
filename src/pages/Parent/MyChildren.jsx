@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { findStudentByAdmission, linkStudentToParent } from '../../firebase/firestore';
-import { LuPlus as Plus, LuPencil as Pencil, LuTrash2 as Trash2, LuUsers as Users, LuX as X, LuBaby as Baby, LuLink as LinkIcon, LuCheckCircle2 as CheckCircle } from 'react-icons/lu';
+import { LuPlus as Plus, LuPencil as Pencil, LuTrash2 as Trash2, LuUsers as Users, LuX as X, LuBaby as Baby, LuLink as LinkIcon, LuSquareCheck as CheckCircle } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
 export default function MyChildren() {
