@@ -410,6 +410,7 @@ service cloud.firestore {
       match /complaints/{document=**} { allow read, write: if belongsToSchool(schoolId); }
       match /messages/{document=**}   { allow read, write: if belongsToSchool(schoolId); }
       match /chats/{document=**}      { allow read, write: if belongsToSchool(schoolId); }
+      match /channels/{document=**}   { allow read, write: if belongsToSchool(schoolId); }
     }
 
     match /{document=**} {

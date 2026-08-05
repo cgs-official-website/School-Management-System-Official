@@ -500,13 +500,9 @@ export default function ParentChat() {
 
               {/* Input Area */}
               <div className="shrink-0 bg-white">
-                {activeChannel.isReadOnly ? (
-                  <div className="p-4 text-center text-slate-500 text-sm bg-slate-50 border-t border-slate-200 font-medium">
-                    This channel is read-only.
-                  </div>
-                ) : (
-                  <ChatInput onSendMessage={handleSendMessage} />
-                )}
+                <div className="p-4 text-center text-slate-500 text-sm bg-slate-50 border-t border-slate-200 font-medium">
+                  Channels are read-only. Announcements appear here.
+                </div>
               </div>
             </>
           )}
