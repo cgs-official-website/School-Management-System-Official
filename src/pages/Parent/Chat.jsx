@@ -102,6 +102,10 @@ export default function ParentChat() {
       setMessages([]); // Clear old messages
       unsubscribe = subscribeToMessages(schoolId, studentId, activeTeacher.id, (newMessages) => {
         setMessages(newMessages);
+        try {
+          const chatRoomId = `${studentId}_${activeTeacher.id}`;
+          markChatRead(schoolId, chatRoomId, 'parent');
+        } catch (err) {}
       });
       
       // Mark chat as read

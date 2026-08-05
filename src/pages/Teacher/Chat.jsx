@@ -170,6 +170,10 @@ export default function TeacherChat() {
         // 2. Subscribe to messages using new room format (studentId_teacherId)
         unsubscribe = subscribeToMessages(schoolId, activeStudent.id, currentUser.uid, (newMessages) => {
           setMessages(newMessages);
+          try {
+            const chatRoomId = `${activeStudent.id}_${currentUser.uid}`;
+            markChatRead(schoolId, chatRoomId, 'teacher');
+          } catch (err) {}
         });
 
         // 3. Subscribe to chat room metadata
