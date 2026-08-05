@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, updateSubDocument, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { getDoc, doc, updateDoc, deleteDoc, collection, getDocs } from 'firebase/firestore';
+import { getDoc, doc, updateDoc, deleteDoc, collection, getDocs, writeBatch } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
@@ -28,6 +28,7 @@ export default function StaffAssignment() {
 
   const [staff, setStaff] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [subjects, setSubjects] = useState([]);
   const [schoolName, setSchoolName] = useState('');
   const [loading, setLoading] = useState(true);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -37,6 +38,7 @@ export default function StaffAssignment() {
   const [selectedStaff, setSelectedStaff] = useState(null);
   const [selectedClassId, setSelectedClassId] = useState('');
   const [selectedSubjectClassIds, setSelectedSubjectClassIds] = useState([]);
+  const [selectedSubjectIds, setSelectedSubjectIds] = useState([]);
   const [saving, setSaving] = useState(false);
 
   // Upload Modal State
@@ -201,7 +203,7 @@ export default function StaffAssignment() {
     if (!schoolId) return;
 
     setLoading(true);
-    let teachersUnsub, classesUnsub;
+    let teachersUnsub, classesUnsub, subjectsUnsub;
 
     // Fetch school name once
     getDoc(doc(db, 'schools', schoolId)).then(snap => {
@@ -216,6 +218,8 @@ export default function StaffAssignment() {
     classesUnsub = subscribeToSubCollection(schoolId, 'classes', (data) => {
       setClasses(sortClassesAscending(data));
     });
+
+    subjectsUnsub = subscribeToSubCollection(schoolId, 'subjects', setSubjects);
 
     // Fetch custom roles list
     const rolesRef = collection(db, `schools/${schoolId}/roles`);
@@ -235,6 +239,7 @@ export default function StaffAssignment() {
     return () => {
       if (teachersUnsub) teachersUnsub();
       if (classesUnsub) classesUnsub();
+      if (subjectsUnsub) subjectsUnsub();
     };
   }, [schoolId]);
 
@@ -255,6 +260,13 @@ export default function StaffAssignment() {
     setSelectedStaff(staffMember);
     setSelectedClassId(staffMember.assignedClassId || '');
     setSelectedSubjectClassIds(staffMember.subjectClassIds || []);
+    
+    // Derive selected subjects based on the subjects' assignedTeacherIds
+    const currentlyAssignedSubjects = subjects
+      .filter(s => s.assignedTeacherIds && s.assignedTeacherIds.includes(staffMember.id))
+      .map(s => s.id);
+    setSelectedSubjectIds(currentlyAssignedSubjects);
+
     setAssignModalOpen(true);
   };
 
@@ -263,15 +275,39 @@ export default function StaffAssignment() {
   const handleAssign = async () => {
     setSaving(true);
     try {
-      await updateSubDocument(schoolId, 'teachers', selectedStaff.id, {
+      const batch = writeBatch(db);
+
+      const teacherRef = doc(db, `schools/${schoolId}/teachers`, selectedStaff.id);
+      batch.update(teacherRef, {
         assignedClassId: selectedClassId,
-        subjectClassIds: selectedSubjectClassIds
+        subjectClassIds: selectedSubjectClassIds,
+        assignedSubjectIds: selectedSubjectIds
       });
+
+      subjects.forEach(subject => {
+        const isSelected = selectedSubjectIds.includes(subject.id);
+        const hasTeacher = (subject.assignedTeacherIds || []).includes(selectedStaff.id);
+        
+        if (isSelected && !hasTeacher) {
+          const subjectRef = doc(db, `schools/${schoolId}/subjects`, subject.id);
+          batch.update(subjectRef, {
+            assignedTeacherIds: [...(subject.assignedTeacherIds || []), selectedStaff.id]
+          });
+        } else if (!isSelected && hasTeacher) {
+          const subjectRef = doc(db, `schools/${schoolId}/subjects`, subject.id);
+          batch.update(subjectRef, {
+            assignedTeacherIds: (subject.assignedTeacherIds || []).filter(id => id !== selectedStaff.id)
+          });
+        }
+      });
+
+      await batch.commit();
+
       setAssignModalOpen(false);
-      // Refresh handled by listener
+      toast.success("Assignments updated successfully.");
     } catch (error) {
       console.error("Error updating assignment:", error);
-      toast.error("Failed to assign class.");
+      toast.error("Failed to assign classes/subjects.");
     } finally {
       setSaving(false);
     }
@@ -1209,6 +1245,30 @@ export default function StaffAssignment() {
                     No classes have been created yet. Please create classes in Class Management first.
                   </p>
                 )}
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Subject Specializations</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border border-slate-200 rounded-xl bg-slate-50">
+                    {subjects.map(s => (
+                      <label key={`spec-${s.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-100 rounded-lg cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedSubjectIds.includes(s.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedSubjectIds([...selectedSubjectIds, s.id]);
+                            } else {
+                              setSelectedSubjectIds(selectedSubjectIds.filter(id => id !== s.id));
+                            }
+                          }}
+                          className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
+                        />
+                        <span className="text-sm font-medium text-slate-700">{s.name} {s.code ? `(${s.code})` : ''}</span>
+                      </label>
+                    ))}
+                    {subjects.length === 0 && <span className="text-sm text-slate-500 italic p-2">No subjects available.</span>}
+                  </div>
+                </div>
               </div>
             </div>
 
