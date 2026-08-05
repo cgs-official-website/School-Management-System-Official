@@ -17,11 +17,7 @@ export default function BillingDashboard() {
   const [loading, setLoading] = useState(true);
 
   // Mocked invoices
-  const invoices = [
-    { id: 'INV-2026-001', date: '2026-07-01', amount: 99, status: 'paid', plan: 'Professional' },
-    { id: 'INV-2026-002', date: '2026-06-01', amount: 99, status: 'paid', plan: 'Professional' },
-    { id: 'INV-2026-003', date: '2026-05-01', amount: 49, status: 'paid', plan: 'Starter' }
-  ];
+  const invoices = [];
 
   useEffect(() => {
     if (!schoolId) return;
@@ -170,25 +166,33 @@ export default function BillingDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm">
-                {invoices.map(inv => (
-                  <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-4 pl-6 font-medium text-slate-900 flex items-center gap-2">
-                      <FileText size={16} className="text-slate-400" /> {inv.id}
-                    </td>
-                    <td className="p-4 text-slate-600">{new Date(inv.date).toLocaleDateString()}</td>
-                    <td className="p-4 font-semibold text-slate-900">₹{inv.amount}</td>
-                    <td className="p-4">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-green-50 text-green-700">
-                        <CheckCircle2 size={12} /> Paid
-                      </span>
-                    </td>
-                    <td className="p-4 pr-6 text-right">
-                      <button className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
-                        <Download size={18} />
-                      </button>
+                {invoices.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="p-8 text-center text-slate-400 font-medium">
+                      No invoices available.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  invoices.map(inv => (
+                    <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="p-4 pl-6 font-medium text-slate-900 flex items-center gap-2">
+                        <FileText size={16} className="text-slate-400" /> {inv.id}
+                      </td>
+                      <td className="p-4 text-slate-600">{new Date(inv.date).toLocaleDateString()}</td>
+                      <td className="p-4 font-semibold text-slate-900">₹{inv.amount}</td>
+                      <td className="p-4">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-green-50 text-green-700">
+                          <CheckCircle2 size={12} /> Paid
+                        </span>
+                      </td>
+                      <td className="p-4 pr-6 text-right">
+                        <button className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                          <Download size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
