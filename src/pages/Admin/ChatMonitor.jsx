@@ -66,14 +66,16 @@ export default function ChatMonitor() {
           const uMap = new Map();
           usersSnap.forEach(doc => {
             const data = doc.data();
-            uMap.set(doc.id, `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'Unknown User');
+            const fullName = `${data.firstName || ''} ${data.lastName || ''}`.trim();
+            uMap.set(doc.id, data.name || fullName || data.email?.split('@')[0] || 'Unknown User');
           });
           setUsersMap(uMap);
 
           const sMap = new Map();
           studentsSnap.forEach(doc => {
             const data = doc.data();
-            sMap.set(doc.id, `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'Unknown Student');
+            const fullName = `${data.firstName || ''} ${data.lastName || ''}`.trim();
+            sMap.set(doc.id, data.name || fullName || 'Unknown Student');
           });
           setStudentsMap(sMap);
 
