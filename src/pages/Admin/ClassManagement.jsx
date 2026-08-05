@@ -202,15 +202,18 @@ export default function ClassManagement() {
           <h3 className="text-lg font-bold text-slate-900 mb-4">{editingId ? 'Edit Class' : 'Add New Class'}</h3>
           <form onSubmit={handleCreate} className="flex flex-col md:flex-row gap-4 items-end">
             <div className="flex-1">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Class/Grade Name</label>
-              <input 
-                type="text" 
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Class Category</label>
+              <select 
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                placeholder="e.g., Grade 10, Freshman, Year 1"
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 required
-              />
+              >
+                <option value="">Select Category</option>
+                <option value="KG">KG</option>
+                <option value="Middle">Middle</option>
+                <option value="Higher Secondary">Higher Secondary</option>
+              </select>
             </div>
             <div className="w-full md:w-48">
               <label className="block text-sm font-semibold text-slate-700 mb-1">Section/Group</label>
