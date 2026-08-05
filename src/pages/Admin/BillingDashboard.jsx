@@ -107,7 +107,7 @@ export default function BillingDashboard() {
               <div>
                 <p className="text-sm font-bold text-amber-600 uppercase tracking-wider mb-1">Current Plan</p>
                 <h2 className="text-3xl font-extrabold text-slate-900">
-                  {currentPlan ? currentPlan.name : getPlanDisplayName(school?.plan)}
+                  Enterprise Plan
                 </h2>
                 {(currentPlan || school?.plan) && (
                   <p className="text-slate-500 mt-2">
