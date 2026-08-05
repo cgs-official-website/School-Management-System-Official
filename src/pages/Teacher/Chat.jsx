@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentsByClass, subscribeToMessages, sendMessage, checkParentRegistration, deleteChatMessage, updateChatRoomStatus, subscribeToChatRoom, getChatsForTeacher, markChatRead } from '../../firebase/firestore';
+import { getStudentsByClass, subscribeToMessages, sendMessage, checkParentRegistration, deleteChatMessage, updateChatRoomStatus, subscribeToChatRoom, getChatsForTeacher, markChatRead, createChannel, getChannelsForUser, subscribeToChannelMessages, sendChannelMessage } from '../../firebase/firestore';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuTrash2 as Trash2, LuCircleCheck as CheckCircle, LuClock as Clock, LuDownload as DownloadIcon, LuX as XIcon } from 'react-icons/lu';
@@ -17,6 +17,14 @@ export default function TeacherChat() {
 
   const [students, setStudents] = useState([]);
   const [activeStudent, setActiveStudent] = useState(null);
+  
+  // Channels State
+  const [activeTab, setActiveTab] = useState('dms'); // 'dms' | 'channels'
+  const [channels, setChannels] = useState([]);
+  const [activeChannel, setActiveChannel] = useState(null);
+  const [loadingChannels, setLoadingChannels] = useState(true);
+  const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
+  
   const [showClassSelector, setShowClassSelector] = useState(false);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -140,6 +148,35 @@ export default function TeacherChat() {
       if (unsubChats) unsubChats();
     };
   }, [schoolId, classId, currentUser]);
+
+  // Fetch Channels
+  useEffect(() => {
+    if (schoolId && currentUser?.uid) {
+      getChannelsForUser(schoolId, 'teacher', currentUser.uid, classId)
+        .then(data => {
+          setChannels(data);
+        })
+        .catch(console.error)
+        .finally(() => setLoadingChannels(false));
+    } else {
+      setLoadingChannels(false);
+    }
+  }, [schoolId, currentUser, classId]);
+
+  // Handle Channel Selection
+  useEffect(() => {
+    let unsubscribe = null;
+    if (activeTab === 'channels' && activeChannel && schoolId) {
+      setMessages([]);
+      unsubscribe = subscribeToChannelMessages(schoolId, activeChannel.id, (newMessages) => {
+        setMessages(newMessages);
+      });
+    }
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [activeChannel, activeTab, schoolId]);
+
   // Handle student selection and message subscription
   useEffect(() => {
     let unsubscribe = null;
@@ -205,20 +242,33 @@ export default function TeacherChat() {
   }, [messages]);
 
   const handleSendMessage = async (text, mediaUrl, mediaType) => {
-    if (!activeStudent || !schoolId) return;
+    if (!schoolId) return;
 
     try {
-      await sendMessage(
-        schoolId,
-        activeStudent.id,
-        currentUser.uid,
-        linkedParentId,
-        currentUser.uid,
-        'teacher',
-        text,
-        mediaUrl,
-        mediaType
-      );
+      if (activeTab === 'channels' && activeChannel) {
+        await sendChannelMessage(
+          schoolId,
+          activeChannel.id,
+          currentUser.uid,
+          'teacher',
+          `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || 'Teacher',
+          text,
+          mediaUrl,
+          mediaType
+        );
+      } else if (activeTab === 'dms' && activeStudent) {
+        await sendMessage(
+          schoolId,
+          activeStudent.id,
+          currentUser.uid,
+          linkedParentId,
+          currentUser.uid,
+          'teacher',
+          text,
+          mediaUrl,
+          mediaType
+        );
+      }
     } catch (error) {
       console.error("Error sending message:", error);
       toast.error("Failed to send message.");
@@ -327,58 +377,117 @@ export default function TeacherChat() {
 
       <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0">
         
-        {/* Sidebar - Roster List */}
+        {/* Sidebar */}
         <div className="w-full lg:w-80 flex flex-col bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm shrink-0">
-          <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-            <h2 className="font-bold text-slate-700">Class Roster</h2>
-            <button 
-              onClick={handleDownloadExcel}
-              title="Download Live Sheet"
-              className="p-2 bg-primary-50 text-primary-600 rounded-lg hover:bg-primary-100 transition-colors"
-            >
-              <DownloadIcon size={18} />
-            </button>
+          <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <h2 className="font-bold text-slate-700">Messaging</h2>
+              {activeTab === 'dms' && (
+                <button 
+                  onClick={handleDownloadExcel}
+                  title="Download Live Sheet"
+                  className="p-2 bg-primary-50 text-primary-600 rounded-lg hover:bg-primary-100 transition-colors"
+                >
+                  <DownloadIcon size={18} />
+                </button>
+              )}
+              {activeTab === 'channels' && (
+                <button 
+                  onClick={() => setShowCreateChannelModal(true)}
+                  title="Create Channel"
+                  className="px-3 py-1.5 bg-primary-600 text-white text-xs font-bold rounded-lg hover:bg-primary-700 transition-colors"
+                >
+                  + Create
+                </button>
+              )}
+            </div>
+            <div className="flex bg-slate-100 rounded-xl p-1">
+              <button 
+                onClick={() => { setActiveTab('dms'); setActiveChannel(null); }}
+                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'dms' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                DMs
+              </button>
+              <button 
+                onClick={() => { setActiveTab('channels'); setActiveStudent(null); }}
+                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'channels' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Channels
+              </button>
+            </div>
           </div>
           
           <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
-            {students.length === 0 ? (
-              <div className="p-6 text-center text-slate-500 text-sm">No students in your class.</div>
-            ) : (
-              students.map(student => (
-                <button
-                  key={student.id}
-                  onClick={() => setActiveStudent(student)}
-                  className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
-                    activeStudent?.id === student.id 
-                      ? 'bg-primary-50 border border-primary-200' 
-                      : 'hover:bg-slate-50 border border-transparent'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
-                    activeStudent?.id === student.id ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
-                  }`}>
-                    {student.firstName.charAt(0)}{student.lastName.charAt(0)}
-                  </div>
-                  <div className="overflow-hidden flex-1">
-                    <div className="font-bold text-slate-900 truncate flex items-center justify-between">
-                      <span>{student.firstName} {student.lastName}</span>
-                      {student.unreadCount > 0 && (
-                        <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
-                          {student.unreadCount}
-                        </span>
-                      )}
+            {activeTab === 'dms' ? (
+              students.length === 0 ? (
+                <div className="p-6 text-center text-slate-500 text-sm">No students in your class.</div>
+              ) : (
+                students.map(student => (
+                  <button
+                    key={student.id}
+                    onClick={() => setActiveStudent(student)}
+                    className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
+                      activeStudent?.id === student.id 
+                        ? 'bg-primary-50 border border-primary-200' 
+                        : 'hover:bg-slate-50 border border-transparent'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                      activeStudent?.id === student.id ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {student.firstName.charAt(0)}{student.lastName.charAt(0)}
                     </div>
-                    <div className="text-xs text-slate-500 truncate">Parent Chat</div>
-                  </div>
-                </button>
-              ))
+                    <div className="overflow-hidden flex-1">
+                      <div className="font-bold text-slate-900 truncate flex items-center justify-between">
+                        <span>{student.firstName} {student.lastName}</span>
+                        {student.unreadCount > 0 && (
+                          <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                            {student.unreadCount}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-slate-500 truncate">Parent Chat</div>
+                    </div>
+                  </button>
+                ))
+              )
+            ) : (
+              loadingChannels ? (
+                <div className="p-6 text-center text-slate-500 text-sm">Loading channels...</div>
+              ) : channels.length === 0 ? (
+                <div className="p-6 text-center text-slate-500 text-sm">No channels found.</div>
+              ) : (
+                channels.map(channel => (
+                  <button
+                    key={channel.id}
+                    onClick={() => setActiveChannel(channel)}
+                    className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
+                      activeChannel?.id === channel.id 
+                        ? 'bg-primary-50 border border-primary-200' 
+                        : 'hover:bg-slate-50 border border-transparent'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
+                      activeChannel?.id === channel.id ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      #
+                    </div>
+                    <div className="overflow-hidden flex-1">
+                      <div className="font-bold text-slate-900 truncate flex items-center justify-between">
+                        <span>{channel.name}</span>
+                      </div>
+                      <div className="text-xs text-slate-500 truncate">{channel.description || 'Channel'}</div>
+                    </div>
+                  </button>
+                ))
+              )
             )}
           </div>
         </div>
 
         {/* Main Chat Area */}
         <div className="flex-1 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col min-h-0 overflow-hidden relative">
-          {activeStudent ? (
+          {activeTab === 'dms' && activeStudent && (
             <>
               {/* Chat Header */}
               <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
@@ -467,13 +576,114 @@ export default function TeacherChat() {
                 onSendMessage={handleSendMessage} 
               />
             </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center text-slate-400 text-center p-8 bg-slate-50/50">
-              <div>
-                <MessageSquare size={48} className="mx-auto mb-4 text-slate-200" />
-                <p className="text-lg font-medium text-slate-600">Select a student</p>
-                <p className="text-sm mt-1">Choose a student from the roster to message their parents</p>
+          )}
+
+          {activeTab === 'dms' && !activeStudent && (
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50/50">
+              <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                <MessageSquare size={32} className="text-slate-300" />
               </div>
+              <h3 className="text-lg font-bold text-slate-700 mb-2">Select a student</h3>
+              <p className="max-w-xs">Choose a student from the roster to view their parent's chat history or start a new conversation.</p>
+            </div>
+          )}
+
+          {activeTab === 'channels' && activeChannel && (
+            <>
+              {/* Channel Header */}
+                <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg">
+                      #
+                    </div>
+                    <div>
+                      <h2 className="font-bold text-slate-900 text-lg">
+                        {activeChannel.name}
+                      </h2>
+                      <p className="text-xs text-slate-500">
+                        {activeChannel.description || 'Group Channel'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Channel Messages */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar bg-slate-50/30">
+                  {messages.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center text-slate-400 text-center">
+                      <MessageSquare size={48} className="mb-4 text-slate-200" />
+                      <p>No messages in this channel yet.</p>
+                      <p className="text-sm mt-1">Send the first message!</p>
+                    </div>
+                  ) : (
+                    messages.map((msg, idx) => {
+                      const isTeacher = msg.senderRole === 'teacher';
+                      return (
+                        <div key={msg.id} className={`flex flex-col ${isTeacher ? 'items-end' : 'items-start'}`}>
+                          <div className={`text-xs font-semibold mb-1 ${isTeacher ? 'text-primary-600' : 'text-slate-500'}`}>
+                            {msg.senderName}
+                          </div>
+                          <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 shadow-sm ${
+                            isTeacher 
+                              ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-tr-none' 
+                              : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none'
+                          }`}>
+                            {msg.text && <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.text}</p>}
+                            {msg.mediaUrl && (
+                              <div className="mt-3">
+                                {msg.mediaType === 'image' && (
+                                  <a href={msg.mediaUrl} target="_blank" rel="noreferrer" className="block w-48 h-48 sm:w-64 sm:h-64 rounded-xl overflow-hidden shadow-sm hover:opacity-90 transition-opacity">
+                                    <img src={msg.mediaUrl} alt="attachment" className="w-full h-full object-cover" />
+                                  </a>
+                                )}
+                                {msg.mediaType === 'audio' && (
+                                  <div className="min-w-[200px] sm:min-w-[250px]">
+                                    <CustomAudioPlayer url={msg.mediaUrl} isOwnMessage={isTeacher} />
+                                  </div>
+                                )}
+                                {msg.mediaType === 'document' && (
+                                  <button onClick={() => handleDownload(msg.mediaUrl)} className={`flex items-center gap-3 p-3 rounded-xl transition-colors w-full text-left ${
+                                    isTeacher ? 'bg-primary-500 hover:bg-primary-400 text-white' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200'
+                                  }`}>
+                                    <div className={`p-2 rounded-lg shrink-0 ${isTeacher ? 'bg-primary-400 text-white' : 'bg-indigo-100 text-indigo-600'}`}>
+                                      <FileIcon size={20} />
+                                    </div>
+                                    <div className="overflow-hidden">
+                                      <div className="font-semibold text-sm truncate">Document File</div>
+                                      <div className={`text-xs ${isTeacher ? 'text-primary-100' : 'text-slate-500'}`}>Click to download</div>
+                                    </div>
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                            <div className={`text-[10px] mt-2 flex items-center gap-1 ${
+                              isTeacher ? 'text-primary-100' : 'text-slate-400'
+                            }`}>
+                              <Clock size={10} />
+                              {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Channel Message Input */}
+                <div className="shrink-0 bg-white">
+                  <ChatInput onSendMessage={handleSendMessage} />
+                </div>
+              </>
+          )}
+
+          {activeTab === 'channels' && !activeChannel && (
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50/50">
+              <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                <MessageSquare size={32} className="text-slate-300" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-700 mb-2">Select a channel</h3>
+              <p className="max-w-xs">Choose a channel to start sending announcements.</p>
             </div>
           )}
         </div>
@@ -538,6 +748,92 @@ export default function TeacherChat() {
                 </div>
               )
             )}
+          </div>
+        </div>
+      )}
+      
+      {/* Create Channel Modal */}
+      {showCreateChannelModal && (
+        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl p-6 relative">
+            <button 
+              onClick={() => setShowCreateChannelModal(false)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+            >
+              <XIcon size={20} />
+            </button>
+            
+            <h2 className="text-xl font-bold text-slate-900 mb-6">Create New Channel</h2>
+            
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              const name = formData.get('name');
+              const description = formData.get('description');
+              const targetClass = formData.get('targetClass'); // 'all' or classId
+              const isReadOnly = formData.get('isReadOnly') === 'on';
+
+              if (!name.trim()) return;
+
+              try {
+                const channelData = {
+                  name,
+                  description,
+                  classId: targetClass,
+                  createdBy: currentUser.uid,
+                  isReadOnly
+                };
+                const newChannelId = await createChannel(schoolId, channelData);
+                const newChannel = { id: newChannelId, ...channelData, createdAt: new Date().toISOString() };
+                setChannels(prev => [newChannel, ...prev]);
+                setActiveChannel(newChannel);
+                setActiveTab('channels');
+                setShowCreateChannelModal(false);
+                toast.success('Channel created successfully!');
+              } catch (err) {
+                toast.error('Failed to create channel');
+              }
+            }} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Channel Name</label>
+                <input 
+                  type="text" 
+                  name="name" 
+                  required 
+                  placeholder="e.g. 10A Science Announcements"
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Description (Optional)</label>
+                <textarea 
+                  name="description" 
+                  placeholder="What is this channel for?"
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none resize-none"
+                  rows="3"
+                ></textarea>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Target Audience</label>
+                <select 
+                  name="targetClass" 
+                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none bg-white"
+                >
+                  <option value={classId}>My Assigned Class Only</option>
+                  <option value="all">Entire School</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="isReadOnly" name="isReadOnly" defaultChecked className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500" />
+                <label htmlFor="isReadOnly" className="text-sm font-medium text-slate-700">Read-Only (Parents cannot reply)</label>
+              </div>
+              <button 
+                type="submit" 
+                className="w-full mt-4 bg-primary-600 text-white font-bold py-3 rounded-xl hover:bg-primary-700 transition-colors"
+              >
+                Create Channel
+              </button>
+            </form>
           </div>
         </div>
       )}

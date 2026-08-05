@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { subscribeToMessages, sendMessage, getTeachersForChat, deleteChatMessage, markChatRead } from '../../firebase/firestore';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { subscribeToMessages, sendMessage, getTeachersForChat, deleteChatMessage, markChatRead, getChannelsForUser, subscribeToChannelMessages, sendChannelMessage } from '../../firebase/firestore';
+import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuTrash2 as Trash2, LuDownload as DownloadIcon, LuX as XIcon } from 'react-icons/lu';
 import toast from 'react-hot-toast';
@@ -16,6 +16,13 @@ export default function ParentChat() {
 
   const [teachers, setTeachers] = useState([]);
   const [activeTeacher, setActiveTeacher] = useState(null);
+  
+  // Channel State
+  const [activeTab, setActiveTab] = useState('dms');
+  const [channels, setChannels] = useState([]);
+  const [activeChannel, setActiveChannel] = useState(null);
+  const [loadingChannels, setLoadingChannels] = useState(true);
+
   const [messages, setMessages] = useState([]);
   const [loadingTeachers, setLoadingTeachers] = useState(true);
   
@@ -94,6 +101,45 @@ export default function ParentChat() {
     };
   }, [schoolId, studentId]);
 
+  // Fetch Channels
+  useEffect(() => {
+    const fetchChannels = async () => {
+      if (schoolId && studentId && currentUser?.uid) {
+        try {
+          const studentDoc = await getDoc(doc(db, `schools/${schoolId}/students`, studentId));
+          const classId = studentDoc.exists() ? studentDoc.data().classId : null;
+          
+          if (classId) {
+            const data = await getChannelsForUser(schoolId, 'parent', currentUser.uid, classId);
+            setChannels(data);
+          }
+        } catch (error) {
+          console.error("Error fetching channels:", error);
+        } finally {
+          setLoadingChannels(false);
+        }
+      } else {
+        setLoadingChannels(false);
+      }
+    };
+    
+    fetchChannels();
+  }, [schoolId, studentId, currentUser]);
+
+  // Handle Channel Selection
+  useEffect(() => {
+    let unsubscribe = null;
+    if (activeTab === 'channels' && activeChannel && schoolId) {
+      setMessages([]);
+      unsubscribe = subscribeToChannelMessages(schoolId, activeChannel.id, (newMessages) => {
+        setMessages(newMessages);
+      });
+    }
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [activeChannel, activeTab, schoolId]);
+
   // Subscribe to messages when a teacher is selected
   useEffect(() => {
     let unsubscribe = null;
@@ -128,20 +174,37 @@ export default function ParentChat() {
   }, [messages]);
 
   const handleSendMessage = async (text, mediaUrl, mediaType) => {
-    if (!schoolId || !studentId || !activeTeacher) return;
+    if (!schoolId || !studentId) return;
 
     try {
-      await sendMessage(
-        schoolId,
-        studentId,
-        activeTeacher.id,
-        currentUser.uid,
-        currentUser.uid,
-        'parent',
-        text,
-        mediaUrl,
-        mediaType
-      );
+      if (activeTab === 'channels' && activeChannel) {
+        if (activeChannel.isReadOnly) {
+          toast.error("This channel is read-only.");
+          return;
+        }
+        await sendChannelMessage(
+          schoolId,
+          activeChannel.id,
+          currentUser.uid,
+          'parent',
+          `${userProfile.firstName || ''} ${userProfile.lastName || ''}`.trim() || 'Parent',
+          text,
+          mediaUrl,
+          mediaType
+        );
+      } else if (activeTab === 'dms' && activeTeacher) {
+        await sendMessage(
+          schoolId,
+          studentId,
+          activeTeacher.id,
+          currentUser.uid,
+          currentUser.uid,
+          'parent',
+          text,
+          mediaUrl,
+          mediaType
+        );
+      }
     } catch (error) {
       console.error("Error sending message:", error);
       toast.error("Failed to send message.");
@@ -217,51 +280,97 @@ export default function ParentChat() {
 
       <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0">
         
-        {/* Sidebar - Teachers List */}
+        {/* Sidebar */}
         <div className="w-full lg:w-80 flex flex-col bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm shrink-0">
-          <div className="p-4 border-b border-slate-100 bg-slate-50/50">
-            <h2 className="font-bold text-slate-700">Staff Members</h2>
+          <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-4">
+            <h2 className="font-bold text-slate-700">Messaging</h2>
+            <div className="flex bg-slate-100 rounded-xl p-1">
+              <button 
+                onClick={() => { setActiveTab('dms'); setActiveChannel(null); }}
+                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'dms' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Staff DMs
+              </button>
+              <button 
+                onClick={() => { setActiveTab('channels'); setActiveTeacher(null); }}
+                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'channels' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Channels
+              </button>
+            </div>
           </div>
           
           <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
-            {teachers.length === 0 ? (
-              <div className="p-6 text-center text-slate-500 text-sm">No teachers available.</div>
-            ) : (
-              teachers.map(teacher => (
-                <button
-                  key={teacher.id}
-                  onClick={() => setActiveTeacher(teacher)}
-                  className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
-                    activeTeacher?.id === teacher.id 
-                      ? 'bg-primary-50 border border-primary-200' 
-                      : 'hover:bg-slate-50 border border-transparent'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
-                    activeTeacher?.id === teacher.id ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
-                  }`}>
-                    {(teacher.firstName || teacher.name || 'T').charAt(0).toUpperCase()}
-                  </div>
-                  <div className="overflow-hidden flex-1">
-                    <div className="font-bold text-slate-900 truncate flex items-center justify-between">
-                      <span>{teacher.firstName ? `${teacher.firstName} ${teacher.lastName}` : (teacher.name || 'Teacher')}</span>
-                      {teacher.unreadCount > 0 && (
-                        <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
-                          {teacher.unreadCount}
-                        </span>
-                      )}
+            {activeTab === 'dms' ? (
+              teachers.length === 0 ? (
+                <div className="p-6 text-center text-slate-500 text-sm">No teachers available.</div>
+              ) : (
+                teachers.map(teacher => (
+                  <button
+                    key={teacher.id}
+                    onClick={() => setActiveTeacher(teacher)}
+                    className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
+                      activeTeacher?.id === teacher.id 
+                        ? 'bg-primary-50 border border-primary-200' 
+                        : 'hover:bg-slate-50 border border-transparent'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
+                      activeTeacher?.id === teacher.id ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {(teacher.firstName || teacher.name || 'T').charAt(0).toUpperCase()}
                     </div>
-                    <div className="text-xs text-slate-500 truncate capitalize">{teacher.role || 'Teacher'}</div>
-                  </div>
-                </button>
-              ))
+                    <div className="overflow-hidden flex-1">
+                      <div className="font-bold text-slate-900 truncate flex items-center justify-between">
+                        <span>{teacher.firstName ? `${teacher.firstName} ${teacher.lastName}` : (teacher.name || 'Teacher')}</span>
+                        {teacher.unreadCount > 0 && (
+                          <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                            {teacher.unreadCount}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs text-slate-500 truncate capitalize">{teacher.role || 'Teacher'}</div>
+                    </div>
+                  </button>
+                ))
+              )
+            ) : (
+              loadingChannels ? (
+                <div className="p-6 text-center text-slate-500 text-sm">Loading channels...</div>
+              ) : channels.length === 0 ? (
+                <div className="p-6 text-center text-slate-500 text-sm">No channels available.</div>
+              ) : (
+                channels.map(channel => (
+                  <button
+                    key={channel.id}
+                    onClick={() => setActiveChannel(channel)}
+                    className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
+                      activeChannel?.id === channel.id 
+                        ? 'bg-primary-50 border border-primary-200' 
+                        : 'hover:bg-slate-50 border border-transparent'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shrink-0 ${
+                      activeChannel?.id === channel.id ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      #
+                    </div>
+                    <div className="overflow-hidden flex-1">
+                      <div className="font-bold text-slate-900 truncate flex items-center justify-between">
+                        <span>{channel.name}</span>
+                      </div>
+                      <div className="text-xs text-slate-500 truncate">{channel.description || 'Channel'}</div>
+                    </div>
+                  </button>
+                ))
+              )
             )}
           </div>
         </div>
 
         {/* Main Chat Area */}
         <div className="flex-1 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col min-h-0 overflow-hidden relative">
-          {activeTeacher ? (
+          {activeTab === 'dms' && activeTeacher && (
             <>
               {/* Chat Header */}
               <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center gap-4 shrink-0">
@@ -324,13 +433,91 @@ export default function ParentChat() {
                 onSendMessage={handleSendMessage} 
               />
             </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center text-slate-400 text-center p-8 bg-slate-50/50">
-              <div>
-                <MessageSquare size={48} className="mx-auto mb-4 text-slate-200" />
-                <p className="text-lg font-medium text-slate-600">Select a staff member</p>
-                <p className="text-sm mt-1">Choose a teacher from the list to start chatting</p>
+          )}
+
+          {activeTab === 'dms' && !activeTeacher && (
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50/50">
+              <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                <MessageSquare size={32} className="text-slate-300" />
               </div>
+              <h3 className="text-lg font-bold text-slate-700 mb-2">Select a staff member</h3>
+              <p className="max-w-xs">Choose a staff member from the sidebar to start a conversation.</p>
+            </div>
+          )}
+
+          {activeTab === 'channels' && activeChannel && (
+            <>
+              {/* Channel Header */}
+              <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg">
+                    #
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-slate-900 text-lg">
+                      {activeChannel.name}
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                      {activeChannel.description || 'Group Channel'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Messages Area */}
+              <div className="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar bg-slate-50/30 flex flex-col gap-4">
+                {messages.length === 0 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center text-slate-400 text-center">
+                    <MessageSquare size={48} className="mb-4 text-slate-200" />
+                    <p>No messages yet.</p>
+                  </div>
+                ) : (
+                  messages.map(msg => {
+                    const isMe = msg.senderId === currentUser.uid;
+                    const isTeacher = msg.senderRole === 'teacher';
+                    return (
+                      <div key={msg.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} group relative`}>
+                        <div className={`text-xs font-semibold mb-1 ${isTeacher ? 'text-primary-600' : 'text-slate-500'}`}>
+                          {msg.senderName}
+                        </div>
+                        <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
+                          isMe 
+                            ? 'bg-primary-600 text-white rounded-tr-none' 
+                            : (isTeacher ? 'bg-primary-50 border border-primary-100 text-slate-900 rounded-tl-none' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm')
+                        } relative`}>
+                          {renderMessageContent(msg, isMe)}
+                          
+                          <div className={`text-[10px] mt-2 text-right ${isMe ? 'text-primary-100' : 'text-slate-400'}`}>
+                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Input Area */}
+              <div className="shrink-0 bg-white">
+                {activeChannel.isReadOnly ? (
+                  <div className="p-4 text-center text-slate-500 text-sm bg-slate-50 border-t border-slate-200 font-medium">
+                    This channel is read-only.
+                  </div>
+                ) : (
+                  <ChatInput onSendMessage={handleSendMessage} />
+                )}
+              </div>
+            </>
+          )}
+
+          {activeTab === 'channels' && !activeChannel && (
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50/50">
+              <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                <MessageSquare size={32} className="text-slate-300" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-700 mb-2">Select a channel</h3>
+              <p className="max-w-xs">Choose a channel from the sidebar to view announcements.</p>
             </div>
           )}
         </div>

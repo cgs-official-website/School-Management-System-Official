@@ -638,10 +638,105 @@ export const deleteChatMessage = async (schoolId, chatRoomId, messageId) => {
     const messageRef = doc(db, `schools/${schoolId}/chats/${chatRoomId}/messages`, messageId);
     await deleteDoc(messageRef);
   } catch (error) {
-    console.error("Error deleting chat message:", error);
+    console.error("Error deleting message:", error);
     throw error;
   }
 };
+
+// ==========================================
+// CHANNELS (GROUP MESSAGING)
+// ==========================================
+
+export const createChannel = async (schoolId, channelData) => {
+  try {
+    const channelsRef = collection(db, `schools/${schoolId}/channels`);
+    const docRef = await addDoc(channelsRef, {
+      ...channelData,
+      createdAt: new Date().toISOString()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating channel:", error);
+    throw error;
+  }
+};
+
+export const getChannelsForUser = async (schoolId, role, uid, classId) => {
+  try {
+    const channelsRef = collection(db, `schools/${schoolId}/channels`);
+    let q;
+    if (role === 'parent') {
+      // Parents see channels for their child's class
+      q = query(channelsRef, where("classId", "==", classId));
+    } else if (role === 'teacher') {
+      // Teachers see channels they created OR channels for their assigned class
+      // Firestore doesn't support OR across different fields easily without composite indexes,
+      // so we'll fetch all and filter in memory since channels count is small.
+      const querySnapshot = await getDocs(channelsRef);
+      const channels = [];
+      querySnapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.createdBy === uid || data.classId === classId || data.classId === 'all') {
+          channels.push({ id: doc.id, ...data });
+        }
+      });
+      return channels.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else {
+      // Admins see all
+      const querySnapshot = await getDocs(channelsRef);
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+    
+    if (q) {
+      const querySnapshot = await getDocs(q);
+      const channels = [];
+      querySnapshot.forEach(doc => {
+        channels.push({ id: doc.id, ...doc.data() });
+      });
+      return channels.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+  } catch (error) {
+    console.error("Error getting channels:", error);
+    throw error;
+  }
+};
+
+export const subscribeToChannelMessages = (schoolId, channelId, callback) => {
+  const messagesRef = collection(db, `schools/${schoolId}/channels/${channelId}/messages`);
+  const q = query(messagesRef, orderBy("createdAt", "asc"));
+  
+  return onSnapshot(q, (snapshot) => {
+    const messages = [];
+    snapshot.forEach((doc) => {
+      messages.push({ id: doc.id, ...doc.data() });
+    });
+    callback(messages);
+  }, (error) => {
+    console.error("Error subscribing to channel messages:", error);
+  });
+};
+
+export const sendChannelMessage = async (schoolId, channelId, senderId, senderRole, senderName, text, mediaUrl = null, mediaType = null) => {
+  try {
+    const messagesRef = collection(db, `schools/${schoolId}/channels/${channelId}/messages`);
+    const messageData = {
+      senderId,
+      senderRole,
+      senderName,
+      text: text || '',
+      createdAt: new Date().toISOString()
+    };
+    if (mediaUrl) {
+      messageData.mediaUrl = mediaUrl;
+      messageData.mediaType = mediaType;
+    }
+    await addDoc(messagesRef, messageData);
+  } catch (error) {
+    console.error("Error sending channel message:", error);
+    throw error;
+  }
+};
+
 
 export const getChatThreads = async (schoolId) => {
   try {
