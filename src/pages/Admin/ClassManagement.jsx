@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, subscribeToSubCollection, updateSubDocument } from '../../firebase/firestore';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuBookOpen as BookOpen, LuPlus as Plus, LuTrash2 as Trash2, LuUsers as Users } from 'react-icons/lu';
+import { LuBookOpen as BookOpen, LuPlus as Plus, LuTrash2 as Trash2, LuUsers as Users, LuPencil as Pencil } from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
@@ -256,15 +256,26 @@ export default function ClassManagement() {
               onClick={() => hasEditPermission && handleEditClick(cls)}
               className={`bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow relative group ${hasEditPermission ? 'cursor-pointer' : 'cursor-default'}`}
             >
-              {hasDeletePermission && (
-                <button 
-                  onClick={(e) => { e.stopPropagation(); handleDeleteClick(cls.id); }}
-                  className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 z-10"
-                  title="Delete Class"
-                >
-                  <Trash2 size={18} />
-                </button>
-              )}
+              <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 z-10 transition-opacity">
+                {hasEditPermission && (
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleEditClick(cls); }}
+                    className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                    title="Edit Class"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                )}
+                {hasDeletePermission && (
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); handleDeleteClick(cls.id); }}
+                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete Class"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                )}
+              </div>
 
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center">
