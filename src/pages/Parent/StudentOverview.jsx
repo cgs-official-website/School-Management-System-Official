@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getDoc, doc, onSnapshot } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { subscribeToAttendanceForClass, subscribeToAssessmentsByClass } from '../../firebase/firestore';
-import { LuCircleUser as UserCircle, LuCalendar as Calendar, LuGraduationCap as GraduationCap, LuCircleCheck as CheckCircle2, LuTrendingUp as TrendingUp, LuTriangleAlert as AlertTriangle } from 'react-icons/lu';
+import { LuCircleUser as UserCircle, LuCalendar as Calendar, LuGraduationCap as GraduationCap, LuCircleCheck as CheckCircle2, LuTrendingUp as TrendingUp, LuTriangleAlert as AlertTriangle, LuCreditCard as CreditCard, LuArrowRight as ArrowRight } from 'react-icons/lu';
 
 export default function StudentOverview() {
   const { userProfile } = useAuth();
@@ -17,6 +18,7 @@ export default function StudentOverview() {
   const [attendanceStats, setAttendanceStats] = useState({ total: 0, present: 0, absent: 0, late: 0 });
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [feeSummary, setFeeSummary] = useState({ unpaidCount: 0, overdueCount: 0, totalUnpaidAmount: 0, earliestDueDate: null });
 
   // Subscribe to student document to get actual classId
   useEffect(() => {
@@ -30,6 +32,50 @@ export default function StudentOverview() {
           setResolvedClassId(data.classId);
         }
       }
+    });
+
+    return () => unsub();
+  }, [schoolId, studentId]);
+
+  // Subscribe to fee invoices for unpaid fee alerts
+  useEffect(() => {
+    if (!schoolId || !studentId) return;
+
+    const q = query(
+      collection(db, `schools/${schoolId}/invoices`),
+      where("studentId", "==", studentId)
+    );
+
+    const unsub = onSnapshot(q, (snap) => {
+      let unpaidCount = 0;
+      let overdueCount = 0;
+      let totalUnpaidAmount = 0;
+      let earliestDue = null;
+      const today = new Date();
+
+      snap.forEach(docSnap => {
+        const inv = docSnap.data();
+        if (inv.status !== 'Paid') {
+          unpaidCount++;
+          totalUnpaidAmount += (Number(inv.amount) || 0);
+          const due = inv.dueDate ? new Date(inv.dueDate + 'T23:59:59') : null;
+          if (due && due < today) {
+            overdueCount++;
+          }
+          if (due && (!earliestDue || due < earliestDue)) {
+            earliestDue = due;
+          }
+        }
+      });
+
+      setFeeSummary({
+        unpaidCount,
+        overdueCount,
+        totalUnpaidAmount,
+        earliestDueDate: earliestDue ? earliestDue.toLocaleDateString() : null
+      });
+    }, (err) => {
+      console.error("Error fetching fee invoices for alert:", err);
     });
 
     return () => unsub();
@@ -96,11 +142,11 @@ export default function StudentOverview() {
         
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
           <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 text-3xl font-black border-4 border-white/10 shrink-0 shadow-xl">
-            {student.firstName.charAt(0)}{student.lastName.charAt(0)}
+            {(student.firstName?.charAt(0) || '')}{(student.lastName?.charAt(0) || '')}
           </div>
           <div className="text-center md:text-left">
             <h1 className="text-4xl font-black mb-2 tracking-tight">
-              {student.firstName} {student.lastName}
+              {student.firstName || ''} {student.lastName || ''}
             </h1>
             <p className="text-slate-300 text-lg flex flex-wrap items-center justify-center md:justify-start gap-3">
               <span className="flex items-center gap-1"><GraduationCap size={18} className="text-primary-400"/> {classDetails ? `${classDetails.name} - ${classDetails.section}` : 'Class'}</span>
@@ -110,6 +156,63 @@ export default function StudentOverview() {
           </div>
         </div>
       </div>
+
+      {/* Outstanding / Overdue Fee Alert Banner */}
+      {feeSummary.unpaidCount > 0 && (
+        <div className={`mb-8 p-6 rounded-3xl border shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5 animate-fade-in ${
+          feeSummary.overdueCount > 0 
+            ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200 text-red-900' 
+            : 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 text-amber-900'
+        }`}>
+          <div className="flex items-start gap-4">
+            <div className={`p-3.5 rounded-2xl shrink-0 mt-0.5 shadow-md ${
+              feeSummary.overdueCount > 0 
+                ? 'bg-red-500 text-white shadow-red-500/30 animate-pulse' 
+                : 'bg-amber-500 text-white shadow-amber-500/30'
+            }`}>
+              <AlertTriangle size={26} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                  feeSummary.overdueCount > 0 ? 'bg-red-200 text-red-950 font-black' : 'bg-amber-200 text-amber-950 font-bold'
+                }`}>
+                  {feeSummary.overdueCount > 0 ? '⚠️ Action Required: Overdue Fees' : '💳 Pending Fee Dues'}
+                </span>
+                {feeSummary.overdueCount > 0 && (
+                  <span className="text-xs font-bold text-red-700 bg-white/90 px-2.5 py-0.5 rounded-full border border-red-200">
+                    {feeSummary.overdueCount} Overdue
+                  </span>
+                )}
+              </div>
+              <h3 className="text-xl font-black mt-1 text-slate-900">
+                {feeSummary.overdueCount > 0
+                  ? `₹${feeSummary.totalUnpaidAmount.toLocaleString()} Outstanding Fee Balance`
+                  : `₹${feeSummary.totalUnpaidAmount.toLocaleString()} Pending Fee Dues`
+                }
+              </h3>
+              <p className="text-sm text-slate-600 mt-1">
+                {feeSummary.overdueCount > 0
+                  ? `There are ${feeSummary.unpaidCount} unpaid fee invoice(s) for your child (${feeSummary.overdueCount} past the due date). Please settle immediately.`
+                  : `You have ${feeSummary.unpaidCount} unpaid invoice(s) due by ${feeSummary.earliestDueDate || 'the upcoming due date'}. Please complete payment.`
+                }
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/parent/fees"
+            className={`px-5 py-3 rounded-2xl font-bold text-sm shadow-md flex items-center gap-2 shrink-0 transition-all hover:scale-105 active:scale-95 ${
+              feeSummary.overdueCount > 0
+                ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/30'
+                : 'bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/30'
+            }`}
+          >
+            <CreditCard size={18} />
+            <span>Pay Fees Now</span>
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         

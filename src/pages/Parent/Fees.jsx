@@ -34,16 +34,25 @@ export default function ParentFees() {
       let totalInvoiced = 0;
       let paid = 0;
       let outstanding = 0;
+      let overdueCount = 0;
+      let overdueAmount = 0;
+      const today = new Date();
 
       snapshot.forEach((doc) => {
         const inv = { id: doc.id, ...doc.data() };
         invoicesData.push(inv);
 
-        totalInvoiced += inv.amount || 0;
+        const amt = Number(inv.amount) || 0;
+        totalInvoiced += amt;
         if (inv.status === 'Paid') {
-          paid += inv.amount || 0;
+          paid += amt;
         } else {
-          outstanding += inv.amount || 0;
+          outstanding += amt;
+          const isOverdue = inv.dueDate && new Date(inv.dueDate + 'T23:59:59') < today;
+          if (isOverdue) {
+            overdueCount++;
+            overdueAmount += amt;
+          }
         }
       });
 
@@ -51,7 +60,7 @@ export default function ParentFees() {
       invoicesData.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
 
       setInvoices(invoicesData);
-      setStats({ totalInvoiced, paid, outstanding });
+      setStats({ totalInvoiced, paid, outstanding, overdueCount, overdueAmount });
       setLoading(false);
     }, (error) => {
       console.error("Error subscribing to invoices:", error);
@@ -130,24 +139,70 @@ export default function ParentFees() {
         </div>
 
         {/* Outstanding */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center gap-4 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
-          <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center">
+        <div className={`bg-white rounded-3xl p-6 border shadow-sm flex items-center gap-4 relative overflow-hidden ${
+          stats.overdueCount > 0 ? 'border-red-200' : 'border-slate-100'
+        }`}>
+          <div className={`absolute top-0 left-0 w-2 h-full ${stats.overdueCount > 0 ? 'bg-red-500' : 'bg-amber-500'}`}></div>
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
+            stats.overdueCount > 0 ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
+          }`}>
             <AlertTriangle size={24} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Outstanding Balance</p>
-            <p className="text-2xl font-black text-amber-600 mt-1">₹{stats.outstanding.toLocaleString()}</p>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              {stats.overdueCount > 0 ? 'Overdue Balance' : 'Outstanding Balance'}
+            </p>
+            <p className={`text-2xl font-black mt-1 ${stats.overdueCount > 0 ? 'text-red-600' : 'text-amber-600'}`}>
+              ₹{stats.outstanding.toLocaleString()}
+            </p>
+            {stats.overdueCount > 0 && (
+              <p className="text-[11px] font-bold text-red-600 mt-0.5">
+                {stats.overdueCount} Invoice(s) Past Due
+              </p>
+            )}
           </div>
         </div>
       </div>
 
       {/* Dues Alert Banner */}
       {stats.outstanding > 0 && (
-        <div className="bg-amber-50 border border-amber-200/60 rounded-2xl p-4 flex items-center gap-3 text-amber-800">
-          <Info className="shrink-0 text-amber-600" size={20} />
-          <div className="text-sm font-medium">
-            You have an outstanding balance of <span className="font-bold">₹{stats.outstanding.toLocaleString()}</span>. Please settle pending invoices before their due date.
+        <div className={`rounded-3xl p-5 border shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-fade-in ${
+          stats.overdueCount > 0
+            ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200 text-red-900'
+            : 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 text-amber-900'
+        }`}>
+          <div className="flex items-start gap-4">
+            <div className={`p-3 rounded-2xl shrink-0 mt-0.5 ${
+              stats.overdueCount > 0 ? 'bg-red-500 text-white shadow-md shadow-red-500/20 animate-pulse' : 'bg-amber-500 text-white shadow-md shadow-amber-500/20'
+            }`}>
+              <AlertTriangle size={24} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                  stats.overdueCount > 0 ? 'bg-red-200 text-red-950 font-black' : 'bg-amber-200 text-amber-950 font-bold'
+                }`}>
+                  {stats.overdueCount > 0 ? '⚠️ Immediate Action Required' : '💳 Pending Payment Alert'}
+                </span>
+                {stats.overdueCount > 0 && (
+                  <span className="text-xs font-bold text-red-700 bg-white/80 px-2 py-0.5 rounded-full border border-red-200">
+                    {stats.overdueCount} Overdue
+                  </span>
+                )}
+              </div>
+              <h3 className="text-lg font-black text-slate-900 mt-1">
+                {stats.overdueCount > 0
+                  ? `You have ₹${stats.outstanding.toLocaleString()} in overdue fees requiring immediate settlement.`
+                  : `You have an outstanding balance of ₹${stats.outstanding.toLocaleString()} pending payment.`
+                }
+              </h3>
+              <p className="text-sm text-slate-600 mt-0.5">
+                {stats.overdueCount > 0
+                  ? 'Please click "Pay Immediately" below on overdue items to clear your account.'
+                  : 'Please settle pending invoices before their due date to keep your child’s account active.'
+                }
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -177,39 +232,57 @@ export default function ParentFees() {
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm">
                 {invoices.map((inv) => {
-                  const isOverdue = new Date(inv.dueDate) < new Date() && inv.status !== 'Paid';
+                  const isOverdue = inv.dueDate && new Date(inv.dueDate + 'T23:59:59') < new Date() && inv.status !== 'Paid';
                   return (
-                    <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr 
+                      key={inv.id} 
+                      className={`transition-colors ${
+                        isOverdue ? 'bg-red-50/40 hover:bg-red-50/70' : 'hover:bg-slate-50/50'
+                      }`}
+                    >
                       <td className="py-4 px-6">
                         <p className="font-semibold text-slate-900">{inv.name}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">Invoiced on {new Date(inv.createdAt).toLocaleDateString()}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          {inv.createdAt ? `Invoiced on ${new Date(inv.createdAt).toLocaleDateString()}` : 'Standard Fee'}
+                        </p>
                       </td>
                       <td className="py-4 px-6">
-                        <span className={`font-medium ${isOverdue ? 'text-red-500 font-semibold' : 'text-slate-600'}`}>
-                          {new Date(inv.dueDate).toLocaleDateString()}
-                          {isOverdue && <span className="ml-1 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-black uppercase">Overdue</span>}
+                        <span className={`font-medium ${isOverdue ? 'text-red-600 font-bold' : 'text-slate-600'}`}>
+                          {inv.dueDate ? new Date(inv.dueDate).toLocaleDateString() : 'N/A'}
+                          {isOverdue && (
+                            <span className="ml-2 inline-flex items-center gap-1 text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-black uppercase tracking-wide border border-red-200">
+                              <AlertTriangle size={10} /> Overdue
+                            </span>
+                          )}
                         </span>
                       </td>
                       <td className="py-4 px-6">
-                        <span className="font-bold text-slate-900">₹{inv.amount.toLocaleString()}</span>
+                        <span className="font-bold text-slate-900">₹{Number(inv.amount || 0).toLocaleString()}</span>
                       </td>
                       <td className="py-4 px-6 text-center">
-                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
-                          inv.status === 'Paid' 
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50' 
-                            : 'bg-amber-50 text-amber-700 border border-amber-200/50'
-                        }`}>
-                          {inv.status === 'Paid' && <CheckCircle2 size={12} />}
-                          {inv.status}
-                        </span>
+                        {inv.status === 'Paid' ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+                            <CheckCircle2 size={12} /> Paid
+                          </span>
+                        ) : isOverdue ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200 animate-pulse">
+                            <AlertTriangle size={12} /> Overdue
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200/50">
+                            Pending
+                          </span>
+                        )}
                       </td>
                       <td className="py-4 px-6 text-right">
                         {inv.status !== 'Paid' ? (
                           <button
                             onClick={() => handleSimulatePayment(inv)}
-                            className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold transition-all hover:scale-[1.02]"
+                            className={`px-4 py-2 text-white rounded-xl text-xs font-bold shadow-sm transition-all hover:scale-105 active:scale-95 ${
+                              isOverdue ? 'bg-red-600 hover:bg-red-700 shadow-red-600/30' : 'bg-primary-600 hover:bg-primary-700 shadow-primary-600/30'
+                            }`}
                           >
-                            Pay Dues
+                            {isOverdue ? 'Pay Immediately' : 'Pay Dues'}
                           </button>
                         ) : (
                           <span className="text-slate-400 text-xs font-medium italic">Fully Settled</span>

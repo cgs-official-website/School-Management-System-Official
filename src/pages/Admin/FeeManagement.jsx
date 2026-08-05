@@ -23,9 +23,17 @@ export default function FeeManagement() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterPeriodId, setFilterPeriodId] = useState(''); // '' = All Periods
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all' | 'overdue' | 'unpaid' | 'paid'
 
   // Dashboard Stats
   const [stats, setStats] = useState({ expected: 0, collected: 0, outstanding: 0 });
+  const [feeAlerts, setFeeAlerts] = useState({
+    overdueCount: 0,
+    overdueAmount: 0,
+    unpaidCount: 0,
+    unpaidStudentsCount: 0,
+    overdueStudentsCount: 0
+  });
 
   // Modal State
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -73,15 +81,38 @@ export default function FeeManagement() {
 
   const calculateStats = (invoicesData) => {
     let expected = 0, collected = 0, outstanding = 0;
+    let overdueCount = 0, overdueAmount = 0, unpaidCount = 0;
+    const unpaidStudentsSet = new Set();
+    const overdueStudentsSet = new Set();
+    const today = new Date();
+
     invoicesData.forEach(inv => {
-      expected += inv.amount;
+      const amt = Number(inv.amount) || 0;
+      expected += amt;
       if (inv.status === 'Paid') {
-        collected += inv.amount;
+        collected += amt;
       } else {
-        outstanding += inv.amount;
+        outstanding += amt;
+        unpaidCount++;
+        if (inv.studentId) unpaidStudentsSet.add(inv.studentId);
+
+        const isOverdue = inv.dueDate && new Date(inv.dueDate + 'T23:59:59') < today;
+        if (isOverdue) {
+          overdueCount++;
+          overdueAmount += amt;
+          if (inv.studentId) overdueStudentsSet.add(inv.studentId);
+        }
       }
     });
+
     setStats({ expected, collected, outstanding });
+    setFeeAlerts({
+      overdueCount,
+      overdueAmount,
+      unpaidCount,
+      unpaidStudentsCount: unpaidStudentsSet.size,
+      overdueStudentsCount: overdueStudentsSet.size
+    });
   };
 
   // When a collection period is selected, auto-generate the fee name
@@ -142,27 +173,43 @@ export default function FeeManagement() {
       );
       setInvoices(updatedInvoices);
       calculateStats(updatedInvoices);
+      toast.success("Payment recorded successfully!");
     } catch (error) {
       toast.error("Failed to record payment.");
     }
   };
 
-  // Filter invoices based on search and period filter
+  // Filter invoices based on status, period, and search query
   const filteredInvoices = invoices.filter(inv => {
+    const today = new Date();
+    const isOverdue = inv.dueDate && new Date(inv.dueDate + 'T23:59:59') < today && inv.status !== 'Paid';
+
+    // Status filter
+    if (statusFilter === 'overdue' && !isOverdue) return false;
+    if (statusFilter === 'unpaid' && inv.status === 'Paid') return false;
+    if (statusFilter === 'paid' && inv.status !== 'Paid') return false;
+
     // Period filter
     if (filterPeriodId && inv.collectionPeriodId !== filterPeriodId) return false;
 
     // Search filter
     if (!searchQuery) return true;
     const student = students[inv.studentId];
-    if (!student) return false;
-    const searchTerm = searchQuery.toLowerCase();
+    const searchTerm = searchQuery.toLowerCase().trim();
+    
+    const studentNameMatch = student ? (
+      (student.firstName || '').toLowerCase().includes(searchTerm) ||
+      (student.lastName || '').toLowerCase().includes(searchTerm) ||
+      `${(student.firstName || '').toLowerCase()} ${(student.lastName || '').toLowerCase()}`.includes(searchTerm) ||
+      (student.admissionNumber || '').toLowerCase().includes(searchTerm)
+    ) : false;
+
     return (
-      student.firstName.toLowerCase().includes(searchTerm) ||
-      student.lastName.toLowerCase().includes(searchTerm) ||
-      student.admissionNumber.toLowerCase().includes(searchTerm) ||
-      inv.feeName.toLowerCase().includes(searchTerm) ||
-      (inv.collectionPeriodName || '').toLowerCase().includes(searchTerm)
+      studentNameMatch ||
+      (inv.feeName || '').toLowerCase().includes(searchTerm) ||
+      (inv.collectionPeriodName || '').toLowerCase().includes(searchTerm) ||
+      (inv.status || '').toLowerCase().includes(searchTerm) ||
+      (isOverdue && 'overdue'.includes(searchTerm))
     );
   });
 
@@ -179,7 +226,7 @@ export default function FeeManagement() {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Fee Management</h1>
-          <p className="text-slate-500 mt-1">Track revenue and manage student payments.</p>
+          <p className="text-slate-500 mt-1">Track revenue, manage student payments, and monitor fee dues alerts.</p>
         </div>
         {hasCreatePermission && (
           <button 
@@ -190,6 +237,94 @@ export default function FeeManagement() {
           </button>
         )}
       </div>
+
+      {/* Fee Dues Alert Banner */}
+      {feeAlerts.overdueCount > 0 ? (
+        <div className="mb-8 p-6 rounded-3xl bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-fade-in">
+          <div className="flex items-start gap-4">
+            <div className="p-3.5 bg-red-600 text-white rounded-2xl shrink-0 shadow-md shadow-red-600/20 animate-pulse">
+              <AlertTriangle size={26} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="bg-red-200 text-red-950 text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                  ⚠️ Overdue Fees Alert
+                </span>
+                <span className="bg-white text-red-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-red-200">
+                  {feeAlerts.overdueCount} Overdue Invoices
+                </span>
+              </div>
+              <h2 className="text-xl font-black text-slate-900 mt-1">
+                ₹{feeAlerts.overdueAmount.toLocaleString()} Overdue Across {feeAlerts.overdueStudentsCount} Student(s)
+              </h2>
+              <p className="text-sm text-slate-600 mt-0.5">
+                Total outstanding: ₹{stats.outstanding.toLocaleString()} ({feeAlerts.unpaidCount} unpaid invoices across {feeAlerts.unpaidStudentsCount} students).
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => setStatusFilter(statusFilter === 'overdue' ? 'all' : 'overdue')}
+              className={`px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm flex items-center gap-2 ${
+                statusFilter === 'overdue'
+                  ? 'bg-red-700 text-white shadow-red-700/20'
+                  : 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/20'
+              }`}
+            >
+              <Filter size={16} />
+              {statusFilter === 'overdue' ? 'Showing Overdue Invoices' : 'Filter Overdue Invoices'}
+            </button>
+            {statusFilter !== 'all' && (
+              <button
+                onClick={() => setStatusFilter('all')}
+                className="px-3 py-2.5 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-sm font-semibold border border-slate-200 transition-colors"
+              >
+                Reset Filter
+              </button>
+            )}
+          </div>
+        </div>
+      ) : feeAlerts.unpaidCount > 0 ? (
+        <div className="mb-8 p-5 rounded-3xl bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-fade-in">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-amber-500 text-white rounded-2xl shrink-0 shadow-md shadow-amber-500/20">
+              <AlertTriangle size={24} />
+            </div>
+            <div>
+              <span className="bg-amber-200 text-amber-950 text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                💳 Pending Collection Alert
+              </span>
+              <h2 className="text-lg font-black text-slate-900 mt-1">
+                ₹{stats.outstanding.toLocaleString()} Pending Collection ({feeAlerts.unpaidCount} Invoices)
+              </h2>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Pending across {feeAlerts.unpaidStudentsCount} students within their active payment deadlines.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => setStatusFilter(statusFilter === 'unpaid' ? 'all' : 'unpaid')}
+              className={`px-4 py-2 rounded-xl font-bold text-xs transition-all shadow-sm flex items-center gap-2 ${
+                statusFilter === 'unpaid'
+                  ? 'bg-amber-700 text-white'
+                  : 'bg-amber-600 hover:bg-amber-700 text-white'
+              }`}
+            >
+              <Filter size={14} />
+              {statusFilter === 'unpaid' ? 'Showing Unpaid Only' : 'View Unpaid Invoices'}
+            </button>
+            {statusFilter !== 'all' && (
+              <button
+                onClick={() => setStatusFilter('all')}
+                className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold border border-slate-200"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </div>
+      ) : null}
 
       {/* Dashboard Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -214,12 +349,23 @@ export default function FeeManagement() {
         </div>
         
         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center">
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
+            feeAlerts.overdueCount > 0 ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
+          }`}>
             <AlertTriangle size={28} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Outstanding</p>
-            <p className="text-2xl font-black text-slate-900">₹{stats.outstanding.toLocaleString()}</p>
+            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+              {feeAlerts.overdueCount > 0 ? 'Outstanding (Overdue Alert)' : 'Outstanding'}
+            </p>
+            <p className={`text-2xl font-black ${feeAlerts.overdueCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
+              ₹{stats.outstanding.toLocaleString()}
+            </p>
+            {feeAlerts.overdueCount > 0 && (
+              <p className="text-xs font-bold text-red-600 mt-0.5">
+                ₹{feeAlerts.overdueAmount.toLocaleString()} overdue
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -239,23 +385,42 @@ export default function FeeManagement() {
             />
           </div>
 
-          {/* Period Filter */}
-          {periods.length > 0 && (
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <Filter size={16} className="text-slate-400 shrink-0" />
+              <span className="text-xs font-bold text-slate-400 uppercase">Status:</span>
               <select
-                value={filterPeriodId}
-                onChange={(e) => setFilterPeriodId(e.target.value)}
-                className="px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white text-slate-700 font-medium"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white text-slate-700 font-medium"
               >
-                <option value="">All Periods</option>
-                {periods.map(p => (
-                  <option key={p.id} value={p.id}>{p.name}</option>
-                ))}
-                <option value="null_period">General (No Period)</option>
+                <option value="all">All Invoices ({invoices.length})</option>
+                {feeAlerts.overdueCount > 0 && (
+                  <option value="overdue">⚠️ Overdue ({feeAlerts.overdueCount})</option>
+                )}
+                <option value="unpaid">Unpaid / Pending ({feeAlerts.unpaidCount})</option>
+                <option value="paid">Paid ({invoices.length - feeAlerts.unpaidCount})</option>
               </select>
             </div>
-          )}
+
+            {/* Period Filter */}
+            {periods.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Filter size={16} className="text-slate-400 shrink-0" />
+                <select
+                  value={filterPeriodId}
+                  onChange={(e) => setFilterPeriodId(e.target.value)}
+                  className="px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white text-slate-700 font-medium"
+                >
+                  <option value="">All Periods</option>
+                  {periods.map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                  <option value="null_period">General (No Period)</option>
+                </select>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -276,19 +441,33 @@ export default function FeeManagement() {
                   <td colSpan="6" className="p-16 text-center text-slate-500">
                     <CreditCard size={48} className="mx-auto mb-4 text-slate-300" />
                     <p className="font-bold text-slate-900 mb-1">No invoices found</p>
-                    <p>Assign a fee to a class to generate invoices.</p>
+                    <p>
+                      {statusFilter !== 'all' || filterPeriodId || searchQuery 
+                        ? 'Try clearing the active filters or search terms.' 
+                        : 'Assign a fee to a class to generate invoices.'}
+                    </p>
                   </td>
                 </tr>
               ) : (
                 filteredInvoices.map((inv) => {
                   const student = students[inv.studentId];
+                  const today = new Date();
+                  const isOverdue = inv.dueDate && new Date(inv.dueDate + 'T23:59:59') < today && inv.status !== 'Paid';
+                  
                   return (
-                    <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr 
+                      key={inv.id} 
+                      className={`transition-colors ${
+                        isOverdue 
+                          ? 'bg-red-50/30 hover:bg-red-50/60' 
+                          : 'hover:bg-slate-50/50'
+                      }`}
+                    >
                       <td className="p-4 pl-6">
                         {student ? (
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm border border-slate-200">
-                              {student.firstName.charAt(0)}{student.lastName.charAt(0)}
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm border border-slate-200 shrink-0">
+                              {(student.firstName?.charAt(0) || '')}{(student.lastName?.charAt(0) || '')}
                             </div>
                             <div>
                               <div className="font-bold text-slate-900">
@@ -305,7 +484,9 @@ export default function FeeManagement() {
                       </td>
                       <td className="p-4">
                         <div className="font-bold text-slate-900">{inv.feeName}</div>
-                        <div className="text-xs text-slate-500">Due: {inv.dueDate}</div>
+                        <div className={`text-xs mt-0.5 ${isOverdue ? 'text-red-600 font-bold' : 'text-slate-500'}`}>
+                          Due: {inv.dueDate || 'N/A'}
+                        </div>
                       </td>
                       <td className="p-4">
                         {inv.collectionPeriodName && inv.collectionPeriodName !== 'General' ? (
@@ -317,12 +498,16 @@ export default function FeeManagement() {
                         )}
                       </td>
                       <td className="p-4 font-mono font-bold text-slate-700">
-                        ₹{inv.amount.toLocaleString()}
+                        ₹{Number(inv.amount || 0).toLocaleString()}
                       </td>
                       <td className="p-4">
                         {inv.status === 'Paid' ? (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-green-100 text-green-700 border border-green-200">
                             <CheckCircle2 size={14} /> Paid
+                          </span>
+                        ) : isOverdue ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-red-100 text-red-700 border border-red-200 animate-pulse">
+                            <AlertTriangle size={14} /> Overdue
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200">
@@ -331,10 +516,14 @@ export default function FeeManagement() {
                         )}
                       </td>
                       <td className="p-4 pr-6 text-right">
-                        {inv.status === 'Pending' && hasEditPermission && (
+                        {inv.status !== 'Paid' && hasEditPermission && (
                           <button 
                             onClick={() => handleMarkPaid(inv.id)}
-                            className="px-4 py-2 bg-primary-50 text-primary-700 hover:bg-primary-600 hover:text-white rounded-xl font-bold transition-colors border border-primary-100 hover:border-primary-600 text-xs"
+                            className={`px-4 py-2 rounded-xl font-bold transition-all text-xs border ${
+                              isOverdue
+                                ? 'bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-sm shadow-red-600/20'
+                                : 'bg-primary-50 text-primary-700 hover:bg-primary-600 hover:text-white border-primary-100 hover:border-primary-600'
+                            }`}
                           >
                             Record Payment
                           </button>

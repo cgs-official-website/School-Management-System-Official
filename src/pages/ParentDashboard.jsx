@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { logoutUser } from '../firebase/auth';
 import { findStudentByAdmission, linkStudentToParent } from '../firebase/firestore';
-import { getDoc, doc, onSnapshot } from 'firebase/firestore';
+import { getDoc, doc, onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
 import { LuCircleUser as UserCircle, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuCreditCard as CreditCard, LuLink as LinkIcon, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuCoffee as Coffee, LuBuilding2 as Building2, LuTrendingUp as TrendingUp, LuCalendarClock as CalendarClock, LuMessageSquare as MessageSquare } from 'react-icons/lu';
@@ -18,6 +18,8 @@ export default function ParentDashboard() {
   const [loading, setLoading] = useState(true);
   const [school, setSchool] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [unpaidFeeCount, setUnpaidFeeCount] = useState(0);
+  const [hasOverdueFees, setHasOverdueFees] = useState(false);
 
   // Link Student Form State
   const [admissionNumber, setAdmissionNumber] = useState('');
@@ -44,6 +46,41 @@ export default function ParentDashboard() {
       if (unsubSchool) unsubSchool();
     };
   }, [userProfile, navigate]);
+
+  // Subscribe to unpaid invoices for the linked student
+  useEffect(() => {
+    if (!userProfile?.schoolId || !userProfile?.linkedStudentId) {
+      setUnpaidFeeCount(0);
+      setHasOverdueFees(false);
+      return;
+    }
+
+    const q = query(
+      collection(db, `schools/${userProfile.schoolId}/invoices`),
+      where("studentId", "==", userProfile.linkedStudentId)
+    );
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      let count = 0;
+      let overdue = false;
+      const today = new Date();
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.status !== 'Paid') {
+          count++;
+          if (data.dueDate && new Date(data.dueDate + 'T23:59:59') < today) {
+            overdue = true;
+          }
+        }
+      });
+      setUnpaidFeeCount(count);
+      setHasOverdueFees(overdue);
+    }, (err) => {
+      console.error("Error subscribing to parent fee invoices:", err);
+    });
+
+    return () => unsub();
+  }, [userProfile?.schoolId, userProfile?.linkedStudentId]);
 
   // Close sidebar on route change for mobile
   useEffect(() => {
@@ -232,11 +269,19 @@ export default function ParentDashboard() {
                   )}
                   <item.icon size={20} className="shrink-0" />
                   <span>{item.name}</span>
-                  {item.moduleKey && unreadCounts[item.moduleKey] > 0 && (
+                  {item.moduleKey === 'fees' && unpaidFeeCount > 0 ? (
+                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full select-none shrink-0 ml-auto animate-pulse ${
+                      hasOverdueFees 
+                        ? 'bg-red-600 text-white shadow-sm shadow-red-500/50' 
+                        : 'bg-amber-500 text-white shadow-sm shadow-amber-500/50'
+                    }`}>
+                      {hasOverdueFees ? `${unpaidFeeCount} Overdue` : `${unpaidFeeCount} Due`}
+                    </span>
+                  ) : item.moduleKey && unreadCounts[item.moduleKey] > 0 ? (
                     <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full select-none shrink-0 ml-auto animate-pulse">
                       {unreadCounts[item.moduleKey]}
                     </span>
-                  )}
+                  ) : null}
                 </>
               )}
             </NavLink>
