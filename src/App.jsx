@@ -22,6 +22,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const SchoolRegistration = lazy(() => import('./pages/SchoolRegistration'));
 const PublicLeadForm = lazy(() => import('./pages/PublicLeadForm'));
+const PublicAdmissionForm = lazy(() => import('./pages/PublicAdmissionForm'));
 
 // Super Admin Workflow
 const SuperAdminDashboard = lazy(() => import('./pages/SuperAdminDashboard'));
@@ -159,6 +160,9 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/register" element={<SchoolRegistration />} />
+            <Route path="/admission/:schoolId" element={<PublicAdmissionForm />} />
+            <Route path="/admission/form/:schoolId" element={<PublicAdmissionForm />} />
+            <Route path="/apply/:schoolId" element={<PublicAdmissionForm />} />
             <Route path="/leads/form/:schoolId/:formId" element={<PublicLeadForm />} />
             
             {/* Super Admin Routes */}

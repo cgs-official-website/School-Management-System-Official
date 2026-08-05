@@ -221,6 +221,16 @@ service cloud.firestore {
           allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId);
         }
       }
+
+      // Online Public Admission Applications Sub-Collection
+      match /admissionApplications/{applicationId} {
+        // Allow prospective parents/students to submit application forms publicly
+        allow create: if true;
+        // School staff, admins, and superadmins can view applications
+        allow read: if belongsToSchool(schoolId) || isAdminOfSchool(schoolId) || isSuperAdmin();
+        // School admins and superadmins can approve, update, or reject applications
+        allow update, delete: if isAdminOfSchool(schoolId) || isSuperAdmin();
+      }
       
       // Automated SOP Absentee Flags
       match /absenteeFlags/{document=**} {

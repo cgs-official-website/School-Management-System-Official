@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { LuLink as LinkIcon, LuCopy as Copy, LuCircleCheck as CheckCircle2, LuMail as Mail, LuUsers as Users, LuGraduationCap as GraduationCap, LuSave as Save, LuSettings2 as Settings2 } from 'react-icons/lu';
+import { LuLink as LinkIcon, LuCopy as Copy, LuCircleCheck as CheckCircle2, LuMail as Mail, LuUsers as Users, LuGraduationCap as GraduationCap, LuSave as Save, LuSettings2 as Settings2, LuUserPlus as UserPlus, LuExternalLink as ExternalLink } from 'react-icons/lu';
 
 export default function LinkGenerator() {
   const { userProfile } = useAuth();
@@ -60,6 +60,14 @@ export default function LinkGenerator() {
 
   const links = [
     {
+      id: 'admission',
+      title: 'Online Admission Application Form Link',
+      description: 'Share this public link with prospective students and parents. Submitted applications arrive in your Student Directory under "Admission Applications" for approval and admission.',
+      url: `${getBaseUrl()}/admission/${schoolId}`,
+      icon: UserPlus,
+      color: 'emerald'
+    },
+    {
       id: 'teacher',
       title: 'Teacher Registration Link',
       description: 'Send this link to your faculty. They will be able to create an account and join your school workspace as a teacher.',
@@ -108,7 +116,7 @@ export default function LinkGenerator() {
         {links.map((link) => (
           <div key={link.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 flex flex-col md:flex-row gap-8 items-start">
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${
-              link.color === 'blue' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
+              link.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' : link.color === 'blue' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
             }`}>
               <link.icon size={32} />
             </div>
@@ -138,6 +146,15 @@ export default function LinkGenerator() {
                       <><Copy size={18} /> Copy Link</>
                     )}
                   </button>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 text-slate-500 hover:text-primary-600 hover:bg-primary-50 border border-slate-200 rounded-xl transition-colors flex items-center justify-center"
+                    title="Open Link in New Tab"
+                  >
+                    <ExternalLink size={20} />
+                  </a>
                   <button 
                     onClick={() => handleEmailShare(link.url, link.title)}
                     className="p-3 text-slate-500 hover:text-primary-600 hover:bg-primary-50 border border-slate-200 rounded-xl transition-colors"

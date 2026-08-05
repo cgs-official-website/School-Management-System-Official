@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { getDoc, doc, deleteDoc, onSnapshot, query, where, getDocs, collection } from 'firebase/firestore';
+import { getDoc, doc, deleteDoc, updateDoc, onSnapshot, query, where, getDocs, collection } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
 import { storage } from '../../firebase/config';
-import { LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, LuExternalLink as ExternalLink, LuX as X, LuEye as Eye, LuTrash2 as Trash, LuDownload as Download, LuFileDown as FileDown, LuLink as LinkIcon } from 'react-icons/lu';
+import { 
+  LuSearch as Search, LuFilter as Filter, LuUserPlus as UserPlus, LuCircleCheck as CheckCircle2, 
+  LuGraduationCap as GraduationCap, LuCloudUpload as UploadCloud, LuFileText as FileText, 
+  LuExternalLink as ExternalLink, LuX as X, LuEye as Eye, LuTrash2 as Trash, LuDownload as Download, 
+  LuFileDown as FileDown, LuLink as LinkIcon, LuShare2 as Share2, LuCheck as Check, LuClock as Clock, 
+  LuTriangleAlert as AlertTriangle, LuSparkles as Sparkles, LuCopy as Copy, LuMail as Mail, 
+  LuUserCheck as UserCheck, LuBookOpen as BookOpen, LuPhone as Phone, LuMapPin as MapPin, 
+  LuCalendar as Calendar, LuArrowRight as ArrowRight
+} from 'react-icons/lu';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
@@ -28,6 +36,22 @@ export default function StudentManagement() {
   const [schoolName, setSchoolName] = useState('');
   const [schoolData, setSchoolData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Directory Tabs & Admission Applications State
+  const [activeDirectoryTab, setActiveDirectoryTab] = useState('enrolled'); // 'enrolled' | 'applications'
+  const [admissionApplications, setAdmissionApplications] = useState([]);
+  const [appSearchQuery, setAppSearchQuery] = useState('');
+  const [appStatusFilter, setAppStatusFilter] = useState('all'); // 'all', 'Pending', 'Approved', 'Rejected'
+  const [selectedAppForReview, setSelectedAppForReview] = useState(null);
+  const [reviewAppModalOpen, setReviewAppModalOpen] = useState(false);
+  const [assigningAppClassId, setAssigningAppClassId] = useState('');
+  const [assigningAppAdmissionNumber, setAssigningAppAdmissionNumber] = useState('');
+  const [approvingApp, setApprovingApp] = useState(false);
+  const [rejectingApp, setRejectingApp] = useState(false);
+  const [shareLinkModalOpen, setShareLinkModalOpen] = useState(false);
+  const [copiedAdmissionLink, setCopiedAdmissionLink] = useState(false);
+  const [appCurrentPage, setAppCurrentPage] = useState(1);
+  const [appRowsPerPage, setAppRowsPerPage] = useState(10);
 
   // Form State
   const [showForm, setShowForm] = useState(false);
@@ -238,6 +262,11 @@ export default function StudentManagement() {
       setClasses(data);
     });
 
+    const unsubApplications = subscribeToSubCollection(schoolId, 'admissionApplications', (data) => {
+      data.sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+      setAdmissionApplications(data);
+    });
+
     const fetchSchema = async () => {
       try {
         const snap = await getDoc(doc(db, `schools/${schoolId}/formSchemas/students`));
@@ -265,8 +294,160 @@ export default function StudentManagement() {
       unsubSchool();
       unsubStudents();
       unsubClasses();
+      unsubApplications();
     };
   }, [schoolId]);
+
+  // Handle Opening Application Review Modal
+  const handleOpenReviewModal = (app) => {
+    setSelectedAppForReview(app);
+    setAssigningAppClassId(app.targetClassId || (classes[0]?.id || ''));
+    
+    // Auto-generate a clean admission number if one isn't already assigned
+    const year = new Date().getFullYear();
+    const existingNums = students.map(s => parseInt((s.admissionNumber || '').replace(/\D/g, ''))).filter(n => !isNaN(n));
+    const maxNum = existingNums.length > 0 ? Math.max(...existingNums) : students.length;
+    const nextSeq = (maxNum + 1).toString().padStart(3, '0');
+    
+    setAssigningAppAdmissionNumber(app.assignedAdmissionNumber || `ADM-${year}-${nextSeq}`);
+    setReviewAppModalOpen(true);
+  };
+
+  // Handle Approving & Admitting Application
+  const handleApproveApplication = async () => {
+    if (!selectedAppForReview) return;
+    const app = selectedAppForReview;
+
+    // Check Seat Limit
+    const effectiveLimit = schoolData?.seatLimit || (schoolData?.plan?.toLowerCase() === 'enterprise' ? 2000 : schoolData?.plan?.toLowerCase() === 'basic' ? 100 : 500);
+    if (students.length >= effectiveLimit) {
+      toast.error(`School student capacity limit of ${effectiveLimit} seats reached. Cannot admit more students. Please contact SuperAdmin to expand limit.`, {
+        duration: 6000,
+        icon: '⚠️'
+      });
+      return;
+    }
+
+    const finalAdmNumber = (assigningAppAdmissionNumber || '').trim();
+    if (!finalAdmNumber) {
+      toast.error("Please enter a valid Admission Number.");
+      return;
+    }
+
+    const isDuplicate = students.some(
+      s => (s.admissionNumber || '').toLowerCase() === finalAdmNumber.toLowerCase()
+    );
+    if (isDuplicate) {
+      toast.error(`Admission number "${finalAdmNumber}" is already in use by another student.`);
+      return;
+    }
+
+    setApprovingApp(true);
+    try {
+      const newStudentPayload = {
+        firstName: app.firstName || (app.studentName ? app.studentName.split(' ')[0] : 'Student'),
+        lastName: app.lastName || (app.studentName && app.studentName.split(' ').length > 1 ? app.studentName.split(' ').slice(1).join(' ') : ''),
+        admissionNumber: finalAdmNumber,
+        classId: assigningAppClassId || app.targetClassId || '',
+        dob: app.dob || '',
+        age: app.age || '',
+        gender: app.gender || 'Male',
+        bloodGroup: app.bloodGroup || '',
+        nationality: app.nationality || 'Indian',
+        religion: app.religion || '',
+        motherTongue: app.motherTongue || '',
+        aadharNumber: app.aadharNumber || '',
+        studentEmail: app.studentEmail || '',
+        studentPhone: app.studentPhone || '',
+        
+        parentName: app.parentName || '',
+        parentRelationship: app.parentRelationship || 'Father',
+        parentPhone: app.parentPhone || '',
+        parentEmail: app.parentEmail || '',
+        parentOccupation: app.parentOccupation || '',
+        annualIncome: app.annualIncome || '',
+        emergencyContact: app.emergencyContact || app.parentPhone || '',
+        siblingName: app.siblingName || '',
+
+        homeAddress: app.homeAddress || '',
+        city: app.city || '',
+        state: app.state || '',
+        pincode: app.pincode || '',
+        
+        previousSchool: app.previousSchool || '',
+        previousRecords: app.previousMarks || '',
+        subjectsChosen: app.subjectsChosen || '',
+        busRoute: app.busRoute || '',
+        
+        photoUrl: app.photoUrl || '',
+        status: 'Active',
+        admittedFromApplicationId: app.id,
+        admittedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString()
+      };
+
+      const studentRef = await addSubDocument(schoolId, 'students', newStudentPayload);
+
+      // Increment School total studentCount
+      try {
+        await updateDoc(doc(db, 'schools', schoolId), {
+          studentCount: (students.length + 1)
+        });
+      } catch (countErr) {
+        console.warn("Could not update school studentCount:", countErr);
+      }
+
+      // Update Application status to Approved
+      await updateSubDocument(schoolId, 'admissionApplications', app.id, {
+        status: 'Approved',
+        admittedAt: new Date().toISOString(),
+        assignedAdmissionNumber: finalAdmNumber,
+        admittedStudentId: studentRef.id,
+        assignedClassId: assigningAppClassId || app.targetClassId || ''
+      });
+
+      toast.success(`Student ${app.studentName || app.firstName} admitted successfully to the student directory!`, {
+        icon: '🎓'
+      });
+      setReviewAppModalOpen(false);
+      setSelectedAppForReview(null);
+    } catch (err) {
+      console.error("Error approving admission:", err);
+      toast.error("Failed to admit student: " + (err.message || 'Unknown error'));
+    } finally {
+      setApprovingApp(false);
+    }
+  };
+
+  // Handle Rejecting Application
+  const handleRejectApplication = async (appId) => {
+    setRejectingApp(true);
+    try {
+      await updateSubDocument(schoolId, 'admissionApplications', appId, {
+        status: 'Rejected',
+        rejectedAt: new Date().toISOString()
+      });
+      toast.success("Application status marked as Rejected.");
+      setReviewAppModalOpen(false);
+      setSelectedAppForReview(null);
+    } catch (err) {
+      console.error("Error rejecting application:", err);
+      toast.error("Failed to reject application.");
+    } finally {
+      setRejectingApp(false);
+    }
+  };
+
+  // Handle Deleting Application
+  const handleDeleteApplication = async (appId) => {
+    try {
+      await deleteDoc(doc(db, `schools/${schoolId}/admissionApplications`, appId));
+      toast.success("Application deleted.");
+    } catch (err) {
+      console.error("Error deleting application:", err);
+      toast.error("Failed to delete application.");
+    }
+  };
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -906,13 +1087,41 @@ export default function StudentManagement() {
     return admA.localeCompare(admB, undefined, { numeric: true, sensitivity: 'base' });
   });
 
-  // Metrics
+  // Enrolled Metrics
   const totalStudents = students.length;
   const activeStudents = students.filter(s => s.status === 'Active').length;
   const maleStudents = students.filter(s => s.gender === 'Male').length;
   const femaleStudents = students.filter(s => s.gender === 'Female').length;
 
-  // Pagination Logic
+  // Applications Metrics & Filtering
+  const pendingAppsCount = admissionApplications.filter(a => (a.status || 'Pending') === 'Pending').length;
+  const approvedAppsCount = admissionApplications.filter(a => a.status === 'Approved').length;
+  const rejectedAppsCount = admissionApplications.filter(a => a.status === 'Rejected').length;
+
+  const filteredApplications = admissionApplications.filter(app => {
+    const status = app.status || 'Pending';
+    if (appStatusFilter !== 'all' && status !== appStatusFilter) return false;
+    if (!appSearchQuery.trim()) return true;
+
+    const q = appSearchQuery.trim().toLowerCase();
+    const name = (app.studentName || `${app.firstName || ''} ${app.lastName || ''}`).toLowerCase();
+    const appNo = (app.applicationNumber || '').toLowerCase();
+    const parentName = (app.parentName || '').toLowerCase();
+    const parentPhone = (app.parentPhone || '').toLowerCase();
+    const parentEmail = (app.parentEmail || '').toLowerCase();
+    const targetClass = (getClassName(app.targetClassId) || '').toLowerCase();
+
+    return name.includes(q) || appNo.includes(q) || parentName.includes(q) || parentPhone.includes(q) || parentEmail.includes(q) || targetClass.includes(q);
+  });
+
+  const appTotalPages = Math.ceil(filteredApplications.length / appRowsPerPage) || 1;
+  const paginatedApplications = filteredApplications.slice((appCurrentPage - 1) * appRowsPerPage, appCurrentPage * appRowsPerPage);
+
+  useEffect(() => {
+    setAppCurrentPage(1);
+  }, [appSearchQuery, appStatusFilter, appRowsPerPage]);
+
+  // Pagination Logic for Enrolled Students
   const totalPages = Math.ceil(filteredStudents.length / rowsPerPage) || 1;
   const paginatedStudents = filteredStudents.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
@@ -975,10 +1184,10 @@ export default function StudentManagement() {
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-slate-900">Student Directory & Attachments</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Student Directory & Admissions</h1>
             <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
               isSeatLimitReached 
                 ? 'bg-red-100 text-red-700 border-red-200' 
@@ -989,9 +1198,16 @@ export default function StudentManagement() {
               Seats: {totalStudents} / {effectiveSeatLimit}
             </span>
           </div>
-          <p className="text-slate-500 mt-1">Manage admissions, upload student records, and class assignments.</p>
+          <p className="text-slate-500 mt-1">Review public admission applications, admit verified students, and manage enrollment directory.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2.5">
+          <button 
+            onClick={() => setShareLinkModalOpen(true)}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-sm flex items-center gap-2 transition-all"
+            title="Share public admission form link with parents & prospective students"
+          >
+            <Share2 size={18} /> Share Admission Link
+          </button>
           <button 
             onClick={() => {
               if (filteredStudents.length === 0) {
@@ -1019,27 +1235,61 @@ export default function StudentManagement() {
           )}
           {hasCreatePermission && (
             <button 
-              onClick={() => {
-                const parentLink = `${window.location.origin}/register/parent/${schoolId}`;
-                navigator.clipboard.writeText(parentLink);
-                toast.success("Parent registration link copied!");
-              }}
-              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
-              title="Copy parent registration link to clipboard"
-            >
-              <LinkIcon size={18} /> Generate Link
-            </button>
-          )}
-          {hasCreatePermission && (
-            <button 
               onClick={() => setShowForm(!showForm)}
               className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
             >
-              {showForm ? 'Cancel Admission' : <><UserPlus size={18} /> New Admission</>}
+              {showForm ? 'Cancel Admission' : <><UserPlus size={18} /> Direct Admit</>}
             </button>
           )}
         </div>
       </div>
+
+      {/* Directory Tab Selector */}
+      {!showForm && (
+        <div className="flex items-center gap-3 mb-6 border-b border-slate-200 pb-3">
+          <button
+            onClick={() => setActiveDirectoryTab('enrolled')}
+            className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+              activeDirectoryTab === 'enrolled'
+                ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
+                : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <GraduationCap size={18} />
+            <span>Enrolled Students</span>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+              activeDirectoryTab === 'enrolled' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+            }`}>
+              {totalStudents}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setActiveDirectoryTab('applications')}
+            className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all relative ${
+              activeDirectoryTab === 'applications'
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
+                : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            <UserCheck size={18} />
+            <span>Admission Applications</span>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+              activeDirectoryTab === 'applications'
+                ? 'bg-white/20 text-white'
+                : pendingAppsCount > 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700'
+            }`}>
+              {admissionApplications.length}
+            </span>
+            {pendingAppsCount > 0 && activeDirectoryTab !== 'applications' && (
+              <span className="flex h-2.5 w-2.5 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+              </span>
+            )}
+          </button>
+        </div>
+      )}
 
       {showForm ? (
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 mb-8 animate-fade-in-down">
@@ -1261,7 +1511,7 @@ export default function StudentManagement() {
             </div>
           </form>
         </div>
-      ) : (
+      ) : activeDirectoryTab === 'enrolled' ? (
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 bg-slate-50/30">
             <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col justify-between">
@@ -1337,15 +1587,14 @@ export default function StudentManagement() {
                   <option key={c.id} value={c.id}>{c.name} - {c.section}</option>
                 ))}
               </select>
-              <div className="h-6 w-px bg-slate-200 hidden sm:block mx-1"></div>
               <select 
                 value={rowsPerPage}
                 onChange={(e) => setRowsPerPage(Number(e.target.value))}
-                className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
-                <option value={10}>10 rows</option>
-                <option value={20}>20 rows</option>
-                <option value={50}>50 rows</option>
+                <option value={10}>10 per page</option>
+                <option value={20}>20 per page</option>
+                <option value={50}>50 per page</option>
               </select>
             </div>
           </div>
@@ -1353,35 +1602,38 @@ export default function StudentManagement() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
-                  <th className="p-4 pl-6">Student Name</th>
-                  <th className="p-4">Admission No.</th>
-                  <th className="p-4">Class & Section</th>
-                  <th className="p-4">Attachment</th>
-                  <th className="p-4 pr-6 text-right">Actions</th>
+                <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  <th className="py-4 px-6">Student</th>
+                  <th className="py-4 px-6">Admission No</th>
+                  <th className="py-4 px-6">Class</th>
+                  <th className="py-4 px-6">Parent Details</th>
+                  <th className="py-4 px-6">Status</th>
+                  <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-sm">
+              <tbody className="divide-y divide-slate-100 text-sm text-slate-600 font-medium">
                 {paginatedStudents.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="p-12 text-center text-slate-500">
-                      <GraduationCap size={48} className="mx-auto mb-4 text-slate-300" />
-                      <p className="text-lg font-medium text-slate-900 mb-1">
-                        {searchQuery ? `No students matching "${searchQuery}"` : 'No students found'}
-                      </p>
-                      <p className="text-sm">
-                        {searchQuery 
-                          ? 'Check the spelling of the student name or admission number, or reset your search.' 
-                          : 'Try adjusting your filters, or admit a new student.'}
-                      </p>
-                      {searchQuery && (
-                        <button
-                          onClick={() => setSearchQuery('')}
-                          className="mt-4 px-4 py-2 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-xl text-sm font-semibold transition-colors inline-flex items-center gap-2"
-                        >
-                          <X size={16} /> Clear Search Filter
-                        </button>
-                      )}
+                    <td colSpan="6" className="py-12 text-center text-slate-400">
+                      <div className="flex flex-col items-center justify-center">
+                        <GraduationCap size={44} className="text-slate-300 mb-2" />
+                        <p className="font-semibold text-slate-700 text-base">
+                          {searchQuery ? `No students matching "${searchQuery}"` : 'No enrolled students found'}
+                        </p>
+                        <p className="text-xs text-slate-400 mt-1">
+                          {searchQuery 
+                            ? 'Check the spelling of the student name or admission number, or reset your search.' 
+                            : 'Try adjusting your filters, or admit a new student.'}
+                        </p>
+                        {searchQuery && (
+                          <button
+                            onClick={() => setSearchQuery('')}
+                            className="mt-4 px-4 py-2 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-xl text-sm font-semibold transition-colors inline-flex items-center gap-2"
+                          >
+                            <X size={16} /> Clear Search Filter
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -1478,6 +1730,250 @@ export default function StudentManagement() {
                 <button 
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        /* ADMISSION APPLICATIONS TAB VIEW */
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
+          {/* Applications Stat Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 bg-slate-50/30">
+            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><UserCheck size={20} /></div>
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Received</p>
+                <p className="text-xl font-bold text-slate-900">{admissionApplications.length}</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-4 border border-amber-100 bg-amber-50/40 shadow-sm flex items-center gap-3">
+              <div className="p-3 bg-amber-100 text-amber-600 rounded-xl"><Clock size={20} /></div>
+              <div>
+                <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Pending Review</p>
+                <p className="text-xl font-bold text-amber-900">{pendingAppsCount}</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-4 border border-emerald-100 bg-emerald-50/40 shadow-sm flex items-center gap-3">
+              <div className="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><CheckCircle2 size={20} /></div>
+              <div>
+                <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Approved & Admitted</p>
+                <p className="text-xl font-bold text-emerald-900">{approvedAppsCount}</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+              <div className="p-3 bg-slate-100 text-slate-600 rounded-xl"><X size={20} /></div>
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Rejected</p>
+                <p className="text-xl font-bold text-slate-900">{rejectedAppsCount}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Search & Filter Header */}
+          <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-white">
+            <div className="relative flex-1 min-w-[250px] max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input 
+                type="text" 
+                placeholder="Search by student name, application no, parent phone..." 
+                value={appSearchQuery}
+                onChange={(e) => setAppSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+              />
+              {appSearchQuery && (
+                <button 
+                  onClick={() => setAppSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
+                  title="Clear search"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <Filter size={18} className="text-slate-400 hidden sm:block" />
+              <select 
+                value={appStatusFilter}
+                onChange={(e) => setAppStatusFilter(e.target.value)}
+                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                <option value="all">All Statuses</option>
+                <option value="Pending">Pending Review</option>
+                <option value="Approved">Approved & Admitted</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+              <select 
+                value={appRowsPerPage}
+                onChange={(e) => setAppRowsPerPage(Number(e.target.value))}
+                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              >
+                <option value={10}>10 per page</option>
+                <option value={20}>20 per page</option>
+                <option value={50}>50 per page</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Applications Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  <th className="py-4 px-6">App ID</th>
+                  <th className="py-4 px-6">Applicant Student</th>
+                  <th className="py-4 px-6">Target Class</th>
+                  <th className="py-4 px-6">Parent Details</th>
+                  <th className="py-4 px-6">Submitted Date</th>
+                  <th className="py-4 px-6">Status</th>
+                  <th className="py-4 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm text-slate-600 font-medium">
+                {paginatedApplications.length === 0 ? (
+                  <tr>
+                    <td colSpan="7" className="py-16 text-center text-slate-400">
+                      <div className="flex flex-col items-center justify-center max-w-md mx-auto">
+                        <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+                          <Share2 size={28} />
+                        </div>
+                        <p className="font-bold text-slate-800 text-base">No Admission Applications Found</p>
+                        <p className="text-xs text-slate-400 mt-1 mb-4 text-center">
+                          Share your school's public admission form link with parents or prospective students to receive online applications.
+                        </p>
+                        <button
+                          onClick={() => setShareLinkModalOpen(true)}
+                          className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-sm flex items-center gap-2 transition-colors"
+                        >
+                          <Share2 size={16} /> Share Admission Link
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedApplications.map((app) => (
+                    <tr key={app.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-4 px-6">
+                        <span className="font-mono text-xs font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                          {app.applicationNumber || app.id?.substring(0, 8)}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                          {app.photoUrl ? (
+                            <img 
+                              src={app.photoUrl} 
+                              alt={app.studentName || `${app.firstName} ${app.lastName}`} 
+                              className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm shrink-0">
+                              {(app.studentName?.[0] || app.firstName?.[0] || 'S')}
+                            </div>
+                          )}
+                          <div>
+                            <p className="font-semibold text-slate-900">
+                              {app.studentName || `${app.firstName || ''} ${app.lastName || ''}`.trim() || 'Prospective Student'}
+                            </p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs text-slate-400">{app.gender || 'N/A'}</span>
+                              {app.age && (
+                                <>
+                                  <span className="text-slate-300">•</span>
+                                  <span className="text-xs text-slate-400">{app.age} yrs</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="inline-block px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                          {getClassName(app.targetClassId) !== 'Unknown' ? getClassName(app.targetClassId) : (app.targetClassName || 'Pending Assign')}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div>
+                          <p className="text-slate-900 font-medium">{app.parentName || 'N/A'}</p>
+                          <p className="text-xs text-slate-400">{app.parentPhone || app.parentEmail || 'No contact'}</p>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 text-xs text-slate-500">
+                        {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Recent'}
+                      </td>
+                      <td className="py-4 px-6">
+                        {app.status === 'Approved' ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                            <CheckCircle2 size={14} className="text-emerald-600" /> Approved & Admitted
+                          </span>
+                        ) : app.status === 'Rejected' ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                            <X size={14} className="text-slate-500" /> Rejected
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                            <Clock size={14} className="text-amber-600" /> Pending Review
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button 
+                            onClick={() => handleOpenReviewModal(app)}
+                            className={`px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all ${
+                              app.status === 'Approved'
+                                ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                            }`}
+                            title="Review Application Details & Admit"
+                          >
+                            <Eye size={14} />
+                            {app.status === 'Approved' ? 'View Details' : 'Review & Admit'}
+                          </button>
+                          {hasDeletePermission && (
+                            <button 
+                              onClick={() => {
+                                if (window.confirm(`Delete application for ${app.studentName || app.firstName}?`)) {
+                                  handleDeleteApplication(app.id);
+                                }
+                              }}
+                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Delete Application"
+                            >
+                              <Trash size={16} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {appTotalPages > 1 && (
+            <div className="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50 rounded-b-3xl">
+              <span className="text-sm text-slate-500">
+                Showing {(appCurrentPage - 1) * appRowsPerPage + 1} to {Math.min(appCurrentPage * appRowsPerPage, filteredApplications.length)} of {filteredApplications.length} applications
+              </span>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setAppCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={appCurrentPage === 1}
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-slate-700">
+                  Page {appCurrentPage} of {appTotalPages}
+                </div>
+                <button 
+                  onClick={() => setAppCurrentPage(prev => Math.min(prev + 1, appTotalPages))}
+                  disabled={appCurrentPage === appTotalPages}
                   className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
                 >
                   Next
@@ -2699,6 +3195,364 @@ export default function StudentManagement() {
               >
                 <Download size={18} />
                 Generate Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* REVIEW & ADMIT APPLICATION MODAL */}
+      {reviewAppModalOpen && selectedAppForReview && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
+          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-emerald-100 text-emerald-700 rounded-2xl">
+                  <UserCheck size={24} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                    Review Admission Application
+                  </h2>
+                  <p className="text-xs text-slate-500 font-mono mt-0.5">
+                    App #{selectedAppForReview.applicationNumber || selectedAppForReview.id} • Submitted on {selectedAppForReview.submittedAt ? new Date(selectedAppForReview.submittedAt).toLocaleDateString() : 'N/A'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {selectedAppForReview.status === 'Approved' ? (
+                  <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold border border-emerald-200 flex items-center gap-1">
+                    <CheckCircle2 size={14} /> Admitted
+                  </span>
+                ) : selectedAppForReview.status === 'Rejected' ? (
+                  <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-bold border border-slate-200">
+                    Rejected
+                  </span>
+                ) : (
+                  <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold border border-amber-200 flex items-center gap-1">
+                    <Clock size={14} /> Pending Review
+                  </span>
+                )}
+                <button 
+                  onClick={() => {
+                    setReviewAppModalOpen(false);
+                    setSelectedAppForReview(null);
+                  }}
+                  className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 sm:p-8 flex-1 overflow-y-auto space-y-6 custom-scrollbar">
+              {/* Enrollment Assignment Card */}
+              {selectedAppForReview.status !== 'Approved' && (
+                <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-200 p-6 rounded-2xl shadow-sm">
+                  <div className="flex items-center gap-2 text-emerald-900 font-bold text-base mb-4">
+                    <Sparkles size={20} className="text-emerald-600" />
+                    <span>Admit to Student Directory - Assignment Configuration</span>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-emerald-950 uppercase tracking-wider mb-1.5">
+                        Assign Class & Section *
+                      </label>
+                      <select
+                        value={assigningAppClassId}
+                        onChange={(e) => setAssigningAppClassId(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-white border border-emerald-300 rounded-xl font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                      >
+                        {classes.length === 0 ? (
+                          <option value="">No classes available - Please create a class first</option>
+                        ) : (
+                          classes.map(c => (
+                            <option key={c.id} value={c.id}>
+                              {c.name} - {c.section} {c.stream ? `(${c.stream})` : ''}
+                            </option>
+                          ))
+                        )}
+                      </select>
+                      <p className="text-xs text-emerald-700 mt-1">Applicant requested: <strong>{getClassName(selectedAppForReview.targetClassId) !== 'Unknown' ? getClassName(selectedAppForReview.targetClassId) : (selectedAppForReview.targetClassName || 'N/A')}</strong></p>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-emerald-950 uppercase tracking-wider mb-1.5">
+                        Assigned Admission Number *
+                      </label>
+                      <input
+                        type="text"
+                        value={assigningAppAdmissionNumber}
+                        onChange={(e) => setAssigningAppAdmissionNumber(e.target.value)}
+                        placeholder="e.g. ADM-2026-001"
+                        className="w-full px-4 py-2.5 bg-white border border-emerald-300 rounded-xl font-mono font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                      />
+                      <p className="text-xs text-emerald-700 mt-1">Unique student identifier for directory & fees.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Student Profile Overview */}
+              <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200">
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+                  <GraduationCap size={18} className="text-primary-600" /> Applicant Student Profile
+                </h3>
+                <div className="flex flex-col sm:flex-row gap-6 items-start">
+                  {selectedAppForReview.photoUrl ? (
+                    <img 
+                      src={selectedAppForReview.photoUrl} 
+                      alt="Student" 
+                      className="w-24 h-24 rounded-2xl object-cover border-2 border-slate-300 shadow-sm shrink-0"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-2xl shrink-0 border border-emerald-200">
+                      {selectedAppForReview.firstName?.[0] || selectedAppForReview.studentName?.[0] || 'S'}
+                    </div>
+                  )}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-400">Full Name</p>
+                      <p className="text-sm font-bold text-slate-900">{selectedAppForReview.studentName || `${selectedAppForReview.firstName || ''} ${selectedAppForReview.lastName || ''}`.trim() || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-400">Date of Birth</p>
+                      <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.dob || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-400">Age & Gender</p>
+                      <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.age ? `${selectedAppForReview.age} yrs` : '-'}, {selectedAppForReview.gender || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-400">Blood Group</p>
+                      <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.bloodGroup || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-400">Religion & Mother Tongue</p>
+                      <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.religion || 'N/A'} {selectedAppForReview.motherTongue ? `(${selectedAppForReview.motherTongue})` : ''}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-400">Aadhaar / Gov ID</p>
+                      <p className="text-sm font-semibold text-slate-800 font-mono">{selectedAppForReview.aadharNumber || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Parent & Contact Details */}
+              <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200">
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+                  <Phone size={18} className="text-indigo-600" /> Parent & Guardian Contact Information
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400">Parent Name</p>
+                    <p className="text-sm font-bold text-slate-900">{selectedAppForReview.parentName || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400">Relationship</p>
+                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.parentRelationship || 'Father'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400">Phone Number</p>
+                    <p className="text-sm font-semibold text-slate-800 font-mono">{selectedAppForReview.parentPhone || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400">Email Address</p>
+                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.parentEmail || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400">Occupation</p>
+                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.parentOccupation || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400">Annual Income</p>
+                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.annualIncome ? `₹${selectedAppForReview.annualIncome}` : 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400">Emergency Contact</p>
+                    <p className="text-sm font-semibold text-slate-800 font-mono">{selectedAppForReview.emergencyContact || selectedAppForReview.parentPhone || 'N/A'}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-xs font-semibold text-slate-400">Sibling in Same School</p>
+                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.siblingName || 'None'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Address & Academic Background */}
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200">
+                  <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+                    <MapPin size={18} className="text-rose-600" /> Residential Address
+                  </h3>
+                  <p className="text-sm text-slate-800 font-medium whitespace-pre-line leading-relaxed">
+                    {selectedAppForReview.homeAddress || 'No address provided'}
+                    {(selectedAppForReview.city || selectedAppForReview.state || selectedAppForReview.pincode) && (
+                      <span className="block text-xs text-slate-500 mt-1">
+                        {[selectedAppForReview.city, selectedAppForReview.state, selectedAppForReview.pincode].filter(Boolean).join(', ')}
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200">
+                  <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+                    <BookOpen size={18} className="text-amber-600" /> Academic & Transport
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <p><span className="text-slate-400 text-xs block">Previous School:</span> <strong className="text-slate-800">{selectedAppForReview.previousSchool || 'N/A'}</strong></p>
+                    <p><span className="text-slate-400 text-xs block">Previous Records / Marks:</span> <strong className="text-slate-800">{selectedAppForReview.previousMarks || 'N/A'}</strong></p>
+                    <p><span className="text-slate-400 text-xs block">Bus Route:</span> <strong className="text-slate-800">{selectedAppForReview.busRoute || 'Not requested'}</strong></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-wrap justify-between items-center gap-3 shrink-0">
+              <div>
+                {selectedAppForReview.status === 'Pending' && (
+                  <button
+                    onClick={() => handleRejectApplication(selectedAppForReview.id)}
+                    disabled={rejectingApp || approvingApp}
+                    className="px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl font-bold text-sm transition-colors border border-red-200"
+                  >
+                    {rejectingApp ? 'Rejecting...' : 'Reject Application'}
+                  </button>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setReviewAppModalOpen(false);
+                    setSelectedAppForReview(null);
+                  }}
+                  className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-sm transition-colors"
+                >
+                  Close
+                </button>
+
+                {selectedAppForReview.status !== 'Approved' && (
+                  <button
+                    onClick={handleApproveApplication}
+                    disabled={approvingApp || isSeatLimitReached}
+                    className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-md transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {approvingApp ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Admitting Student...
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus size={18} />
+                        Approve & Admit Student
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SHARE ADMISSION LINK MODAL */}
+      {shareLinkModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
+          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-emerald-100 text-emerald-700 rounded-2xl">
+                  <Share2 size={22} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900">Share Public Admission Form</h2>
+                  <p className="text-xs text-slate-500">Provide this link to prospective students and parents</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  setShareLinkModalOpen(false);
+                  setCopiedAdmissionLink(false);
+                }}
+                className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5">
+              <div className="p-4 bg-emerald-50/60 rounded-2xl border border-emerald-200 text-xs text-emerald-900 leading-relaxed">
+                Parents and students can open this link from any smartphone, tablet, or PC to fill out the admission form. Submitted applications will automatically appear in your <strong>Admission Applications</strong> tab for one-click review and admission!
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                  Official Online Admission Form Link
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={`${window.location.origin}/admission/${schoolId}`}
+                    className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs text-slate-700 select-all focus:outline-none"
+                  />
+                  <button
+                    onClick={() => {
+                      const link = `${window.location.origin}/admission/${schoolId}`;
+                      navigator.clipboard.writeText(link);
+                      setCopiedAdmissionLink(true);
+                      toast.success("Admission form link copied to clipboard!");
+                      setTimeout(() => setCopiedAdmissionLink(false), 3000);
+                    }}
+                    className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm ${
+                      copiedAdmissionLink 
+                        ? 'bg-emerald-600 text-white' 
+                        : 'bg-primary-600 hover:bg-primary-700 text-white'
+                    }`}
+                  >
+                    {copiedAdmissionLink ? <><Check size={16} /> Copied</> : <><Copy size={16} /> Copy</>}
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <a
+                  href={`/admission/${schoolId}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-3 rounded-xl border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
+                >
+                  <ExternalLink size={20} className="text-primary-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold text-slate-800">Preview Form</span>
+                  <span className="text-[10px] text-slate-400">Open in new tab</span>
+                </a>
+
+                <a
+                  href={`mailto:?subject=Online Admission Application - ${encodeURIComponent(schoolName || 'School')}&body=Dear Parent / Student,%0D%0A%0D%0APlease fill out our online school admission form using the following link:%0D%0A${encodeURIComponent(`${window.location.origin}/admission/${schoolId}`)}%0D%0A%0D%0ABest regards,%0D%0A${encodeURIComponent(schoolName || 'School Administration')}`}
+                  className="p-3 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
+                >
+                  <Mail size={20} className="text-indigo-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold text-slate-800">Send via Email</span>
+                  <span className="text-[10px] text-slate-400">Compose invitation</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <button
+                onClick={() => {
+                  setShareLinkModalOpen(false);
+                  setCopiedAdmissionLink(false);
+                }}
+                className="px-6 py-2.5 bg-slate-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-colors shadow-sm"
+              >
+                Done
               </button>
             </div>
           </div>
