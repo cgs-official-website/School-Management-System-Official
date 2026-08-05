@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
 import { getDoc, doc, deleteDoc, updateDoc, onSnapshot, query, where, getDocs, collection } from 'firebase/firestore';
@@ -53,6 +53,18 @@ export default function StudentManagement() {
   const [copiedAdmissionLink, setCopiedAdmissionLink] = useState(false);
   const [appCurrentPage, setAppCurrentPage] = useState(1);
   const [appRowsPerPage, setAppRowsPerPage] = useState(10);
+  const [newAdmissionDropdownOpen, setNewAdmissionDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setNewAdmissionDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Form State
   const [showForm, setShowForm] = useState(false);
@@ -1196,13 +1208,6 @@ export default function StudentManagement() {
         </div>
         <div className="flex flex-wrap gap-2.5">
           <button 
-            onClick={() => setShareLinkModalOpen(true)}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-sm flex items-center gap-2 transition-all"
-            title="Share public admission form link with parents & prospective students"
-          >
-            <Share2 size={18} /> Share Admission Link
-          </button>
-          <button 
             onClick={() => {
               if (filteredStudents.length === 0) {
                 toast.error("No student data available to export.");
@@ -1228,12 +1233,48 @@ export default function StudentManagement() {
             </button>
           )}
           {hasCreatePermission && (
-            <button 
-              onClick={() => setShowForm(!showForm)}
-              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
-            >
-              {showForm ? 'Cancel Admission' : <><UserPlus size={18} /> Direct Admit</>}
-            </button>
+            showForm ? (
+              <button 
+                onClick={() => setShowForm(false)}
+                className="px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-xl font-medium shadow-sm flex items-center gap-2 transition-colors border border-red-200"
+              >
+                Cancel Admission
+              </button>
+            ) : (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setNewAdmissionDropdownOpen(!newAdmissionDropdownOpen)}
+                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium shadow-sm flex items-center gap-2 transition-colors focus:outline-none"
+                >
+                  <UserPlus size={18} /> New Admission <span className="text-[10px]">▼</span>
+                </button>
+                {newAdmissionDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-52 bg-white border border-slate-200 rounded-xl shadow-lg z-50 py-1.5 animate-fade-in">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShareLinkModalOpen(true);
+                        setNewAdmissionDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                    >
+                      <Share2 size={16} className="text-emerald-600" /> Share Admission Link
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowForm(true);
+                        setNewAdmissionDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                    >
+                      <UserPlus size={16} className="text-primary-600" /> Add Student
+                    </button>
+                  </div>
+                )}
+              </div>
+            )
           )}
         </div>
       </div>
