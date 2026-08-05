@@ -42,6 +42,7 @@ secrets/
 .firebase/
 *firebase-adminsdk*.json
 firebase-debug.log
+firestore.rules
 
 # Testing / QA Outputs
 screenshots/
