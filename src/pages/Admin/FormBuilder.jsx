@@ -8,6 +8,36 @@ import toast from 'react-hot-toast';
 import { allNavItems } from '../AdminDashboard';
 import ConfirmModal from '../../components/ConfirmModal';
 
+const defaultCoreSchemas = {
+  'staff': {
+    sections: [
+      { id: 'sec_1', title: 'Personal Details', fields: [
+        { id: 'f_1', label: 'First Name', type: 'text', required: true },
+        { id: 'f_2', label: 'Last Name', type: 'text', required: true },
+        { id: 'f_3', label: 'Email', type: 'email', required: true },
+        { id: 'f_4', label: 'Phone', type: 'text', required: true },
+      ]},
+      { id: 'sec_2', title: 'Academic Details', fields: [
+        { id: 'f_5', label: 'Qualification', type: 'text', required: true },
+        { id: 'f_6', label: 'Experience (Years)', type: 'number', required: false },
+      ]}
+    ]
+  },
+  'students': {
+    sections: [
+      { id: 'sec_1', title: 'Student Details', fields: [
+        { id: 'f_1', label: 'First Name', type: 'text', required: true },
+        { id: 'f_2', label: 'Last Name', type: 'text', required: true },
+        { id: 'f_3', label: 'Date of Birth', type: 'date', required: true },
+      ]},
+      { id: 'sec_2', title: 'Parent Details', fields: [
+        { id: 'f_4', label: 'Parent Name', type: 'text', required: true },
+        { id: 'f_5', label: 'Parent Phone', type: 'text', required: true },
+      ]}
+    ]
+  }
+};
+
 export default function FormBuilder() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
@@ -173,9 +203,10 @@ export default function FormBuilder() {
     try {
       const schemaRef = doc(db, `schools/${schoolId}/formSchemas`, moduleId);
       const schemaSnap = await getDoc(schemaRef);
+      let importedSections = [];
+
       if (schemaSnap.exists()) {
         const data = schemaSnap.data();
-        let importedSections = [];
         if (data.sections && data.sections.length > 0) {
           importedSections = data.sections;
         } else if (data.fields && data.fields.length > 0) {
@@ -185,24 +216,34 @@ export default function FormBuilder() {
             fields: data.fields
           }];
         }
-        
-        if (importedSections.length > 0) {
-          const clonedSections = importedSections.map((sec, sIdx) => ({
-            ...sec,
-            id: `sec_${Date.now()}_${sIdx}_${Math.random().toString(36).substr(2, 5)}`,
-            fields: (sec.fields || []).map((f, fIdx) => ({
-              ...f,
-              id: `field_${Date.now()}_${fIdx}_${Math.random().toString(36).substr(2, 5)}`
-            }))
-          }));
-          
-          setSections(prev => [...prev, ...clonedSections]);
-          toast.success("Sections imported successfully!");
-        } else {
-          toast.error("Selected module has no sections to import.");
+      }
+
+      // Fallback for core modules that don't have a saved schema in Firestore yet
+      if (importedSections.length === 0) {
+        const isCore = coreModules.some(m => m.id === moduleId);
+        if (isCore) {
+          importedSections = defaultCoreSchemas[moduleId]?.sections || [
+            { id: `sec_default`, title: 'General Details', fields: [
+              { id: 'f_def_1', label: 'Name / Title', type: 'text', required: true, options: '', relationModule: '' }
+            ]}
+          ];
         }
+      }
+      
+      if (importedSections.length > 0) {
+        const clonedSections = importedSections.map((sec, sIdx) => ({
+          ...sec,
+          id: `sec_${Date.now()}_${sIdx}_${Math.random().toString(36).substr(2, 5)}`,
+          fields: (sec.fields || []).map((f, fIdx) => ({
+            ...f,
+            id: `field_${Date.now()}_${fIdx}_${Math.random().toString(36).substr(2, 5)}`
+          }))
+        }));
+        
+        setSections(prev => [...prev, ...clonedSections]);
+        toast.success("Sections imported successfully!");
       } else {
-        toast.error("Selected module has no custom schema.");
+        toast.error("Selected module has no sections or schema to import.");
       }
     } catch (error) {
       console.error("Error importing schema:", error);
