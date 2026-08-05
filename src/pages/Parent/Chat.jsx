@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { subscribeToMessages, sendMessage, getTeachersForChat, deleteChatMessage } from '../../firebase/firestore';
+import { subscribeToMessages, sendMessage, getTeachersForChat, deleteChatMessage, markChatRead } from '../../firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuTrash2 as Trash2, LuDownload as DownloadIcon, LuX as XIcon } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ChatInput from '../../components/ChatInput';
@@ -50,19 +52,47 @@ export default function ParentChat() {
     }
   };
 
-  // Fetch all teachers in the school
+  // Fetch all teachers in the school and their chat unread counts
   useEffect(() => {
-    if (schoolId) {
+    let unsubChats = null;
+    
+    if (schoolId && studentId) {
       getTeachersForChat(schoolId)
         .then(data => {
           data.sort((a, b) => (a.firstName || '').localeCompare(b.firstName || ''));
-          setTeachers(data);
-          if (data.length > 0) setActiveTeacher(data[0]);
+          
+          // Now subscribe to chats to get unread counts
+          const chatsRef = collection(db, `schools/${schoolId}/chats`);
+          const q = query(chatsRef, where("studentId", "==", studentId));
+          
+          unsubChats = onSnapshot(q, (snapshot) => {
+            const chatsMap = new Map();
+            snapshot.forEach(doc => {
+              chatsMap.set(doc.data().teacherId, doc.data());
+            });
+            
+            const enrichedTeachers = data.map(teacher => {
+              const chatData = chatsMap.get(teacher.id);
+              return {
+                ...teacher,
+                unreadCount: chatData?.unreadCount_parent || 0
+              };
+            });
+            
+            setTeachers(enrichedTeachers);
+            if (enrichedTeachers.length > 0 && !activeTeacher) {
+              setActiveTeacher(enrichedTeachers[0]);
+            }
+            setLoadingTeachers(false);
+          });
         })
-        .catch(console.error)
-        .finally(() => setLoadingTeachers(false));
+        .catch(console.error);
     }
-  }, [schoolId]);
+    
+    return () => {
+      if (unsubChats) unsubChats();
+    };
+  }, [schoolId, studentId]);
 
   // Subscribe to messages when a teacher is selected
   useEffect(() => {
@@ -73,6 +103,14 @@ export default function ParentChat() {
       unsubscribe = subscribeToMessages(schoolId, studentId, activeTeacher.id, (newMessages) => {
         setMessages(newMessages);
       });
+      
+      // Mark chat as read
+      try {
+        const chatRoomId = `${studentId}_${activeTeacher.id}`;
+        markChatRead(schoolId, chatRoomId, 'parent');
+      } catch (err) {
+        console.error("Failed to mark chat as read:", err);
+      }
     }
 
     return () => {
@@ -200,9 +238,14 @@ export default function ParentChat() {
                   }`}>
                     {(teacher.firstName || teacher.name || 'T').charAt(0).toUpperCase()}
                   </div>
-                  <div className="overflow-hidden">
-                    <div className="font-bold text-slate-900 truncate">
-                      {teacher.firstName ? `${teacher.firstName} ${teacher.lastName}` : (teacher.name || 'Teacher')}
+                  <div className="overflow-hidden flex-1">
+                    <div className="font-bold text-slate-900 truncate flex items-center justify-between">
+                      <span>{teacher.firstName ? `${teacher.firstName} ${teacher.lastName}` : (teacher.name || 'Teacher')}</span>
+                      {teacher.unreadCount > 0 && (
+                        <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                          {teacher.unreadCount}
+                        </span>
+                      )}
                     </div>
                     <div className="text-xs text-slate-500 truncate capitalize">{teacher.role || 'Teacher'}</div>
                   </div>

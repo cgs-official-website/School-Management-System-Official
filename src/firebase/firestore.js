@@ -576,19 +576,46 @@ export const sendMessage = async (schoolId, studentId, teacherId, parentId, send
     });
 
     const chatRef = doc(db, `schools/${schoolId}/chats`, chatRoomId);
-    await setDoc(chatRef, {
+    
+    // Increment unread count for the recipient
+    const updates = {
       studentId,
       teacherId,
       parentId, // could be null if not yet linked
       lastMessage: text || (mediaType ? `Sent a ${mediaType}` : 'Sent an attachment'),
       lastMessageTime: new Date().toISOString()
-    }, { merge: true });
+    };
+    
+    if (senderRole === 'teacher') {
+      updates.unreadCount_parent = increment(1);
+    } else {
+      updates.unreadCount_teacher = increment(1);
+    }
+
+    await setDoc(chatRef, updates, { merge: true });
 
   } catch (error) {
     console.error("Error sending message:", error);
     throw error;
   }
 };
+
+export const markChatRead = async (schoolId, chatRoomId, userRole) => {
+  try {
+    const chatRef = doc(db, `schools/${schoolId}/chats`, chatRoomId);
+    const updates = {};
+    if (userRole === 'teacher') {
+      updates.unreadCount_teacher = 0;
+    } else if (userRole === 'parent') {
+      updates.unreadCount_parent = 0;
+    }
+    await setDoc(chatRef, updates, { merge: true });
+  } catch (error) {
+    console.error("Error marking chat as read:", error);
+  }
+};
+
+
 
 export const subscribeToMessages = (schoolId, studentId, teacherId, callback) => {
   const chatRoomId = `${studentId}_${teacherId}`;

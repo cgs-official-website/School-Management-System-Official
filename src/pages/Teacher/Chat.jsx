@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentsByClass, subscribeToMessages, sendMessage, checkParentRegistration, deleteChatMessage, updateChatRoomStatus, subscribeToChatRoom, getChatsForTeacher } from '../../firebase/firestore';
+import { getStudentsByClass, subscribeToMessages, sendMessage, checkParentRegistration, deleteChatMessage, updateChatRoomStatus, subscribeToChatRoom, getChatsForTeacher, markChatRead } from '../../firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuTrash2 as Trash2, LuCircleCheck as CheckCircle, LuClock as Clock, LuDownload as DownloadIcon, LuX as XIcon } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ChatInput from '../../components/ChatInput';
@@ -58,21 +60,86 @@ export default function TeacherChat() {
   
   const [loadingStudents, setLoadingStudents] = useState(true);
   
-  // Fetch students initially
+  // Fetch students and chats
   useEffect(() => {
-    if (schoolId && classId) {
-      getStudentsByClass(schoolId, classId)
-        .then(data => {
-          data.sort((a, b) => a.firstName.localeCompare(b.firstName));
-          setStudents(data);
-        })
-        .catch(console.error)
-        .finally(() => setLoadingStudents(false));
-    } else {
-      setLoadingStudents(false);
-    }
-  }, [schoolId, classId]);
+    let unsubChats = null;
+    
+    const fetchStudentsAndChats = async () => {
+      if (!schoolId) {
+        setLoadingStudents(false);
+        return;
+      }
+      
+      try {
+        // 1. Get class students if classId exists
+        let classStudents = [];
+        if (classId) {
+          classStudents = await getStudentsByClass(schoolId, classId);
+        }
 
+        // 2. Subscribe to chats for this teacher
+        const { collection, query, where, onSnapshot } = await import('firebase/firestore');
+        const chatsRef = collection(db, `schools/${schoolId}/chats`);
+        const q = query(chatsRef, where("teacherId", "==", currentUser.uid));
+        
+        unsubChats = onSnapshot(q, async (snapshot) => {
+          const chatsMap = new Map();
+          snapshot.forEach(doc => {
+            chatsMap.set(doc.data().studentId, { id: doc.id, ...doc.data() });
+          });
+
+          const allStudents = [...classStudents];
+          
+          // Add any students from chats that aren't in the class
+          for (const [studentId, chatData] of chatsMap.entries()) {
+            if (!allStudents.find(s => s.id === studentId)) {
+              try {
+                const studentDoc = await getDoc(doc(db, `schools/${schoolId}/students`, studentId));
+                if (studentDoc.exists()) {
+                  allStudents.push({ id: studentDoc.id, ...studentDoc.data() });
+                }
+              } catch (e) {
+                console.error("Failed to fetch extra student:", e);
+              }
+            }
+          }
+          
+          // Attach chat unread counts to the student objects
+          const enrichedStudents = allStudents.map(student => {
+            const chatInfo = chatsMap.get(student.id);
+            return {
+              ...student,
+              unreadCount: chatInfo?.unreadCount_teacher || 0,
+              lastMessageTime: chatInfo?.lastMessageTime || null
+            };
+          });
+
+          // Sort by last message time, then name
+          enrichedStudents.sort((a, b) => {
+            if (a.lastMessageTime && b.lastMessageTime) {
+              return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
+            }
+            if (a.lastMessageTime) return -1;
+            if (b.lastMessageTime) return 1;
+            return a.firstName.localeCompare(b.firstName);
+          });
+
+          setStudents(enrichedStudents);
+          setLoadingStudents(false);
+        });
+
+      } catch (error) {
+        console.error("Error fetching students and chats:", error);
+        setLoadingStudents(false);
+      }
+    };
+
+    fetchStudentsAndChats();
+
+    return () => {
+      if (unsubChats) unsubChats();
+    };
+  }, [schoolId, classId, currentUser]);
   // Handle student selection and message subscription
   useEffect(() => {
     let unsubscribe = null;
@@ -109,6 +176,14 @@ export default function TeacherChat() {
         unsubscribeRoom = subscribeToChatRoom(schoolId, activeStudent.id, currentUser.uid, (roomData) => {
           setChatRoomData(roomData);
         });
+
+        // 4. Mark chat as read
+        try {
+          const chatRoomId = `${activeStudent.id}_${currentUser.uid}`;
+          await markChatRead(schoolId, chatRoomId, 'teacher');
+        } catch (err) {
+          console.error("Failed to mark chat as read:", err);
+        }
       }
     };
 
@@ -280,9 +355,14 @@ export default function TeacherChat() {
                   }`}>
                     {student.firstName.charAt(0)}{student.lastName.charAt(0)}
                   </div>
-                  <div className="overflow-hidden">
-                    <div className="font-bold text-slate-900 truncate">
-                      {student.firstName} {student.lastName}
+                  <div className="overflow-hidden flex-1">
+                    <div className="font-bold text-slate-900 truncate flex items-center justify-between">
+                      <span>{student.firstName} {student.lastName}</span>
+                      {student.unreadCount > 0 && (
+                        <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                          {student.unreadCount}
+                        </span>
+                      )}
                     </div>
                     <div className="text-xs text-slate-500 truncate">Parent Chat</div>
                   </div>

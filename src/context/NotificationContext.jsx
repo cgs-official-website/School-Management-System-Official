@@ -17,7 +17,8 @@ export const NotificationProvider = ({ children }) => {
     homework: 0,
     complaints: 0,
     leaves: 0,
-    canteen: 0
+    canteen: 0,
+    chats: 0
   });
 
   const [lastViewed, setLastViewed] = useState({
@@ -33,7 +34,7 @@ export const NotificationProvider = ({ children }) => {
 
   useEffect(() => {
     if (!schoolId || !currentUser) {
-      setUnreadCounts({ noticeboard: 0, homework: 0, complaints: 0, leaves: 0, canteen: 0 });
+      setUnreadCounts({ noticeboard: 0, homework: 0, complaints: 0, leaves: 0, canteen: 0, chats: 0 });
       return;
     }
 
@@ -144,6 +145,37 @@ export const NotificationProvider = ({ children }) => {
           setUnreadCounts(prev => ({ ...prev, canteen: count }));
         });
         unsubscribers.push(unsubCanteen);
+      }
+    }
+
+    // 6. Chats Listener (Parent and Teacher)
+    if (role === 'parent' || role === 'teacher') {
+      try {
+        const chatsRef = collection(db, `schools/${schoolId}/chats`);
+        let q;
+        if (role === 'parent' && userProfile?.linkedStudentId) {
+          q = query(chatsRef, where("studentId", "==", userProfile.linkedStudentId));
+        } else if (role === 'teacher') {
+          q = query(chatsRef, where("teacherId", "==", currentUser.uid));
+        }
+
+        if (q) {
+          const unsubChats = onSnapshot(q, (snapshot) => {
+            let count = 0;
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              if (role === 'parent') {
+                count += (data.unreadCount_parent || 0);
+              } else if (role === 'teacher') {
+                count += (data.unreadCount_teacher || 0);
+              }
+            });
+            setUnreadCounts(prev => ({ ...prev, chats: count }));
+          });
+          unsubscribers.push(unsubChats);
+        }
+      } catch (e) {
+        console.error("Error subscribing to chats notifications:", e);
       }
     }
 

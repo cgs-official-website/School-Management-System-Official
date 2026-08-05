@@ -6,9 +6,11 @@ import { subscribeToNotices } from '../firebase/firestore';
 import { db } from '../firebase/config';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import RaiseTicketModal from './RaiseTicketModal';
+import { useNotifications } from '../context/NotificationContext';
 
 export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navItems = [] }) {
   const { userProfile } = useAuth();
+  const { unreadCounts } = useNotifications();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -96,7 +98,19 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   const allNotifications = [
     ...notifications,
     ...notices.map(n => ({ ...n, type: 'notice' }))
-  ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  ];
+
+  if (unreadCounts?.chats > 0) {
+    allNotifications.push({
+      id: 'unread_chats',
+      type: 'chat',
+      title: 'New Messages',
+      description: `You have ${unreadCounts.chats} unread message(s).`,
+      createdAt: new Date().toISOString()
+    });
+  }
+
+  allNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const unreadCount = allNotifications.filter(n => {
     if (n.type === 'notice') return !readNotices.includes(n.id);
