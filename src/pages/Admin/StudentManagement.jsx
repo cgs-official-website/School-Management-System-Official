@@ -396,7 +396,7 @@ export default function StudentManagement() {
         status: 'Approved',
         admittedAt: new Date().toISOString(),
         assignedAdmissionNumber: finalAdmNumber,
-        admittedStudentId: studentRef.id,
+        admittedStudentId: studentRef,
         assignedClassId: assigningAppClassId || app.targetClassId || ''
       });
 
