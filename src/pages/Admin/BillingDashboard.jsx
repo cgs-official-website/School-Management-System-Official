@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { subscribeToSubscriptionPlans } from '../../firebase/firestore';
+import { subscribeToPlans } from '../../firebase/firestore';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +19,21 @@ export default function BillingDashboard() {
   // Mocked invoices
   const invoices = [];
 
+  const getPlanDisplayName = (planStr) => {
+    if (!planStr) return 'Free Trial';
+    const clean = planStr.trim().toLowerCase();
+    if (clean === 'free') return 'Free Trial';
+    if (clean === 'starter' || clean === 'starter_monthly' || clean === 'starter_yearly') return 'Starter Plan';
+    if (clean === 'professional' || clean === 'professional_monthly' || clean === 'professional_yearly') return 'Professional Plan';
+    if (clean === 'enterprise' || clean === 'enterprise_monthly' || clean === 'enterprise_yearly') return 'Enterprise Plan';
+    
+    // Capitalize each word from snake_case or standard words
+    return clean
+      .split(/[\s_-]+/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ') + ' Plan';
+  };
+
   useEffect(() => {
     if (!schoolId) return;
 
@@ -27,7 +42,7 @@ export default function BillingDashboard() {
 
     let allPlans = [];
 
-    plansUnsub = subscribeToSubscriptionPlans((data) => {
+    plansUnsub = subscribeToPlans((data) => {
       allPlans = data;
       updateCurrentPlan();
     });
@@ -92,7 +107,7 @@ export default function BillingDashboard() {
               <div>
                 <p className="text-sm font-bold text-amber-600 uppercase tracking-wider mb-1">Current Plan</p>
                 <h2 className="text-3xl font-extrabold text-slate-900">
-                  {currentPlan ? currentPlan.name : (school?.plan ? school.plan.charAt(0).toUpperCase() + school.plan.slice(1) : 'Free Trial')}
+                  {currentPlan ? currentPlan.name : getPlanDisplayName(school?.plan)}
                 </h2>
                 {(currentPlan || school?.plan) && (
                   <p className="text-slate-500 mt-2">
