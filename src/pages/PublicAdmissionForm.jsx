@@ -910,7 +910,7 @@ export default function PublicAdmissionForm() {
 
             {/* Captcha Verification */}
             <div className="max-w-md mx-auto mb-6">
-              <Captcha ref={captchaRef} onValidate={setCaptchaValid} />
+              <Captcha ref={captchaRef} onChange={setCaptchaValid} />
             </div>
 
             {/* Submit CTA */}
