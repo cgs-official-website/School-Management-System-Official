@@ -58,6 +58,7 @@ export default function FormBuilder() {
   const [sidebarOrder, setSidebarOrder] = useState([]);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, onConfirm: null, message: '', title: '' });
   const [unifiedModules, setUnifiedModules] = useState([]);
+  const [importModuleId, setImportModuleId] = useState('');
 
   const coreModules = [
     { id: 'staff', name: 'Staff Directory' },
@@ -149,6 +150,7 @@ export default function FormBuilder() {
   useEffect(() => {
     if (schoolId && activeModule && activeTab === 'schema') {
       loadSchema();
+      setImportModuleId('');
     }
   }, [schoolId, activeModule, activeTab]);
 
@@ -199,6 +201,7 @@ export default function FormBuilder() {
   };
 
   const handleImportSchema = async (moduleId) => {
+    setImportModuleId(moduleId);
     if (!moduleId) return;
     try {
       const schemaRef = doc(db, `schools/${schoolId}/formSchemas`, moduleId);
@@ -587,7 +590,7 @@ export default function FormBuilder() {
             <div className="flex items-center gap-3 flex-wrap">
               <select
                 className="px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white shadow-sm text-sm font-semibold text-slate-700"
-                value=""
+                value={importModuleId}
                 onChange={(e) => handleImportSchema(e.target.value)}
               >
                 <option value="">Import Sections from...</option>
