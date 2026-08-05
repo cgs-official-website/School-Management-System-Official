@@ -94,6 +94,7 @@ const ParentLeaves = lazy(() => import('./pages/Parent/LeaveRequests'));
 const ParentRegistration = lazy(() => import('./pages/ParentRegistration'));
 const ParentDashboard = lazy(() => import('./pages/ParentDashboard'));
 const StudentOverview = lazy(() => import('./pages/Parent/StudentOverview'));
+const MyChildren = lazy(() => import('./pages/Parent/MyChildren'));
 const ParentFees = lazy(() => import('./pages/Parent/Fees'));
 const ParentNoticeboard = lazy(() => import('./pages/Parent/ParentNoticeboard'));
 const HomeworkOverview = lazy(() => import('./pages/Parent/HomeworkOverview'));
@@ -264,6 +265,7 @@ function App() {
               } 
             >
               <Route index element={<StudentOverview />} />
+              <Route path="children" element={<MyChildren />} />
               <Route path="attendance" element={<ParentAttendance />} />
               <Route path="homework" element={<HomeworkOverview />} />
               <Route path="grades" element={<ParentGrades />} />

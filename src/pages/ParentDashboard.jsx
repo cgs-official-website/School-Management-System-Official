@@ -6,7 +6,7 @@ import { findStudentByAdmission, linkStudentToParent } from '../firebase/firesto
 import { getDoc, doc, onSnapshot, collection, query, where } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import TopNavbar from '../components/TopNavbar';
-import { LuCircleUser as UserCircle, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuCreditCard as CreditCard, LuLink as LinkIcon, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuCoffee as Coffee, LuBuilding2 as Building2, LuTrendingUp as TrendingUp, LuCalendarClock as CalendarClock, LuMessageSquare as MessageSquare } from 'react-icons/lu';
+import { LuCircleUser as UserCircle, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuCreditCard as CreditCard, LuLink as LinkIcon, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuCoffee as Coffee, LuBuilding2 as Building2, LuTrendingUp as TrendingUp, LuCalendarClock as CalendarClock, LuMessageSquare as MessageSquare, LuUsers as Users } from 'react-icons/lu';
 import useSchoolBranding from '../hooks/useSchoolBranding';
 import { useNotifications } from '../context/NotificationContext';
 
@@ -129,6 +129,7 @@ export default function ParentDashboard() {
 
   const navItems = [
     { name: 'Student Overview', path: '/parent', icon: UserCircle, exact: true },
+    { name: 'My Children', path: '/parent/children', icon: Users },
     { name: 'Performance', path: '/parent/performance', icon: TrendingUp },
     { name: 'PTM Meetings', path: '/parent/ptm', icon: CalendarClock },
     { name: 'Noticeboard', path: '/parent/notices', icon: Bell, moduleKey: 'noticeboard' },
