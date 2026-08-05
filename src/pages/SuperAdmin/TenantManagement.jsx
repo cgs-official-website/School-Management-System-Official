@@ -51,6 +51,8 @@ export default function TenantManagement() {
   const [showModal, setShowModal] = useState(false);
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [selectedModules, setSelectedModules] = useState([]);
+  const [seatLimit, setSeatLimit] = useState(500);
+  const [teacherLimit, setTeacherLimit] = useState(50);
   const [saving, setSaving] = useState(false);
   
   const [isConfigOpen, setIsConfigOpen] = useState(false);
@@ -99,8 +101,11 @@ export default function TenantManagement() {
   const openApprovalModal = (school) => {
     setSelectedSchool(school);
     setModalAction('approve');
-    // Pre-select based on plan, or default empty. For demo, we leave it empty or select all.
     setSelectedModules(school.permittedModules || []);
+    const defaultSeats = school.seatLimit !== undefined ? school.seatLimit : (school.plan?.toLowerCase() === 'enterprise' ? 2000 : school.plan?.toLowerCase() === 'basic' ? 100 : 500);
+    const defaultTeachers = school.teacherLimit !== undefined ? school.teacherLimit : (school.plan?.toLowerCase() === 'enterprise' ? 150 : school.plan?.toLowerCase() === 'basic' ? 10 : 50);
+    setSeatLimit(defaultSeats);
+    setTeacherLimit(defaultTeachers);
     setShowModal(true);
   };
 
@@ -108,6 +113,10 @@ export default function TenantManagement() {
     setSelectedSchool(school);
     setModalAction('edit');
     setSelectedModules(school.permittedModules || []);
+    const defaultSeats = school.seatLimit !== undefined ? school.seatLimit : (school.plan?.toLowerCase() === 'enterprise' ? 2000 : school.plan?.toLowerCase() === 'basic' ? 100 : 500);
+    const defaultTeachers = school.teacherLimit !== undefined ? school.teacherLimit : (school.plan?.toLowerCase() === 'enterprise' ? 150 : school.plan?.toLowerCase() === 'basic' ? 10 : 50);
+    setSeatLimit(defaultSeats);
+    setTeacherLimit(defaultTeachers);
     setShowModal(true);
   };
 
@@ -122,8 +131,19 @@ export default function TenantManagement() {
   const handleSavePermissions = async () => {
     setSaving(true);
     try {
-      await updateSchoolStatus(selectedSchool.id, 'approved', selectedModules);
-      setSchools(schools.map(s => s.id === selectedSchool.id ? { ...s, status: 'approved', permittedModules: selectedModules } : s));
+      const parsedSeatLimit = Math.max(1, Number(seatLimit) || 500);
+      const parsedTeacherLimit = Math.max(1, Number(teacherLimit) || 50);
+      await updateSchoolStatus(selectedSchool.id, 'approved', selectedModules, {
+        seatLimit: parsedSeatLimit,
+        teacherLimit: parsedTeacherLimit
+      });
+      setSchools(schools.map(s => s.id === selectedSchool.id ? { 
+        ...s, 
+        status: 'approved', 
+        permittedModules: selectedModules,
+        seatLimit: parsedSeatLimit,
+        teacherLimit: parsedTeacherLimit
+      } : s));
       
       if (modalAction === 'approve') {
         try {
@@ -135,13 +155,13 @@ export default function TenantManagement() {
               dashboardLink: window.location.origin + '/login'
             }
           });
-          toast.success("School approved & email sent!");
+          toast.success("School approved with limits & email sent!");
         } catch (emailError) {
           console.error("Email error:", emailError);
           toast.error("Approved, but email failed to send.");
         }
       } else {
-        toast.success("Permissions updated successfully.");
+        toast.success("School limits and permissions updated successfully.");
       }
 
       setShowModal(false);
@@ -279,9 +299,14 @@ export default function TenantManagement() {
                       </div>
                     </td>
                     <td className="p-4">
-                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 uppercase tracking-wider border border-slate-200">
-                        {school.plan}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className="inline-block w-fit px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 uppercase tracking-wider border border-slate-200">
+                          {school.plan || 'Standard'}
+                        </span>
+                        <span className="text-xs font-semibold text-primary-700 bg-primary-50 px-2 py-0.5 rounded-md border border-primary-200 w-fit">
+                          {school.seatLimit || (school.plan?.toLowerCase() === 'enterprise' ? 2000 : school.plan?.toLowerCase() === 'basic' ? 100 : 500)} Student Seats
+                        </span>
+                      </div>
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2 text-sm text-slate-600">
@@ -409,9 +434,90 @@ export default function TenantManagement() {
             </div>
 
             <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
-              <div className="mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <h3 className="font-bold text-slate-900">{selectedSchool.schoolName}</h3>
-                <p className="text-sm text-slate-500 mt-1">Purchased Plan: <span className="font-bold uppercase tracking-wider text-slate-700">{selectedSchool.plan}</span></p>
+              <div className="mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                <div>
+                  <h3 className="font-bold text-slate-900">{selectedSchool.schoolName}</h3>
+                  <p className="text-sm text-slate-500 mt-0.5">Purchased Plan: <span className="font-bold uppercase tracking-wider text-slate-700">{selectedSchool.plan || 'Standard'}</span></p>
+                </div>
+                <div className="bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-600">
+                  DB Enforcement: <span className="text-green-600 font-bold">Active</span>
+                </div>
+              </div>
+
+              {/* License Capacity & Seat Limits (SuperAdmin Controlled) */}
+              <div className="mb-6 border border-primary-200 bg-primary-50/40 rounded-2xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                    <ShieldCheck size={18} className="text-primary-600" />
+                    School License Capacity & DB Rules Limit
+                  </h4>
+                  <span className="text-xs font-bold text-primary-700 bg-primary-100 px-2.5 py-0.5 rounded-full">
+                    SuperAdmin Only
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 mb-4">
+                  Set or expand the maximum student and teacher capacity for this school document. The database rules and application enforce this limit strictly.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Student Seat Limit
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="number"
+                        min="1"
+                        value={seatLimit}
+                        onChange={(e) => setSeatLimit(Math.max(1, parseInt(e.target.value) || 1))}
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 font-bold text-slate-900 bg-white"
+                        placeholder="e.g. 500"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <span className="text-[11px] text-slate-500 font-medium">Quick presets:</span>
+                      {[250, 500, 1000, 2500].map(val => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setSeatLimit(val)}
+                          className={`text-[11px] px-2 py-0.5 rounded font-bold transition-colors ${seatLimit === val ? 'bg-primary-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'}`}
+                        >
+                          {val}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                      Teacher Limit
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="number"
+                        min="1"
+                        value={teacherLimit}
+                        onChange={(e) => setTeacherLimit(Math.max(1, parseInt(e.target.value) || 1))}
+                        className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 font-bold text-slate-900 bg-white"
+                        placeholder="e.g. 50"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <span className="text-[11px] text-slate-500 font-medium">Quick presets:</span>
+                      {[25, 50, 100, 200].map(val => (
+                        <button
+                          key={val}
+                          type="button"
+                          onClick={() => setTeacherLimit(val)}
+                          className={`text-[11px] px-2 py-0.5 rounded font-bold transition-colors ${teacherLimit === val ? 'bg-primary-600 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'}`}
+                        >
+                          {val}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Legal Verification Section */}

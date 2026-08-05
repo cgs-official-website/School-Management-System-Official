@@ -2707,6 +2707,7 @@ export default function StaffAssignment() {
         title="Delete Staff Member"
         message={`Are you sure you want to delete the staff member "${confirmDeleteState.name}"? This action cannot be undone.`}
         onConfirm={() => handleDeleteStaff(confirmDeleteState.id)}
+        onClose={() => setConfirmDeleteState({ isOpen: false, id: null, name: '' })}
         onCancel={() => setConfirmDeleteState({ isOpen: false, id: null, name: '' })}
         confirmText="Delete"
         cancelText="Cancel"

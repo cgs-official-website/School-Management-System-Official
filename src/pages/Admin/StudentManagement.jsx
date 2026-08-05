@@ -26,6 +26,7 @@ export default function StudentManagement() {
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
   const [schoolName, setSchoolName] = useState('');
+  const [schoolData, setSchoolData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Form State
@@ -212,9 +213,13 @@ export default function StudentManagement() {
 
     setLoading(true);
     
-    // Fetch School Name statically once
-    getDoc(doc(db, 'schools', schoolId)).then(snap => {
-      if (snap.exists()) setSchoolName(snap.data().schoolName || 'School');
+    // Subscribe to School Document in real-time for live seatLimit & metadata
+    const unsubSchool = onSnapshot(doc(db, 'schools', schoolId), (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setSchoolData(data);
+        setSchoolName(data.schoolName || 'School');
+      }
     });
 
     const unsubStudents = subscribeToSubCollection(schoolId, 'students', (data) => {
@@ -257,6 +262,7 @@ export default function StudentManagement() {
     fetchSchema();
 
     return () => {
+      unsubSchool();
       unsubStudents();
       unsubClasses();
     };
@@ -264,6 +270,16 @@ export default function StudentManagement() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+
+    // Check Seat Limit
+    const effectiveSeatLimit = schoolData?.seatLimit || (schoolData?.plan?.toLowerCase() === 'enterprise' ? 2000 : schoolData?.plan?.toLowerCase() === 'basic' ? 100 : 500);
+    if (students.length >= effectiveSeatLimit) {
+      toast.error(`School student capacity limit of ${effectiveSeatLimit} seats reached! Please contact SuperAdmin to expand your school license limit.`, {
+        duration: 6000,
+        icon: '⚠️'
+      });
+      return;
+    }
 
     if (!formData.admissionNumber?.trim()) {
       toast.error("Admission number is required.");
@@ -298,6 +314,15 @@ export default function StudentManagement() {
         photoUrl,
         createdAt: new Date().toISOString()
       });
+
+      // Update studentCount counter on school doc
+      try {
+        await updateDoc(doc(db, 'schools', schoolId), {
+          studentCount: (students.length + 1)
+        });
+      } catch (countErr) {
+        console.warn("Could not update school studentCount:", countErr);
+      }
       
       setFormData({
         firstName: '', lastName: '', admissionNumber: '', classId: '', parentEmail: '', dob: '', gender: 'Male', status: 'Active',
@@ -309,6 +334,7 @@ export default function StudentManagement() {
       setCustomData({});
       setPhotoFile(null);
       setShowForm(false);
+      toast.success("Student admitted successfully!");
     } catch (error) {
       console.error("Error creating student:", error);
       toast.error("Failed to admit student.");
@@ -330,6 +356,16 @@ export default function StudentManagement() {
     if (!selectedStudentForUpload) {
       // BULK IMPORT LOGIC
       setUploadModalOpen(false);
+
+      const effectiveSeatLimit = schoolData?.seatLimit || (schoolData?.plan?.toLowerCase() === 'enterprise' ? 2000 : schoolData?.plan?.toLowerCase() === 'basic' ? 100 : 500);
+      const availableCapacity = Math.max(0, effectiveSeatLimit - students.length);
+
+      if (availableCapacity <= 0) {
+        toast.error(`School student capacity limit of ${effectiveSeatLimit} seats reached. No more students can be imported. Contact SuperAdmin to expand limit.`, { duration: 6000 });
+        setUploading(false);
+        return;
+      }
+
       const loadingToastId = toast.loading("Processing bulk import...");
       try {
         const reader = new FileReader();
@@ -344,6 +380,7 @@ export default function StudentManagement() {
             let successCount = 0;
             let skipCount = 0;
             let replaceCount = 0;
+            let limitCappedCount = 0;
             const importedAdmissions = new Set();
             const existingAdmissionsMap = new Map(students.map(s => [s.admissionNumber?.toLowerCase(), s]));
 
@@ -365,8 +402,16 @@ export default function StudentManagement() {
                   continue;
                 }
 
+                const isReplacement = existingAdmissionsMap.has(lowerAdmission);
+
+                // If this is a new addition and we reached available capacity, skip and count limit cap
+                if (!isReplacement && (students.length + successCount - replaceCount) >= effectiveSeatLimit) {
+                  limitCappedCount++;
+                  continue;
+                }
+
                 // If exists in database, delete the old one completely to replace it
-                if (existingAdmissionsMap.has(lowerAdmission)) {
+                if (isReplacement) {
                   const existingStudent = existingAdmissionsMap.get(lowerAdmission);
                   await deleteDoc(doc(db, 'schools', schoolId, 'students', existingStudent.id));
                   replaceCount++;
@@ -417,7 +462,18 @@ export default function StudentManagement() {
                 successCount++;
               }
             }
-            if (skipCount > 0 || replaceCount > 0) {
+            // Update school studentCount
+            try {
+              await updateDoc(doc(db, 'schools', schoolId), {
+                studentCount: (students.length + successCount - replaceCount)
+              });
+            } catch (cntErr) {
+              console.warn("Could not update school studentCount after import:", cntErr);
+            }
+
+            if (limitCappedCount > 0) {
+              toast.error(`Imported ${successCount} students. ${limitCappedCount} student(s) skipped because school capacity limit (${effectiveSeatLimit}) was reached! Contact SuperAdmin to expand limit.`, { id: loadingToastId, duration: 8000 });
+            } else if (skipCount > 0 || replaceCount > 0) {
               toast.success(`Imported ${successCount} (Replaced: ${replaceCount}). Skipped ${skipCount} duplicates.`, { id: loadingToastId });
             } else {
               toast.success(`Successfully imported ${successCount} students!`, { id: loadingToastId });
@@ -840,11 +896,62 @@ export default function StudentManagement() {
     );
   }
 
+  const effectiveSeatLimit = schoolData?.seatLimit || (schoolData?.plan?.toLowerCase() === 'enterprise' ? 2000 : schoolData?.plan?.toLowerCase() === 'basic' ? 100 : 500);
+  const seatUsagePercent = effectiveSeatLimit > 0 ? Math.min(Math.round((totalStudents / effectiveSeatLimit) * 100), 100) : 0;
+  const isSeatLimitReached = totalStudents >= effectiveSeatLimit;
+  const isSeatLimitWarning = !isSeatLimitReached && seatUsagePercent >= 85;
+
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <div className="flex justify-between items-end mb-8">
+      {/* Seat Limit Warning Banner */}
+      {isSeatLimitReached && (
+        <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 flex items-center justify-between shadow-sm animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-red-100 rounded-xl text-red-600 font-bold">⚠️</div>
+            <div>
+              <p className="font-bold text-sm">School Student Capacity Limit Reached ({totalStudents} / {effectiveSeatLimit})</p>
+              <p className="text-xs text-red-700 mt-0.5">
+                Your school has filled all allocated student seats. Single admissions and bulk imports are locked. Please contact your SuperAdmin to expand your school license limit.
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-black bg-red-600 text-white px-3 py-1.5 rounded-xl uppercase tracking-wider whitespace-nowrap">
+            Locked
+          </span>
+        </div>
+      )}
+
+      {isSeatLimitWarning && (
+        <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 flex items-center justify-between shadow-sm animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-100 rounded-xl text-amber-600 font-bold">⚡</div>
+            <div>
+              <p className="font-bold text-sm">School Nearing Seat Capacity Limit ({totalStudents} / {effectiveSeatLimit} Seats, {seatUsagePercent}%)</p>
+              <p className="text-xs text-amber-700 mt-0.5">
+                You are approaching your plan's maximum capacity. Contact your SuperAdmin if you need to expand student limits.
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-black bg-amber-500 text-white px-3 py-1.5 rounded-xl uppercase tracking-wider whitespace-nowrap">
+            {effectiveSeatLimit - totalStudents} Seats Left
+          </span>
+        </div>
+      )}
+
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Student Directory & Attachments</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-slate-900">Student Directory & Attachments</h1>
+            <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
+              isSeatLimitReached 
+                ? 'bg-red-100 text-red-700 border-red-200' 
+                : isSeatLimitWarning 
+                ? 'bg-amber-100 text-amber-700 border-amber-200' 
+                : 'bg-primary-50 text-primary-700 border-primary-200'
+            }`}>
+              Seats: {totalStudents} / {effectiveSeatLimit}
+            </span>
+          </div>
           <p className="text-slate-500 mt-1">Manage admissions, upload student records, and class assignments.</p>
         </div>
         <div className="flex gap-3">
@@ -1120,9 +1227,22 @@ export default function StudentManagement() {
       ) : (
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 bg-slate-50/30">
-            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><GraduationCap size={20} /></div>
-              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Students</p><p className="text-xl font-bold text-slate-900">{totalStudents}</p></div>
+            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><GraduationCap size={20} /></div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Seats Enrolled</p>
+                  <p className="text-xl font-bold text-slate-900">{totalStudents} <span className="text-xs font-normal text-slate-400">/ {effectiveSeatLimit}</span></p>
+                </div>
+              </div>
+              <div className="mt-2.5">
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full transition-all ${isSeatLimitReached ? 'bg-red-500' : isSeatLimitWarning ? 'bg-amber-500' : 'bg-primary-600'}`} 
+                    style={{ width: `${seatUsagePercent}%` }}
+                  />
+                </div>
+              </div>
             </div>
             <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><CheckCircle2 size={20} /></div>
@@ -2410,6 +2530,7 @@ export default function StudentManagement() {
         title="Delete Student"
         message={`Are you sure you want to delete the student "${confirmDeleteState.name}"? This action cannot be undone.`}
         onConfirm={() => handleDeleteStudent(confirmDeleteState.id)}
+        onClose={() => setConfirmDeleteState({ isOpen: false, id: null, name: '' })}
         onCancel={() => setConfirmDeleteState({ isOpen: false, id: null, name: '' })}
         confirmText="Delete"
         cancelText="Cancel"

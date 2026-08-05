@@ -211,7 +211,7 @@ export const createSchool = async (schoolData, schoolId = null) => {
 
 
 
-export const updateSchoolStatus = async (schoolId, newStatus, permittedModules = []) => {
+export const updateSchoolStatus = async (schoolId, newStatus, permittedModules = [], limits = {}) => {
   try {
     const schoolRef = doc(db, "schools", schoolId);
     const updateData = {
@@ -220,12 +220,29 @@ export const updateSchoolStatus = async (schoolId, newStatus, permittedModules =
     };
     if (newStatus === 'approved') {
       updateData.permittedModules = permittedModules;
+      if (limits.seatLimit !== undefined) updateData.seatLimit = Number(limits.seatLimit);
+      if (limits.teacherLimit !== undefined) updateData.teacherLimit = Number(limits.teacherLimit);
       // Initialize empty API keys if not present
       updateData.apiKeys = { googleMaps: '', cloudinary: { cloudName: '', uploadPreset: '' } };
     }
     await updateDoc(schoolRef, updateData);
   } catch (error) {
     console.error("Error updating school status:", error);
+    throw error;
+  }
+};
+
+export const updateSchoolLimits = async (schoolId, { seatLimit, teacherLimit }) => {
+  try {
+    const schoolRef = doc(db, "schools", schoolId);
+    const updateData = {
+      updatedAt: new Date().toISOString()
+    };
+    if (seatLimit !== undefined) updateData.seatLimit = Number(seatLimit);
+    if (teacherLimit !== undefined) updateData.teacherLimit = Number(teacherLimit);
+    await updateDoc(schoolRef, updateData);
+  } catch (error) {
+    console.error("Error updating school limits:", error);
     throw error;
   }
 };

@@ -4,6 +4,7 @@ import { LuTriangleAlert as AlertTriangle, LuX as X } from 'react-icons/lu';
 export default function ConfirmModal({ 
   isOpen, 
   onClose, 
+  onCancel,
   onConfirm, 
   title = "Confirm Action", 
   message = "Are you sure you want to proceed?", 
@@ -13,6 +14,8 @@ export default function ConfirmModal({
   zIndex = "z-[10000]"
 }) {
   if (!isOpen) return null;
+
+  const handleClose = onClose || onCancel;
 
   const colors = {
     danger: {
@@ -40,11 +43,15 @@ export default function ConfirmModal({
   const theme = colors[type] || colors.danger;
 
   return (
-    <div className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200`}>
+    <div 
+      className={`fixed inset-0 ${zIndex} flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200`}
+      onClick={handleClose}
+    >
       <div 
         className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
           <div className="flex justify-between items-start mb-4">
@@ -52,7 +59,8 @@ export default function ConfirmModal({
               <AlertTriangle size={24} />
             </div>
             <button 
-              onClick={onClose}
+              type="button"
+              onClick={handleClose}
               className="text-slate-400 hover:text-slate-500 hover:bg-slate-100 p-2 rounded-full transition-colors"
               aria-label="Close"
             >
@@ -81,7 +89,7 @@ export default function ConfirmModal({
           <button
             type="button"
             className="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition-colors"
-            onClick={onClose}
+            onClick={handleClose}
           >
             {cancelText}
           </button>

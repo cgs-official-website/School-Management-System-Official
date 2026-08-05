@@ -1,0 +1,409 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===========================================================
+    // GLOBAL NOTES
+    // ===========================================================
+    // 1. Rules enforce ACCESS CONTROL and protected fields.
+    // 2. School limits (seatLimit, teacherLimit) can ONLY be altered by SuperAdmin.
+
+    // ---------------------------------------------------------
+    // HELPER FUNCTIONS
+    // ---------------------------------------------------------
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function currentRole() {
+      return isAuthenticated() ? getUserData().role : '';
+    }
+
+    function currentSchoolId() {
+      return isAuthenticated() ? getUserData().schoolId : '';
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated() && (currentRole() == 'superadmin' || currentRole() == 'SuperAdmin');
+    }
+
+    function isAdminOfSchool(schoolId) {
+      return isAuthenticated() && currentRole() == 'admin' && currentSchoolId() == schoolId;
+    }
+
+    function isTeacherOfSchool(schoolId) {
+      return isAuthenticated() && currentRole() == 'teacher' && currentSchoolId() == schoolId;
+    }
+
+    function isParentOfSchool(schoolId) {
+      return isAuthenticated() && currentRole() == 'parent' && currentSchoolId() == schoolId;
+    }
+
+    function isStudentOfSchool(schoolId) {
+      return isAuthenticated() && currentRole() == 'student' && currentSchoolId() == schoolId;
+    }
+
+    function isAccountantOfSchool(schoolId) {
+      return isAuthenticated() && currentRole() == 'accountant' && currentSchoolId() == schoolId;
+    }
+
+    function isLibrarianOfSchool(schoolId) {
+      return isAuthenticated() && currentRole() == 'librarian' && currentSchoolId() == schoolId;
+    }
+
+    function isWardenOfSchool(schoolId) {
+      return isAuthenticated() && currentRole() == 'warden' && currentSchoolId() == schoolId;
+    }
+
+    function isStaffOfSchool(schoolId) {
+      return isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId)
+        || isAccountantOfSchool(schoolId) || isLibrarianOfSchool(schoolId)
+        || isWardenOfSchool(schoolId);
+    }
+
+    function belongsToSchool(schoolId) {
+      return isAuthenticated() && currentSchoolId() == schoolId;
+    }
+
+    // Allows setting the schoolId if it was previously blank (during initial registration)
+    function noPrivilegeEscalation() {
+      let before = resource.data;
+      let after = request.resource.data;
+      return before.role == after.role && (before.schoolId == after.schoolId || before.schoolId == '');
+    }
+
+    // Protect core school configuration fields from being modified by school admins
+    function schoolProtectedFieldsUnchanged() {
+      return !request.resource.data.diff(resource.data).affectedKeys()
+        .hasAny(['status', 'planId', 'permittedModules', 'seatLimit', 'studentLimit', 'teacherLimit']);
+    }
+
+    function isValidRegistrationToken(schoolId, token) {
+      let linkPath = /databases/$(database)/documents/schools/$(schoolId)/registrationLinks/$(token);
+      return exists(linkPath)
+        && get(linkPath).data.status == 'active'
+        && get(linkPath).data.expiresAt > request.time;
+    }
+
+    // ---------------------------------------------------------
+    // USERS COLLECTION
+    // ---------------------------------------------------------
+    match /users/{userId} {
+      // Allow user to read their own profile, or superadmins to read all
+      allow read: if isSuperAdmin() || (isAuthenticated() && request.auth.uid == userId);
+      
+      // Allow anyone in the school to read profiles of users in the same school.
+      allow read: if isAuthenticated() && resource.data.schoolId == currentSchoolId();
+
+      allow update: if isSuperAdmin()
+        || (isAuthenticated() && request.auth.uid == userId && noPrivilegeEscalation());
+
+      allow create: if isSuperAdmin()
+        || (isAdminOfSchool(request.resource.data.schoolId) && request.resource.data.role != 'superadmin')
+        || (isAuthenticated() && request.auth.uid == userId && (request.resource.data.role == 'teacher' || request.resource.data.role == 'parent' || request.resource.data.role == 'admin'));
+
+      allow delete: if isSuperAdmin() || isAdminOfSchool(resource.data.schoolId);
+    }
+
+    // ---------------------------------------------------------
+    // PLANS COLLECTION
+    // ---------------------------------------------------------
+    match /plans/{planId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+    
+    // ---------------------------------------------------------
+    // SUBSCRIPTION PLANS COLLECTION
+    // ---------------------------------------------------------
+    match /subscriptionPlans/{document=**} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // GLOBAL SETTINGS COLLECTION (Added for Email Templates)
+    // ---------------------------------------------------------
+    match /settings/{document=**} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // COUNTERS COLLECTION
+    // ---------------------------------------------------------
+    match /counters/{counterId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ---------------------------------------------------------
+    // SCHOOLS COLLECTION
+    // ---------------------------------------------------------
+    match /schools/{schoolId} {
+      // SuperAdmin has full read/write permission (can expand seatLimit, change status, etc.)
+      allow read, write: if isSuperAdmin();
+
+      // New registrations start pending without pre-assigning protected limits
+      allow create: if isAuthenticated()
+        && request.resource.data.status == 'pending'
+        && request.resource.data.ownerId == request.auth.uid
+        && !request.resource.data.keys().hasAny(['planId', 'permittedModules', 'seatLimit', 'studentLimit', 'teacherLimit']);
+
+      // Public read for branding / logos
+      allow read: if true;
+
+      // School Admin can update regular school profile fields, but CANNOT alter seatLimit, planId, status, etc.
+      allow update: if isAdminOfSchool(schoolId) && schoolProtectedFieldsUnchanged();
+
+      match /environment/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId);
+      }
+
+      // ==========================================
+      // SCHOOL SETTINGS & GLOBALS
+      // ==========================================
+      match /settings/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId);
+      }
+
+      // SOP Attendance Settings Configuration
+      match /config/attendanceSettings {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId);
+      }
+
+      // SOP Leave Approval Rules Configuration
+      match /config/leaveApprovalRules/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId);
+      }
+
+      // ==========================================
+      // ADMINISTRATIVE DATA (Staff & Students)
+      // ==========================================
+      match /staff_audit_logs/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      
+      match /teachers/{teacherId} { 
+        allow read: if true; 
+        allow update: if isAdminOfSchool(schoolId) || (isAuthenticated() && (request.resource.data.userId == request.auth.uid || resource.data.userId == request.auth.uid));
+        allow delete: if isAdminOfSchool(schoolId);
+        allow create: if isAdminOfSchool(schoolId) || (isAuthenticated() && request.resource.data.userId == request.auth.uid);
+      }
+      
+      match /parents/{parentId} { 
+        allow read: if true; 
+        allow update: if isAdminOfSchool(schoolId) || (isAuthenticated() && (request.resource.data.userId == request.auth.uid || resource.data.userId == request.auth.uid));
+        allow delete: if isAdminOfSchool(schoolId);
+        allow create: if isAdminOfSchool(schoolId) || (isAuthenticated() && request.resource.data.userId == request.auth.uid);
+      }
+      
+      match /staff/{document=**}      { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /classes/{document=**}    { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /subjects/{document=**}   { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /timetables/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      
+      // Student Verification & Nested Report Cards Rules
+      match /students/{studentId} {
+        allow read: if belongsToSchool(schoolId) || isAuthenticated();
+        allow write: if isAdminOfSchool(schoolId);
+        allow update: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId);
+
+        match /report_cards/{reportCardId} {
+          allow read: if belongsToSchool(schoolId) || isAuthenticated();
+          allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId);
+        }
+      }
+      
+      // Automated SOP Absentee Flags
+      match /absenteeFlags/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isStaffOfSchool(schoolId) || isSuperAdmin();
+      }
+
+      // Automated SOP Attendance Statistics
+      match /attendanceStats/{document=**} {
+        allow read: if belongsToSchool(schoolId) || isParentOfSchool(schoolId);
+        allow write: if isStaffOfSchool(schoolId) || isSuperAdmin();
+      }
+
+      // SOP Dashboard Stats Snapshots
+      match /dashboardStats/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isStaffOfSchool(schoolId) || isSuperAdmin();
+      }
+
+      // ==========================================
+      // CUSTOM MODULES & FORM BUILDER
+      // ==========================================
+      match /formSchemas/{document=**} { allow read, write: if belongsToSchool(schoolId); }
+      match /templates/{document=**}   { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      
+      match /customModules/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId);
+      }
+      
+      match /{collectionId}/{document=**} {
+        allow read: if belongsToSchool(schoolId) && collectionId.matches('.*_data');
+        allow write: if isAdminOfSchool(schoolId) && collectionId.matches('.*_data');
+      }
+
+      // Leads Module Rules
+      match /leadForms/{formId} {
+        allow read: if true;
+        allow write: if isAdminOfSchool(schoolId) || isSuperAdmin();
+      }
+
+      match /leads/{leadId} {
+        allow create: if true;
+        allow read, update, delete: if isAdminOfSchool(schoolId) || isSuperAdmin();
+      }
+
+      match /notices/{document=**}    { 
+        allow read: if belongsToSchool(schoolId); 
+        allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId); 
+        allow update: if belongsToSchool(schoolId); 
+      }
+      
+      match /calendar/{document=**}   { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /health/{document=**}     { allow read: if isAdminOfSchool(schoolId) || isWardenOfSchool(schoolId) || isParentOfSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /alumni/{document=**}     { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /documents/{document=**}  { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /branches/{document=**}   { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      
+      // ==========================================
+      // INVENTORY & HOSTEL
+      // ==========================================
+      match /inventory/{document=**}            { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /inventory_categories/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /inventory_transactions/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /inventory_audit_logs/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      
+      match /hostels/{document=**}    { allow read: if isAdminOfSchool(schoolId) || isWardenOfSchool(schoolId); allow write: if isAdminOfSchool(schoolId) || isWardenOfSchool(schoolId); }
+      
+      // Transport Collections
+      match /transport/{document=**}  { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /transportRoutes/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+
+      // Library Collections
+      match /library/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isLibrarianOfSchool(schoolId);
+      }
+      match /books/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isLibrarianOfSchool(schoolId);
+      }
+      match /issuedBooks/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isLibrarianOfSchool(schoolId);
+      }
+
+      // Fee Collections
+      match /fees/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isAccountantOfSchool(schoolId);
+      }
+      match /feeStructures/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isAccountantOfSchool(schoolId);
+      }
+      match /invoices/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isAccountantOfSchool(schoolId);
+      }
+      
+      match /feeCollectionPeriods/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isAccountantOfSchool(schoolId);
+      }
+
+      // HR & Roles
+      match /payroll/{document=**} { allow read: if isStaffOfSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /hr/{document=**}      { allow read, write: if isAdminOfSchool(schoolId); }
+      match /reports/{document=**} { allow read, write: if isAdminOfSchool(schoolId); }
+      match /roles/{document=**}   { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+
+      match /apiIntegrations/{document=**} {
+        allow read, write: if isAdminOfSchool(schoolId);
+      }
+
+      match /registrationLinks/{document=**} {
+        allow read, write: if isAdminOfSchool(schoolId);
+      }
+
+      match /pendingAdmissions/{admissionId} {
+        allow read, update, delete: if isAdminOfSchool(schoolId);
+
+        allow create: if
+          request.resource.data.token is string
+          && isValidRegistrationToken(schoolId, request.resource.data.token)
+          && request.resource.data.keys().hasOnly(
+               ['token', 'studentName', 'dob', 'parentName', 'parentPhone', 'parentEmail', 'submittedAt']
+             )
+          && request.resource.data.keys().hasAll(
+               ['token', 'studentName', 'parentName', 'parentPhone', 'submittedAt']
+             )
+          && request.resource.data.submittedAt == request.time
+          && request.resource.data.studentName is string
+          && request.resource.data.studentName.size() > 0
+          && request.resource.data.studentName.size() < 200
+          && request.resource.data.parentPhone.matches('^[0-9]{10}$');
+      }
+
+      // ==========================================
+      // ACADEMIC DATA
+      // ==========================================
+      match /lesson_plans/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId);
+      }
+      
+      match /leaves/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId) || isParentOfSchool(schoolId);
+      }
+      
+      match /homeworks/{hwId} { 
+        allow read: if belongsToSchool(schoolId); 
+        allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId); 
+
+        match /submissions/{document=**} {
+          allow read: if belongsToSchool(schoolId);
+          allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId) || isParentOfSchool(schoolId);
+        }
+      }
+
+      match /notifications/{document=**} {
+        allow read: if belongsToSchool(schoolId);
+        allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId);
+      }
+
+      match /attendance/{document=**}  { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId); }
+      match /grades/{document=**}      { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId); }
+      match /exams/{document=**}       { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId); }
+      match /assignments/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId); }
+      
+      match /ptms/{document=**}      { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId) || isParentOfSchool(schoolId); }
+      match /resources/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId); }
+      match /assessments/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId) || isTeacherOfSchool(schoolId); }
+      match /canteen_requests/{document=**} { allow read, write: if belongsToSchool(schoolId); }
+
+      match /complaints/{document=**} { allow read, write: if belongsToSchool(schoolId); }
+      match /messages/{document=**}   { allow read, write: if belongsToSchool(schoolId); }
+      match /chats/{document=**}      { allow read, write: if belongsToSchool(schoolId); }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
