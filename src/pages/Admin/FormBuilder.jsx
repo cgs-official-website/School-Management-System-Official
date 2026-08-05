@@ -168,6 +168,48 @@ export default function FormBuilder() {
     }
   };
 
+  const handleImportSchema = async (moduleId) => {
+    if (!moduleId) return;
+    try {
+      const schemaRef = doc(db, `schools/${schoolId}/formSchemas`, moduleId);
+      const schemaSnap = await getDoc(schemaRef);
+      if (schemaSnap.exists()) {
+        const data = schemaSnap.data();
+        let importedSections = [];
+        if (data.sections && data.sections.length > 0) {
+          importedSections = data.sections;
+        } else if (data.fields && data.fields.length > 0) {
+          importedSections = [{
+            id: `sec_${Date.now()}`,
+            title: 'Imported General Details',
+            fields: data.fields
+          }];
+        }
+        
+        if (importedSections.length > 0) {
+          const clonedSections = importedSections.map((sec, sIdx) => ({
+            ...sec,
+            id: `sec_${Date.now()}_${sIdx}_${Math.random().toString(36).substr(2, 5)}`,
+            fields: (sec.fields || []).map((f, fIdx) => ({
+              ...f,
+              id: `field_${Date.now()}_${fIdx}_${Math.random().toString(36).substr(2, 5)}`
+            }))
+          }));
+          
+          setSections(prev => [...prev, ...clonedSections]);
+          toast.success("Sections imported successfully!");
+        } else {
+          toast.error("Selected module has no sections to import.");
+        }
+      } else {
+        toast.error("Selected module has no custom schema.");
+      }
+    } catch (error) {
+      console.error("Error importing schema:", error);
+      toast.error("Failed to import schema.");
+    }
+  };
+
   // --- Custom Module Manager Functions ---
   const handleCreateModule = async () => {
     if (!newModuleName.trim()) return toast.error("Module name cannot be empty");
@@ -501,7 +543,17 @@ export default function FormBuilder() {
               ))}
             </select>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
+              <select
+                className="px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white shadow-sm text-sm font-semibold text-slate-700"
+                value=""
+                onChange={(e) => handleImportSchema(e.target.value)}
+              >
+                <option value="">Import Sections from...</option>
+                {allModulesOptions.filter(m => m.id !== activeModule).map(m => (
+                  <option key={`import-${m.id}`} value={m.id}>{m.name}</option>
+                ))}
+              </select>
               {customModules.some(m => m.id === activeModule) && (
                 <button 
                   type="button"
