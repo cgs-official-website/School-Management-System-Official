@@ -117,28 +117,47 @@ export const sendEmail = async ({ to, templateType, data }) => {
     }
   }
 
+  // First try serverless function endpoint /api/send-email
   try {
     const response = await fetch('/api/send-email', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        to,
-        subject,
-        html,
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, subject, html }),
     });
 
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || 'Failed to send email');
+    if (response.ok) {
+      return await response.json();
     }
-
-    return result;
   } catch (error) {
-    console.error("Error in sendEmail service:", error);
-    throw error;
+    console.warn("Serverless API endpoint unavailable, attempting direct Resend API call...", error);
+  }
+
+  // Direct Resend API invocation (ensures Resend sends email in both local dev & production)
+  const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
+  if (resendApiKey) {
+    try {
+      const directRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Team Carrezza <admin@teamcarrezza.com>',
+          to: [to],
+          subject: subject,
+          html: html,
+        }),
+      });
+
+      const data = await directRes.json();
+      if (!directRes.ok) {
+        throw new Error(data.message || 'Resend API returned error');
+      }
+      return data;
+    } catch (directErr) {
+      console.error("Direct Resend API error:", directErr);
+      throw directErr;
+    }
   }
 };

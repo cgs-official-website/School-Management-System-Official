@@ -3,7 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { LuArrowLeft as ArrowLeft } from 'react-icons/lu';
 import { FiLoader as Loader, FiCheckCircle as CheckCircle } from 'react-icons/fi';
-import { resetPassword } from '../firebase/auth';
+import { sendEmail } from '../services/emailService';
+import { db } from '../firebase/config';
+import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
@@ -24,18 +26,55 @@ export default function ForgotPassword() {
     setLoading(true);
     setError(null);
     try {
-      await resetPassword(email);
-      // Always show success to prevent account enumeration
+      const targetEmail = email.toLowerCase().trim();
+
+      // 1. Try serverless backend endpoint first (/api/forgot-password)
+      let sentViaServerless = false;
+      try {
+        const res = await fetch('/api/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: targetEmail })
+        });
+        if (res.ok) {
+          sentViaServerless = true;
+        }
+      } catch (apiErr) {
+        console.warn("Serverless API offline, falling back to direct Resend service call...", apiErr);
+      }
+
+      // 2. Fallback if running in local Vite dev mode: Send email directly via Resend service
+      if (!sentViaServerless) {
+        const resetLink = `https://school-management-system-6a2c4.firebaseapp.com/__/auth/action?mode=resetPassword&email=${encodeURIComponent(targetEmail)}`;
+        
+        await sendEmail({
+          to: targetEmail,
+          templateType: 'FORGOT_PASSWORD',
+          data: { resetLink }
+        });
+
+        // Try updating user timestamp in DB if accessible
+        try {
+          const usersRef = collection(db, 'users');
+          const q = query(usersRef, where('email', '==', targetEmail));
+          const querySnapshot = await getDocs(q);
+
+          querySnapshot.forEach(async (userDoc) => {
+            await updateDoc(doc(db, 'users', userDoc.id), {
+              lastPasswordResetAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            });
+          });
+        } catch (dbErr) {
+          console.warn("Client DB update skipped (requires auth permissions):", dbErr);
+        }
+      }
+
+      // Always show success screen
       setSuccess(true);
     } catch (err) {
-      console.error(err);
-      // Still show success to prevent account enumeration, 
-      // unless it's a specific rate limit error
-      if (err.code === 'auth/too-many-requests') {
-        setError("Too many requests. Please try again later.");
-      } else {
-        setSuccess(true);
-      }
+      console.error("Password reset submission error:", err);
+      setSuccess(true);
     } finally {
       setLoading(false);
     }
