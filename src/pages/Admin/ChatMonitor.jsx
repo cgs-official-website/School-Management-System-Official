@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getChatThreads, subscribeToMessages } from '../../firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuSearch as Search, LuShieldAlert as ShieldAlert, LuDownload as DownloadIcon, LuX as XIcon } from 'react-icons/lu';
 import CustomAudioPlayer from '../../components/CustomAudioPlayer';
 
@@ -47,16 +49,43 @@ export default function ChatMonitor() {
   
   const messagesEndRef = useRef(null);
 
-  // Fetch all chat threads for the school
+  const [usersMap, setUsersMap] = useState(new Map());
+  const [studentsMap, setStudentsMap] = useState(new Map());
+
+  // Fetch all chat threads for the school and user maps
   useEffect(() => {
     if (schoolId) {
-      getChatThreads(schoolId)
-        .then(data => {
-          setThreads(data);
-          setFilteredThreads(data);
-        })
-        .catch(console.error)
-        .finally(() => setLoading(false));
+      const fetchData = async () => {
+        try {
+          const [threadsData, usersSnap, studentsSnap] = await Promise.all([
+            getChatThreads(schoolId),
+            getDocs(query(collection(db, 'users'), where('schoolId', '==', schoolId))),
+            getDocs(collection(db, `schools/${schoolId}/students`))
+          ]);
+          
+          const uMap = new Map();
+          usersSnap.forEach(doc => {
+            const data = doc.data();
+            uMap.set(doc.id, `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'Unknown User');
+          });
+          setUsersMap(uMap);
+
+          const sMap = new Map();
+          studentsSnap.forEach(doc => {
+            const data = doc.data();
+            sMap.set(doc.id, `${data.firstName || ''} ${data.lastName || ''}`.trim() || 'Unknown Student');
+          });
+          setStudentsMap(sMap);
+
+          setThreads(threadsData);
+          setFilteredThreads(threadsData);
+        } catch (err) {
+          console.error("Error fetching monitor data:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchData();
     }
   }, [schoolId]);
 
@@ -177,13 +206,14 @@ export default function ChatMonitor() {
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
                     activeThread?.id === thread.id ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'
                   }`}>
-                    {thread.teacherId ? thread.teacherId.substring(0,2).toUpperCase() : '..'}
+                    {thread.teacherId ? (usersMap.get(thread.teacherId) || '..').substring(0,2).toUpperCase() : '..'}
                   </div>
                   <div className="overflow-hidden flex-1">
                     <div className="font-bold text-slate-900 truncate text-sm">
-                      Thread: {thread.studentId}
+                      Thread: {studentsMap.get(thread.studentId) || thread.studentId}
                     </div>
-                    <div className="text-xs text-slate-500 truncate">Staff: {thread.teacherId}</div>
+                    <div className="text-xs text-slate-700 truncate font-medium">Parent: {usersMap.get(thread.parentId) || thread.parentId}</div>
+                    <div className="text-xs text-slate-500 truncate">Staff: {usersMap.get(thread.teacherId) || thread.teacherId}</div>
                     <div className="text-xs text-slate-400 truncate mt-1">
                       {thread.lastMessage || 'No recent messages'}
                     </div>
@@ -226,8 +256,8 @@ export default function ChatMonitor() {
                     return (
                       <div key={msg.id} className={`flex ${isTeacher ? 'justify-end' : 'justify-start'} w-full`}>
                         <div className={`max-w-[85%] md:max-w-[75%] flex flex-col ${isTeacher ? 'items-end' : 'items-start'}`}>
-                          <span className="text-xs font-bold text-slate-500 mb-1 px-1 uppercase tracking-wide">
-                            {isTeacher ? 'Teacher / Staff' : 'Parent'} (ID: {msg.senderId})
+                          <span className="text-xs font-bold text-slate-500 mb-1 px-1 tracking-wide">
+                            {usersMap.get(msg.senderId) || (isTeacher ? 'Teacher / Staff' : 'Parent')}
                           </span>
                           <div className={`rounded-2xl p-4 w-full ${
                             isTeacher 
