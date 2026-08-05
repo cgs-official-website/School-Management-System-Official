@@ -20,9 +20,9 @@ export default function BillingDashboard() {
   const invoices = [];
 
   const getPlanDisplayName = (planStr) => {
-    if (!planStr) return 'Free Trial';
+    if (!planStr) return 'Enterprise Plan';
     const clean = planStr.trim().toLowerCase();
-    if (clean === 'free') return 'Free Trial';
+    if (clean === 'free') return 'Enterprise Plan';
     if (clean === 'starter' || clean === 'starter_monthly' || clean === 'starter_yearly') return 'Starter Plan';
     if (clean === 'professional' || clean === 'professional_monthly' || clean === 'professional_yearly') return 'Professional Plan';
     if (clean === 'enterprise' || clean === 'enterprise_monthly' || clean === 'enterprise_yearly') return 'Enterprise Plan';
