@@ -1641,8 +1641,7 @@ export default function StudentManagement() {
                   <th className="py-4 px-6">Student</th>
                   <th className="py-4 px-6">Admission No</th>
                   <th className="py-4 px-6">Class</th>
-                  <th className="py-4 px-6">Parent Details</th>
-                  <th className="py-4 px-6">Status</th>
+                  <th className="py-4 px-6">Attachment</th>
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
               </thead>
