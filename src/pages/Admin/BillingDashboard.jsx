@@ -34,15 +34,16 @@ export default function BillingDashboard() {
 
     schoolUnsub = onSnapshot(doc(db, 'schools', schoolId), (docSnap) => {
       if (docSnap.exists()) {
-        setSchool(docSnap.data());
-        updateCurrentPlan(docSnap.data().planId);
+        const data = docSnap.data();
+        setSchool(data);
+        updateCurrentPlan(data.plan || data.planId);
       }
       setLoading(false);
     });
 
-    const updateCurrentPlan = (planId = school?.planId) => {
+    const updateCurrentPlan = (planId = school?.plan || school?.planId) => {
       if (planId && allPlans.length > 0) {
-        const p = allPlans.find(plan => plan.id === planId);
+        const p = allPlans.find(plan => plan.id.toLowerCase() === planId.toLowerCase() || plan.name.toLowerCase() === planId.toLowerCase());
         setCurrentPlan(p);
       }
     };
@@ -91,9 +92,9 @@ export default function BillingDashboard() {
               <div>
                 <p className="text-sm font-bold text-amber-600 uppercase tracking-wider mb-1">Current Plan</p>
                 <h2 className="text-3xl font-extrabold text-slate-900">
-                  {currentPlan ? currentPlan.name : 'Free Trial'}
+                  {currentPlan ? currentPlan.name : (school?.plan ? school.plan.charAt(0).toUpperCase() + school.plan.slice(1) : 'Free Trial')}
                 </h2>
-                {currentPlan && (
+                {(currentPlan || school?.plan) && (
                   <p className="text-slate-500 mt-2">
                     Billing cycle: <span className="font-semibold text-slate-700 capitalize">{school?.billingCycle || 'monthly'}</span> &middot; Next charge: <span className="font-semibold text-slate-700">Next cycle</span>
                   </p>
