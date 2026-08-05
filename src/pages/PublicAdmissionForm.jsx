@@ -921,7 +921,7 @@ export default function PublicAdmissionForm() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary-600/25 flex items-center justify-center gap-2 text-base disabled:opacity-50"
+                className="w-full sm:w-auto px-8 py-3.5 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center gap-2 text-base disabled:opacity-50"
               >
                 {submitting ? (
                   <>

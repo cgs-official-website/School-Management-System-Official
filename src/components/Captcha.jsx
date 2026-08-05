@@ -5,6 +5,7 @@ const Captcha = forwardRef(({ onChange }, ref) => {
   const canvasRef = useRef(null);
   const [captchaText, setCaptchaText] = useState('');
   const [userInput, setUserInput] = useState('');
+  const captchaTextRef = useRef('');
 
   const generateCaptcha = () => {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'; // Excluded confusing chars like O, 0, I, 1, l
@@ -12,6 +13,7 @@ const Captcha = forwardRef(({ onChange }, ref) => {
     for (let i = 0; i < 6; i++) {
       text += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    captchaTextRef.current = text;
     setCaptchaText(text);
     setUserInput('');
     if (onChange) onChange(false); // Reset validation state
@@ -68,7 +70,7 @@ const Captcha = forwardRef(({ onChange }, ref) => {
   const handleInputChange = (e) => {
     const val = e.target.value;
     setUserInput(val);
-    const isValid = val.toLowerCase() === captchaText.toLowerCase();
+    const isValid = val.trim().toLowerCase() === captchaTextRef.current.trim().toLowerCase();
     if (onChange) onChange(isValid);
   };
 
