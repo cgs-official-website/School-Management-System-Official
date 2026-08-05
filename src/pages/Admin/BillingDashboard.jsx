@@ -105,7 +105,7 @@ export default function BillingDashboard() {
               </div>
               <div className="text-right">
                 <div className="text-4xl font-extrabold text-slate-900 mb-2">
-                  ₹{currentPlan ? (school?.billingCycle === 'yearly' ? currentPlan.pricePerUserPerYear : Math.round((currentPlan.pricePerUserPerYear || 0) / 12)) : 0}<span className="text-lg text-slate-500 font-medium">/{school?.billingCycle === 'yearly' ? 'yr' : 'mo'}</span>
+                  ₹{school?.calculatedTotalAmount || 0}<span className="text-lg text-slate-500 font-medium">/{school?.billingCycle === 'yearly' ? 'yr' : 'mo'}</span>
                 </div>
                 <button 
                   onClick={() => navigate('/admin/upgrade')}
@@ -212,7 +212,7 @@ export default function BillingDashboard() {
               </div>
             </div>
             <p className="text-xs text-slate-500 mt-4 leading-relaxed">
-              This card will be automatically charged ₹{currentPlan ? currentPlan.priceMonthly : 0} on the 1st of every month.
+              This card will be automatically charged ₹{school?.calculatedTotalAmount || 0} on the 1st of every {school?.billingCycle === 'yearly' ? 'year' : 'month'}.
             </p>
           </div>
 
