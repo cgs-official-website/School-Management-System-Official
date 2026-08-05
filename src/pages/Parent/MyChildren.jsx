@@ -2,16 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { LuPlus as Plus, LuPencil as Pencil, LuTrash2 as Trash2, LuUsers as Users, LuX as X, LuBaby as Baby } from 'react-icons/lu';
+import { findStudentByAdmission, linkStudentToParent } from '../../firebase/firestore';
+import { LuPlus as Plus, LuPencil as Pencil, LuTrash2 as Trash2, LuUsers as Users, LuX as X, LuBaby as Baby, LuLink as LinkIcon, LuCheckCircle2 as CheckCircle } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
 export default function MyChildren() {
-  const { currentUser } = useAuth();
+  const { currentUser, userProfile, updateProfileData } = useAuth();
   const [children, setChildren] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   
+  // Link state
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [linkingIndex, setLinkingIndex] = useState(null);
+  const [linkingAdmission, setLinkingAdmission] = useState('');
+  const [linkingError, setLinkingError] = useState('');
+  const [isLinking, setIsLinking] = useState(false);
+
   const [formData, setFormData] = useState({
     name: '',
     dob: '',
@@ -112,6 +120,58 @@ export default function MyChildren() {
     });
   };
 
+  const handleOpenLinkModal = (index) => {
+    setLinkingIndex(index);
+    setLinkingAdmission('');
+    setLinkingError('');
+    setIsLinkModalOpen(true);
+  };
+
+  const handleLinkSubmit = async (e) => {
+    e.preventDefault();
+    setLinkingError('');
+    setIsLinking(true);
+
+    try {
+      const child = children[linkingIndex];
+      // 1. Find the student
+      const student = await findStudentByAdmission(userProfile.schoolId, linkingAdmission, child.dob);
+      
+      if (!student) {
+        setLinkingError("No student found matching this Admission Number and the Date of Birth provided in this profile.");
+        setIsLinking(false);
+        return;
+      }
+
+      const studentName = student.name || `${student.firstName || ''} ${student.lastName || ''}`.trim() || 'Student';
+
+      // 2. Link to parent's profile context
+      await linkStudentToParent(currentUser.uid, student.id, student.classId, studentName);
+      
+      // 3. Update the specific child object locally
+      let updatedChildren = [...children];
+      updatedChildren[linkingIndex] = {
+        ...updatedChildren[linkingIndex],
+        studentId: student.id,
+        classId: student.classId
+      };
+      
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, { children: updatedChildren });
+      
+      setChildren(updatedChildren);
+      await updateProfileData();
+      
+      toast.success("Child officially linked successfully!");
+      setIsLinkModalOpen(false);
+    } catch (error) {
+      console.error("Link error:", error);
+      setLinkingError("An error occurred while linking. Please try again.");
+    } finally {
+      setIsLinking(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -176,13 +236,35 @@ export default function MyChildren() {
                 </div>
                 <div className="min-w-0 pr-16">
                   <h3 className="text-xl font-bold text-slate-900 truncate">{child.name}</h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200 mt-1">
-                    {child.relationship}
-                  </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                      {child.relationship}
+                    </span>
+                    {child.studentId ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
+                        <CheckCircle size={12} /> Verified
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-600 border border-amber-200">
+                        Unverified
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-3 text-sm mt-6 pt-6 border-t border-slate-100">
+              {!child.studentId && (
+                <div className="mb-2">
+                  <button 
+                    onClick={() => handleOpenLinkModal(index)}
+                    className="w-full flex items-center justify-center gap-2 py-2 bg-primary-50 text-primary-700 rounded-xl font-semibold hover:bg-primary-100 transition-colors text-sm"
+                  >
+                    <LinkIcon size={16} /> Link Official Account
+                  </button>
+                </div>
+              )}
+
+              <div className="space-y-3 text-sm mt-4 pt-4 border-t border-slate-100">
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 font-medium">Date of Birth</span>
                   <span className="font-semibold text-slate-900">{new Date(child.dob).toLocaleDateString()}</span>
@@ -321,6 +403,64 @@ export default function MyChildren() {
                   className="px-8 py-2.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors"
                 >
                   {editingIndex !== null ? 'Save Changes' : 'Add Child'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Link Official Account Modal */}
+      {isLinkModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h3 className="text-xl font-bold text-slate-900">Link Official Account</h3>
+              <button 
+                onClick={() => setIsLinkModalOpen(false)} 
+                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleLinkSubmit} className="p-6 space-y-4">
+              <div className="bg-primary-50 text-primary-800 p-4 rounded-xl text-sm mb-4">
+                Linking <strong>{children[linkingIndex]?.name}</strong>. Their date of birth will be used automatically for verification.
+              </div>
+
+              {linkingError && (
+                <div className="p-4 bg-red-50 text-red-700 rounded-xl text-sm font-medium border border-red-200">
+                  {linkingError}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Admission Number <span className="text-red-500">*</span></label>
+                <input 
+                  type="text" 
+                  required
+                  value={linkingAdmission}
+                  onChange={(e) => setLinkingAdmission(e.target.value)}
+                  placeholder="e.g. ADM-2024-001"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                />
+              </div>
+
+              <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+                <button 
+                  type="button" 
+                  onClick={() => setIsLinkModalOpen(false)}
+                  className="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isLinking}
+                  className="px-8 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isLinking ? 'Verifying...' : 'Link Account'}
                 </button>
               </div>
             </form>
