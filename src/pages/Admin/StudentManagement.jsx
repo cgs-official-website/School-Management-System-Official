@@ -856,17 +856,54 @@ export default function StudentManagement() {
   };
 
   const filteredStudents = students.filter(student => {
-    const matchesSearch = 
-      student.firstName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      student.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.admissionNumber.toLowerCase().includes(searchQuery.toLowerCase());
+    const q = searchQuery.trim().toLowerCase();
     
     const matchesClass = classFilter === 'all' || student.classId === classFilter;
     const matchesGender = genderFilter === 'all' || student.gender === genderFilter;
+    if (!matchesClass || !matchesGender) return false;
 
-    return matchesSearch && matchesClass && matchesGender;
+    if (!q) return true;
+
+    const firstName = (student.firstName || '').toString().toLowerCase();
+    const lastName = (student.lastName || '').toString().toLowerCase();
+    const fullName = `${firstName} ${lastName}`.trim();
+    const reverseFullName = `${lastName} ${firstName}`.trim();
+    const directName = (student.name || student.fullName || student.studentName || '').toString().toLowerCase();
+    const admissionNumber = (student.admissionNumber || student.admissionNo || student.rollNo || '').toString().toLowerCase();
+    const parentName = (student.parentName || student.guardianName || '').toString().toLowerCase();
+    const parentPhone = (student.parentPhone || student.phone || student.emergencyContact || '').toString().toLowerCase();
+    const parentEmail = (student.parentEmail || student.email || '').toString().toLowerCase();
+
+    // Direct substring matches
+    if (
+      fullName.includes(q) || 
+      reverseFullName.includes(q) || 
+      directName.includes(q) || 
+      admissionNumber.includes(q) ||
+      firstName.includes(q) ||
+      lastName.includes(q)
+    ) {
+      return true;
+    }
+
+    // Multi-term matching (e.g. searching "John Doe" or "John 1001")
+    const searchTerms = q.split(/\s+/).filter(Boolean);
+    const matchesAllTerms = searchTerms.every(term => 
+      firstName.includes(term) ||
+      lastName.includes(term) ||
+      fullName.includes(term) ||
+      directName.includes(term) ||
+      admissionNumber.includes(term) ||
+      parentName.includes(term) ||
+      parentPhone.includes(term) ||
+      parentEmail.includes(term)
+    );
+
+    return matchesAllTerms;
   }).sort((a, b) => {
-    return a.admissionNumber.localeCompare(b.admissionNumber, undefined, { numeric: true, sensitivity: 'base' });
+    const admA = (a.admissionNumber || a.admissionNo || '').toString();
+    const admB = (b.admissionNumber || b.admissionNo || '').toString();
+    return admA.localeCompare(admB, undefined, { numeric: true, sensitivity: 'base' });
   });
 
   // Metrics
@@ -1263,11 +1300,20 @@ export default function StudentManagement() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input 
                 type="text" 
-                placeholder="Search by name or admission number..." 
+                placeholder="Search by student name or admission number..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
               />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
+                  title="Clear search"
+                >
+                  <X size={16} />
+                </button>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <Filter size={18} className="text-slate-400 hidden sm:block" />
@@ -1320,8 +1366,22 @@ export default function StudentManagement() {
                   <tr>
                     <td colSpan="5" className="p-12 text-center text-slate-500">
                       <GraduationCap size={48} className="mx-auto mb-4 text-slate-300" />
-                      <p className="text-lg font-medium text-slate-900 mb-1">No students found</p>
-                      <p>Try adjusting your search or filters, or admit a new student.</p>
+                      <p className="text-lg font-medium text-slate-900 mb-1">
+                        {searchQuery ? `No students matching "${searchQuery}"` : 'No students found'}
+                      </p>
+                      <p className="text-sm">
+                        {searchQuery 
+                          ? 'Check the spelling of the student name or admission number, or reset your search.' 
+                          : 'Try adjusting your filters, or admit a new student.'}
+                      </p>
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery('')}
+                          className="mt-4 px-4 py-2 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-xl text-sm font-semibold transition-colors inline-flex items-center gap-2"
+                        >
+                          <X size={16} /> Clear Search Filter
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ) : (
@@ -1333,16 +1393,16 @@ export default function StudentManagement() {
                             {student.photoUrl ? (
                               <img src={student.photoUrl} alt="Avatar" className="w-full h-full object-cover" />
                             ) : (
-                              <>{student.firstName.charAt(0)}{student.lastName.charAt(0)}</>
+                              <>{(student.firstName?.charAt(0) || student.name?.charAt(0) || 'S')}{(student.lastName?.charAt(0) || '')}</>
                             )}
                           </div>
                           <div className="font-semibold text-slate-900 leading-snug">
-                            {student.firstName} {student.lastName}
+                            {student.firstName || student.name || student.fullName || ''} {student.lastName || ''}
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 font-mono text-slate-600">
-                        {student.admissionNumber}
+                      <td className="p-4 font-mono text-slate-600 font-medium">
+                        {student.admissionNumber || student.admissionNo || student.rollNo || '-'}
                       </td>
                       <td className="p-4 text-slate-700">
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
