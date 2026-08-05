@@ -206,7 +206,7 @@ service cloud.firestore {
       }
       
       match /staff/{document=**}      { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
-      match /classes/{document=**}    { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
+      match /classes/{document=**}    { allow read: if true; allow write: if isAdminOfSchool(schoolId); }
       match /subjects/{document=**}   { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
       match /timetables/{document=**} { allow read: if belongsToSchool(schoolId); allow write: if isAdminOfSchool(schoolId); }
       
