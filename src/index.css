@@ -136,3 +136,19 @@
 .rbc-date-cell { padding: 8px; font-weight: 600; color: #334155; }
 .rbc-off-range .rbc-date-cell { color: #cbd5e1; }
 .rbc-event-content { font-weight: 700; }
+
+/* Global Dark Mode Variables (Overrides Tailwind v4 slate palette and white) */
+.dark {
+  --color-white: #0f172a;
+  --color-slate-50: #1e293b;
+  --color-slate-100: #334155;
+  --color-slate-200: #475569;
+  --color-slate-300: #64748b;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #94a3b8;
+  --color-slate-600: #cbd5e1;
+  --color-slate-700: #e2e8f0;
+  --color-slate-800: #f1f5f9;
+  --color-slate-900: #f8fafc;
+  --color-slate-950: #ffffff;
+}
