@@ -309,16 +309,18 @@ export default function ParentChat() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto h-[calc(100vh-2rem)] flex flex-col">
-      <div className="mb-6 shrink-0">
-        <h1 className="text-3xl font-bold text-slate-900">Staff Chat</h1>
-        <p className="text-slate-500 mt-1">Communicate directly with teachers.</p>
+    <div className="p-0 sm:p-4 md:p-8 max-w-7xl mx-auto h-[100dvh] md:h-[calc(100vh-2rem)] flex flex-col bg-slate-50 md:bg-transparent">
+      <div className="mb-4 md:mb-6 shrink-0 p-4 md:p-0 bg-white md:bg-transparent border-b border-slate-200 md:border-transparent">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Staff Chat</h1>
+        <p className="text-sm md:text-base text-slate-500 mt-1">Communicate directly with teachers.</p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0">
+      <div className="flex flex-col lg:flex-row gap-0 md:gap-6 flex-1 min-h-0 bg-white md:bg-transparent">
         
         {/* Sidebar */}
-        <div className="w-full lg:w-80 flex flex-col bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm shrink-0">
+        <div className={`w-full lg:w-80 flex-col bg-white md:border md:border-slate-200 md:rounded-3xl overflow-hidden md:shadow-sm shrink-0 ${
+          activeTeacher || activeChannel ? 'hidden lg:flex' : 'flex'
+        }`}>
           <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-4">
             <h2 className="font-bold text-slate-700">Messaging</h2>
             <div className="flex bg-slate-100 rounded-xl p-1">
@@ -406,11 +408,19 @@ export default function ParentChat() {
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col min-h-0 overflow-hidden relative">
+        <div className={`flex-1 bg-white md:rounded-3xl md:border border-slate-200 md:shadow-sm flex-col min-h-0 overflow-hidden relative ${
+          !activeTeacher && !activeChannel ? 'hidden lg:flex' : 'flex'
+        }`}>
           {activeTab === 'dms' && activeTeacher && (
             <>
               {/* Chat Header */}
               <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center gap-4 shrink-0">
+                <button 
+                  onClick={() => setActiveTeacher(null)}
+                  className="lg:hidden p-2 text-slate-500 hover:bg-slate-200 rounded-full"
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
                 <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg">
                   {(activeTeacher.firstName || activeTeacher.name || 'T').charAt(0).toUpperCase()}
                 </div>
@@ -459,7 +469,7 @@ export default function ParentChat() {
                       return (
                         <React.Fragment key={msg.id}>
                           {showDateSeparator && (
-                            <div className="flex justify-center my-4 z-10 sticky top-2">
+                            <div className="flex justify-center my-4 z-10">
                               <span className="bg-white/80 backdrop-blur-md shadow-sm text-slate-500 text-[11px] font-bold px-4 py-1.5 rounded-full border border-slate-200/50">
                                 {formatDateSeparator(msg.createdAt)}
                               </span>
@@ -532,8 +542,14 @@ export default function ParentChat() {
           {activeTab === 'channels' && activeChannel && (
             <>
               {/* Channel Header */}
-              <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
+              <div className="p-4 border-b border-slate-100 bg-white flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => setActiveChannel(null)}
+                    className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-full"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                  </button>
                   <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg">
                     #
                   </div>
