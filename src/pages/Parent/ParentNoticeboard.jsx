@@ -98,7 +98,7 @@ export default function ParentNoticeboard() {
     <div className="p-8 max-w-5xl mx-auto pb-24">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <Megaphone className="text-primary-600" />
             Noticeboard
           </h1>
@@ -106,7 +106,7 @@ export default function ParentNoticeboard() {
         </div>
       </div>
 
-      <div className="flex gap-4 mb-6 border-b border-slate-200">
+      <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700">
         <button
           onClick={() => setActiveTab('global')}
           className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'global' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 hover:text-slate-700'}`}
@@ -128,9 +128,9 @@ export default function ParentNoticeboard() {
       ) : (
         <div className="space-y-4">
           {displayedNotices.length === 0 ? (
-            <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center text-slate-500">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500">
               <Bell size={48} className="mx-auto mb-4 text-slate-300" />
-              <p className="text-lg font-medium text-slate-900">No active notices</p>
+              <p className="text-lg font-medium text-slate-900 dark:text-white">No active notices</p>
               <p>You're all caught up!</p>
             </div>
           ) : (
@@ -140,8 +140,8 @@ export default function ParentNoticeboard() {
               return (
                 <div 
                   key={notice.id} 
-                  className={`bg-white rounded-3xl border p-6 flex flex-col md:flex-row gap-6 shadow-sm transition-all hover:shadow-md
-                    ${isHighPriority ? 'border-red-200 bg-red-50/10' : 'border-slate-200'}
+                  className={`bg-white dark:bg-slate-900 rounded-3xl border p-6 flex flex-col md:flex-row gap-6 shadow-sm transition-all hover:shadow-md
+                    ${isHighPriority ? 'border-red-200 bg-red-50/10' : 'border-slate-200 dark:border-slate-700'}
                   `}
                 >
                   <div className="flex-1 space-y-4">
@@ -158,15 +158,15 @@ export default function ParentNoticeboard() {
                           })}
                         </span>
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 mt-2">{notice.title}</h3>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-2">{notice.title}</h3>
                     </div>
                     
-                    <div className="text-slate-600 leading-relaxed whitespace-pre-wrap font-medium">
+                    <div className="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-medium">
                       {notice.message}
                     </div>
                     
-                    <div className="text-sm font-medium text-slate-400 pt-2 border-t border-slate-100 flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                    <div className="text-sm font-medium text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center border border-slate-200 dark:border-slate-700">
                         <Users size={12} className="text-slate-500" />
                       </div>
                       Posted by: {notice.authorName}

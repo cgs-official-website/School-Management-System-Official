@@ -77,7 +77,7 @@ export default function APIIntegrations() {
   return (
     <div className="p-8 max-w-4xl mx-auto pb-24">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
           <Key className="text-primary-600" />
           API Integrations
         </h1>
@@ -92,24 +92,24 @@ export default function APIIntegrations() {
       )}
 
       {(hasTransport || hasMedia) && (
-        <form onSubmit={handleSave} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <form onSubmit={handleSave} className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
           <div className="p-6 md:p-8 space-y-8">
             
             {hasTransport && (
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <Map className="text-blue-500" size={24} />
-                  <h2 className="text-xl font-bold text-slate-900">Google Maps API (Transport Module)</h2>
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">Google Maps API (Transport Module)</h2>
                 </div>
                 <div className="space-y-4 max-w-2xl">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">API Key</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">API Key</label>
                     <input 
                       type="text"
                       value={apiKeys.googleMaps}
                       onChange={(e) => setApiKeys({...apiKeys, googleMaps: e.target.value})}
                       placeholder="AIzaSy..."
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-mono"
                     />
                     <p className="text-xs text-slate-500 mt-2">
                       Required for live GPS tracking and route optimization. Must have Maps JavaScript API and Directions API enabled.
@@ -119,34 +119,34 @@ export default function APIIntegrations() {
               </div>
             )}
 
-            {hasTransport && hasMedia && <div className="border-t border-slate-100"></div>}
+            {hasTransport && hasMedia && <div className="border-t border-slate-100 dark:border-slate-800"></div>}
 
             {hasMedia && (
               <div>
                 <div className="flex items-center gap-2 mb-4">
                   <ImageIcon className="text-purple-500" size={24} />
-                  <h2 className="text-xl font-bold text-slate-900">Cloudinary (Media Module)</h2>
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">Cloudinary (Media Module)</h2>
                 </div>
                 <div className="space-y-4 max-w-2xl">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1">Cloud Name</label>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Cloud Name</label>
                       <input 
                         type="text"
                         value={apiKeys.cloudinary.cloudName}
                         onChange={(e) => setApiKeys({...apiKeys, cloudinary: { ...apiKeys.cloudinary, cloudName: e.target.value }})}
                         placeholder="e.g. dxyz123"
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-mono"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1">Unsigned Upload Preset</label>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Unsigned Upload Preset</label>
                       <input 
                         type="text"
                         value={apiKeys.cloudinary.uploadPreset}
                         onChange={(e) => setApiKeys({...apiKeys, cloudinary: { ...apiKeys.cloudinary, uploadPreset: e.target.value }})}
                         placeholder="e.g. preset_name"
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-mono"
                       />
                     </div>
                   </div>
@@ -159,7 +159,7 @@ export default function APIIntegrations() {
 
           </div>
 
-          <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end items-center gap-4">
+          <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end items-center gap-4">
             {success && (
               <span className="flex items-center gap-2 text-green-600 font-bold text-sm animate-fade-in">
                 <CheckCircle2 size={18} /> Settings Saved

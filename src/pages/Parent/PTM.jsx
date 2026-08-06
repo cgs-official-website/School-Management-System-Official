@@ -74,7 +74,7 @@ export default function PTM() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto pb-24 h-full flex flex-col">
       <div className="mb-8 shrink-0">
-        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
           <LuCalendarClock className="text-primary-600" /> Parent-Teacher Meetings
         </h1>
         <p className="text-slate-500 mt-1">View your scheduled meetings with teachers.</p>
@@ -84,34 +84,34 @@ export default function PTM() {
         <section>
           <div className="flex items-center gap-3 mb-4">
             <LuCalendarCheck className="text-primary-600" size={24} />
-            <h2 className="text-xl font-bold text-slate-900">Upcoming Meetings</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Upcoming Meetings</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {upcomingMeetings.map(meeting => (
-              <div key={meeting.id} className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-primary-300 hover:shadow-md transition-all flex flex-col group">
+              <div key={meeting.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow-md transition-all flex flex-col group">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 shrink-0">
                       <LuUsers size={24} />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-slate-900 leading-tight">Class Teacher</h3>
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">Class Teacher</h3>
                       <p className="text-xs font-semibold text-slate-500 mt-0.5">Ref: {meeting.studentName}</p>
                     </div>
                   </div>
                   {getStatusBadge(meeting.status)}
                 </div>
                 
-                <div className="bg-slate-50 rounded-xl p-4 mb-4 flex-1">
+                <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 mb-4 flex-1">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date & Time</p>
-                      <p className="text-sm font-semibold text-slate-700">{new Date(meeting.date).toLocaleDateString('en-GB')} at {meeting.time}</p>
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{new Date(meeting.date).toLocaleDateString('en-GB')} at {meeting.time}</p>
                     </div>
                     <div>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Type</p>
-                      <p className="text-sm font-semibold text-slate-700 flex items-center gap-1">
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1">
                         {meeting.type === 'online' ? <LuVideo size={14} className="text-blue-500" /> : <LuMapPin size={14} className="text-amber-500" />}
                         <span className="capitalize">{meeting.type}</span>
                       </p>
@@ -129,7 +129,7 @@ export default function PTM() {
               </div>
             ))}
             {upcomingMeetings.length === 0 && (
-              <div className="col-span-full py-8 text-center text-slate-500 font-medium bg-white rounded-3xl border border-slate-200">
+              <div className="col-span-full py-8 text-center text-slate-500 font-medium bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700">
                 You have no upcoming meetings scheduled.
               </div>
             )}
@@ -140,34 +140,34 @@ export default function PTM() {
           <section>
             <div className="flex items-center gap-3 mb-4">
               <LuCalendarClock className="text-slate-400" size={24} />
-              <h2 className="text-xl font-bold text-slate-900">Past Meetings</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Past Meetings</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-75 hover:opacity-100 transition-opacity">
               {pastMeetings.map(meeting => (
-                <div key={meeting.id} className="bg-white p-5 rounded-2xl border border-slate-200 flex flex-col group">
+                <div key={meeting.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col group">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 shrink-0">
                         <LuUsers size={24} />
                       </div>
                       <div>
-                        <h3 className="text-base font-bold text-slate-900 leading-tight">Class Teacher</h3>
+                        <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">Class Teacher</h3>
                         <p className="text-xs font-semibold text-slate-500 mt-0.5">Ref: {meeting.studentName}</p>
                       </div>
                     </div>
                     {getStatusBadge(meeting.status)}
                   </div>
                   
-                  <div className="bg-slate-50 rounded-xl p-4 flex-1">
+                  <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 flex-1">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date & Time</p>
-                        <p className="text-sm font-semibold text-slate-700">{new Date(meeting.date).toLocaleDateString('en-GB')} at {meeting.time}</p>
+                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{new Date(meeting.date).toLocaleDateString('en-GB')} at {meeting.time}</p>
                       </div>
                       <div>
                         <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Type</p>
-                        <p className="text-sm font-semibold text-slate-700 flex items-center gap-1">
+                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1">
                           {meeting.type === 'online' ? <LuVideo size={14} className="text-blue-500" /> : <LuMapPin size={14} className="text-amber-500" />}
                           <span className="capitalize">{meeting.type}</span>
                         </p>

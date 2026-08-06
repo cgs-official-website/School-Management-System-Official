@@ -413,7 +413,7 @@ export default function EnvironmentSetup() {
     <div className="p-8 max-w-5xl mx-auto pb-24">
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Environment Setup</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Environment Setup</h1>
           <p className="text-slate-500 mt-1">Configure your school's branding, contact info, and academic settings.</p>
         </div>
         <button 
@@ -435,71 +435,71 @@ export default function EnvironmentSetup() {
 
       <div className="space-y-8">
         {/* General Information */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center gap-3">
             <Building2 className="text-primary-600" size={24} />
-            <h2 className="text-xl font-bold text-slate-900">General Information</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">General Information</h2>
           </div>
           <div className="p-8 grid md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">School Name</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">School Name</label>
               <input 
                 type="text" 
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1 flex items-center gap-2"><MapPin size={16} className="text-slate-400"/> Location / Address</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><MapPin size={16} className="text-slate-400"/> Location / Address</label>
               <input 
                 type="text" 
                 value={formData.location}
                 onChange={(e) => setFormData({...formData, location: e.target.value})}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1 flex items-center gap-2"><Phone size={16} className="text-slate-400"/> Contact Phone</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><Phone size={16} className="text-slate-400"/> Contact Phone</label>
               <input 
                 type="tel" 
                 value={formData.contactPhone}
                 onChange={(e) => setFormData({...formData, contactPhone: e.target.value})}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-slate-700 mb-1 flex items-center gap-2"><Globe size={16} className="text-slate-400"/> Official Website</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><Globe size={16} className="text-slate-400"/> Official Website</label>
               <input 
                 type="url" 
                 value={formData.website}
                 onChange={(e) => setFormData({...formData, website: e.target.value})}
                 placeholder="https://www.yourschool.edu"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               />
             </div>
           </div>
         </section>
 
         {/* Branding */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center gap-3">
             <Palette className="text-primary-600" size={24} />
-            <h2 className="text-xl font-bold text-slate-900">Branding & Theming</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Branding & Theming</h2>
           </div>
           <div className="p-8 grid md:grid-cols-2 gap-8 items-start">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1 flex items-center gap-2"><ImageIcon size={16} className="text-slate-400"/> Upload Logo</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><ImageIcon size={16} className="text-slate-400"/> Upload Logo</label>
               <p className="text-xs text-slate-500 mb-3">Upload your school's logo image (PNG/JPG/SVG, max 2MB).</p>
               <input 
                 type="file" 
                 accept="image/*"
                 onChange={handleLogoUpload}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-all cursor-pointer"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-all cursor-pointer"
               />
               
               <div className="mt-6">
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Primary Brand Color</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Primary Brand Color</label>
                 <div className="flex items-center gap-4">
                   <input 
                     type="color" 
@@ -511,13 +511,13 @@ export default function EnvironmentSetup() {
                     type="text" 
                     value={formData.branding.primaryColor}
                     onChange={(e) => setFormData({...formData, branding: { ...formData.branding, primaryColor: e.target.value }})}
-                    className="w-32 px-3 py-2 border border-slate-200 rounded-lg text-sm font-mono uppercase"
+                    className="w-32 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-mono uppercase"
                   />
                 </div>
               </div>
             </div>
             
-            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col items-center justify-center min-h-[200px] text-center">
+            <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center min-h-[200px] text-center">
               <p className="text-sm font-semibold text-slate-500 mb-4 uppercase tracking-wider">Preview</p>
               {formData.branding.logoUrl ? (
                 <img src={formData.branding.logoUrl} alt="School Logo" className="h-16 object-contain mb-4" onError={(e) => { e.target.src = ''; e.target.className='hidden'; }} />
@@ -537,18 +537,18 @@ export default function EnvironmentSetup() {
         </section>
 
         {/* Academic Settings */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center gap-3">
             <Calendar className="text-primary-600" size={24} />
-            <h2 className="text-xl font-bold text-slate-900">Academic Configuration</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Academic Configuration</h2>
           </div>
           <div className="p-8 grid md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Current Academic Year</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Current Academic Year</label>
               <select 
                 value={formData.academicConfig.currentYear}
                 onChange={(e) => setFormData({...formData, academicConfig: { ...formData.academicConfig, currentYear: e.target.value }})}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               >
                 <option value="2025-2026">2025 - 2026</option>
                 <option value="2026-2027">2026 - 2027</option>
@@ -556,7 +556,7 @@ export default function EnvironmentSetup() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Term Type</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Term Type</label>
               <select 
                 value={formData.academicConfig.termType}
                 onChange={(e) => {
@@ -567,7 +567,7 @@ export default function EnvironmentSetup() {
                     setFormData({...formData, academicConfig: { ...formData.academicConfig, termType: value }});
                   }
                 }}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
               >
                 {termTypes.map(type => {
                   let displayName = type;
@@ -581,13 +581,13 @@ export default function EnvironmentSetup() {
               </select>
 
               {showCustomTermInput && (
-                <div className="mt-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-3 animate-fade-in">
+                <div className="mt-3 p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl flex items-center gap-3 animate-fade-in">
                   <input
                     type="text"
                     placeholder="Enter new term type..."
                     value={customTermName}
                     onChange={(e) => setCustomTermName(e.target.value)}
-                    className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 bg-white outline-none"
+                    className="flex-1 px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 outline-none"
                   />
                   <button
                     type="button"
@@ -622,16 +622,16 @@ export default function EnvironmentSetup() {
 
         {/* Custom Form Builder Settings */}
         {formSchema.length > 0 && (
-          <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
+          <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center gap-3">
               <Settings className="text-primary-600" size={24} />
-              <h2 className="text-xl font-bold text-slate-900">Additional Settings</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Additional Settings</h2>
             </div>
             <div className="p-8 grid md:grid-cols-2 gap-6">
               {formSchema.map(field => (
                 <div key={field.id} className={field.type === 'checkbox' ? 'col-span-2' : ''}>
                   {field.type !== 'checkbox' && (
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">
                       {field.label} {field.required && <span className="text-red-500">*</span>}
                     </label>
                   )}
@@ -641,7 +641,7 @@ export default function EnvironmentSetup() {
                       required={field.required}
                       value={customData[field.id] || ''}
                       onChange={e => setCustomData({...customData, [field.id]: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white transition-all"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 transition-all"
                     >
                       <option value="">Select...</option>
                       {field.options && field.options.split(',').map(opt => (
@@ -655,9 +655,9 @@ export default function EnvironmentSetup() {
                         required={field.required}
                         checked={customData[field.id] || false}
                         onChange={e => setCustomData({...customData, [field.id]: e.target.checked})}
-                        className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                        className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500"
                       />
-                      <span className="text-sm font-semibold text-slate-700">{field.label} {field.required && <span className="text-red-500">*</span>}</span>
+                      <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{field.label} {field.required && <span className="text-red-500">*</span>}</span>
                     </label>
                   ) : (
                     <input
@@ -665,7 +665,7 @@ export default function EnvironmentSetup() {
                       required={field.required}
                       value={customData[field.id] || ''}
                       onChange={e => setCustomData({...customData, [field.id]: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 transition-all"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 transition-all"
                     />
                   )}
                 </div>
@@ -675,12 +675,12 @@ export default function EnvironmentSetup() {
         )}
 
         {/* Fee Collection Periods */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <IndianRupee className="text-primary-600" size={24} />
               <div>
-                <h2 className="text-xl font-bold text-slate-900">Fee Collection Periods</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Fee Collection Periods</h2>
                 <p className="text-xs text-slate-500 mt-0.5">Define your school's fee collection schedule (e.g. Term 1, Quarter 1, Annual).</p>
               </div>
             </div>
@@ -708,7 +708,7 @@ export default function EnvironmentSetup() {
                       {p.displayOrder || '—'}
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900">{p.name}</p>
+                      <p className="font-bold text-slate-900 dark:text-white">{p.name}</p>
                       {p.description && <p className="text-xs text-slate-500 mt-0.5">{p.description}</p>}
                       <span className="text-[10px] font-mono text-slate-400">{p.code}</span>
                     </div>
@@ -720,7 +720,7 @@ export default function EnvironmentSetup() {
                       className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
                         p.status === 'active'
                           ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                          : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                          : 'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200'
                       }`}
                     >
                       {p.status === 'active' ? 'Active' : 'Inactive'}
@@ -739,50 +739,50 @@ export default function EnvironmentSetup() {
         </section>
 
         {/* Attendance Settings (SOP alignment) */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center gap-3">
             <Clock className="text-primary-600" size={24} />
             <div>
-              <h2 className="text-xl font-bold text-slate-900">Attendance Configuration</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Attendance Configuration</h2>
               <p className="text-xs text-slate-500 mt-0.5">Configure school timings, thresholds, and thresholds for automated flags.</p>
             </div>
           </div>
           <form onSubmit={handleSaveAttendanceConfig} className="p-8 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Working Hours Start</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Working Hours Start</label>
                 <input
                   type="time" required
                   value={attendanceConfig.workingHoursStart}
                   onChange={(e) => setAttendanceConfig({ ...attendanceConfig, workingHoursStart: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Working Hours End</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Working Hours End</label>
                 <input
                   type="time" required
                   value={attendanceConfig.workingHoursEnd}
                   onChange={(e) => setAttendanceConfig({ ...attendanceConfig, workingHoursEnd: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Cutoff Time (Late after this)</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Cutoff Time (Late after this)</label>
                 <input
                   type="time" required
                   value={attendanceConfig.cutoffTime}
                   onChange={(e) => setAttendanceConfig({ ...attendanceConfig, cutoffTime: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Absentee Threshold For Students (Absences/Month before Flag)</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Absentee Threshold For Students (Absences/Month before Flag)</label>
                 <input
                   type="number" required min="1"
                   value={attendanceConfig.absenteeThreshold}
                   onChange={(e) => setAttendanceConfig({ ...attendanceConfig, absenteeThreshold: Number(e.target.value) })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                 />
               </div>
             </div>
@@ -799,12 +799,12 @@ export default function EnvironmentSetup() {
         </section>
 
         {/* Leave Approval Rules builder */}
-        <section className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+        <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <UserCheck className="text-primary-600" size={24} />
               <div>
-                <h2 className="text-xl font-bold text-slate-900">Leave Approval Rules</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Leave Approval Rules</h2>
                 <p className="text-xs text-slate-500 mt-0.5">Build a custom multi-level leave approval ladder by duration bands.</p>
               </div>
             </div>
@@ -847,7 +847,7 @@ export default function EnvironmentSetup() {
                       {rule.order || '—'}
                     </div>
                     <div>
-                      <p className="font-bold text-slate-900">
+                      <p className="font-bold text-slate-900 dark:text-white">
                         {rule.minDays} {rule.maxDays === null ? 'and above' : `to ${rule.maxDays}`} Days
                       </p>
                       <p className="text-xs text-slate-500 mt-0.5">
@@ -874,55 +874,55 @@ export default function EnvironmentSetup() {
       {/* Period Modal */}
       {showPeriodModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="text-lg font-bold text-slate-900">{editingPeriod ? 'Edit Period' : 'Add Fee Collection Period'}</h3>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingPeriod ? 'Edit Period' : 'Add Fee Collection Period'}</h3>
               <button type="button" onClick={() => setShowPeriodModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full"><X size={18} /></button>
             </div>
             <form onSubmit={handleSavePeriod} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Period Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Period Name <span className="text-red-500">*</span></label>
                 <input
                   type="text" required
                   value={periodForm.name}
                   onChange={(e) => setPeriodForm(p => ({ ...p, name: e.target.value }))}
                   placeholder="e.g. Term 1, Quarter 2, Annual"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Code</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Code</label>
                   <input
                     type="text"
                     value={periodForm.code}
                     onChange={(e) => setPeriodForm(p => ({ ...p, code: e.target.value }))}
                     placeholder="e.g. TERM1"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 font-mono uppercase text-sm"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 font-mono uppercase text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Display Order</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Display Order</label>
                   <input
                     type="number" min="1"
                     value={periodForm.displayOrder}
                     onChange={(e) => setPeriodForm(p => ({ ...p, displayOrder: e.target.value }))}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Description</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Description</label>
                 <input
                   type="text"
                   value={periodForm.description}
                   onChange={(e) => setPeriodForm(p => ({ ...p, description: e.target.value }))}
                   placeholder="Optional description"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setShowPeriodModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
+                <button type="button" onClick={() => setShowPeriodModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" disabled={savingPeriod} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60">
                   {savingPeriod ? 'Saving...' : editingPeriod ? 'Update Period' : 'Add Period'}
                 </button>
@@ -935,41 +935,41 @@ export default function EnvironmentSetup() {
       {/* Leave Approval Rule Modal */}
       {showLeaveRuleModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="text-lg font-bold text-slate-900">{editingLeaveRule ? 'Edit Approval Rule' : 'Add Leave Approval Band'}</h3>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingLeaveRule ? 'Edit Approval Rule' : 'Add Leave Approval Band'}</h3>
               <button type="button" onClick={() => setShowLeaveRuleModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full"><X size={18} /></button>
             </div>
             <form onSubmit={handleSaveLeaveRule} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Min Days <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Min Days <span className="text-red-500">*</span></label>
                   <input
                     type="number" required min="1"
                     value={leaveRuleForm.minDays}
                     onChange={(e) => setLeaveRuleForm(p => ({ ...p, minDays: e.target.value }))}
                     placeholder="e.g. 1"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Max Days (blank for +)</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Max Days (blank for +)</label>
                   <input
                     type="number" min={leaveRuleForm.minDays || 1}
                     value={leaveRuleForm.maxDays}
                     onChange={(e) => setLeaveRuleForm(p => ({ ...p, maxDays: e.target.value }))}
                     placeholder="e.g. 3"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Route to Role <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Route to Role <span className="text-red-500">*</span></label>
                 <select
                   required
                   value={leaveRuleForm.roleId}
                   onChange={(e) => setLeaveRuleForm(p => ({ ...p, roleId: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                 >
                   <option value="">Select role...</option>
                   {roles.map(r => (
@@ -978,17 +978,17 @@ export default function EnvironmentSetup() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Evaluation Order (Priority)</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Evaluation Order (Priority)</label>
                 <input
                   type="number" min="1"
                   value={leaveRuleForm.order}
                   onChange={(e) => setLeaveRuleForm(p => ({ ...p, order: e.target.value }))}
                   placeholder="e.g. 1"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setShowLeaveRuleModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
+                <button type="button" onClick={() => setShowLeaveRuleModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" disabled={savingLeaveRule} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60">
                   {savingLeaveRule ? 'Saving...' : editingLeaveRule ? 'Update Rule' : 'Add Rule'}
                 </button>

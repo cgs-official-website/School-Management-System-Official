@@ -114,7 +114,7 @@ export default function PublicLeadForm() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex justify-center items-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-800 flex justify-center items-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
       </div>
     );
@@ -122,10 +122,10 @@ export default function PublicLeadForm() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex justify-center items-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center border border-slate-100">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-800 flex justify-center items-center p-4">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 max-w-md w-full text-center border border-slate-100 dark:border-slate-800">
           <div className="text-red-500 font-bold text-lg mb-2">Error</div>
-          <p className="text-slate-600 text-sm">{error}</p>
+          <p className="text-slate-600 dark:text-slate-300 text-sm">{error}</p>
         </div>
       </div>
     );
@@ -133,15 +133,15 @@ export default function PublicLeadForm() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-slate-50 flex justify-center items-center p-4 font-sans">
-        <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full text-center border border-slate-100 animate-scale-in">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-800 flex justify-center items-center p-4 font-sans">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-8 max-w-md w-full text-center border border-slate-100 dark:border-slate-800 animate-scale-in">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500">
               <LuCircleCheck size={40} />
             </div>
           </div>
-          <h2 className="text-2xl font-black text-slate-900 mb-2">Thank You!</h2>
-          <p className="text-slate-600 text-sm leading-relaxed mb-6">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Thank You!</h2>
+          <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6">
             {formSchema.successMessage || 'Your enquiry has been successfully submitted. We will get back to you shortly.'}
           </p>
         </div>
@@ -150,8 +150,8 @@ export default function PublicLeadForm() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 font-sans">
-      <div className="max-w-2xl mx-auto bg-white rounded-[2rem] shadow-xl overflow-hidden border border-slate-100">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 py-12 px-4 font-sans">
+      <div className="max-w-2xl mx-auto bg-white dark:bg-slate-900 rounded-[2rem] shadow-xl overflow-hidden border border-slate-100 dark:border-slate-800">
         <div className="bg-gradient-to-br from-primary-600 to-indigo-700 p-8 text-white">
           <h1 className="text-3xl font-black">{formSchema.title || 'Enquiry Form'}</h1>
           {formSchema.description && (
@@ -168,7 +168,7 @@ export default function PublicLeadForm() {
             const isReq = f.required;
             return (
               <div key={f.id} className="space-y-1.5">
-                <label className="block text-sm font-bold text-slate-700">
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200">
                   {f.label} {isReq && <span className="text-red-500">*</span>}
                 </label>
 
@@ -178,7 +178,7 @@ export default function PublicLeadForm() {
                     required={isReq}
                     value={formData[f.id] || ''}
                     onChange={(e) => handleInputChange(f.id, e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
                   />
                 )}
 
@@ -188,7 +188,7 @@ export default function PublicLeadForm() {
                     required={isReq}
                     value={formData[f.id] || ''}
                     onChange={(e) => handleInputChange(f.id, e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
                   />
                 )}
 
@@ -198,7 +198,7 @@ export default function PublicLeadForm() {
                     required={isReq}
                     value={formData[f.id] || ''}
                     onChange={(e) => handleInputChange(f.id, e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
                   />
                 )}
 
@@ -208,7 +208,7 @@ export default function PublicLeadForm() {
                     required={isReq}
                     value={formData[f.id] || ''}
                     onChange={(e) => handleInputChange(f.id, e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
                   />
                 )}
 
@@ -218,7 +218,7 @@ export default function PublicLeadForm() {
                     required={isReq}
                     value={formData[f.id] || ''}
                     onChange={(e) => handleInputChange(f.id, e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
                   />
                 )}
 
@@ -228,7 +228,7 @@ export default function PublicLeadForm() {
                     rows={4}
                     value={formData[f.id] || ''}
                     onChange={(e) => handleInputChange(f.id, e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
                   />
                 )}
 
@@ -237,7 +237,7 @@ export default function PublicLeadForm() {
                     required={isReq}
                     value={formData[f.id] || ''}
                     onChange={(e) => handleInputChange(f.id, e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 bg-white rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
                   >
                     <option value="">Select option</option>
                     {(f.options || []).map(opt => (
@@ -249,7 +249,7 @@ export default function PublicLeadForm() {
                 {f.type === 'radio' && (
                   <div className="flex flex-col gap-2 mt-1">
                     {(f.options || []).map(opt => (
-                      <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                      <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer">
                         <input
                           type="radio"
                           name={f.id}
@@ -269,7 +269,7 @@ export default function PublicLeadForm() {
                     {(f.options || []).map(opt => {
                       const checked = (formData[f.id] || []).includes(opt);
                       return (
-                        <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                        <label key={opt} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer">
                           <input
                             type="checkbox"
                             checked={checked}

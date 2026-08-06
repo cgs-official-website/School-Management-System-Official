@@ -48,7 +48,7 @@ export default function ConfirmModal({
       onClick={handleClose}
     >
       <div 
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
         onClick={(e) => e.stopPropagation()}
@@ -68,7 +68,7 @@ export default function ConfirmModal({
             </button>
           </div>
           <div className="mt-3 text-left">
-            <h3 className="text-xl font-bold leading-6 text-slate-900" id="modal-title">
+            <h3 className="text-xl font-bold leading-6 text-slate-900 dark:text-white" id="modal-title">
               {title}
             </h3>
             <div className="mt-2">
@@ -78,7 +78,7 @@ export default function ConfirmModal({
             </div>
           </div>
         </div>
-        <div className="bg-slate-50 px-6 py-4 flex flex-row-reverse gap-3">
+        <div className="bg-slate-50 dark:bg-slate-800 px-6 py-4 flex flex-row-reverse gap-3">
           <button
             type="button"
             className={`inline-flex w-full justify-center rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 sm:w-auto transition-colors ${theme.button}`}
@@ -88,7 +88,7 @@ export default function ConfirmModal({
           </button>
           <button
             type="button"
-            className="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition-colors"
+            className="mt-3 inline-flex w-full justify-center rounded-xl bg-white dark:bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition-colors"
             onClick={handleClose}
           >
             {cancelText}

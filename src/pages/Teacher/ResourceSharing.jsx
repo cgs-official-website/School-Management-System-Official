@@ -178,7 +178,7 @@ export default function ResourceSharing() {
       case 'video': return <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0"><LuVideo size={20} /></div>;
       case 'image': return <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0"><LuImage size={20} /></div>;
       case 'link': return <div className="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center shrink-0"><LuLink size={20} /></div>;
-      default: return <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0"><LuFileText size={20} /></div>;
+      default: return <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0"><LuFileText size={20} /></div>;
     }
   };
 
@@ -186,7 +186,7 @@ export default function ResourceSharing() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto h-full flex flex-col">
       <div className="mb-8 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuFolderDown className="text-primary-600" /> Digital Resources
           </h1>
           <p className="text-slate-500 mt-1">Upload study materials, notes, and links to share with your students.</p>
@@ -199,20 +199,20 @@ export default function ResourceSharing() {
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div className="flex border-b border-slate-100 bg-slate-50/50 px-6 pt-4 shrink-0 overflow-x-auto custom-scrollbar">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 px-6 pt-4 shrink-0 overflow-x-auto custom-scrollbar">
           {['all', 'document', 'video', 'link', 'image'].map(tab => (
             <button 
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 capitalize whitespace-nowrap ${activeTab === tab ? 'border-primary-600 text-primary-700 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'}`}
+              className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 capitalize whitespace-nowrap ${activeTab === tab ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'}`}
             >
               {tab === 'all' ? 'All Files' : `${tab}s`}
             </button>
           ))}
         </div>
 
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex gap-4 shrink-0">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input 
@@ -220,7 +220,7 @@ export default function ResourceSharing() {
               placeholder="Search resources..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
             />
           </div>
         </div>
@@ -233,12 +233,12 @@ export default function ResourceSharing() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredResources.map(resource => (
-                <div key={resource.id} className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-primary-300 hover:shadow-md transition-all group flex flex-col">
+                <div key={resource.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow-md transition-all group flex flex-col">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
                       {getTypeIcon(resource.type)}
                       <div>
-                        <h3 className="text-sm font-bold text-slate-900 leading-tight line-clamp-2" title={resource.title}>
+                        <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-tight line-clamp-2" title={resource.title}>
                           {resource.title}
                         </h3>
                         <p className="text-xs text-slate-500 font-medium mt-0.5">{resource.size || 'External URL'}</p>
@@ -247,7 +247,7 @@ export default function ResourceSharing() {
                   </div>
                   
                   <div className="flex gap-2 mb-6">
-                    <span className="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
+                    <span className="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                       {resource.class}
                     </span>
                     <span className="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-primary-50 text-primary-600">
@@ -255,7 +255,7 @@ export default function ResourceSharing() {
                     </span>
                   </div>
                   
-                  <div className="pt-4 border-t border-slate-100 flex justify-between items-center mt-auto">
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center mt-auto">
                     <span className="text-xs font-semibold text-slate-400">
                       {resource.date ? new Date(resource.date).toLocaleDateString('en-GB') : 'No Date'}
                     </span>
@@ -296,7 +296,7 @@ export default function ResourceSharing() {
               {filteredResources.length === 0 && (
                 <div className="col-span-full text-center py-12 text-slate-500">
                   <LuFolderDown size={48} className="mx-auto mb-4 text-slate-300" />
-                  <p className="text-lg font-medium text-slate-700">No resources found.</p>
+                  <p className="text-lg font-medium text-slate-700 dark:text-slate-200">No resources found.</p>
                 </div>
               )}
             </div>
@@ -309,11 +309,11 @@ export default function ResourceSharing() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
           <form 
             onSubmit={handleSubmit}
-            className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]"
+            className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transform transition-all flex flex-col max-h-[90vh]"
           >
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-slate-900">Add New Resource</h3>
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Add New Resource</h3>
               <button 
                 type="button"
                 onClick={() => setShowModal(false)}
@@ -326,22 +326,22 @@ export default function ResourceSharing() {
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Resource Title</label>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Resource Title</label>
                 <input
                   type="text"
                   placeholder="e.g. Calculus Chapter 4 Notes"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Resource Type</label>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Resource Type</label>
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                 >
                   <option value="document">Document (PDF/Doc)</option>
                   <option value="video">Video Explainer</option>
@@ -351,12 +351,12 @@ export default function ResourceSharing() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Class / Section</label>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Class / Section</label>
                 {classes.length > 0 ? (
                   <select
                     value={formData.class}
                     onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                   >
                     {classes.map(c => (
                       <option key={c.id} value={`${c.name} - Section ${c.section}`}>
@@ -370,18 +370,18 @@ export default function ResourceSharing() {
                     placeholder="e.g. Grade 12"
                     value={formData.class}
                     onChange={(e) => setFormData({ ...formData, class: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                   />
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Subject</label>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Subject</label>
                 {subjects.length > 0 ? (
                   <select
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                   >
                     {subjects.map(s => (
                       <option key={s.id} value={s.name}>
@@ -395,18 +395,18 @@ export default function ResourceSharing() {
                     placeholder="e.g. Physics"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                   />
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Upload File</label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer relative group">
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Upload File</label>
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 dark:border-slate-700 border-dashed rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer relative group">
                   <div className="space-y-1 text-center">
                     <LuFolderDown className="mx-auto h-12 w-12 text-slate-400 group-hover:text-primary-500 transition-colors" />
-                    <div className="flex text-sm text-slate-600 justify-center">
-                      <label className="relative cursor-pointer bg-white rounded-md font-bold text-primary-600 hover:text-primary-700 focus-within:outline-none">
+                    <div className="flex text-sm text-slate-600 dark:text-slate-300 justify-center">
+                      <label className="relative cursor-pointer bg-white dark:bg-slate-900 rounded-md font-bold text-primary-600 hover:text-primary-700 focus-within:outline-none">
                         <span>{selectedFile ? 'Change file' : 'Select a file'}</span>
                         <input 
                           type="file" 
@@ -430,7 +430,7 @@ export default function ResourceSharing() {
                     </div>
                     <p className="text-xs text-slate-500">Any file up to 3MB</p>
                     {selectedFile && (
-                      <div className="mt-2 p-2 bg-slate-100/80 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 flex items-center justify-between gap-3">
+                      <div className="mt-2 p-2 bg-slate-100/80 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-between gap-3">
                         <span className="truncate max-w-[200px]">{selectedFile.name}</span>
                         <span className="text-slate-500 shrink-0">({selectedFile.size > 1024 * 1024 ? (selectedFile.size / (1024 * 1024)).toFixed(1) + ' MB' : (selectedFile.size / 1024).toFixed(0) + ' KB'})</span>
                       </div>
@@ -441,11 +441,11 @@ export default function ResourceSharing() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

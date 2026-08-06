@@ -273,14 +273,14 @@ export default function AdminOverview() {
       <div className="space-y-6 animate-fade-in-up">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Dashboard Overview</h1>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Dashboard Overview</h1>
             <p className="text-sm text-slate-500 mt-1">Welcome back, here's what's happening at your school today.</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             
             <button 
               onClick={() => setIsConfigModalOpen(true)}
-              className="flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-5 py-2.5 rounded-xl shadow-sm font-semibold transition-all active:scale-[0.98]"
+              className="flex items-center gap-2 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-5 py-2.5 rounded-xl shadow-sm font-semibold transition-all active:scale-[0.98]"
             >
               <Settings size={18} />
               Customize
@@ -296,16 +296,16 @@ export default function AdminOverview() {
               </button>
               
               {isInviteDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-100 p-2 z-50">
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-100 dark:border-slate-800 p-2 z-50">
                   <div className="flex flex-col space-y-1">
-                    <button onClick={() => handleCopyLink('teacher')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-cyan-600 rounded-lg transition-colors group">
+                    <button onClick={() => handleCopyLink('teacher')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 hover:text-cyan-600 rounded-lg transition-colors group">
                       <div className="flex items-center gap-3">
                         <Users size={18} className="text-cyan-600 group-hover:scale-110 transition-transform" />
                         Teacher Link
                       </div>
                       {copiedRole === 'teacher' ? <Check size={16} className="text-primary-500" /> : <Copy size={16} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />}
                     </button>
-                    <button onClick={() => handleCopyLink('parent')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-amber-600 rounded-lg transition-colors group">
+                    <button onClick={() => handleCopyLink('parent')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 hover:text-amber-600 rounded-lg transition-colors group">
                       <div className="flex items-center gap-3">
                         <User size={18} className="text-amber-600 group-hover:scale-110 transition-transform" />
                         Parent Link
@@ -317,9 +317,9 @@ export default function AdminOverview() {
               )}
             </div>
 
-            <div className="hidden sm:flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 shadow-sm border border-slate-200">
+            <div className="hidden sm:flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 px-4 py-2.5 shadow-sm border border-slate-200 dark:border-slate-700">
               <Calendar className="h-5 w-5 text-slate-400" />
-              <span className="text-sm font-medium text-slate-700">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
                 {new Date().toLocaleDateString('en-GB')}
               </span>
             </div>
@@ -330,14 +330,14 @@ export default function AdminOverview() {
       {visibleStatCards.length > 0 && (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {visibleStatCards.map((stat, idx) => (
-            <div key={idx} className="overflow-hidden rounded-xl bg-white p-6 shadow-sm border border-slate-200 transition-all hover:shadow-md hover:-translate-y-1">
+            <div key={idx} className="overflow-hidden rounded-xl bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-200 dark:border-slate-700 transition-all hover:shadow-md hover:-translate-y-1">
               <div className="flex items-center gap-4">
                 <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${stat.bg}`}>
                   {stat.icon}
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500">{stat.title}</p>
-                  <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
                 </div>
               </div>
               <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500">
@@ -352,7 +352,7 @@ export default function AdminOverview() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {/* Pending Attendance Alerts */}
         {pendingAttendanceAlerts.length > 0 && (
-          <div className="col-span-1 rounded-xl bg-white shadow-sm border border-red-200 overflow-hidden">
+          <div className="col-span-1 rounded-xl bg-white dark:bg-slate-900 shadow-sm border border-red-200 overflow-hidden">
             <div className="border-b border-red-100 px-6 py-4 bg-red-50/55 flex items-center justify-between">
               <h2 className="text-base font-bold text-red-800 flex items-center gap-2">
                 <AlertCircle className="text-red-600" size={20} /> Pending Attendance
@@ -365,9 +365,9 @@ export default function AdminOverview() {
               {pendingAttendanceAlerts.map((alert) => (
                 <div key={alert.id} className="flex items-start justify-between gap-4 pt-3 first:pt-0">
                   <div>
-                    <p className="font-bold text-slate-800 text-sm">{alert.message}</p>
+                    <p className="font-bold text-slate-800 dark:text-slate-100 text-sm">{alert.message}</p>
                     <p className="text-[11px] text-slate-500 mt-1">
-                      Cutoff Date: <span className="font-semibold text-slate-700">{alert.date}</span>
+                      Cutoff Date: <span className="font-semibold text-slate-700 dark:text-slate-200">{alert.date}</span>
                     </p>
                   </div>
                   <button
@@ -384,20 +384,20 @@ export default function AdminOverview() {
 
         {/* Recent Notices */}
         {config.widgets.recentNotices !== false && (
-          <div className="col-span-1 rounded-xl bg-white shadow-sm border border-slate-200">
-            <div className="border-b border-slate-100 px-6 py-4">
-              <h2 className="text-base font-semibold text-slate-900">Recent Notices</h2>
+          <div className="col-span-1 rounded-xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-slate-700">
+            <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-4">
+              <h2 className="text-base font-semibold text-slate-900 dark:text-white">Recent Notices</h2>
             </div>
             <div className="p-6">
               {recentNotices.length > 0 ? (
                 <div className="space-y-4">
                   {recentNotices.map((notice) => (
-                    <div key={notice.id} className="group relative flex gap-4 rounded-xl border border-slate-100 p-4 transition-all hover:bg-slate-50">
+                    <div key={notice.id} className="group relative flex gap-4 rounded-xl border border-slate-100 dark:border-slate-800 p-4 transition-all hover:bg-slate-50">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
                         <Bell className="h-5 w-5" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-slate-900">{notice.title}</h3>
+                        <h3 className="font-medium text-slate-900 dark:text-white">{notice.title}</h3>
                         <p className="mt-1 line-clamp-2 text-sm text-slate-500">{notice.content}</p>
                         <p className="mt-2 text-xs font-medium text-slate-400">
                           {new Date(notice.date).toLocaleDateString('en-GB')} • {notice.targetAudience ? notice.targetAudience.charAt(0).toUpperCase() + notice.targetAudience.slice(1) : 'All'}
@@ -408,10 +408,10 @@ export default function AdminOverview() {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="mb-3 rounded-full bg-slate-50 p-3">
+                  <div className="mb-3 rounded-full bg-slate-50 dark:bg-slate-800 p-3">
                     <Bell className="h-6 w-6 text-slate-400" />
                   </div>
-                  <h3 className="text-sm font-medium text-slate-900">No notices yet</h3>
+                  <h3 className="text-sm font-medium text-slate-900 dark:text-white">No notices yet</h3>
                   <p className="mt-1 text-sm text-slate-500">Create a notice to keep everyone informed.</p>
                 </div>
               )}
@@ -497,37 +497,37 @@ export default function AdminOverview() {
 
         {/* Quick Actions */}
         {config.widgets.quickActions !== false && (
-          <div className="col-span-1 rounded-xl bg-white shadow-sm border border-slate-200 flex flex-col">
-            <div className="border-b border-slate-100 px-6 py-4 shrink-0">
-              <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+          <div className="col-span-1 rounded-xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col">
+            <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-4 shrink-0">
+              <h2 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                 <Zap className="text-primary-500" size={20} /> Quick Actions
               </h2>
             </div>
             <div className="p-6 flex-1 flex flex-col justify-center">
               <div className="grid grid-cols-2 gap-4 h-full">
-                <button onClick={() => window.location.href = '/admin/students'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                <button onClick={() => window.location.href = '/admin/students'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                     <UserPlus size={20} />
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 text-center">Add Student</span>
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 text-center">Add Student</span>
                 </button>
-                <button onClick={() => window.location.href = '/admin/staff'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                <button onClick={() => window.location.href = '/admin/staff'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                     <Users size={20} />
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 text-center">Add Staff</span>
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 text-center">Add Staff</span>
                 </button>
-                <button onClick={() => window.location.href = '/admin/attendance'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                <button onClick={() => window.location.href = '/admin/attendance'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                     <ClipboardCheck size={20} />
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 text-center">Mark Attendance</span>
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 text-center">Mark Attendance</span>
                 </button>
-                <button onClick={() => window.location.href = '/admin/notices'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                <button onClick={() => window.location.href = '/admin/notices'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                     <FileEdit size={20} />
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 text-center">Create Notice</span>
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 text-center">Create Notice</span>
                 </button>
                 <button 
                   onClick={() => {
@@ -550,12 +550,12 @@ export default function AdminOverview() {
                     });
                   }} 
                   disabled={isCleaningAudio}
-                  className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 hover:border-red-200 hover:bg-red-50 transition-colors group col-span-2 sm:col-span-1"
+                  className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-red-200 hover:bg-red-50 transition-colors group col-span-2 sm:col-span-1"
                 >
                   <div className={`w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 transition-transform ${isCleaningAudio ? 'animate-spin' : 'group-hover:scale-110'}`}>
                     <Trash2 size={20} />
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 text-center">{isCleaningAudio ? 'Cleaning...' : 'Cleanup DB Space'}</span>
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 text-center">{isCleaningAudio ? 'Cleaning...' : 'Cleanup DB Space'}</span>
                 </button>
               </div>
             </div>
@@ -564,42 +564,42 @@ export default function AdminOverview() {
 
         {/* Attendance Summary */}
         {config.widgets.attendanceSummary !== false && (
-          <div className="col-span-1 rounded-xl bg-white shadow-sm border border-slate-200 flex flex-col">
-            <div className="border-b border-slate-100 px-6 py-4 shrink-0">
-              <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+          <div className="col-span-1 rounded-xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col">
+            <div className="border-b border-slate-100 dark:border-slate-800 px-6 py-4 shrink-0">
+              <h2 className="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                 <BarChart2 className="text-primary-500" size={20} /> Today's Attendance
               </h2>
             </div>
             <div className="p-6 flex flex-col justify-center flex-1">
               <div className="text-center mb-6">
-                <div className="text-4xl font-black text-slate-800">85%</div>
+                <div className="text-4xl font-black text-slate-800 dark:text-slate-100">85%</div>
                 <div className="text-sm font-bold text-slate-400 uppercase tracking-wider mt-1">School Average</div>
               </div>
               <div className="space-y-4 w-full max-w-sm mx-auto">
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-slate-600">Students</span>
+                    <span className="text-slate-600 dark:text-slate-300">Students</span>
                     <span className="text-emerald-600">82% Present</span>
                   </div>
-                  <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
                     <div className="h-full bg-emerald-500 rounded-full" style={{width: '82%'}}></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-slate-600">Teaching Staff</span>
+                    <span className="text-slate-600 dark:text-slate-300">Teaching Staff</span>
                     <span className="text-emerald-600">96% Present</span>
                   </div>
-                  <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
                     <div className="h-full bg-emerald-500 rounded-full" style={{width: '96%'}}></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between text-xs font-semibold mb-1">
-                    <span className="text-slate-600">Non-Teaching Staff</span>
+                    <span className="text-slate-600 dark:text-slate-300">Non-Teaching Staff</span>
                     <span className="text-emerald-600">90% Present</span>
                   </div>
-                  <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div className="h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
                     <div className="h-full bg-emerald-500 rounded-full" style={{width: '90%'}}></div>
                   </div>
                 </div>
@@ -613,9 +613,9 @@ export default function AdminOverview() {
       {/* Settings Modal */}
       {isConfigModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Settings className="text-primary-600" />
                 Customize Dashboard
               </h2>
@@ -627,22 +627,22 @@ export default function AdminOverview() {
             <div className="p-6 space-y-8 overflow-y-auto">
               {/* Metrics */}
               <div>
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Metrics</h3>
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">Metrics</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {['students', 'staff', 'classes', 'notices'].map(metric => (
-                    <label key={metric} className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-slate-50 transition-colors">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.metrics[metric] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 text-slate-400'}`}>
+                    <label key={metric} className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-slate-50 transition-colors">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.metrics[metric] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 dark:bg-slate-700 text-slate-400'}`}>
                         {metric === 'students' && <GraduationCap size={20} />}
                         {metric === 'staff' && <Users size={20} />}
                         {metric === 'classes' && <BookOpen size={20} />}
                         {metric === 'notices' && <Bell size={20} />}
                       </div>
-                      <div className="flex-1 font-semibold text-slate-700 capitalize text-sm">{metric}</div>
+                      <div className="flex-1 font-semibold text-slate-700 dark:text-slate-200 capitalize text-sm">{metric}</div>
                       <input 
                         type="checkbox" 
                         checked={tempConfig.metrics[metric] !== false}
                         onChange={(e) => setTempConfig({ ...tempConfig, metrics: { ...tempConfig.metrics, [metric]: e.target.checked } })}
-                        className="w-4 h-4 rounded text-primary-600 focus:ring-primary-500 border-slate-300"
+                        className="w-4 h-4 rounded text-primary-600 focus:ring-primary-500 border-slate-300 dark:border-slate-600"
                       />
                     </label>
                   ))}
@@ -651,7 +651,7 @@ export default function AdminOverview() {
 
               {/* Widgets */}
               <div>
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Widgets</h3>
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">Widgets</h3>
                 <div className="grid grid-cols-1 gap-4">
                   {[
                     { id: 'recentNotices', name: 'Recent Notices', icon: <Bell size={20} /> },
@@ -659,18 +659,18 @@ export default function AdminOverview() {
                     { id: 'quickActions', name: 'Quick Actions', icon: <LinkIcon size={20} /> },
                     { id: 'attendanceSummary', name: 'Attendance Summary', icon: <BarChart2 size={20} /> }
                   ].map(widget => (
-                    <label key={widget.id} className="flex items-center justify-between cursor-pointer group p-3 rounded-xl border border-slate-100 hover:border-primary-200 hover:bg-slate-50 transition-colors">
+                    <label key={widget.id} className="flex items-center justify-between cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-slate-50 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.widgets[widget.id] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 text-slate-400'}`}>
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.widgets[widget.id] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 dark:bg-slate-700 text-slate-400'}`}>
                           {widget.icon}
                         </div>
-                        <div className="font-semibold text-slate-700 text-sm">{widget.name}</div>
+                        <div className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{widget.name}</div>
                       </div>
                       <input 
                         type="checkbox" 
                         checked={tempConfig.widgets[widget.id] !== false}
                         onChange={(e) => setTempConfig({ ...tempConfig, widgets: { ...tempConfig.widgets, [widget.id]: e.target.checked } })}
-                        className="w-4 h-4 rounded text-primary-600 focus:ring-primary-500 border-slate-300"
+                        className="w-4 h-4 rounded text-primary-600 focus:ring-primary-500 border-slate-300 dark:border-slate-600"
                       />
                     </label>
                   ))}
@@ -678,10 +678,10 @@ export default function AdminOverview() {
               </div>
             </div>
 
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 shrink-0">
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3 shrink-0">
               <button 
                 onClick={() => setIsConfigModalOpen(false)}
-                className="px-6 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-200 transition-colors"
+                className="px-6 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
               >
                 Cancel
               </button>

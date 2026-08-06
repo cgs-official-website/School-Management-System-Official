@@ -70,23 +70,23 @@ export default function UpgradePlan() {
   return (
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="text-center max-w-2xl mx-auto mb-16 mt-8">
-        <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Upgrade your Workspace</h1>
-        <p className="text-lg text-slate-600">
+        <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">Upgrade your Workspace</h1>
+        <p className="text-lg text-slate-600 dark:text-slate-300">
           Unlock more students, advanced features, and premium support by selecting a plan that fits your institution.
         </p>
         
         {/* Billing Toggle */}
         <div className="flex items-center justify-center mt-8">
-          <div className="bg-slate-100 p-1 rounded-xl inline-flex relative">
+          <div className="bg-slate-100 dark:bg-slate-700 p-1 rounded-xl inline-flex relative">
             <button 
               onClick={() => setBillingCycle('monthly')}
-              className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${billingCycle === 'monthly' ? 'text-slate-900 shadow-sm bg-white' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${billingCycle === 'monthly' ? 'text-slate-900 dark:text-white shadow-sm bg-white dark:bg-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
             >
               Monthly billing
             </button>
             <button 
               onClick={() => setBillingCycle('yearly')}
-              className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${billingCycle === 'yearly' ? 'text-slate-900 shadow-sm bg-white' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${billingCycle === 'yearly' ? 'text-slate-900 dark:text-white shadow-sm bg-white dark:bg-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
             >
               Yearly billing
               <span className="absolute -top-3 -right-3 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full border border-green-200">Save 20%</span>
@@ -96,12 +96,12 @@ export default function UpgradePlan() {
       </div>
 
       {upgrading ? (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-xl p-16 text-center max-w-md mx-auto">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-xl p-16 text-center max-w-md mx-auto">
           <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6 relative">
             <Zap size={32} className="text-primary-600 animate-pulse" />
             <div className="absolute inset-0 border-4 border-primary-500 rounded-full border-t-transparent animate-spin"></div>
           </div>
-          <h3 className="text-2xl font-bold text-slate-900 mb-2">Processing Payment...</h3>
+          <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Processing Payment...</h3>
           <p className="text-slate-500">Please do not close this window.</p>
         </div>
       ) : (
@@ -119,7 +119,7 @@ export default function UpgradePlan() {
                 className={`rounded-3xl border relative flex flex-col transition-transform hover:-translate-y-1 duration-300 ${
                   isPopular 
                     ? 'bg-gradient-to-b from-primary-600 to-primary-800 border-primary-500 shadow-xl shadow-primary-600/20 text-white' 
-                    : 'bg-white border-slate-200 shadow-lg text-slate-900'
+                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-lg text-slate-900 dark:text-white'
                 }`}
               >
                 {isPopular && (
@@ -129,7 +129,7 @@ export default function UpgradePlan() {
                 )}
                 
                 <div className="p-8 pb-0">
-                  <h3 className={`text-xl font-bold mb-2 ${isPopular ? 'text-white' : 'text-slate-900'}`}>{plan.name}</h3>
+                  <h3 className={`text-xl font-bold mb-2 ${isPopular ? 'text-white' : 'text-slate-900 dark:text-white'}`}>{plan.name}</h3>
                   <div className="flex items-baseline gap-1 mb-2">
                     <span className="text-4xl font-extrabold">₹{price}</span>
                     <span className={`text-sm font-medium ${isPopular ? 'text-primary-200' : 'text-slate-500'}`}>/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
@@ -144,13 +144,13 @@ export default function UpgradePlan() {
                     {plan.cloudStorageGB > 0 && (
                       <li className="flex items-start gap-3">
                         <CheckCircle2 size={18} className={`shrink-0 ${isPopular ? 'text-amber-400' : 'text-primary-500'}`} />
-                        <span className={`text-sm ${isPopular ? 'text-primary-50' : 'text-slate-600'}`}>{plan.cloudStorageGB}GB Cloud Storage</span>
+                        <span className={`text-sm ${isPopular ? 'text-primary-50' : 'text-slate-600 dark:text-slate-300'}`}>{plan.cloudStorageGB}GB Cloud Storage</span>
                       </li>
                     )}
                     {plan.modules && Object.entries(plan.modules).filter(([_, v]) => v).map(([key, _]) => (
                       <li key={key} className="flex items-start gap-3">
                         <CheckCircle2 size={18} className={`shrink-0 ${isPopular ? 'text-amber-400' : 'text-primary-500'}`} />
-                        <span className={`text-sm ${isPopular ? 'text-primary-50' : 'text-slate-600'} capitalize`}>
+                        <span className={`text-sm ${isPopular ? 'text-primary-50' : 'text-slate-600 dark:text-slate-300'} capitalize`}>
                           {key.replace(/([A-Z])/g, ' $1').trim()}
                         </span>
                       </li>
@@ -162,7 +162,7 @@ export default function UpgradePlan() {
                     disabled={isCurrent}
                     className={`w-full py-3.5 rounded-xl font-bold transition-all flex justify-center items-center gap-2 ${
                       isCurrent
-                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                        ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 cursor-not-allowed border border-slate-200 dark:border-slate-700'
                         : isPopular
                           ? 'bg-amber-400 hover:bg-amber-500 text-amber-950 shadow-lg shadow-amber-400/30'
                           : 'bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200'
@@ -180,7 +180,7 @@ export default function UpgradePlan() {
 
       {/* Trust Badges */}
       {!upgrading && (
-        <div className="mt-20 flex justify-center gap-12 border-t border-slate-200 pt-12 text-slate-400">
+        <div className="mt-20 flex justify-center gap-12 border-t border-slate-200 dark:border-slate-700 pt-12 text-slate-400">
           <div className="flex items-center gap-2">
             <Shield size={24} />
             <span className="text-sm font-medium">Bank-level Security</span>

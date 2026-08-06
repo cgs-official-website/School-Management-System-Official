@@ -87,7 +87,7 @@ export default function Overview() {
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Global Overview</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Global Overview</h1>
           <p className="text-slate-500 mt-1">Platform analytics and tenant metrics.</p>
         </div>
         
@@ -103,7 +103,7 @@ export default function Overview() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
           <div className="flex justify-between items-start mb-4">
             <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
               <Building2 size={24} />
@@ -111,11 +111,11 @@ export default function Overview() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 mb-1">Total Active Schools</p>
-            <h3 className="text-3xl font-black text-slate-900">{activeSchools.length}</h3>
+            <h3 className="text-3xl font-black text-slate-900 dark:text-white">{activeSchools.length}</h3>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
           <div className="flex justify-between items-start mb-4">
             <div className="p-3 bg-green-50 text-green-600 rounded-2xl">
               <TrendingUp size={24} />
@@ -123,11 +123,11 @@ export default function Overview() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 mb-1">Monthly Recurring Revenue</p>
-            <h3 className="text-3xl font-black text-slate-900">₹{mrr}</h3>
+            <h3 className="text-3xl font-black text-slate-900 dark:text-white">₹{mrr}</h3>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
           <div className="flex justify-between items-start mb-4">
             <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl">
               <AlertCircle size={24} />
@@ -141,14 +141,14 @@ export default function Overview() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 mb-1">Pending Approvals</p>
-            <h3 className="text-3xl font-black text-slate-900">{pendingSchools.length}</h3>
+            <h3 className="text-3xl font-black text-slate-900 dark:text-white">{pendingSchools.length}</h3>
             {pendingSchools.length > 0 && (
               <Link to="/superadmin/tenants" className="text-xs text-primary-600 font-bold hover:underline mt-2 inline-block">Review Now &rarr;</Link>
             )}
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
           <div className="flex justify-between items-start mb-4">
             <div className="p-3 bg-red-50 text-red-600 rounded-2xl">
               <AlertCircle size={24} />
@@ -156,15 +156,15 @@ export default function Overview() {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 mb-1">Suspended Tenants</p>
-            <h3 className="text-3xl font-black text-slate-900">{suspendedSchools.length}</h3>
+            <h3 className="text-3xl font-black text-slate-900 dark:text-white">{suspendedSchools.length}</h3>
           </div>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-          <h2 className="text-xl font-bold text-slate-900">Recent Registrations</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Registrations</h2>
           <Link to="/superadmin/tenants" className="text-sm font-bold text-primary-600 hover:text-primary-700">View All Tenants</Link>
         </div>
         <div className="divide-y divide-slate-100">
@@ -174,16 +174,16 @@ export default function Overview() {
             recentSchools.map(school => (
               <div key={school.id} className="p-6 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-500">
+                  <div className="h-10 w-10 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-slate-500">
                     {school.schoolName?.charAt(0) || 'S'}
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900">{school.schoolName}</h4>
+                    <h4 className="font-bold text-slate-900 dark:text-white">{school.schoolName}</h4>
                     <p className="text-sm text-slate-500">{new Date(school.createdAt).toLocaleDateString('en-GB')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                     {school.plan}
                   </span>
                   <span className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1

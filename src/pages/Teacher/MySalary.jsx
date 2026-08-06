@@ -114,7 +114,7 @@ export default function MySalary() {
   return (
     <div className="p-4 sm:p-8 max-w-6xl mx-auto h-[calc(100vh-2rem)] flex flex-col print:p-0 print:h-auto">
       <div className="mb-8 shrink-0 print:hidden">
-        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
           <div className="p-2.5 bg-emerald-100 text-emerald-600 rounded-xl">
             <LuBanknote size={28} />
           </div>
@@ -123,17 +123,17 @@ export default function MySalary() {
         <p className="text-slate-500 mt-2">View your monthly salary details, deductions, and download payslips.</p>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden print:hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden print:hidden">
         <div className="flex-1 overflow-auto custom-scrollbar">
           <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead className="bg-slate-50 sticky top-0 z-10">
+            <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10">
               <tr>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Month</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Base Salary</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Total Deductions</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Net Pay</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200">Status</th>
-                <th className="p-4 font-semibold text-slate-600 border-b border-slate-200 text-right">Action</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">Month</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">Base Salary</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">Total Deductions</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">Net Pay</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">Status</th>
+                <th className="p-4 font-semibold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -141,8 +141,8 @@ export default function MySalary() {
                 const netPay = (payroll.baseSalary || 0) - (payroll.deductions || 0);
                 return (
                   <tr key={payroll.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-4 font-bold text-slate-900">{payroll.month || 'N/A'}</td>
-                    <td className="p-4 text-slate-700 font-medium">₹{(payroll.baseSalary || 0).toLocaleString()}</td>
+                    <td className="p-4 font-bold text-slate-900 dark:text-white">{payroll.month || 'N/A'}</td>
+                    <td className="p-4 text-slate-700 dark:text-slate-200 font-medium">₹{(payroll.baseSalary || 0).toLocaleString()}</td>
                     <td className="p-4 text-red-600 font-medium">
                       -₹{(payroll.deductions || 0).toLocaleString()}
                       <div className="text-[10px] text-slate-400 mt-0.5">
@@ -168,7 +168,7 @@ export default function MySalary() {
                           <FileText size={16} /> Payslip
                         </button>
                       ) : (
-                        <span className="text-xs text-slate-400 font-medium italic px-2 py-1 bg-slate-50 rounded-lg">Not Released</span>
+                        <span className="text-xs text-slate-400 font-medium italic px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded-lg">Not Released</span>
                       )}
                     </td>
                   </tr>
@@ -178,7 +178,7 @@ export default function MySalary() {
                 <tr>
                   <td colSpan="6" className="p-12 text-center text-slate-500">
                     <LuBanknote size={48} className="mx-auto mb-4 text-slate-300" />
-                    <p className="text-lg font-medium text-slate-900 mb-1">No Payroll Records</p>
+                    <p className="text-lg font-medium text-slate-900 dark:text-white mb-1">No Payroll Records</p>
                     <p>Your salary records will appear here once processed by the admin.</p>
                   </td>
                 </tr>
@@ -191,7 +191,7 @@ export default function MySalary() {
       {/* Payslip Modal (Printable) */}
       {showPayslipModal && (
         <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 sm:p-8 print:p-0 print:bg-white print:static print:z-0">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[95vh] print:max-h-none print:shadow-none print:w-full">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[95vh] print:max-h-none print:shadow-none print:w-full">
             
             {/* Modal Controls - Hidden during print */}
             <div className="p-4 bg-slate-800 text-white flex justify-between items-center shrink-0 print:hidden rounded-t-xl">
@@ -216,25 +216,25 @@ export default function MySalary() {
             </div>
 
             {/* Printable Area */}
-            <div className="flex-1 overflow-y-auto bg-slate-100 p-8 print:p-0 print:bg-white custom-scrollbar">
-              <div className="bg-white border border-slate-200 p-10 print:border-none print:p-0 mx-auto max-w-3xl">
+            <div className="flex-1 overflow-y-auto bg-slate-100 dark:bg-slate-700 p-8 print:p-0 print:bg-white custom-scrollbar">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-10 print:border-none print:p-0 mx-auto max-w-3xl">
                 
                 {/* Header */}
-                <div className="flex justify-between items-center border-b-2 border-slate-200 pb-6 mb-8">
+                <div className="flex justify-between items-center border-b-2 border-slate-200 dark:border-slate-700 pb-6 mb-8">
                   <div className="flex items-center gap-4">
                     {schoolDetails?.logoUrl ? (
                       <img src={schoolDetails.logoUrl} alt="School Logo" className="h-16 w-16 object-contain" />
                     ) : (
-                      <div className="h-16 w-16 bg-slate-100 rounded flex items-center justify-center font-bold text-slate-400">LOGO</div>
+                      <div className="h-16 w-16 bg-slate-100 dark:bg-slate-700 rounded flex items-center justify-center font-bold text-slate-400">LOGO</div>
                     )}
                     <div>
-                      <h1 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">{schoolDetails?.schoolName || 'School Name'}</h1>
+                      <h1 className="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{schoolDetails?.schoolName || 'School Name'}</h1>
                       <p className="text-slate-500 text-sm mt-1">{schoolDetails?.address || 'School Address Not Configured'}</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <h2 className="text-3xl font-black text-slate-300 uppercase tracking-widest">Payslip</h2>
-                    <p className="text-slate-600 font-semibold mt-1">{showPayslipModal.month}</p>
+                    <p className="text-slate-600 dark:text-slate-300 font-semibold mt-1">{showPayslipModal.month}</p>
                   </div>
                 </div>
 
@@ -242,54 +242,54 @@ export default function MySalary() {
                 <div className="grid grid-cols-2 gap-8 mb-8">
                   <div>
                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Employee Details</h3>
-                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                      <p className="text-slate-500 text-sm mb-1">Name: <span className="text-slate-900 font-bold ml-1">{showPayslipModal.name}</span></p>
-                      <p className="text-slate-500 text-sm">Role/Designation: <span className="text-slate-900 font-semibold ml-1">{showPayslipModal.role}</span></p>
+                    <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
+                      <p className="text-slate-500 text-sm mb-1">Name: <span className="text-slate-900 dark:text-white font-bold ml-1">{showPayslipModal.name}</span></p>
+                      <p className="text-slate-500 text-sm">Role/Designation: <span className="text-slate-900 dark:text-white font-semibold ml-1">{showPayslipModal.role}</span></p>
                     </div>
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Payment Details</h3>
-                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                    <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
                       <p className="text-slate-500 text-sm mb-1">Status: <span className="text-emerald-600 font-bold ml-1">{showPayslipModal.status}</span></p>
-                      <p className="text-slate-500 text-sm">Date: <span className="text-slate-900 font-semibold ml-1">{new Date().toLocaleDateString('en-GB')}</span></p>
+                      <p className="text-slate-500 text-sm">Date: <span className="text-slate-900 dark:text-white font-semibold ml-1">{new Date().toLocaleDateString('en-GB')}</span></p>
                     </div>
                   </div>
                 </div>
 
                 {/* Salary Breakdown Table */}
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Salary Breakdown</h3>
-                <div className="border border-slate-200 rounded-lg overflow-hidden mb-8">
+                <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden mb-8">
                   <table className="w-full text-left border-collapse">
-                    <thead className="bg-slate-50 border-b border-slate-200">
+                    <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
                       <tr>
-                        <th className="py-3 px-4 text-slate-600 font-bold w-1/2">Earnings</th>
-                        <th className="py-3 px-4 text-slate-600 font-bold w-1/2 border-l border-slate-200">Deductions</th>
+                        <th className="py-3 px-4 text-slate-600 dark:text-slate-300 font-bold w-1/2">Earnings</th>
+                        <th className="py-3 px-4 text-slate-600 dark:text-slate-300 font-bold w-1/2 border-l border-slate-200 dark:border-slate-700">Deductions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       <tr>
                         <td className="py-3 px-4 align-top">
                           <div className="flex justify-between items-center mb-2">
-                            <span className="text-slate-700">Basic Salary</span>
+                            <span className="text-slate-700 dark:text-slate-200">Basic Salary</span>
                             <span className="font-semibold">₹{(showPayslipModal.baseSalary || 0).toLocaleString()}</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 align-top border-l border-slate-200">
+                        <td className="py-3 px-4 align-top border-l border-slate-200 dark:border-slate-700">
                           {showPayslipModal.pfCalculated > 0 && (
                             <div className="flex justify-between items-center mb-2">
-                              <span className="text-slate-700">Provident Fund (PF)</span>
+                              <span className="text-slate-700 dark:text-slate-200">Provident Fund (PF)</span>
                               <span className="font-semibold text-red-600">₹{showPayslipModal.pfCalculated.toLocaleString()}</span>
                             </div>
                           )}
                           {showPayslipModal.esiCalculated > 0 && (
                             <div className="flex justify-between items-center mb-2">
-                              <span className="text-slate-700">ESI</span>
+                              <span className="text-slate-700 dark:text-slate-200">ESI</span>
                               <span className="font-semibold text-red-600">₹{showPayslipModal.esiCalculated.toLocaleString()}</span>
                             </div>
                           )}
                           {((showPayslipModal.deductions || 0) - (showPayslipModal.pfCalculated || 0) - (showPayslipModal.esiCalculated || 0)) > 0 && (
                             <div className="flex justify-between items-center mb-2">
-                              <span className="text-slate-700">Other Deductions</span>
+                              <span className="text-slate-700 dark:text-slate-200">Other Deductions</span>
                               <span className="font-semibold text-red-600">₹{((showPayslipModal.deductions || 0) - (showPayslipModal.pfCalculated || 0) - (showPayslipModal.esiCalculated || 0)).toLocaleString()}</span>
                             </div>
                           )}
@@ -298,16 +298,16 @@ export default function MySalary() {
                           )}
                         </td>
                       </tr>
-                      <tr className="bg-slate-50 border-t-2 border-slate-200">
+                      <tr className="bg-slate-50 dark:bg-slate-800 border-t-2 border-slate-200 dark:border-slate-700">
                         <td className="py-3 px-4">
                           <div className="flex justify-between items-center">
-                            <span className="font-bold text-slate-900">Gross Earnings</span>
-                            <span className="font-bold text-slate-900">₹{(showPayslipModal.baseSalary || 0).toLocaleString()}</span>
+                            <span className="font-bold text-slate-900 dark:text-white">Gross Earnings</span>
+                            <span className="font-bold text-slate-900 dark:text-white">₹{(showPayslipModal.baseSalary || 0).toLocaleString()}</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 border-l border-slate-200">
+                        <td className="py-3 px-4 border-l border-slate-200 dark:border-slate-700">
                           <div className="flex justify-between items-center">
-                            <span className="font-bold text-slate-900">Total Deductions</span>
+                            <span className="font-bold text-slate-900 dark:text-white">Total Deductions</span>
                             <span className="font-bold text-red-600">₹{(showPayslipModal.deductions || 0).toLocaleString()}</span>
                           </div>
                         </td>
@@ -320,7 +320,7 @@ export default function MySalary() {
                 <div className="flex justify-between items-end mt-12 border-t-2 border-slate-900 pt-6">
                   <div>
                     <h4 className="text-slate-500 font-semibold mb-1 uppercase tracking-widest text-sm">Net Pay</h4>
-                    <p className="text-4xl font-black text-slate-900">₹{((showPayslipModal.baseSalary || 0) - (showPayslipModal.deductions || 0)).toLocaleString()}</p>
+                    <p className="text-4xl font-black text-slate-900 dark:text-white">₹{((showPayslipModal.baseSalary || 0) - (showPayslipModal.deductions || 0)).toLocaleString()}</p>
                     <p className="text-slate-400 text-sm mt-2 italic">*This is a computer generated document.</p>
                   </div>
                   
@@ -330,9 +330,9 @@ export default function MySalary() {
                         <img src={schoolDetails.hrConfig.authorizedSignature} alt="Authorized Signature" className="max-h-full object-contain mix-blend-multiply" />
                       </div>
                     ) : (
-                      <div className="h-16 mb-2 border-b-2 border-dashed border-slate-300"></div>
+                      <div className="h-16 mb-2 border-b-2 border-dashed border-slate-300 dark:border-slate-600"></div>
                     )}
-                    <p className="text-sm font-bold text-slate-800 border-t border-slate-200 pt-2">Authorized Signatory</p>
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100 border-t border-slate-200 dark:border-slate-700 pt-2">Authorized Signatory</p>
                   </div>
                 </div>
 

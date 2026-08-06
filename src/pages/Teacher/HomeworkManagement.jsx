@@ -233,7 +233,7 @@ export default function HomeworkManagement() {
     <div className="p-4 sm:p-8 max-w-7xl mx-auto animate-fade-in-up">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Homework Management</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Homework Management</h1>
           <p className="text-slate-500 mt-1">Assign tasks and evaluate student progress.</p>
         </div>
         <div className="flex gap-3">
@@ -261,9 +261,9 @@ export default function HomeworkManagement() {
       {/* Homework List */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {homeworks.length === 0 ? (
-          <div className="col-span-full p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
+          <div className="col-span-full p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <FileText size={48} className="mx-auto text-slate-300 mb-4" />
-            <h3 className="text-lg font-bold text-slate-900">No homework assigned yet</h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">No homework assigned yet</h3>
             <p className="text-slate-500 mt-1">Click the button above to assign your first homework.</p>
           </div>
         ) : (
@@ -273,7 +273,7 @@ export default function HomeworkManagement() {
               <div 
                 key={hw.id} 
                 onClick={() => openTracking(hw)}
-                className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group cursor-pointer"
+                className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group cursor-pointer"
               >
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                   <FileText size={64} className="text-primary-600 transform rotate-12" />
@@ -287,10 +287,10 @@ export default function HomeworkManagement() {
                       Due: {new Date(hw.dueDate).toLocaleDateString('en-GB')}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">{hw.title}</h3>
-                  <p className="text-sm text-slate-600 mb-4 line-clamp-2">{hw.description}</p>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{hw.title}</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 line-clamp-2">{hw.description}</p>
                   
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                     <span className="text-sm font-medium text-emerald-600 flex items-center gap-1">
                       <CheckCircle size={16} /> Active
                     </span>
@@ -306,9 +306,9 @@ export default function HomeworkManagement() {
       {/* Create Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50">
-          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h2 className="text-xl font-bold text-slate-900">New Homework Assignment</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">New Homework Assignment</h2>
               <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X size={24} />
               </button>
@@ -316,31 +316,31 @@ export default function HomeworkManagement() {
             <form onSubmit={handleCreate}>
               <div className="p-6 space-y-4">
                 <div className="space-y-1">
-                  <label className="text-sm font-bold text-slate-700">Homework Title</label>
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Homework Title</label>
                   <input
                     type="text"
                     required
                     value={newHomework.title}
                     onChange={(e) => setNewHomework({ ...newHomework, title: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-bold text-slate-700">Description</label>
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Description</label>
                   <textarea
                     rows="3"
                     value={newHomework.description}
                     onChange={(e) => setNewHomework({ ...newHomework, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-bold text-slate-700">Class</label>
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Class</label>
                   <select
                     required
                     value={newHomework.classId}
                     onChange={(e) => setNewHomework({ ...newHomework, classId: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white text-sm font-semibold"
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white dark:bg-slate-900 text-sm font-semibold"
                   >
                     <option value="">Select a Class</option>
                     {classes.map(c => (
@@ -353,7 +353,7 @@ export default function HomeworkManagement() {
 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <label className="text-sm font-bold text-slate-700">Select Subjects (Multiple)</label>
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Select Subjects (Multiple)</label>
                     <div className="flex items-center gap-2 text-xs">
                       <button 
                         type="button" 
@@ -373,7 +373,7 @@ export default function HomeworkManagement() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-3 border border-slate-200 rounded-xl bg-slate-50/50 custom-scrollbar">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 custom-scrollbar">
                     {subjects.length === 0 ? (
                       <span className="text-xs text-slate-400 font-semibold col-span-full">No subjects available</span>
                     ) : (
@@ -385,7 +385,7 @@ export default function HomeworkManagement() {
                             className={`flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all ${
                               isChecked
                                 ? 'bg-primary-50/80 border-primary-300 text-primary-900 font-bold'
-                                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100/70 font-semibold'
+                                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 font-semibold'
                             }`}
                           >
                             <input
@@ -398,7 +398,7 @@ export default function HomeworkManagement() {
                                   : current.filter(item => item !== s.name);
                                 setNewHomework({ ...newHomework, selectedSubjects: next });
                               }}
-                              className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500 cursor-pointer"
+                              className="w-4 h-4 text-primary-600 rounded border-slate-300 dark:border-slate-600 focus:ring-primary-500 cursor-pointer"
                             />
                             <span className="text-sm truncate">{s.name}</span>
                           </label>
@@ -414,32 +414,32 @@ export default function HomeworkManagement() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-sm font-bold text-slate-700">Due Date</label>
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Due Date</label>
                     <input
                       type="date"
                       required
                       value={newHomework.dueDate}
                       onChange={(e) => setNewHomework({ ...newHomework, dueDate: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                      className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm font-bold text-slate-700">Max Marks</label>
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Max Marks</label>
                     <input
                       type="number"
                       required
                       value={newHomework.maxMarks}
                       onChange={(e) => setNewHomework({ ...newHomework, maxMarks: parseInt(e.target.value) })}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                      className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                     />
                   </div>
                 </div>
               </div>
-              <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-5 py-2 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-100 font-bold"
+                  className="px-5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 font-bold"
                 >
                   Cancel
                 </button>
@@ -459,9 +459,9 @@ export default function HomeworkManagement() {
       {/* Excel Upload Modal */}
       {showExcelModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50">
-          <div className="bg-white rounded-3xl w-full max-w-2xl flex flex-col max-h-[90vh] overflow-hidden shadow-2xl animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">Evaluate via Excel</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl flex flex-col max-h-[90vh] overflow-hidden shadow-2xl animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Evaluate via Excel</h2>
               <button onClick={() => setShowExcelModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X size={24} />
               </button>
@@ -473,7 +473,7 @@ export default function HomeworkManagement() {
                 <strong>Required Columns:</strong> Admission Number, Homework Title, Status, Grade
               </p>
               
-              <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center bg-slate-50 hover:bg-slate-100 transition-colors relative">
+              <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 transition-colors relative">
                 <input 
                   type="file" 
                   required
@@ -482,17 +482,17 @@ export default function HomeworkManagement() {
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
                 <Upload size={32} className="mx-auto text-primary-500 mb-3" />
-                <span className="block text-sm font-semibold text-slate-700">
+                <span className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
                   {excelFile ? excelFile.name : "Click or drag Excel file here"}
                 </span>
               </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
                 <button 
                   type="button" 
                   onClick={() => setShowExcelModal(false)}
-                  className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-50 rounded-xl"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 rounded-xl"
                 >
                   Cancel
                 </button>
@@ -512,10 +512,10 @@ export default function HomeworkManagement() {
       {/* Tracking Modal */}
       {showTrackingModal && selectedHomework && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50">
-          <div className="bg-white rounded-3xl w-full max-w-3xl flex flex-col max-h-[90vh] overflow-hidden shadow-2xl animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-3xl flex flex-col max-h-[90vh] overflow-hidden shadow-2xl animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <div>
-                <h2 className="text-xl font-bold text-slate-900">{selectedHomework.title}</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedHomework.title}</h2>
                 <p className="text-sm font-semibold text-slate-500">Student Progress Tracking</p>
               </div>
               <div className="flex items-center gap-3">
@@ -549,15 +549,15 @@ export default function HomeworkManagement() {
                     const status = submission?.status || 'Not Started';
                     const lastUpdated = submission?.lastUpdated ? new Date(submission.lastUpdated).toLocaleString() : 'N/A';
                     
-                    let statusColor = "bg-slate-100 text-slate-600";
+                    let statusColor = "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300";
                     if (status === 'In Progress') statusColor = "bg-amber-100 text-amber-700";
                     if (status === 'Completed') statusColor = "bg-blue-100 text-blue-700";
                     if (status === 'Submitted') statusColor = "bg-emerald-100 text-emerald-700";
 
                     return (
-                      <div key={student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-200 rounded-2xl hover:border-primary-300 transition-colors gap-4">
+                      <div key={student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-primary-300 transition-colors gap-4">
                         <div>
-                          <p className="font-bold text-slate-900">{student.firstName} {student.lastName}</p>
+                          <p className="font-bold text-slate-900 dark:text-white">{student.firstName} {student.lastName}</p>
                           <p className="text-xs font-semibold text-slate-500">ADM: {student.admissionNumber} | Last Updated: {lastUpdated}</p>
                         </div>
                         <div className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap ${statusColor}`}>
@@ -575,11 +575,11 @@ export default function HomeworkManagement() {
 
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold text-slate-900">Export Submissions Roster</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Submissions Roster</h3>
                 <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
               </div>
               <button 
@@ -593,7 +593,7 @@ export default function HomeworkManagement() {
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               {/* File Name Input */}
-              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+              <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
@@ -601,7 +601,7 @@ export default function HomeworkManagement() {
                     placeholder="e.g. Homework_Submissions"
                     value={exportFileName}
                     onChange={(e) => setExportFileName(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
                   <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
                 </div>
@@ -619,7 +619,7 @@ export default function HomeworkManagement() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
                 >
                   Deselect All
                 </button>
@@ -630,7 +630,7 @@ export default function HomeworkManagement() {
                 {availableFieldsList.map((field) => (
                   <label 
                     key={field.key}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
                   >
                     <input 
                       type="checkbox"
@@ -638,18 +638,18 @@ export default function HomeworkManagement() {
                       onChange={() => handleFieldToggle(field.key)}
                       className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
                     />
-                    <span className="text-sm font-semibold text-slate-700">{field.label}</span>
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{field.label}</span>
                   </label>
                 ))}
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

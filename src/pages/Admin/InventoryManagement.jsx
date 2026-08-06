@@ -653,7 +653,7 @@ export default function InventoryManagement() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuPackage className="text-primary-600" /> Inventory & Assets
           </h1>
           <p className="text-slate-500 mt-1">Track school assets, stock, and inventory.</p>
@@ -662,7 +662,7 @@ export default function InventoryManagement() {
         <div className="flex flex-wrap gap-2">
           <button 
             onClick={() => navigate('/admin/inventory/audit-logs')}
-            className="flex items-center gap-2 border border-slate-200 bg-white text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
+            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
           >
             <LuClipboardList size={18} /> Audit Logs
           </button>
@@ -670,7 +670,7 @@ export default function InventoryManagement() {
           {canCreate('inventory') && (
             <button 
               onClick={() => setShowImportModal(true)}
-              className="flex items-center gap-2 border border-slate-200 bg-white text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
+              className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
             >
               <Upload size={18} /> Bulk Import
             </button>
@@ -685,7 +685,7 @@ export default function InventoryManagement() {
               setExportFileName('inventory_products_' + new Date().toISOString().slice(0,10));
               setShowExportModal(true);
             }}
-            className="flex items-center gap-2 border border-slate-200 bg-white text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
+            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
           >
             <Download size={18} /> Bulk Export
           </button>
@@ -713,7 +713,7 @@ export default function InventoryManagement() {
       </div>
 
       {/* Tabs Selector */}
-      <div className="flex border-b border-slate-200 mb-6 shrink-0 gap-4">
+      <div className="flex border-b border-slate-200 dark:border-slate-700 mb-6 shrink-0 gap-4">
         <button 
           onClick={() => setActiveTab('items')}
           className={`pb-3 text-sm font-bold border-b-2 transition-all ${
@@ -736,41 +736,41 @@ export default function InventoryManagement() {
         <>
           {/* Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6 shrink-0">
-            <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
               <div className="w-10 h-10 bg-primary-50 text-primary-600 rounded-xl flex items-center justify-center">
                 <LuPackage size={20} />
               </div>
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Items</p>
-                <p className="text-xl font-bold text-slate-900">{items.length}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{items.length}</p>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
               <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
                 <LuServer size={20} />
               </div>
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Low Stock Alerts</p>
-                <p className="text-xl font-bold text-slate-900">{items.filter(i => i.status === 'Low Stock').length}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{items.filter(i => i.status === 'Low Stock').length}</p>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
               <div className="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
                 <LuPackage size={20} />
               </div>
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Out of Stock</p>
-                <p className="text-xl font-bold text-slate-900">{items.filter(i => i.status === 'Out of Stock').length}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{items.filter(i => i.status === 'Out of Stock').length}</p>
               </div>
             </div>
           </div>
 
           {/* Table Container */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm mb-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm mb-4">
             {/* Filters Row */}
-            <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-3 shrink-0">
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row gap-3 shrink-0">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                 <input 
@@ -778,13 +778,13 @@ export default function InventoryManagement() {
                   placeholder="Search by name, product ID or category..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <select 
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold"
+                className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold"
               >
                 <option value="All">All Categories</option>
                 {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
@@ -792,7 +792,7 @@ export default function InventoryManagement() {
               <select 
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold"
+                className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold"
               >
                 <option value="All">All Statuses</option>
                 <option value="In Stock">In Stock</option>
@@ -804,14 +804,14 @@ export default function InventoryManagement() {
             {/* Table */}
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[800px]">
-                <thead className="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
                   <tr className="text-slate-500 text-xs font-semibold uppercase">
                     <th className="p-4 pl-6 w-12">
                       <input 
                         type="checkbox" 
                         onChange={handleSelectAll} 
                         checked={filteredItems.length > 0 && selectedItemIds.length === filteredItems.length}
-                        className="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4.5 w-4.5"
+                        className="rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500 h-4.5 w-4.5"
                       />
                     </th>
                     <th className="p-4">Product ID</th>
@@ -830,13 +830,13 @@ export default function InventoryManagement() {
                           type="checkbox" 
                           checked={selectedItemIds.includes(item.id)} 
                           onChange={() => handleSelectItem(item.id)}
-                          className="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4.5 w-4.5"
+                          className="rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500 h-4.5 w-4.5"
                         />
                       </td>
                       <td className="p-4 font-semibold text-slate-500">{item.productId || '—'}</td>
-                      <td className="p-4 font-bold text-slate-900">{item.name}</td>
-                      <td className="p-4 text-slate-600 font-medium">{item.category}</td>
-                      <td className="p-4 font-bold text-slate-900">{item.quantity} {item.unit}</td>
+                      <td className="p-4 font-bold text-slate-900 dark:text-white">{item.name}</td>
+                      <td className="p-4 text-slate-600 dark:text-slate-300 font-medium">{item.category}</td>
+                      <td className="p-4 font-bold text-slate-900 dark:text-white">{item.quantity} {item.unit}</td>
                       <td className="p-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
                           item.status === 'In Stock' ? 'bg-emerald-100 text-emerald-700' : 
@@ -850,7 +850,7 @@ export default function InventoryManagement() {
                           {canEdit('inventory') && (
                             <button 
                               onClick={() => { setStockAdjustment({ itemId: item.id, itemName: item.name, type: 'inbound', quantity: 1, remarks: '', prevStock: item.quantity }); setShowStockModal(true); }}
-                              className="px-2 py-1 text-xs font-bold border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-700"
+                              className="px-2 py-1 text-xs font-bold border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 text-slate-700 dark:text-slate-200"
                             >
                               Adjust Stock
                             </button>
@@ -882,19 +882,19 @@ export default function InventoryManagement() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-b-3xl">
+              <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-b-3xl">
                 <span className="text-sm text-slate-500 font-medium">
-                  Showing <span className="font-semibold text-slate-900">{indexOfFirstItem + 1}</span> to{' '}
-                  <span className="font-semibold text-slate-900">
+                  Showing <span className="font-semibold text-slate-900 dark:text-white">{indexOfFirstItem + 1}</span> to{' '}
+                  <span className="font-semibold text-slate-900 dark:text-white">
                     {Math.min(indexOfLastItem, filteredItems.length)}
                   </span>{' '}
-                  of <span className="font-semibold text-slate-900">{filteredItems.length}</span> products
+                  of <span className="font-semibold text-slate-900 dark:text-white">{filteredItems.length}</span> products
                 </span>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     Previous
                   </button>
@@ -907,7 +907,7 @@ export default function InventoryManagement() {
                         className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                           currentPage === pageNum
                             ? 'bg-primary-600 text-white shadow-sm'
-                            : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                            : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
                         }`}
                       >
                         {pageNum}
@@ -917,7 +917,7 @@ export default function InventoryManagement() {
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     Next
                   </button>
@@ -928,10 +928,10 @@ export default function InventoryManagement() {
         </>
       ) : (
         /* Categories Tab */
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm mb-4">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm mb-4">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[600px]">
-              <thead className="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+              <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
                 <tr className="text-slate-500 text-xs font-semibold uppercase">
                   <th className="p-4 pl-6">Category Name</th>
                   <th className="p-4">Description</th>
@@ -941,8 +941,8 @@ export default function InventoryManagement() {
               <tbody className="divide-y divide-slate-100 text-sm">
                 {categories.map((cat) => (
                   <tr key={cat.id} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="p-4 pl-6 font-bold text-slate-900">{cat.name}</td>
-                    <td className="p-4 text-slate-600">{cat.description || 'No description provided'}</td>
+                    <td className="p-4 pl-6 font-bold text-slate-900 dark:text-white">{cat.name}</td>
+                    <td className="p-4 text-slate-600 dark:text-slate-300">{cat.description || 'No description provided'}</td>
                     <td className="p-4 pr-6 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {canEdit('inventory') && (
@@ -975,9 +975,9 @@ export default function InventoryManagement() {
       {/* Item Modal */}
       {showItemModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">{itemFormData.id ? 'Edit' : 'Add'} Inventory Product</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{itemFormData.id ? 'Edit' : 'Add'} Inventory Product</h2>
               <button onClick={() => setShowItemModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
@@ -986,58 +986,58 @@ export default function InventoryManagement() {
             <form onSubmit={handleSaveItem} className="flex-1 overflow-y-auto custom-scrollbar">
               <div className="p-6 space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Product ID (Unique, Optional)</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Product ID (Unique, Optional)</label>
                   <input 
                     type="text" 
                     value={itemFormData.productId} onChange={e => setItemFormData({...itemFormData, productId: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 text-black bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-black bg-white dark:bg-slate-900"
                     placeholder="e.g. PROD-102"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Product Name (Mandatory)</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Product Name (Mandatory)</label>
                   <input 
                     type="text" required
                     value={itemFormData.name} onChange={e => setItemFormData({...itemFormData, name: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 text-black bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-black bg-white dark:bg-slate-900"
                   />
                 </div>
                 
                 <div className="grid grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Category</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Category</label>
                     <select 
                       required
                       value={itemFormData.category} onChange={e => setItemFormData({...itemFormData, category: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 text-black bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-black bg-white dark:bg-slate-900"
                     >
                       <option value="">-- Choose Category --</option>
                       {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Unit</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Unit</label>
                     <input 
                       type="text" required
                       value={itemFormData.unit} onChange={e => setItemFormData({...itemFormData, unit: e.target.value})}
                       placeholder="e.g. pcs, boxes"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 text-black bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-black bg-white dark:bg-slate-900"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Initial Stock Quantity</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Initial Stock Quantity</label>
                   <input 
                     type="number" required min="0"
                     disabled={!!itemFormData.id}
                     value={itemFormData.quantity} onChange={e => setItemFormData({...itemFormData, quantity: parseInt(e.target.value) || 0})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 text-black bg-white disabled:opacity-50"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-black bg-white dark:bg-slate-900 disabled:opacity-50"
                   />
                 </div>
                 
-                <div className="pt-4 border-t border-slate-100">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                   <CustomFieldsRenderer 
                     moduleKey="inventory"
                     customData={itemFormData.customData}
@@ -1054,8 +1054,8 @@ export default function InventoryManagement() {
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowItemModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
+                <button type="button" onClick={() => setShowItemModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">Save Product</button>
               </div>
             </form>
@@ -1066,9 +1066,9 @@ export default function InventoryManagement() {
       {/* Category Modal */}
       {showCategoryModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">{categoryFormData.id ? 'Edit' : 'Add'} Category</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{categoryFormData.id ? 'Edit' : 'Add'} Category</h2>
               <button onClick={() => setShowCategoryModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
@@ -1077,24 +1077,24 @@ export default function InventoryManagement() {
             <form onSubmit={handleSaveCategory} className="flex-1 overflow-y-auto custom-scrollbar">
               <div className="p-6 space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Category Name</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Category Name</label>
                   <input 
                     type="text" required
                     value={categoryFormData.name} onChange={e => setCategoryFormData({...categoryFormData, name: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 text-black bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-black bg-white dark:bg-slate-900"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Description (Optional)</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Description (Optional)</label>
                   <textarea 
                     value={categoryFormData.description} onChange={e => setCategoryFormData({...categoryFormData, description: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 text-black bg-white h-24"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-black bg-white dark:bg-slate-900 h-24"
                   />
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowCategoryModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
+                <button type="button" onClick={() => setShowCategoryModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">Save Category</button>
               </div>
             </form>
@@ -1105,9 +1105,9 @@ export default function InventoryManagement() {
       {/* Stock Adjustment Modal */}
       {showStockModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">Adjust Stock: {stockAdjustment.itemName}</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Adjust Stock: {stockAdjustment.itemName}</h2>
               <button onClick={() => setShowStockModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
@@ -1115,10 +1115,10 @@ export default function InventoryManagement() {
             
             <form onSubmit={handleStockAdjustment} className="flex-1 overflow-y-auto custom-scrollbar">
               <div className="p-6 space-y-5">
-                <div className="flex gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                  <div className="flex-1 text-center border-r border-slate-200">
+                <div className="flex gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <div className="flex-1 text-center border-r border-slate-200 dark:border-slate-700">
                     <span className="block text-xs font-semibold text-slate-500 uppercase">Previous Stock</span>
-                    <span className="text-xl font-bold text-slate-800">{stockAdjustment.prevStock}</span>
+                    <span className="text-xl font-bold text-slate-800 dark:text-slate-100">{stockAdjustment.prevStock}</span>
                   </div>
                   <div className="flex-1 text-center">
                     <span className="block text-xs font-semibold text-slate-500 uppercase">New Stock</span>
@@ -1132,9 +1132,9 @@ export default function InventoryManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Adjustment Type</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Adjustment Type</label>
                   <div className="flex gap-4">
-                    <label className="flex-1 flex items-center justify-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-black">
+                    <label className="flex-1 flex items-center justify-center gap-2 p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-black">
                       <input 
                         type="radio" 
                         name="stock-type" 
@@ -1145,7 +1145,7 @@ export default function InventoryManagement() {
                       />
                       Inbound Stock
                     </label>
-                    <label className="flex-1 flex items-center justify-center gap-2 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-black">
+                    <label className="flex-1 flex items-center justify-center gap-2 p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-black">
                       <input 
                         type="radio" 
                         name="stock-type" 
@@ -1160,26 +1160,26 @@ export default function InventoryManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Adjustment Quantity</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Adjustment Quantity</label>
                   <input 
                     type="number" required min="1"
                     value={stockAdjustment.quantity} onChange={e => setStockAdjustment({...stockAdjustment, quantity: parseInt(e.target.value) || 1})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 text-black bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-black bg-white dark:bg-slate-900"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Remarks / Reason (Optional)</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Remarks / Reason (Optional)</label>
                   <textarea 
                     value={stockAdjustment.remarks} onChange={e => setStockAdjustment({...stockAdjustment, remarks: e.target.value})}
                     placeholder="e.g. Received new shipment, Damaged item audit..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 text-black bg-white h-20"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-black bg-white dark:bg-slate-900 h-20"
                   />
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowStockModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
+                <button type="button" onClick={() => setShowStockModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">Save Adjustment</button>
               </div>
             </form>
@@ -1190,9 +1190,9 @@ export default function InventoryManagement() {
       {/* Bulk Import Modal */}
       {showImportModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">Bulk Import Products</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Bulk Import Products</h2>
               <button onClick={() => setShowImportModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
@@ -1206,13 +1206,13 @@ export default function InventoryManagement() {
                 <div className="flex gap-2 mt-1">
                   <button 
                     onClick={() => handleDownloadTemplate('xlsx')} 
-                    className="flex-1 px-3 py-1.5 bg-white border border-primary-200 text-primary-700 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-primary-100 transition-all"
+                    className="flex-1 px-3 py-1.5 bg-white dark:bg-slate-900 border border-primary-200 text-primary-700 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-primary-100 transition-all"
                   >
                     <Download size={14} /> Excel Template
                   </button>
                   <button 
                     onClick={() => handleDownloadTemplate('csv')} 
-                    className="flex-1 px-3 py-1.5 bg-white border border-primary-200 text-primary-700 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-primary-100 transition-all"
+                    className="flex-1 px-3 py-1.5 bg-white dark:bg-slate-900 border border-primary-200 text-primary-700 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-primary-100 transition-all"
                   >
                     <Download size={14} /> CSV Template
                   </button>
@@ -1220,15 +1220,15 @@ export default function InventoryManagement() {
               </div>
 
               {/* Settings / Configs */}
-              <div className="space-y-4 border-t border-slate-100 pt-4">
-                <span className="block text-sm font-bold text-slate-800">Import Configuration</span>
+              <div className="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+                <span className="block text-sm font-bold text-slate-800 dark:text-slate-100">Import Configuration</span>
                 
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">If Product Already Exists</label>
                   <select 
                     value={importConfig.duplicateAction} 
                     onChange={e => setImportConfig({...importConfig, duplicateAction: e.target.value})}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-semibold focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 text-sm font-semibold focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="skip">Skip Existing Products</option>
                     <option value="update">Update Existing Products (Add Quantity)</option>
@@ -1236,9 +1236,9 @@ export default function InventoryManagement() {
                   </select>
                 </div>
 
-                <div className="flex items-center justify-between p-3 border border-slate-200 rounded-xl bg-slate-50/50">
+                <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50">
                   <div>
-                    <span className="block text-sm font-bold text-slate-700">Auto-create Categories</span>
+                    <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">Auto-create Categories</span>
                     <span className="block text-xs text-slate-400">If category doesn't exist, create it dynamically instead of rejecting row</span>
                   </div>
                   <input 
@@ -1251,23 +1251,23 @@ export default function InventoryManagement() {
               </div>
 
               {/* Upload Input */}
-              <div className="border-t border-slate-100 pt-4">
-                <label className="block text-sm font-bold text-slate-800 mb-2">Select Upload File (.xlsx or .csv)</label>
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+                <label className="block text-sm font-bold text-slate-800 dark:text-slate-100 mb-2">Select Upload File (.xlsx or .csv)</label>
                 <input 
                   type="file" 
                   accept=".csv, .xlsx"
                   onChange={handleImportFileChange}
-                  className="w-full px-3 py-2.5 border border-dashed border-slate-300 rounded-xl text-sm"
+                  className="w-full px-3 py-2.5 border border-dashed border-slate-300 dark:border-slate-600 rounded-xl text-sm"
                 />
               </div>
 
               {/* Summaries & Error logs */}
               {importSummary && (
-                <div className="border-t border-slate-100 pt-4 space-y-3">
-                  <span className="block text-sm font-bold text-slate-800">Import Processed</span>
+                <div className="border-t border-slate-100 dark:border-slate-800 pt-4 space-y-3">
+                  <span className="block text-sm font-bold text-slate-800 dark:text-slate-100">Import Processed</span>
                   <div className="grid grid-cols-4 gap-2 text-center text-xs">
-                    <div className="p-2 bg-slate-100 rounded-xl">
-                      <span className="block font-bold text-slate-700">{importSummary.totalRows}</span>
+                    <div className="p-2 bg-slate-100 dark:bg-slate-700 rounded-xl">
+                      <span className="block font-bold text-slate-700 dark:text-slate-200">{importSummary.totalRows}</span>
                       <span className="text-[10px] text-slate-500 uppercase">Total Rows</span>
                     </div>
                     <div className="p-2 bg-emerald-50 text-emerald-800 rounded-xl">
@@ -1306,8 +1306,8 @@ export default function InventoryManagement() {
               )}
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-              <button type="button" onClick={() => setShowImportModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">Close</button>
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
+              <button type="button" onClick={() => setShowImportModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Close</button>
               <button 
                 type="button" 
                 onClick={handleProcessImport}
@@ -1324,9 +1324,9 @@ export default function InventoryManagement() {
       {/* Bulk Export Modal */}
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">Export Inventory Data</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Export Inventory Data</h2>
               <button onClick={() => setShowExportModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
@@ -1334,7 +1334,7 @@ export default function InventoryManagement() {
             
             <div className="p-6 space-y-4">
               {/* File Name Input */}
-              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+              <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
@@ -1342,13 +1342,13 @@ export default function InventoryManagement() {
                     placeholder="e.g. inventory_products"
                     value={exportFileName}
                     onChange={(e) => setExportFileName(e.target.value)}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-sm space-y-1">
-                <span className="block font-bold text-slate-700">Export Summary Scope</span>
+              <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-sm space-y-1">
+                <span className="block font-bold text-slate-700 dark:text-slate-200">Export Summary Scope</span>
                 <span className="block text-xs text-slate-500">
                   {selectedItemIds.length > 0 
                     ? `Exporting ${selectedItemIds.length} Selected items` 
@@ -1358,18 +1358,18 @@ export default function InventoryManagement() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Export Data Format</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Export Data Format</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => handleBulkExport('xlsx')}
-                    className="p-4 border border-slate-200 rounded-xl hover:bg-slate-50 flex flex-col items-center justify-center gap-2 font-bold"
+                    className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 flex flex-col items-center justify-center gap-2 font-bold"
                   >
                     <Download size={24} className="text-emerald-600" />
                     Excel (.xlsx)
                   </button>
                   <button 
                     onClick={() => handleBulkExport('csv')}
-                    className="p-4 border border-slate-200 rounded-xl hover:bg-slate-50 flex flex-col items-center justify-center gap-2 font-bold"
+                    className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 flex flex-col items-center justify-center gap-2 font-bold"
                   >
                     <Download size={24} className="text-blue-600" />
                     CSV (.csv)
@@ -1378,8 +1378,8 @@ export default function InventoryManagement() {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-              <button type="button" onClick={() => setShowExportModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
+              <button type="button" onClick={() => setShowExportModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
             </div>
           </div>
         </div>

@@ -63,17 +63,17 @@ export default function Canteen() {
   return (
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Emergency Canteen Requests</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Emergency Canteen Requests</h1>
         <p className="text-slate-500 mt-1">If your child forgot their meal, you can request a meal from the school canteen for today.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Breakfast Card */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 overflow-hidden relative group">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 overflow-hidden relative group">
           <div className="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110">
             <Coffee size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Breakfast</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Breakfast</h2>
           <p className="text-slate-500 mb-6">Request breakfast for today. Meal will be provided during morning break.</p>
           
           {requestedBreakfast ? (
@@ -92,11 +92,11 @@ export default function Canteen() {
         </div>
 
         {/* Lunch Card */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 overflow-hidden relative group">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 overflow-hidden relative group">
           <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110">
             <Utensils size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Lunch</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Lunch</h2>
           <p className="text-slate-500 mb-6">Request lunch for today. Meal will be provided during lunch break.</p>
           
           {requestedLunch ? (
@@ -116,8 +116,8 @@ export default function Canteen() {
       </div>
 
       {/* History */}
-      <h2 className="text-xl font-bold text-slate-900 mb-4">Request History</h2>
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Request History</h2>
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {requests.length === 0 ? (
           <div className="p-8 text-center text-slate-500">
             No past canteen requests found.
@@ -125,7 +125,7 @@ export default function Canteen() {
         ) : (
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Date</th>
                 <th className="p-4">Meal Type</th>
                 <th className="p-4 pr-6 text-right">Status</th>
@@ -134,15 +134,15 @@ export default function Canteen() {
             <tbody className="divide-y divide-slate-100">
               {requests.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).map((req) => (
                 <tr key={req.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-4 pl-6 font-medium text-slate-900">{req.date}</td>
-                  <td className="p-4 text-slate-600">{req.mealType}</td>
+                  <td className="p-4 pl-6 font-medium text-slate-900 dark:text-white">{req.date}</td>
+                  <td className="p-4 text-slate-600 dark:text-slate-300">{req.mealType}</td>
                   <td className="p-4 pr-6 text-right">
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${
                       req.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
                       req.status === 'Approved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                       req.status === 'Delivered' ? 'bg-green-50 text-green-700 border-green-200' :
                       req.status === 'Cancelled' ? 'bg-red-50 text-red-700 border-red-200' :
-                      'bg-slate-100 text-slate-700 border-slate-200'
+                      'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                     }`}>
                       {req.status}
                     </span>

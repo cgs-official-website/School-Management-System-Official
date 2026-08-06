@@ -36,9 +36,9 @@ export default function TenantsList() {
       case 'suspended':
         return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200"><AlertCircle size={14} /> Suspended</span>;
       case 'rejected':
-        return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200"><XCircle size={14} /> Rejected</span>;
+        return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700"><XCircle size={14} /> Rejected</span>;
       default:
-        return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800">{status}</span>;
+        return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100">{status}</span>;
     }
   };
 
@@ -55,7 +55,7 @@ export default function TenantsList() {
     <div className="p-8">
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Tenant Management</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Tenant Management</h1>
           <p className="text-slate-500 mt-1">Manage and monitor all school workspaces.</p>
         </div>
         <button className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2">
@@ -64,9 +64,9 @@ export default function TenantsList() {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {/* Toolbar */}
-        <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
@@ -74,7 +74,7 @@ export default function TenantsList() {
               placeholder="Search by school name or email..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export default function TenantsList() {
             <select 
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="all">All Statuses</option>
               <option value="approved">Active (Approved)</option>
@@ -97,7 +97,7 @@ export default function TenantsList() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">School Name</th>
                 <th className="p-4">Contact</th>
                 <th className="p-4">Location</th>
@@ -125,14 +125,14 @@ export default function TenantsList() {
                 paginatedSchools.map((school) => (
                   <tr key={school.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="p-4 pl-6">
-                      <div className="font-semibold text-slate-900">{school.name}</div>
+                      <div className="font-semibold text-slate-900 dark:text-white">{school.name}</div>
                       <div className="text-slate-500 text-xs mt-0.5 font-mono">ID: {school.id.slice(0, 8)}...</div>
                     </td>
                     <td className="p-4">
-                      <div className="text-slate-900">{school.contactEmail || 'N/A'}</div>
+                      <div className="text-slate-900 dark:text-white">{school.contactEmail || 'N/A'}</div>
                       <div className="text-slate-500 text-xs mt-0.5">{school.contactPhone || 'No phone'}</div>
                     </td>
-                    <td className="p-4 text-slate-700">
+                    <td className="p-4 text-slate-700 dark:text-slate-200">
                       {school.location || 'Not specified'}
                     </td>
                     <td className="p-4">
@@ -144,7 +144,7 @@ export default function TenantsList() {
                     <td className="p-4 pr-6 text-right">
                       <Link 
                         to={`/superadmin/tenants/${school.id}`}
-                        className="inline-flex items-center justify-center px-3 py-1.5 border border-slate-200 rounded-lg text-sm font-medium text-primary-600 hover:bg-primary-50 transition-colors"
+                        className="inline-flex items-center justify-center px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-primary-600 hover:bg-primary-50 transition-colors"
                       >
                         View Details
                       </Link>
@@ -158,19 +158,19 @@ export default function TenantsList() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
             <span className="text-sm text-slate-500 font-medium">
-              Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
-              <span className="font-semibold text-slate-900">
+              Showing <span className="font-semibold text-slate-900 dark:text-white">{startIndex + 1}</span> to{' '}
+              <span className="font-semibold text-slate-900 dark:text-white">
                 {Math.min(startIndex + itemsPerPage, filteredSchools.length)}
               </span>{' '}
-              of <span className="font-semibold text-slate-900">{filteredSchools.length}</span> tenants
+              of <span className="font-semibold text-slate-900 dark:text-white">{filteredSchools.length}</span> tenants
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -183,7 +183,7 @@ export default function TenantsList() {
                     className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                       currentPage === pageNum
                         ? 'bg-primary-600 text-white shadow-sm'
-                        : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {pageNum}
@@ -193,7 +193,7 @@ export default function TenantsList() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>

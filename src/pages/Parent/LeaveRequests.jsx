@@ -140,7 +140,7 @@ export default function LeaveRequests() {
       {/* Header */}
       <div className="mb-8 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Student Leave Requests</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Student Leave Requests</h1>
           <p className="text-slate-500 mt-1">Submit leaves on behalf of {studentName} and track approval status.</p>
         </div>
         <button 
@@ -152,9 +152,9 @@ export default function LeaveRequests() {
       </div>
 
       {/* Main Request History Box */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
-          <h3 className="font-bold text-slate-900 text-lg">Leave History</h3>
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex items-center justify-between shrink-0">
+          <h3 className="font-bold text-slate-900 dark:text-white text-lg">Leave History</h3>
           <span className="text-xs text-slate-400 font-semibold">{leaves.length} Applications</span>
         </div>
 
@@ -166,7 +166,7 @@ export default function LeaveRequests() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {leaves.map(leave => (
-                <div key={leave.id} className="bg-white p-6 rounded-2xl border border-slate-200 hover:border-primary-350 hover:shadow-md transition-all flex flex-col justify-between">
+                <div key={leave.id} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-350 hover:shadow-md transition-all flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between items-start mb-4 gap-2">
                       <span className="px-3 py-1 bg-primary-50 text-primary-700 rounded-lg text-xs font-extrabold uppercase tracking-wide">
@@ -180,14 +180,14 @@ export default function LeaveRequests() {
                         <LuCalendar size={14} className="text-slate-400" />
                         {new Date(leave.startDate).toLocaleDateString('en-GB')} — {new Date(leave.endDate).toLocaleDateString('en-GB')}
                       </p>
-                      <h4 className="text-sm font-semibold text-slate-800 leading-relaxed line-clamp-3">
+                      <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-relaxed line-clamp-3">
                         "{leave.reason}"
                       </h4>
                     </div>
                   </div>
 
                   {leave.supportingDoc && (
-                    <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-500">
+                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-slate-500">
                       <div className="flex items-center gap-1 overflow-hidden mr-2">
                         <span className="truncate max-w-[120px]">{leave.supportingDoc.name}</span>
                         <span className="text-slate-400 shrink-0">({leave.supportingDoc.size})</span>
@@ -215,7 +215,7 @@ export default function LeaveRequests() {
               {leaves.length === 0 && (
                 <div className="col-span-full text-center py-12 text-slate-500">
                   <LuCalendar size={48} className="mx-auto mb-4 text-slate-300" />
-                  <p className="text-lg font-medium text-slate-700">No leave requests submitted yet.</p>
+                  <p className="text-lg font-medium text-slate-700 dark:text-slate-200">No leave requests submitted yet.</p>
                 </div>
               )}
             </div>
@@ -228,10 +228,10 @@ export default function LeaveRequests() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
           <form 
             onSubmit={handleSubmit}
-            className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]"
+            className="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transform transition-all flex flex-col max-h-[90vh]"
           >
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-slate-900">Request Leave on Behalf of Student</h3>
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Request Leave on Behalf of Student</h3>
               <button 
                 type="button"
                 onClick={() => setShowModal(false)}
@@ -243,11 +243,11 @@ export default function LeaveRequests() {
 
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Leave Type</label>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Leave Type</label>
                 <select
                   value={formData.leaveType}
                   onChange={(e) => setFormData({ ...formData, leaveType: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                 >
                   <option value="sick">Sick Leave</option>
                   <option value="others">Others</option>
@@ -256,60 +256,60 @@ export default function LeaveRequests() {
 
               {formData.leaveType === 'others' && (
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Specify Leave Type</label>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Specify Leave Type</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Travel / Family Function"
                     value={formData.customType}
                     onChange={(e) => setFormData({ ...formData, customType: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                   />
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Start Date</label>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Start Date</label>
                   <input
                     type="date"
                     required
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">End Date</label>
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">End Date</label>
                   <input
                     type="date"
                     required
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Reason for Leave</label>
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Reason for Leave</label>
                 <textarea
                   required
                   rows="3"
                   placeholder="Explain why the student requires leave..."
                   value={formData.reason}
                   onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:outline-none text-sm font-medium"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Supporting Document (Optional)</label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer relative group">
+                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Supporting Document (Optional)</label>
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 dark:border-slate-700 border-dashed rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer relative group">
                   <div className="space-y-1 text-center">
                     <LuFolderDown className="mx-auto h-12 w-12 text-slate-400 group-hover:text-primary-500 transition-colors" />
-                    <div className="flex text-sm text-slate-600 justify-center">
-                      <label className="relative cursor-pointer bg-white rounded-md font-bold text-primary-600 hover:text-primary-700 focus-within:outline-none">
+                    <div className="flex text-sm text-slate-600 dark:text-slate-300 justify-center">
+                      <label className="relative cursor-pointer bg-white dark:bg-slate-900 rounded-md font-bold text-primary-600 hover:text-primary-700 focus-within:outline-none">
                         <span>{selectedFile ? 'Change file' : 'Select a file'}</span>
                         <input 
                           type="file" 
@@ -330,7 +330,7 @@ export default function LeaveRequests() {
                     </div>
                     <p className="text-xs text-slate-500">PDF, PNG, JPG up to 3MB</p>
                     {selectedFile && (
-                      <div className="mt-2 p-2 bg-slate-100/80 border border-slate-200 rounded-lg text-xs font-bold text-slate-700 flex items-center justify-between gap-3">
+                      <div className="mt-2 p-2 bg-slate-100/80 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-between gap-3">
                         <span className="truncate max-w-[200px]">{selectedFile.name}</span>
                         <span className="text-slate-500 shrink-0">({selectedFile.size > 1024 * 1024 ? (selectedFile.size / (1024 * 1024)).toFixed(1) + ' MB' : (selectedFile.size / 1024).toFixed(0) + ' KB'})</span>
                       </div>
@@ -340,11 +340,11 @@ export default function LeaveRequests() {
               </div>
             </div>
 
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

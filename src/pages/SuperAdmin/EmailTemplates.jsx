@@ -108,7 +108,7 @@ export default function EmailTemplates() {
     <div className="max-w-6xl mx-auto h-full flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Email Templates</h1>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white">Email Templates</h1>
           <p className="text-slate-500 font-medium">Customize automated emails sent from the system.</p>
         </div>
         <button 
@@ -121,9 +121,9 @@ export default function EmailTemplates() {
         </button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col lg:flex-row flex-1 min-h-0">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col lg:flex-row flex-1 min-h-0">
         {/* Sidebar Tabs */}
-        <div className="w-full lg:w-64 bg-slate-50 border-r border-slate-200 p-4 flex flex-col gap-2">
+        <div className="w-full lg:w-64 bg-slate-50 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 p-4 flex flex-col gap-2">
           {TEMPLATES.map(template => (
             <button
               key={template.id}
@@ -131,7 +131,7 @@ export default function EmailTemplates() {
               className={`w-full text-left px-4 py-3 rounded-xl font-bold transition-colors flex items-center gap-3 ${
                 activeTab === template.id 
                   ? 'bg-primary-50 text-primary-700 border border-primary-200' 
-                  : 'text-slate-600 hover:bg-slate-100 border border-transparent'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 border border-transparent'
               }`}
             >
               <LuMail size={18} className={activeTab === template.id ? 'text-primary-500' : 'text-slate-400'} />
@@ -143,37 +143,37 @@ export default function EmailTemplates() {
         {/* Editor Area */}
         <div className="flex-1 p-6 flex flex-col min-h-0 overflow-y-auto">
           <div className="mb-6">
-            <h2 className="text-lg font-bold text-slate-900">{activeTemplate.name}</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{activeTemplate.name}</h2>
             <p className="text-sm text-slate-500">{activeTemplate.description}</p>
           </div>
 
           <div className="space-y-6 flex-1 flex flex-col min-h-0">
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">Email Subject Line</label>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Email Subject Line</label>
               <input 
                 type="text" 
                 value={formData[`${activeTab}Subject`] || ''}
                 onChange={(e) => handleChange(`${activeTab}Subject`, e.target.value)}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
                 placeholder="e.g. Welcome to Acme School"
               />
             </div>
 
             <div className="flex-1 flex flex-col min-h-[300px]">
               <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <label className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
                   <LuCode className="text-slate-400" /> HTML Content
                 </label>
                 <div className="flex gap-2">
                   {activeTemplate.variables.map(v => (
-                    <span key={v} className="px-2 py-1 bg-slate-100 text-slate-600 text-xs font-mono rounded border border-slate-200 cursor-help" title="Available Variable">
+                    <span key={v} className="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-mono rounded border border-slate-200 dark:border-slate-700 cursor-help" title="Available Variable">
                       {v}
                     </span>
                   ))}
                 </div>
               </div>
               
-              <div className="flex-1 bg-white text-slate-900 rounded-xl overflow-hidden [&_.ql-container]:!border-slate-200 [&_.ql-container]:!rounded-b-xl [&_.ql-container]:!font-sans [&_.ql-editor]:!min-h-[250px] [&_.ql-editor]:!text-base [&_.ql-toolbar]:!border-slate-200 [&_.ql-toolbar]:!rounded-t-xl [&_.ql-toolbar]:!bg-slate-50">
+              <div className="flex-1 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-xl overflow-hidden [&_.ql-container]:!border-slate-200 [&_.ql-container]:!rounded-b-xl [&_.ql-container]:!font-sans [&_.ql-editor]:!min-h-[250px] [&_.ql-editor]:!text-base [&_.ql-toolbar]:!border-slate-200 [&_.ql-toolbar]:!rounded-t-xl [&_.ql-toolbar]:!bg-slate-50">
                 <ReactQuill
                   theme="snow"
                   value={formData[`${activeTab}Html`] || ''}

@@ -64,7 +64,7 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
         
         return (
           <div key={section.id} className="space-y-4">
-            <h4 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-2 border-b border-slate-200 pb-2">
+            <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-2 border-b border-slate-200 dark:border-slate-700 pb-2">
               {section.title}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -73,12 +73,12 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                 
                 return (
                   <div key={field.id}>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">
                       {field.label} {field.required && !readOnly && <span className="text-red-500">*</span>}
                     </label>
                     
                     {readOnly ? (
-                      <div className="text-slate-900 font-medium">
+                      <div className="text-slate-900 dark:text-white font-medium">
                         {field.type === 'checkbox' ? (value ? 'Yes' : 'No') : field.type === 'file' ? (
                           value ? (
                             <button
@@ -99,7 +99,7 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                             required={field.required}
                             value={value}
                             onChange={(e) => onChange(field.id, e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                           />
                         )}
                         
@@ -109,7 +109,7 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                             required={field.required}
                             value={value}
                             onChange={(e) => onChange(field.id, e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                           />
                         )}
                         
@@ -119,7 +119,7 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                             required={field.required}
                             value={value}
                             onChange={(e) => onChange(field.id, e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                           />
                         )}
                         
@@ -129,7 +129,7 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                             required={field.required}
                             value={value}
                             onChange={(e) => onChange(field.id, e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                           />
                         )}
                         
@@ -138,7 +138,7 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                             required={field.required}
                             value={value}
                             onChange={(e) => onChange(field.id, e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                           >
                             <option value="">Select...</option>
                             {(field.options || '').split(',').map((opt, idx) => (
@@ -154,9 +154,9 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                               required={field.required}
                               checked={value === true || value === 'true'}
                               onChange={(e) => onChange(field.id, e.target.checked)}
-                              className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
+                              className="w-4 h-4 text-primary-600 rounded border-slate-300 dark:border-slate-600 focus:ring-primary-500"
                             />
-                            <span className="text-sm text-slate-700">Yes</span>
+                            <span className="text-sm text-slate-700 dark:text-slate-200">Yes</span>
                           </div>
                         )}
                         
@@ -176,7 +176,7 @@ export default function CustomFieldsRenderer({ moduleKey, customData, onChange, 
                                   onChange(field.id, file);
                                 }
                               }}
-                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                             />
                             {value instanceof File && (
                               <span className="text-xs text-green-600 flex items-center gap-1">

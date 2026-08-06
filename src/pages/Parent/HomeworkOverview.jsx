@@ -121,15 +121,15 @@ export default function HomeworkOverview() {
   return (
     <div className="p-4 sm:p-8 max-w-5xl mx-auto animate-fade-in-up">
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Homework & Assignments</h1>
+        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Homework & Assignments</h1>
         <p className="text-slate-500 mt-1">Track upcoming tasks and recent evaluations.</p>
       </div>
 
       <div className="grid gap-4">
         {homeworks.length === 0 ? (
-          <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
+          <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <CheckCircle2 size={48} className="mx-auto text-emerald-300 mb-4" />
-            <h3 className="text-lg font-bold text-slate-900">All caught up!</h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">All caught up!</h3>
             <p className="text-slate-500 mt-1">No pending homework assignments found for this class.</p>
           </div>
         ) : (
@@ -138,42 +138,42 @@ export default function HomeworkOverview() {
             const currentStatus = studentStatuses[hw.id] || 'Not Started';
             const isOverdue = dueDate < new Date() && currentStatus !== 'Completed' && currentStatus !== 'Submitted';
 
-            let statusColor = "bg-slate-100 text-slate-700 border-slate-200";
+            let statusColor = "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700";
             if (currentStatus === 'In Progress') statusColor = "bg-amber-50 text-amber-700 border-amber-200";
             if (currentStatus === 'Completed') statusColor = "bg-blue-50 text-blue-700 border-blue-200";
             if (currentStatus === 'Submitted') statusColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
 
             return (
-              <div key={hw.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div key={hw.id} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
                   <div className={`p-3 rounded-xl ${isOverdue ? 'bg-red-50 text-red-600' : 'bg-primary-50 text-primary-600'}`}>
                     <FileText size={24} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-slate-900">{hw.title}</h3>
-                    <p className="text-slate-600 mt-1 mb-3">{hw.description}</p>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">{hw.title}</h3>
+                    <p className="text-slate-600 dark:text-slate-300 mt-1 mb-3">{hw.description}</p>
                     {hw.remarks && (
-                      <div className="mb-3 px-3 py-2 bg-slate-50/50 border border-slate-100 rounded-xl text-xs font-semibold text-slate-700 italic max-w-xl">
+                      <div className="mb-3 px-3 py-2 bg-slate-50/50 border border-slate-100 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 italic max-w-xl">
                         <span className="font-bold text-primary-700 not-italic block mb-0.5">Teacher's Remarks:</span>
                         "{hw.remarks}"
                       </div>
                     )}
                     <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-500">
-                      <span className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                      <span className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-100 dark:border-slate-800">
                         <BookOpen size={12} /> {hw.subject || 'General'}
                       </span>
-                      <span className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                      <span className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-100 dark:border-slate-800">
                         <User size={12} /> {hw.teacherName || 'Teacher'}
                       </span>
-                      <span className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
+                      <span className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-100 dark:border-slate-800">
                         Assigned: {hw.assignedDate ? new Date(hw.assignedDate).toLocaleDateString('en-GB') : 'N/A'}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:items-end gap-3 border-t sm:border-t-0 sm:border-l border-slate-100 pt-4 sm:pt-0 sm:pl-6 min-w-[180px]">
-                  <div className={`flex items-center gap-1.5 text-sm font-bold ${isOverdue ? 'text-red-600' : 'text-slate-600'}`}>
+                <div className="flex flex-col sm:items-end gap-3 border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-4 sm:pt-0 sm:pl-6 min-w-[180px]">
+                  <div className={`flex items-center gap-1.5 text-sm font-bold ${isOverdue ? 'text-red-600' : 'text-slate-600 dark:text-slate-300'}`}>
                     <Clock size={16} />
                     Due: {dueDate.toLocaleDateString('en-GB')}
                   </div>

@@ -244,7 +244,7 @@ export default function SchoolRegistration() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center relative overflow-x-hidden px-4 py-12">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center relative overflow-x-hidden px-4 py-12">
       
       {/* Decorative background blobs */}
       <div className="absolute top-0 right-0 w-96 h-96 lg:w-[500px] lg:h-[500px] bg-primary-200 rounded-full blur-[150px] opacity-40 pointer-events-none"></div>
@@ -272,7 +272,7 @@ export default function SchoolRegistration() {
             {steps.map((s) => (
               <div key={s.num} className="flex flex-col items-center gap-2">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-300 ${
-                  step >= s.num ? 'bg-primary-500 text-white shadow-[0_4px_14px_rgba(229,189,223,0.4)]' : 'bg-white text-slate-400 border border-slate-200'
+                  step >= s.num ? 'bg-primary-500 text-white shadow-[0_4px_14px_rgba(229,189,223,0.4)]' : 'bg-white dark:bg-slate-900 text-slate-400 border border-slate-200 dark:border-slate-700'
                 }`}>
                   {step > s.num ? <Check size={20} /> : <s.icon size={20} />}
                 </div>
@@ -289,7 +289,7 @@ export default function SchoolRegistration() {
           initial={{ opacity: 0, y: reducedMotion ? 0 : 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="bg-white/90 backdrop-blur-xl border border-slate-200 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-[40px] p-8 sm:p-12 overflow-hidden relative"
+          className="bg-white/90 backdrop-blur-xl border border-slate-200 dark:border-slate-700 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-[40px] p-8 sm:p-12 overflow-hidden relative"
         >
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -299,7 +299,7 @@ export default function SchoolRegistration() {
               exit={{ opacity: 0, x: reducedMotion ? 0 : -20 }}
               transition={{ duration: 0.3 }}
             >
-              <h2 className="text-3xl font-black mb-2 text-slate-900">{steps[step-1].title}</h2>
+              <h2 className="text-3xl font-black mb-2 text-slate-900 dark:text-white">{steps[step-1].title}</h2>
               <p className="text-slate-500 mb-8">
                 {step === 1 && "Calculate your pricing based on the expected number of users."}
                 {step === 2 && "Tell us about your institution to get started."}
@@ -313,7 +313,7 @@ export default function SchoolRegistration() {
                   <>
                     {/* Billing Cycle Toggle */}
                     <div className="flex justify-center mb-6">
-                      <div className="bg-slate-100 border border-slate-200 p-1.5 rounded-full flex gap-1 relative">
+                      <div className="bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 p-1.5 rounded-full flex gap-1 relative">
                         <button
                           type="button"
                           onClick={() => setFormData({ ...formData, billingCycle: 'monthly' })}
@@ -344,7 +344,7 @@ export default function SchoolRegistration() {
 
                     {/* Input Section */}
                     <div className="mb-6">
-                      <label htmlFor="user-count-input" className="block text-sm font-bold text-slate-700 mb-2">
+                      <label htmlFor="user-count-input" className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">
                         Number of Users (Students + Staff) *
                       </label>
                       <div className="relative flex items-center">
@@ -392,9 +392,9 @@ export default function SchoolRegistration() {
                             setFormData({ ...formData, userCount: num, studentCount: range });
                           }}
                           placeholder="e.g. 500"
-                          className={`w-full pl-12 pr-4 py-4 rounded-xl bg-white border ${
-                            calculatorError ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-primary-500'
-                          } focus:ring-2 focus:border-transparent transition-all outline-none text-xl font-bold text-slate-900 placeholder-slate-300`}
+                          className={`w-full pl-12 pr-4 py-4 rounded-xl bg-white dark:bg-slate-900 border ${
+                            calculatorError ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 dark:border-slate-700 focus:ring-primary-500'
+                          } focus:ring-2 focus:border-transparent transition-all outline-none text-xl font-bold text-slate-900 dark:text-white placeholder-slate-300`}
                         />
                       </div>
                       {calculatorError && (
@@ -405,17 +405,17 @@ export default function SchoolRegistration() {
                     </div>
 
                     {/* Output Display Area */}
-                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 relative overflow-hidden mb-2">
+                    <div className="p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 relative overflow-hidden mb-2">
                       <div className="space-y-3.5 mb-5 text-sm text-slate-500">
                         <div className="flex justify-between items-center">
                           <span>Number of Users:</span>
-                          <span className="font-bold text-slate-800">
+                          <span className="font-bold text-slate-800 dark:text-slate-100">
                             {isCalculatorInvalid ? '-' : numUsers.toLocaleString('en-IN')}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span>Base Rate:</span>
-                          <span className="font-bold text-slate-800">₹26 / user / month</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-100">₹26 / user / month</span>
                         </div>
                         {formData.billingCycle === 'yearly' && !isCalculatorInvalid && (
                           <div className="flex justify-between items-center text-primary-600">
@@ -423,8 +423,8 @@ export default function SchoolRegistration() {
                             <span>- {formatIndianCurrency(yearlyDiscount)} / year</span>
                           </div>
                         )}
-                        <div className="border-t border-slate-200 pt-3.5 flex justify-between items-end">
-                          <span className="font-bold text-slate-800">Total Amount:</span>
+                        <div className="border-t border-slate-200 dark:border-slate-700 pt-3.5 flex justify-between items-end">
+                          <span className="font-bold text-slate-800 dark:text-slate-100">Total Amount:</span>
                           <div className="text-right">
                             <span className="block text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-primary-500">
                               {isCalculatorInvalid ? '₹0' : formatIndianCurrency(totalAmount)}
@@ -438,7 +438,7 @@ export default function SchoolRegistration() {
 
                       {/* Discount Callout Banner */}
                       {!isCalculatorInvalid && (
-                        <div className="bg-white border border-slate-200 rounded-xl p-3 flex items-start gap-2 text-xs text-slate-500">
+                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex items-start gap-2 text-xs text-slate-500">
                           <div className="mt-0.5 text-primary-500 flex-shrink-0"><Check size={14} strokeWidth={3} /></div>
                           <div>
                             {formData.billingCycle === 'monthly' ? (
@@ -462,47 +462,47 @@ export default function SchoolRegistration() {
                   <>
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="relative group">
-                        <input type="text" id="schoolName" name="schoolName" value={formData.schoolName} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="School Name" />
-                        <label htmlFor="schoolName" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Institution Name *</label>
+                        <input type="text" id="schoolName" name="schoolName" value={formData.schoolName} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 dark:text-white placeholder-transparent" placeholder="School Name" />
+                        <label htmlFor="schoolName" className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Institution Name *</label>
                       </div>
                       
                       <div className="relative group">
-                        <select id="schoolType" name="schoolType" value={formData.schoolType} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 appearance-none">
+                        <select id="schoolType" name="schoolType" value={formData.schoolType} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white appearance-none">
                           <option value="School">K-12 School</option>
                           <option value="College">College / University</option>
                           <option value="Coaching">Coaching Institute</option>
                           <option value="Other">Other</option>
                         </select>
-                        <label htmlFor="schoolType" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-primary-600">Institution Type *</label>
+                        <label htmlFor="schoolType" className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-primary-600">Institution Type *</label>
                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="relative group">
-                        <input type="text" id="location" name="location" value={formData.location} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="City, State" />
-                        <label htmlFor="location" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">City / State *</label>
+                        <input type="text" id="location" name="location" value={formData.location} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 dark:text-white placeholder-transparent" placeholder="City, State" />
+                        <label htmlFor="location" className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">City / State *</label>
                       </div>
 
                       <div className="relative group">
-                        <select id="studentCount" name="studentCount" value={formData.studentCount} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 appearance-none">
+                        <select id="studentCount" name="studentCount" value={formData.studentCount} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white appearance-none">
                           <option value="" disabled>Select range</option>
                           <option value="0-500">0 - 500</option>
                           <option value="501-1000">501 - 1000</option>
                           <option value="1001-5000">1001 - 5000</option>
                           <option value="5000+">5000+</option>
                         </select>
-                        <label htmlFor="studentCount" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-primary-600">Expected Students *</label>
+                        <label htmlFor="studentCount" className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-primary-600">Expected Students *</label>
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-200">
-                      <h4 className="font-bold text-slate-900 mb-4 text-sm uppercase tracking-wider">Required Documents</h4>
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                      <h4 className="font-bold text-slate-900 dark:text-white mb-4 text-sm uppercase tracking-wider">Required Documents</h4>
                       <div className="grid md:grid-cols-2 gap-4">
-                        <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 relative">
+                        <div className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 relative">
                           <label className="text-sm font-bold text-slate-500 mb-2 block">Registration Cert *</label>
                           <input type="file" accept=".pdf,.jpg,.png" onChange={(e) => handleFileChange(e, 'regCertFile')} className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-primary-50 file:text-primary-600 hover:file:bg-primary-100 transition-colors w-full" />
                         </div>
-                        <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 relative">
+                        <div className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 relative">
                           <label className="text-sm font-bold text-slate-500 mb-2 block">Institution PAN Card *</label>
                           <input type="file" accept=".pdf,.jpg,.png" onChange={(e) => handleFileChange(e, 'panFile')} className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-primary-50 file:text-primary-600 hover:file:bg-primary-100 transition-colors w-full" />
                         </div>
@@ -515,26 +515,26 @@ export default function SchoolRegistration() {
                 {step === 3 && (
                   <>
                     <div className="relative group">
-                      <input type="text" id="adminName" name="adminName" value={formData.adminName} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Admin Name" />
-                      <label htmlFor="adminName" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Full Name *</label>
+                      <input type="text" id="adminName" name="adminName" value={formData.adminName} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 dark:text-white placeholder-transparent" placeholder="Admin Name" />
+                      <label htmlFor="adminName" className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Full Name *</label>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="relative group">
-                        <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Email Address" />
-                        <label htmlFor="email" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Work Email *</label>
+                        <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 dark:text-white placeholder-transparent" placeholder="Email Address" />
+                        <label htmlFor="email" className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Work Email *</label>
                       </div>
                       <div className="relative group">
-                        <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Phone Number" />
-                        <label htmlFor="phone" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange} className="w-full px-5 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 dark:text-white placeholder-transparent" placeholder="Phone Number" />
+                        <label htmlFor="phone" className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Phone Number *</label>
                       </div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <div className="relative group">
-                          <input type={showPassword ? "text" : "password"} id="password" name="password" value={formData.password} onChange={handleChange} className="w-full px-5 py-4 pr-12 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Password" />
-                          <label htmlFor="password" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Password *</label>
+                          <input type={showPassword ? "text" : "password"} id="password" name="password" value={formData.password} onChange={handleChange} className="w-full px-5 py-4 pr-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 dark:text-white placeholder-transparent" placeholder="Password" />
+                          <label htmlFor="password" className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Password *</label>
                           <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
                             {showPassword ? <LuEyeOff size={20} /> : <LuEye size={20} />}
                           </button>
@@ -549,8 +549,8 @@ export default function SchoolRegistration() {
                       </div>
 
                       <div className="relative group">
-                        <input type={showPassword ? "text" : "password"} id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className="w-full px-5 py-4 pr-12 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent" placeholder="Confirm Password" />
-                        <label htmlFor="confirmPassword" className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Confirm Password *</label>
+                        <input type={showPassword ? "text" : "password"} id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} className="w-full px-5 py-4 pr-12 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 dark:text-white placeholder-transparent" placeholder="Confirm Password" />
+                        <label htmlFor="confirmPassword" className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600">Confirm Password *</label>
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
                           {showPassword ? <LuEyeOff size={20} /> : <LuEye size={20} />}
                         </button>
@@ -569,12 +569,12 @@ export default function SchoolRegistration() {
                       <div className="relative z-10">
                         <h4 className="text-primary-600 font-bold uppercase tracking-wider text-sm mb-1">Subscription Details</h4>
                         <div className="flex items-end gap-4 mb-4">
-                          <h3 className="text-3xl font-black text-slate-900">{numUsers} Users</h3>
+                          <h3 className="text-3xl font-black text-slate-900 dark:text-white">{numUsers} Users</h3>
                           <div className="text-slate-500 font-medium pb-1">
-                            <span className="text-xl text-slate-900">{formatIndianCurrency(totalAmount)}</span> / {pricePeriod}
+                            <span className="text-xl text-slate-900 dark:text-white">{formatIndianCurrency(totalAmount)}</span> / {pricePeriod}
                           </div>
                         </div>
-                        <ul className="space-y-2 text-sm text-slate-600">
+                        <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
                           <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Calculated price based on ₹26 / user / month</li>
                           <li className="flex items-center gap-2"><Check size={16} className="text-primary-500"/> Billing Cycle: {formData.billingCycle === 'monthly' ? 'Monthly' : 'Yearly (10% Discount applied)'}</li>
                           {selectedPlanDetails && (
@@ -584,10 +584,10 @@ export default function SchoolRegistration() {
                       </div>
                     </div>
 
-                    <div className="bg-white border border-slate-200 rounded-2xl p-6">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-6">
                       <label className="flex items-start gap-4 cursor-pointer group">
                         <div className="mt-1">
-                          <input type="checkbox" name="termsAccepted" checked={formData.termsAccepted} onChange={handleChange} className="w-5 h-5 rounded border-slate-300 bg-white text-primary-500 focus:ring-primary-500 focus:ring-offset-white cursor-pointer" />
+                          <input type="checkbox" name="termsAccepted" checked={formData.termsAccepted} onChange={handleChange} className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-primary-500 focus:ring-primary-500 focus:ring-offset-white cursor-pointer" />
                         </div>
                         <span className="text-sm text-slate-500 leading-relaxed group-hover:text-slate-700 transition-colors">
                           I agree to the School <a href="#" className="text-primary-600 hover:underline">Terms of Service</a> and <a href="#" className="text-primary-600 hover:underline">Privacy Policy</a>. I understand my account will be manually verified before activation.
@@ -612,7 +612,7 @@ export default function SchoolRegistration() {
           </motion.div>
 
           {/* Action Buttons */}
-          <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-between">
+          <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
             {step > 1 ? (
               <button 
                 onClick={handleBack}
@@ -629,7 +629,7 @@ export default function SchoolRegistration() {
               <button 
                 disabled={step === 1 && isCalculatorInvalid}
                 onClick={handleNext}
-                className="px-8 py-3 bg-slate-50 border border-slate-200 text-primary-600 font-bold rounded-xl hover:bg-slate-100 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-primary-600 font-bold rounded-xl hover:bg-slate-100 transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next Step <ArrowRight size={18} />
               </button>

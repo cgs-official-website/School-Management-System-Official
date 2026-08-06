@@ -439,7 +439,7 @@ export default function TransportManagement() {
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Transport Management</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Transport Management</h1>
           <p className="text-slate-500 mt-1">Manage bus routes, drivers, school vehicles, and student assignments.</p>
         </div>
         
@@ -485,13 +485,13 @@ export default function TransportManagement() {
       </div>
 
       {/* Tabs Switcher */}
-      <div className="flex items-center gap-2 mb-6 border-b border-slate-200 pb-3">
+      <div className="flex items-center gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 pb-3">
         <button
           onClick={() => setActiveTab('routes')}
           className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
             activeTab === 'routes'
               ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
           }`}
         >
           <Navigation size={18} />
@@ -503,7 +503,7 @@ export default function TransportManagement() {
           className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
             activeTab === 'vehicles'
               ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
           }`}
         >
           <Bus size={18} />
@@ -515,7 +515,7 @@ export default function TransportManagement() {
           className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
             activeTab === 'assignments'
               ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
           }`}
         >
           <Users size={18} />
@@ -527,9 +527,9 @@ export default function TransportManagement() {
       {activeTab === 'routes' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {routes.length === 0 ? (
-            <div className="col-span-full bg-white rounded-3xl border border-slate-200 p-12 text-center text-slate-500">
+            <div className="col-span-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500">
               <Bus size={64} className="mx-auto mb-4 text-slate-300" />
-              <h3 className="text-xl font-bold text-slate-900 mb-2">No Routes Found</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No Routes Found</h3>
               <p>Create your first transport route to begin assigning students.</p>
             </div>
           ) : (
@@ -539,10 +539,10 @@ export default function TransportManagement() {
               const percentage = Math.round((currentCount / route.capacity) * 100) || 0;
 
               return (
-                <div key={route.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow">
-                  <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+                <div key={route.id} className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+                  <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-bold text-lg text-slate-900 leading-tight pr-4 truncate">{route.name}</h3>
+                      <h3 className="font-bold text-lg text-slate-900 dark:text-white leading-tight pr-4 truncate">{route.name}</h3>
                       <div className="flex items-center gap-1 shrink-0">
                         <button 
                           onClick={() => { setSelectedRouteToView(route); setShowViewModal(true); }}
@@ -571,18 +571,18 @@ export default function TransportManagement() {
                         )}
                       </div>
                     </div>
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-200/50 text-slate-700 rounded-lg text-xs font-mono font-bold tracking-wide">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-200/50 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-mono font-bold tracking-wide">
                       {route.vehicleNumber}
                     </div>
                   </div>
 
                   <div className="p-6 flex-1 space-y-4">
-                    <div className="flex items-center gap-3 text-sm text-slate-600">
-                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                    <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center shrink-0">
                         <Users size={16} className="text-slate-500" />
                       </div>
                       <div className="overflow-hidden">
-                        <p className="font-semibold text-slate-900 truncate">{route.driverName || 'No Driver Assigned'}</p>
+                        <p className="font-semibold text-slate-900 dark:text-white truncate">{route.driverName || 'No Driver Assigned'}</p>
                         <p className="text-xs truncate flex items-center gap-1"><Phone size={10}/> {route.driverPhone || 'N/A'}</p>
                       </div>
                     </div>
@@ -590,11 +590,11 @@ export default function TransportManagement() {
                     <div>
                       <div className="flex justify-between items-end mb-2">
                         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Capacity</span>
-                        <span className={`font-bold text-sm ${isFull ? 'text-red-600' : 'text-slate-900'}`}>
+                        <span className={`font-bold text-sm ${isFull ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>
                           {currentCount} / {route.capacity}
                         </span>
                       </div>
-                      <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full transition-all duration-500 ${isFull ? 'bg-red-500' : percentage > 80 ? 'bg-amber-500' : 'bg-green-500'}`}
                           style={{ width: `${Math.min(percentage, 100)}%` }}
@@ -604,11 +604,11 @@ export default function TransportManagement() {
                   </div>
 
                   {hasEditPermission && (
-                    <div className="p-4 border-t border-slate-100 bg-slate-50 mt-auto">
+                    <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 mt-auto">
                       <button 
                         onClick={() => openAssignModal(route.id)}
                         disabled={isFull}
-                        className="w-full py-2.5 bg-white text-slate-700 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 hover:border-primary-200 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 dark:border-slate-700 hover:border-primary-200 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isFull ? <><AlertTriangle size={16}/> Bus Full</> : <><Plus size={16}/> Assign Student</>}
                       </button>
@@ -626,19 +626,19 @@ export default function TransportManagement() {
         <div className="space-y-6">
           {/* Vehicle Dashboard Metrics */}
           <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total</span>
-              <span className="text-2xl font-black text-slate-800 mt-2">{totalVehiclesCount}</span>
+              <span className="text-2xl font-black text-slate-800 dark:text-slate-100 mt-2">{totalVehiclesCount}</span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Active</span>
               <span className="text-2xl font-black text-green-600 mt-2">{activeVehiclesCount}</span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned</span>
               <span className="text-2xl font-black text-primary-600 mt-2">{assignedVehiclesCount}</span>
             </div>
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Unassigned</span>
               <span className="text-2xl font-black text-amber-600 mt-2">{unassignedVehiclesCount}</span>
             </div>
@@ -653,7 +653,7 @@ export default function TransportManagement() {
           </div>
 
           {/* Filters Bar */}
-          <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <div className="relative w-full md:max-w-sm">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                 <Search size={18} />
@@ -663,7 +663,7 @@ export default function TransportManagement() {
                 placeholder="Search vehicles..."
                 value={vehicleSearchQuery}
                 onChange={(e) => setVehicleSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all"
               />
             </div>
             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
@@ -673,7 +673,7 @@ export default function TransportManagement() {
               <select
                 value={vehicleStatusFilter}
                 onChange={(e) => setVehicleStatusFilter(e.target.value)}
-                className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+                className="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
               >
                 <option value="all">All Statuses</option>
                 <option value="Active">Active Only</option>
@@ -682,7 +682,7 @@ export default function TransportManagement() {
               <select
                 value={vehicleComplianceFilter}
                 onChange={(e) => setVehicleComplianceFilter(e.target.value)}
-                className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+                className="px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
               >
                 <option value="all">All Compliance Statuses</option>
                 <option value="active">Documents Active</option>
@@ -693,11 +693,11 @@ export default function TransportManagement() {
           </div>
 
           {/* Vehicles Table */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                     <th className="py-4 px-6">Vehicle Details</th>
                     <th className="py-4 px-6">Registration No</th>
                     <th className="py-4 px-6">Capacity</th>
@@ -707,12 +707,12 @@ export default function TransportManagement() {
                     <th className="py-4 px-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-600 font-medium">
+                <tbody className="divide-y divide-slate-100 text-sm text-slate-600 dark:text-slate-300 font-medium">
                   {filteredVehicles.length === 0 ? (
                     <tr>
                       <td colSpan="7" className="py-12 text-center text-slate-400">
                         <Bus size={40} className="mx-auto mb-2 text-slate-300" />
-                        <p className="font-semibold text-slate-700">No vehicles found matching filters</p>
+                        <p className="font-semibold text-slate-700 dark:text-slate-200">No vehicles found matching filters</p>
                       </td>
                     </tr>
                   ) : (
@@ -722,14 +722,14 @@ export default function TransportManagement() {
                         <tr key={vehicle.id} className="hover:bg-slate-50/50 transition-colors">
                           <td className="py-4 px-6">
                             <div>
-                              <p className="font-bold text-slate-900">{vehicle.vehicleName}</p>
+                              <p className="font-bold text-slate-900 dark:text-white">{vehicle.vehicleName}</p>
                               <p className="text-xs text-slate-400 mt-0.5">{vehicle.vehicleModel}</p>
                             </div>
                           </td>
-                          <td className="py-4 px-6 font-mono font-bold uppercase tracking-wide text-slate-700">
+                          <td className="py-4 px-6 font-mono font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">
                             {vehicle.registrationNumber}
                           </td>
-                          <td className="py-4 px-6 font-semibold text-slate-800">
+                          <td className="py-4 px-6 font-semibold text-slate-800 dark:text-slate-100">
                             {vehicle.seatingCapacity} seats
                           </td>
                           <td className="py-4 px-6">
@@ -751,7 +751,7 @@ export default function TransportManagement() {
                             <div className="flex flex-wrap gap-1.5 max-w-[200px]">
                               {vehicle.assignedRouteIds && vehicle.assignedRouteIds.length > 0 ? (
                                 vehicle.assignedRouteIds.map(rid => (
-                                  <span key={rid} className="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-xs font-bold text-slate-600">
+                                  <span key={rid} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-md text-xs font-bold text-slate-600 dark:text-slate-300">
                                     {getRouteName(rid)}
                                   </span>
                                 ))
@@ -762,7 +762,7 @@ export default function TransportManagement() {
                           </td>
                           <td className="py-4 px-6">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
-                              vehicle.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'
+                              vehicle.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                             }`}>
                               {vehicle.status}
                             </span>
@@ -810,7 +810,7 @@ export default function TransportManagement() {
       {/* -------------------- TAB 3: STUDENT ASSIGNMENTS -------------------- */}
       {activeTab === 'assignments' && (
         <div className="space-y-6">
-          <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <div className="relative w-full md:max-w-sm">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                 <Search size={18} />
@@ -820,16 +820,16 @@ export default function TransportManagement() {
                 placeholder="Search students or assigned routes..."
                 value={assignmentSearchQuery}
                 onChange={(e) => setAssignmentSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all"
               />
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                     <th className="py-4 px-6">Student</th>
                     <th className="py-4 px-6">Admission No</th>
                     <th className="py-4 px-6">Assigned Route</th>
@@ -837,12 +837,12 @@ export default function TransportManagement() {
                     <th className="py-4 px-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-600 font-medium">
+                <tbody className="divide-y divide-slate-100 text-sm text-slate-600 dark:text-slate-300 font-medium">
                   {filteredStudents.length === 0 ? (
                     <tr>
                       <td colSpan="5" className="py-12 text-center text-slate-400">
                         <Users size={40} className="mx-auto mb-2 text-slate-300" />
-                        <p className="font-semibold text-slate-700">No student assignments found</p>
+                        <p className="font-semibold text-slate-700 dark:text-slate-200">No student assignments found</p>
                       </td>
                     </tr>
                   ) : (
@@ -850,10 +850,10 @@ export default function TransportManagement() {
                       const route = routes.find(r => r.id === student.transportRouteId);
                       return (
                         <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="py-4 px-6 font-bold text-slate-900">
+                          <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">
                             {student.firstName} {student.lastName}
                           </td>
-                          <td className="py-4 px-6 font-mono font-semibold text-slate-600">
+                          <td className="py-4 px-6 font-mono font-semibold text-slate-600 dark:text-slate-300">
                             {student.admissionNumber || '-'}
                           </td>
                           <td className="py-4 px-6">
@@ -868,7 +868,7 @@ export default function TransportManagement() {
                           <td className="py-4 px-6">
                             {route ? (
                               <div>
-                                <p className="font-semibold text-slate-800">{route.driverName || 'N/A'}</p>
+                                <p className="font-semibold text-slate-800 dark:text-slate-100">{route.driverName || 'N/A'}</p>
                                 <p className="text-xs text-slate-400 mt-0.5">{route.driverPhone || 'N/A'}</p>
                               </div>
                             ) : (
@@ -901,7 +901,7 @@ export default function TransportManagement() {
                                       });
                                     }
                                   }}
-                                  className="px-3 py-1.5 text-xs font-bold text-slate-700 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+                                  className="px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
                                 >
                                   <option value="">Quick Assign...</option>
                                   {routes.map(r => (
@@ -927,9 +927,9 @@ export default function TransportManagement() {
       {/* -------------------- VEHICLE REGISTRATION/EDIT MODAL -------------------- */}
       {showVehicleModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bus className="text-primary-600" /> {newVehicle.id ? 'Edit Vehicle Details' : 'Register School Vehicle'}
               </h2>
               <button onClick={() => setShowVehicleModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
@@ -941,54 +941,54 @@ export default function TransportManagement() {
               <div className="p-6 space-y-6 flex-1">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Vehicle Name *</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Vehicle Name *</label>
                     <input 
                       type="text" required
                       value={newVehicle.vehicleName}
                       onChange={(e) => setNewVehicle({...newVehicle, vehicleName: e.target.value})}
                       placeholder="e.g. School Bus 15"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Vehicle Model *</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Vehicle Model *</label>
                     <input 
                       type="text" required
                       value={newVehicle.vehicleModel}
                       onChange={(e) => setNewVehicle({...newVehicle, vehicleModel: e.target.value})}
                       placeholder="e.g. Tata Winger 2024"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Registration Number (Unique) *</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Registration Number (Unique) *</label>
                     <input 
                       type="text" required
                       value={newVehicle.registrationNumber}
                       onChange={(e) => setNewVehicle({...newVehicle, registrationNumber: e.target.value})}
                       placeholder="e.g. MH-12-PQ-4567"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono uppercase"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-mono uppercase"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Seating Capacity *</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Seating Capacity *</label>
                     <input 
                       type="number" min="1" required
                       value={newVehicle.seatingCapacity}
                       onChange={(e) => setNewVehicle({...newVehicle, seatingCapacity: e.target.value})}
                       placeholder="e.g. 40"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Assigned Route(s)</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Assigned Route(s)</label>
                     <select
                       multiple
                       value={newVehicle.assignedRouteIds || []}
@@ -996,7 +996,7 @@ export default function TransportManagement() {
                         const values = Array.from(e.target.selectedOptions, option => option.value);
                         setNewVehicle({...newVehicle, assignedRouteIds: values});
                       }}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white min-h-[110px]"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 min-h-[110px]"
                     >
                       {routes.map(r => (
                         <option key={r.id} value={r.id}>
@@ -1004,15 +1004,15 @@ export default function TransportManagement() {
                         </option>
                       ))}
                     </select>
-                    <p className="text-slate-400 text-xs mt-1.5">Hold <kbd className="font-mono bg-slate-100 px-1 py-0.5 rounded border border-slate-200">Ctrl</kbd> (or <kbd className="font-mono bg-slate-100 px-1 py-0.5 rounded border border-slate-200">Cmd</kbd> on Mac) to select multiple routes.</p>
+                    <p className="text-slate-400 text-xs mt-1.5">Hold <kbd className="font-mono bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded border border-slate-200 dark:border-slate-700">Ctrl</kbd> (or <kbd className="font-mono bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded border border-slate-200 dark:border-slate-700">Cmd</kbd> on Mac) to select multiple routes.</p>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Vehicle Status *</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Vehicle Status *</label>
                     <select 
                       value={newVehicle.status}
                       onChange={(e) => setNewVehicle({...newVehicle, status: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white appearance-none cursor-pointer"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 appearance-none cursor-pointer"
                     >
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
@@ -1020,8 +1020,8 @@ export default function TransportManagement() {
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-slate-100 mt-6">
-                  <h4 className="font-bold text-slate-900 mb-4 text-sm uppercase tracking-wider">Compliance & Expiry Dates</h4>
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-4 text-sm uppercase tracking-wider">Compliance & Expiry Dates</h4>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -1030,7 +1030,7 @@ export default function TransportManagement() {
                         type="date" required
                         value={newVehicle.fcExpiryDate}
                         onChange={(e) => setNewVehicle({...newVehicle, fcExpiryDate: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                       />
                     </div>
                     <div>
@@ -1039,7 +1039,7 @@ export default function TransportManagement() {
                         type="date" required
                         value={newVehicle.insuranceExpiryDate}
                         onChange={(e) => setNewVehicle({...newVehicle, insuranceExpiryDate: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                       />
                     </div>
                   </div>
@@ -1051,7 +1051,7 @@ export default function TransportManagement() {
                         type="date" required
                         value={newVehicle.permitExpiryDate}
                         onChange={(e) => setNewVehicle({...newVehicle, permitExpiryDate: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                       />
                     </div>
                     <div>
@@ -1060,7 +1060,7 @@ export default function TransportManagement() {
                         type="date" required
                         value={newVehicle.roadTaxExpiryDate}
                         onChange={(e) => setNewVehicle({...newVehicle, roadTaxExpiryDate: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                       />
                     </div>
                   </div>
@@ -1072,18 +1072,18 @@ export default function TransportManagement() {
                         type="date" required
                         value={newVehicle.pollutionCertificateExpiryDate}
                         onChange={(e) => setNewVehicle({...newVehicle, pollutionCertificateExpiryDate: e.target.value})}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                       />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
                 <button 
                   type="button"
                   onClick={() => setShowVehicleModal(false)}
-                  className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
@@ -1103,9 +1103,9 @@ export default function TransportManagement() {
       {/* -------------------- VIEW VEHICLE DETAILS MODAL -------------------- */}
       {showViewVehicleModal && selectedVehicleToView && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bus className="text-indigo-600" /> Vehicle Information
               </h2>
               <button onClick={() => setShowViewVehicleModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
@@ -1116,24 +1116,24 @@ export default function TransportManagement() {
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar space-y-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900">{selectedVehicleToView.vehicleName}</h3>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white">{selectedVehicleToView.vehicleName}</h3>
                   <p className="text-slate-500 font-semibold">{selectedVehicleToView.vehicleModel}</p>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                  selectedVehicleToView.status === 'Active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-50 text-slate-600 border-slate-200'
+                  selectedVehicleToView.status === 'Active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                 }`}>
                   {selectedVehicleToView.status}
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Registration Number</label>
-                  <p className="text-slate-900 font-mono font-bold text-base uppercase">{selectedVehicleToView.registrationNumber}</p>
+                  <p className="text-slate-900 dark:text-white font-mono font-bold text-base uppercase">{selectedVehicleToView.registrationNumber}</p>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Seating Capacity</label>
-                  <p className="text-slate-900 font-semibold text-base">{selectedVehicleToView.seatingCapacity} seats</p>
+                  <p className="text-slate-900 dark:text-white font-semibold text-base">{selectedVehicleToView.seatingCapacity} seats</p>
                 </div>
               </div>
 
@@ -1152,8 +1152,8 @@ export default function TransportManagement() {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-slate-100 space-y-4">
-                <h4 className="font-bold text-slate-900 text-sm uppercase tracking-wider">Compliance Status</h4>
+              <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-4">
+                <h4 className="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-wider">Compliance Status</h4>
                 
                 <div className="space-y-3">
                   {[
@@ -1165,10 +1165,10 @@ export default function TransportManagement() {
                   ].map((doc, idx) => {
                     const status = getExpiryStatus(doc.date);
                     return (
-                      <div key={idx} className="flex justify-between items-center p-3 rounded-xl border border-slate-100 bg-slate-50/50">
+                      <div key={idx} className="flex justify-between items-center p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50">
                         <div>
                           <p className="text-xs font-bold text-slate-500">{doc.label}</p>
-                          <p className="text-sm font-semibold text-slate-800 mt-0.5">{doc.date ? new Date(doc.date).toLocaleDateString('en-GB') : 'N/A'}</p>
+                          <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 mt-0.5">{doc.date ? new Date(doc.date).toLocaleDateString('en-GB') : 'N/A'}</p>
                         </div>
                         <div>
                           {status === 'expired' ? (
@@ -1186,8 +1186,8 @@ export default function TransportManagement() {
               </div>
             </div>
             
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
-              <button onClick={() => setShowViewVehicleModal(false)} className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition-colors">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0">
+              <button onClick={() => setShowViewVehicleModal(false)} className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-colors">
                 Close
               </button>
             </div>
@@ -1198,9 +1198,9 @@ export default function TransportManagement() {
       {/* Existing Create Route Modals */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Navigation className="text-primary-600" /> {newRoute.id ? 'Edit Route' : 'New Route'}
               </h2>
               <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
@@ -1211,61 +1211,61 @@ export default function TransportManagement() {
             <form onSubmit={handleCreateRoute} className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
               <div className="p-6 space-y-6 flex-1">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Route Name</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Route Name</label>
                   <input 
                     type="text" required
                     value={newRoute.name}
                     onChange={(e) => setNewRoute({...newRoute, name: e.target.value})}
                     placeholder="e.g. North City Loop"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                   />
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Vehicle No.</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Vehicle No.</label>
                     <input 
                       type="text" required
                       value={newRoute.vehicleNumber}
                       onChange={(e) => setNewRoute({...newRoute, vehicleNumber: e.target.value})}
                       placeholder="e.g. BUS-12"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono uppercase"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-mono uppercase"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Capacity</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Capacity</label>
                     <input 
                       type="number" min="1" required
                       value={newRoute.capacity}
                       onChange={(e) => setNewRoute({...newRoute, capacity: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Driver Name</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Driver Name</label>
                     <input 
                       type="text" required
                       value={newRoute.driverName}
                       onChange={(e) => setNewRoute({...newRoute, driverName: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Driver Phone</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Driver Phone</label>
                     <input 
                       type="tel" required
                       value={newRoute.driverPhone}
                       onChange={(e) => setNewRoute({...newRoute, driverPhone: e.target.value})}
                       placeholder="e.g. 9876543210"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-slate-100 mt-6">
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
                   <CustomFieldsRenderer
                     moduleKey="transport"
                     customData={newRoute.customData}
@@ -1274,11 +1274,11 @@ export default function TransportManagement() {
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
                 <button 
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
@@ -1298,9 +1298,9 @@ export default function TransportManagement() {
       {/* Assign Student Modal */}
       {showAssignModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Users className="text-primary-600" /> Assign Student
               </h2>
               <button onClick={() => setShowAssignModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
@@ -1312,12 +1312,12 @@ export default function TransportManagement() {
               <div className="p-6 space-y-6 flex-1">
                 <div className="grid grid-cols-1 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Select Student</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Select Student</label>
                     <select 
                       required
                       value={selectedStudentId}
                       onChange={(e) => setSelectedStudentId(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white appearance-none pr-10 cursor-pointer"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 appearance-none pr-10 cursor-pointer"
                       style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg fill="none" viewBox="0 0 24 24" stroke="%2364748B" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1.2em' }}
                     >
                       <option value="">Choose an unassigned student...</option>
@@ -1336,11 +1336,11 @@ export default function TransportManagement() {
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
                 <button 
                   type="button"
                   onClick={() => setShowAssignModal(false)}
-                  className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
@@ -1360,9 +1360,9 @@ export default function TransportManagement() {
       {/* View Route Modal */}
       {showViewModal && selectedRouteToView && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bus className="text-indigo-600" /> Route Details
               </h2>
               <button onClick={() => setShowViewModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
@@ -1373,16 +1373,16 @@ export default function TransportManagement() {
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar space-y-6">
               <div>
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Route Name</label>
-                <p className="text-slate-900 font-semibold">{selectedRouteToView.name}</p>
+                <p className="text-slate-900 dark:text-white font-semibold">{selectedRouteToView.name}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Vehicle No.</label>
-                  <p className="text-slate-900 font-mono font-semibold">{selectedRouteToView.vehicleNumber}</p>
+                  <p className="text-slate-900 dark:text-white font-mono font-semibold">{selectedRouteToView.vehicleNumber}</p>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Capacity</label>
-                  <p className="text-slate-900 font-semibold">
+                  <p className="text-slate-900 dark:text-white font-semibold">
                     {selectedRouteToView.assignedStudents?.length || 0} / {selectedRouteToView.capacity}
                   </p>
                 </div>
@@ -1390,16 +1390,16 @@ export default function TransportManagement() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Driver Name</label>
-                  <p className="text-slate-900 font-semibold">{selectedRouteToView.driverName || 'N/A'}</p>
+                  <p className="text-slate-900 dark:text-white font-semibold">{selectedRouteToView.driverName || 'N/A'}</p>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Driver Phone</label>
-                  <p className="text-slate-900 font-semibold">{selectedRouteToView.driverPhone || 'N/A'}</p>
+                  <p className="text-slate-900 dark:text-white font-semibold">{selectedRouteToView.driverPhone || 'N/A'}</p>
                 </div>
               </div>
 
               {selectedRouteToView.customData && Object.keys(selectedRouteToView.customData).length > 0 && (
-                <div className="pt-6 border-t border-slate-100">
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
                   <CustomFieldsRenderer
                     moduleKey="transport"
                     customData={selectedRouteToView.customData}
@@ -1411,7 +1411,7 @@ export default function TransportManagement() {
               <div>
                 <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assigned Students</label>
                 {selectedRouteToView.assignedStudents?.length > 0 ? (
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                  <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
                     <ul className="divide-y divide-slate-100 max-h-48 overflow-y-auto custom-scrollbar">
                       {selectedRouteToView.assignedStudents.map((s, idx) => {
                         const sId = typeof s === 'object' ? (s.id || s.studentId) : String(s);
@@ -1426,7 +1426,7 @@ export default function TransportManagement() {
                         }
 
                         return (
-                          <li key={idx} className="p-3 text-sm text-slate-700 flex justify-between items-center hover:bg-slate-100 transition-colors">
+                          <li key={idx} className="p-3 text-sm text-slate-700 dark:text-slate-200 flex justify-between items-center hover:bg-slate-100 transition-colors">
                             <span className="font-medium">{displayName}</span>
                             <div className="flex items-center gap-3">
                               <span className="text-xs text-slate-400 font-mono">{studentData?.admissionNumber || 'N/A'}</span>
@@ -1445,13 +1445,13 @@ export default function TransportManagement() {
                     </ul>
                   </div>
                 ) : (
-                  <p className="text-sm text-slate-500 italic p-3 bg-slate-50 rounded-xl border border-slate-200">No students assigned to this route yet.</p>
+                  <p className="text-sm text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">No students assigned to this route yet.</p>
                 )}
               </div>
             </div>
             
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
-              <button onClick={() => setShowViewModal(false)} className="px-6 py-2 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0">
+              <button onClick={() => setShowViewModal(false)} className="px-6 py-2 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors">
                 Close
               </button>
             </div>

@@ -206,15 +206,15 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
 
   const modalContent = (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-xl overflow-hidden flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+      <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-xl overflow-hidden flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
               <LuLifeBuoy size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900">Zuna Central Support</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Zuna Central Support</h3>
               <p className="text-xs text-slate-500 font-medium">Direct live support desk for School Administrators</p>
             </div>
           </div>
@@ -227,12 +227,12 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-100 bg-slate-50 px-5 gap-2">
+        <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 px-5 gap-2">
           <button
             onClick={() => { setActiveTab('raise'); setSelectedTicket(null); }}
             className={`py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'raise'
-                ? 'border-indigo-600 text-indigo-600 bg-white rounded-t-xl'
+                ? 'border-indigo-600 text-indigo-600 bg-white dark:bg-slate-900 rounded-t-xl'
                 : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
@@ -242,7 +242,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
             onClick={() => setActiveTab('history')}
             className={`py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'history'
-                ? 'border-indigo-600 text-indigo-600 bg-white rounded-t-xl'
+                ? 'border-indigo-600 text-indigo-600 bg-white dark:bg-slate-900 rounded-t-xl'
                 : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
@@ -266,13 +266,13 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
             )}
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">
                 Issue Subject
               </label>
               <input 
                 type="text"
                 required
-                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-900 font-medium"
+                className="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-900 dark:text-white font-medium"
                 placeholder="e.g. Exam Marks Generation Failure"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
@@ -281,11 +281,11 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">
                   Priority Level
                 </label>
                 <select
-                  className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-900 font-semibold"
+                  className="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-900 dark:text-white font-semibold"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
                 >
@@ -296,26 +296,26 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">
                   Product System
                 </label>
                 <input 
                   type="text"
                   disabled
                   value="School Management"
-                  className="w-full px-4 py-3 text-sm bg-slate-100 border border-slate-200 rounded-2xl text-slate-500 font-bold"
+                  className="w-full px-4 py-3 text-sm bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-500 font-bold"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">
                 Detailed Description
               </label>
               <textarea
                 required
                 rows={4}
-                className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-900 font-medium resize-none"
+                className="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-slate-900 dark:text-white font-medium resize-none"
                 placeholder="Explain the issue you are experiencing..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -326,7 +326,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-2xl transition-colors"
+                className="px-5 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 rounded-2xl transition-colors"
               >
                 Cancel
               </button>
@@ -348,7 +348,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
               <div 
                 key={t.id}
                 onClick={() => setSelectedTicket(t)}
-                className="p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer bg-white flex items-center justify-between gap-3 group"
+                className="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-slate-900 flex items-center justify-between gap-3 group"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
@@ -358,7 +358,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
                       {t.createdAt ? new Date(t.createdAt).toLocaleDateString('en-GB') : 'Recently'}
                     </span>
                   </div>
-                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{t.subject}</h4>
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors">{t.subject}</h4>
                   <p className="text-xs text-slate-500 truncate mt-0.5">{t.description}</p>
                 </div>
                 <LuChevronRight className="text-slate-300 group-hover:text-indigo-600 transition-colors shrink-0" size={18} />
@@ -368,7 +368,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
             {myTickets.length === 0 && (
               <div className="text-center py-12 text-slate-400">
                 <LuLifeBuoy size={40} className="mx-auto mb-2 text-slate-300" />
-                <p className="text-sm font-semibold text-slate-600">No support tickets found.</p>
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">No support tickets found.</p>
                 <p className="text-xs text-slate-400 mt-1">Switch to "Raise New Ticket" tab to submit a support request.</p>
               </div>
             )}
@@ -379,7 +379,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
         {activeTab === 'history' && selectedTicket && (
           <div className="flex flex-col flex-1 overflow-hidden">
             {/* Thread Navigation Header */}
-            <div className="px-5 py-3 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+            <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 flex items-center justify-between">
               <button 
                 onClick={() => setSelectedTicket(null)}
                 className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
@@ -394,9 +394,9 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
 
             {/* Message Thread List */}
             <div className="p-5 flex-1 overflow-y-auto space-y-3 bg-slate-50/40">
-              <div className="p-3.5 bg-slate-100/80 rounded-2xl border border-slate-200">
+              <div className="p-3.5 bg-slate-100/80 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <span className="text-xs font-bold text-slate-500 block mb-1">Ticket Subject: {selectedTicket.subject}</span>
-                <p className="text-xs text-slate-800 font-medium">{selectedTicket.description}</p>
+                <p className="text-xs text-slate-800 dark:text-slate-100 font-medium">{selectedTicket.description}</p>
               </div>
 
               {(selectedTicket.messages || []).map((msg, i) => {
@@ -406,7 +406,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
                     <div className={`max-w-[85%] p-3.5 rounded-2xl text-xs font-medium ${
                       isSuperAdmin 
                         ? 'bg-indigo-600 text-white rounded-tl-none shadow-sm' 
-                        : 'bg-white border border-slate-200 text-slate-800 rounded-tr-none shadow-sm'
+                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-tr-none shadow-sm'
                     }`}>
                       <div className="flex items-center justify-between gap-3 text-[10px] opacity-75 mb-1 font-bold">
                         <span>{isSuperAdmin ? '⚡ Zuna SuperAdmin Support' : msg.author || 'School Admin'}</span>
@@ -420,13 +420,13 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
             </div>
 
             {/* Reply Input Box */}
-            <form onSubmit={handleSendReply} className="p-3 border-t border-slate-100 bg-white flex gap-2">
+            <form onSubmit={handleSendReply} className="p-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex gap-2">
               <input 
                 type="text" 
                 placeholder="Write reply to Zuna SuperAdmin..." 
                 value={replyText}
                 onChange={e => setReplyText(e.target.value)}
-                className="flex-1 px-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 font-medium"
+                className="flex-1 px-4 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 dark:text-white font-medium"
                 required
               />
               <button 

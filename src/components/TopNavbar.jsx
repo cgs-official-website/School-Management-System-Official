@@ -148,7 +148,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   };
 
   return (
-    <header className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-[4.5rem] shrink-0 flex items-center justify-between px-4 lg:px-8 z-30 relative min-w-0">
+    <header className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-[4.5rem] shrink-0 flex items-center justify-between px-4 lg:px-8 z-30 relative min-w-0">
       
       {/* Left section: Mobile menu & Logo (if needed) */}
       <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
@@ -177,7 +177,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
             </div>
             <input
               type="text"
-              className="block w-full h-full pl-10 pr-3 border border-transparent rounded-2xl text-sm bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-primary-200 focus:shadow-md transition-all duration-300 ease-out"
+              className="block w-full h-full pl-10 pr-3 border border-transparent rounded-2xl text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-primary-200 focus:shadow-md transition-all duration-300 ease-out"
               placeholder="Search modules..."
             value={searchQuery}
             onChange={(e) => {
@@ -201,7 +201,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
           
           {/* Search Dropdown */}
           {showDropdown && searchQuery && (
-            <div className="absolute top-full left-0 mt-2 w-full min-w-[300px] bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50 max-h-64 overflow-y-auto custom-scrollbar animate-fade-in-up">
+            <div className="absolute top-full left-0 mt-2 w-full min-w-[300px] bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden z-50 max-h-64 overflow-y-auto custom-scrollbar animate-fade-in-up">
               {filteredNavItems.length > 0 ? (
                 <ul className="py-2">
                   {filteredNavItems.map((item, idx) => (
@@ -219,7 +219,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                           <div className="text-slate-400">
                             <item.icon size={18} />
                           </div>
-                          <span className="text-sm font-medium text-slate-700">{item.name}</span>
+                          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{item.name}</span>
                         </div>
                         <ChevronRight size={16} className="text-slate-300" />
                       </button>
@@ -294,9 +294,9 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
           )}
           
           {showNotifications && (
-            <div className="absolute top-full right-[-2rem] sm:right-0 mt-2 w-[300px] sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50 flex flex-col animate-fade-in-up">
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h3 className="font-semibold text-slate-900">Notifications</h3>
+            <div className="absolute top-full right-[-2rem] sm:right-0 mt-2 w-[300px] sm:w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden z-50 flex flex-col animate-fade-in-up">
+              <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50">
+                <h3 className="font-semibold text-slate-900 dark:text-white">Notifications</h3>
                 <div className="flex items-center gap-3">
                   {unreadCount > 0 && (
                     <button 
@@ -342,8 +342,8 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                               {notice.priority === 'high' ? <AlertTriangle size={16} /> : <Bell size={16} />}
                             </div>
                             <div>
-                              <p className="text-sm font-bold text-slate-900 line-clamp-1">{notice.title}</p>
-                              <p className="text-xs font-semibold text-slate-700 mt-1 line-clamp-2 leading-relaxed">{notice.description || notice.message}</p>
+                              <p className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">{notice.title}</p>
+                              <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 mt-1 line-clamp-2 leading-relaxed">{notice.description || notice.message}</p>
                               <p className="text-[10px] text-slate-500 mt-2 font-bold">
                                 {new Date(notice.createdAt).toLocaleDateString('en-GB')}
                               </p>
@@ -365,7 +365,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                   </div>
                 )}
               </div>
-              <div className="p-3 border-t border-slate-100 text-center bg-slate-50/50">
+              <div className="p-3 border-t border-slate-100 dark:border-slate-800 text-center bg-slate-50/50">
                 <button 
                   onClick={() => {
                     setShowNotifications(false);
@@ -387,7 +387,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
         {/* User Profile */}
         <div className="flex items-center gap-3 pl-1 min-w-0 shrink-0">
           <div className="hidden md:flex flex-col text-right min-w-0 max-w-xs lg:max-w-sm overflow-hidden group">
-            <p className="text-sm font-bold text-slate-900 truncate">
+            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
               {userProfile?.name || userProfile?.email?.split('@')[0] || 'User'}
             </p>
             <div className="overflow-hidden whitespace-nowrap">
@@ -396,7 +396,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
               </p>
             </div>
           </div>
-          <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 shadow-sm relative z-10 overflow-hidden ${schoolLogo ? 'bg-white' : 'bg-emerald-500 text-white'}`}>
+          <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 shadow-sm relative z-10 overflow-hidden ${schoolLogo ? 'bg-white dark:bg-slate-900' : 'bg-emerald-500 text-white'}`}>
             {schoolLogo ? (
               <img src={schoolLogo} alt="School Logo" className="w-full h-full object-contain" />
             ) : (

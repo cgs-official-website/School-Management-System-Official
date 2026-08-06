@@ -86,7 +86,7 @@ const Captcha = forwardRef(({ onChange }, ref) => {
           ref={canvasRef} 
           width="200" 
           height="60" 
-          className="rounded-xl border border-slate-200 shadow-sm"
+          className="rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm"
         />
         <button
           type="button"
@@ -98,14 +98,14 @@ const Captcha = forwardRef(({ onChange }, ref) => {
         </button>
       </div>
       <div>
-        <label className="block text-sm font-semibold text-slate-700 mb-1 ml-1">Verification Code</label>
+        <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 ml-1">Verification Code</label>
         <input
           type="text"
           value={userInput}
           onChange={handleInputChange}
           placeholder="Enter the 6-character code"
           required
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white shadow-inner transition-all"
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 shadow-inner transition-all"
         />
       </div>
     </div>

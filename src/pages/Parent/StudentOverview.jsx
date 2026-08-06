@@ -185,13 +185,13 @@ export default function StudentOverview() {
                   </span>
                 )}
               </div>
-              <h3 className="text-xl font-black mt-1 text-slate-900">
+              <h3 className="text-xl font-black mt-1 text-slate-900 dark:text-white">
                 {feeSummary.overdueCount > 0
                   ? `₹${feeSummary.totalUnpaidAmount.toLocaleString()} Outstanding Fee Balance`
                   : `₹${feeSummary.totalUnpaidAmount.toLocaleString()} Pending Fee Dues`
                 }
               </h3>
-              <p className="text-sm text-slate-600 mt-1">
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
                 {feeSummary.overdueCount > 0
                   ? `There are ${feeSummary.unpaidCount} unpaid fee invoice(s) for your child (${feeSummary.overdueCount} past the due date). Please settle immediately.`
                   : `You have ${feeSummary.unpaidCount} unpaid invoice(s) due by ${feeSummary.earliestDueDate || 'the upcoming due date'}. Please complete payment.`
@@ -218,9 +218,9 @@ export default function StudentOverview() {
         
         {/* Attendance Summary */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Calendar size={20} className="text-primary-500" />
                 Attendance Summary
               </h2>
@@ -254,7 +254,7 @@ export default function StudentOverview() {
                     </>
                   )}
                 </svg>
-                <div className="text-3xl font-black text-slate-900">
+                <div className="text-3xl font-black text-slate-900 dark:text-white">
                   {attendanceStats.total === 0 ? '--' : `${attendancePercentage}%`}
                 </div>
               </div>
@@ -276,7 +276,7 @@ export default function StudentOverview() {
             </div>
             
             {attendanceStats.total === 0 ? (
-              <div className="mt-6 bg-slate-50 text-slate-500 p-3 rounded-xl border border-slate-200/60 text-center text-xs font-semibold uppercase tracking-wider">
+              <div className="mt-6 bg-slate-50 dark:bg-slate-800 text-slate-500 p-3 rounded-xl border border-slate-200/60 text-center text-xs font-semibold uppercase tracking-wider">
                 No Attendance Recorded Yet
               </div>
             ) : attendancePercentage < 80 ? (
@@ -290,9 +290,9 @@ export default function StudentOverview() {
 
         {/* Recent Grades */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden h-full flex flex-col">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden h-full flex flex-col">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <TrendingUp size={20} className="text-primary-500" />
                 Recent Assessments
               </h2>
@@ -301,10 +301,10 @@ export default function StudentOverview() {
             <div className="flex-1 overflow-y-auto p-0">
               {assessments.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center p-12 text-center">
-                  <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 text-slate-300 rounded-full flex items-center justify-center mb-4">
                     <CheckCircle2 size={32} />
                   </div>
-                  <h3 className="text-slate-900 font-bold mb-1">No Grades Yet</h3>
+                  <h3 className="text-slate-900 dark:text-white font-bold mb-1">No Grades Yet</h3>
                   <p className="text-slate-500 text-sm">Assessments and grades will appear here once published by the teacher.</p>
                 </div>
               ) : (
@@ -316,12 +316,12 @@ export default function StudentOverview() {
                     return (
                       <div key={assessment.id} className="p-4 sm:p-6 hover:bg-slate-50/50 transition-colors flex items-center justify-between gap-4">
                         <div>
-                          <h4 className="font-bold text-slate-900">{assessment.title}</h4>
+                          <h4 className="font-bold text-slate-900 dark:text-white">{assessment.title}</h4>
                           <p className="text-sm text-slate-500 mt-0.5">{assessment.date}</p>
                         </div>
                         <div className="flex items-center gap-4 text-right">
                           <div className="hidden sm:block">
-                            <div className="text-sm font-medium text-slate-900">{marks} <span className="text-slate-400">/ {assessment.totalMarks}</span></div>
+                            <div className="text-sm font-medium text-slate-900 dark:text-white">{marks} <span className="text-slate-400">/ {assessment.totalMarks}</span></div>
                             <div className="text-xs text-slate-500">Marks</div>
                           </div>
                           <div className={`px-4 py-2 rounded-xl border font-black text-lg w-20 text-center ${

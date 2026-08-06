@@ -81,7 +81,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center relative overflow-hidden px-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center relative overflow-hidden px-4">
       
       {/* Subtle Background Ambiance */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-200 rounded-full blur-[120px] opacity-40 pointer-events-none"></div>
@@ -97,11 +97,11 @@ export default function ForgotPassword() {
           <Link to="/" className="inline-flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg p-1">
             <img src="/logo.png" alt="School Logo" className="w-auto h-12 object-contain group-hover:scale-105 transition-transform drop-shadow-sm filter invert" />
           </Link>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900">Reset Password</h2>
+          <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Reset Password</h2>
           <p className="mt-2 text-sm text-slate-500 text-center">Enter your email address and we'll send you a link to reset your password.</p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-xl border border-slate-200 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-3xl p-8 sm:p-10">
+        <div className="bg-white/80 backdrop-blur-xl border border-slate-200 dark:border-slate-700 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-3xl p-8 sm:p-10">
           {!success ? (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="relative group">
@@ -111,14 +111,14 @@ export default function ForgotPassword() {
                   name="email"
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); setError(null); }}
-                  className="w-full px-5 py-4 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 placeholder-transparent disabled:opacity-50" 
+                  className="w-full px-5 py-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none peer text-slate-900 dark:text-white placeholder-transparent disabled:opacity-50" 
                   placeholder="Email Address" 
                   disabled={loading}
                   required 
                 />
                 <label 
                   htmlFor="email" 
-                  className="absolute left-5 -top-2.5 bg-white px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600 cursor-text"
+                  className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600 cursor-text"
                 >
                   Email Address
                 </label>
@@ -155,13 +155,13 @@ export default function ForgotPassword() {
               <div className="w-16 h-16 bg-primary-400/20 text-primary-400 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle size={32} />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Check your email</h3>
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Check your email</h3>
               <p className="text-slate-500 mb-8 leading-relaxed">
-                If an account exists for <span className="text-slate-900 font-medium">{email}</span>, a reset link has been sent.
+                If an account exists for <span className="text-slate-900 dark:text-white font-medium">{email}</span>, a reset link has been sent.
               </p>
               <button 
                 onClick={() => navigate('/login')}
-                className="w-full py-4 bg-slate-50 border border-slate-200 text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold rounded-xl hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 Return to Login
               </button>

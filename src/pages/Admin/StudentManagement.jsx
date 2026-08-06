@@ -1193,7 +1193,7 @@ export default function StudentManagement() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-slate-900">Student Directory & Admissions</h1>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Student Directory & Admissions</h1>
             <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${
               isSeatLimitReached 
                 ? 'bg-red-100 text-red-700 border-red-200' 
@@ -1250,14 +1250,14 @@ export default function StudentManagement() {
                   <UserPlus size={18} /> New Admission <span className="text-[10px]">▼</span>
                 </button>
                 {newAdmissionDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-52 bg-white border border-slate-200 rounded-xl shadow-lg z-50 py-1.5 animate-fade-in">
+                  <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-50 py-1.5 animate-fade-in">
                     <button
                       type="button"
                       onClick={() => {
                         setShareLinkModalOpen(true);
                         setNewAdmissionDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 flex items-center gap-2 transition-colors"
                     >
                       <Share2 size={16} className="text-emerald-600" /> Share Admission Link
                     </button>
@@ -1267,7 +1267,7 @@ export default function StudentManagement() {
                         setShowForm(true);
                         setNewAdmissionDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 flex items-center gap-2 transition-colors"
                     >
                       <UserPlus size={16} className="text-primary-600" /> Add Student
                     </button>
@@ -1281,19 +1281,19 @@ export default function StudentManagement() {
 
       {/* Directory Tab Selector */}
       {!showForm && (
-        <div className="flex items-center gap-3 mb-6 border-b border-slate-200 pb-3">
+        <div className="flex items-center gap-3 mb-6 border-b border-slate-200 dark:border-slate-700 pb-3">
           <button
             onClick={() => setActiveDirectoryTab('enrolled')}
             className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
               activeDirectoryTab === 'enrolled'
                 ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
-                : 'text-slate-600 hover:bg-slate-100'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
             }`}
           >
             <GraduationCap size={18} />
             <span>Enrolled Students</span>
             <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-              activeDirectoryTab === 'enrolled' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+              activeDirectoryTab === 'enrolled' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700 dark:text-slate-200'
             }`}>
               {totalStudents}
             </span>
@@ -1304,7 +1304,7 @@ export default function StudentManagement() {
             className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all relative ${
               activeDirectoryTab === 'applications'
                 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
-                : 'text-slate-600 hover:bg-slate-100'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
             }`}
           >
             <UserCheck size={18} />
@@ -1312,7 +1312,7 @@ export default function StudentManagement() {
             <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
               activeDirectoryTab === 'applications'
                 ? 'bg-white/20 text-white'
-                : pendingAppsCount > 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700'
+                : pendingAppsCount > 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700 dark:text-slate-200'
             }`}>
               {admissionApplications.length}
             </span>
@@ -1327,20 +1327,20 @@ export default function StudentManagement() {
       )}
 
       {showForm ? (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 mb-8 animate-fade-in-down">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-8 mb-8 animate-fade-in-down">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800">
             <div className="p-2 bg-primary-50 text-primary-600 rounded-lg">
               <UserPlus size={24} />
             </div>
-            <h2 className="text-xl font-bold text-slate-900">Admit New Student</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Admit New Student</h2>
           </div>
 
           <form onSubmit={handleCreate} className="space-y-6">
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-3 mb-4">Personal Information</h3>
+            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Personal Information</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-3">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Profile Photo (JPG/PNG)</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Profile Photo (JPG/PNG)</label>
                   <input type="file" accept="image/png, image/jpeg" onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
                       const file = e.target.files[0];
@@ -1355,9 +1355,9 @@ export default function StudentManagement() {
                       setCropModalOpen(true);
                       e.target.value = null; // Reset input
                     }
-                  }} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  }} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                   {photoFile && (
-                    <div className="mt-2 text-sm text-slate-600 flex items-center gap-3">
+                    <div className="mt-2 text-sm text-slate-600 dark:text-slate-300 flex items-center gap-3">
                       <img src={URL.createObjectURL(photoFile)} alt="Preview" className="w-12 h-12 rounded-full object-cover border shadow-sm" />
                       <div className="flex flex-col">
                         <span className="truncate font-medium">{photoFile.name}</span>
@@ -1367,147 +1367,147 @@ export default function StudentManagement() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">First Name *</label>
-                  <input type="text" required value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">First Name *</label>
+                  <input type="text" required value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Last Name *</label>
-                  <input type="text" required value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Last Name *</label>
+                  <input type="text" required value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Date of Birth *</label>
-                  <input type="date" required value={formData.dob} onChange={(e) => setFormData({...formData, dob: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Date of Birth *</label>
+                  <input type="date" required value={formData.dob} onChange={(e) => setFormData({...formData, dob: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Age</label>
-                  <input type="number" value={formData.age} onChange={(e) => setFormData({...formData, age: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Age</label>
+                  <input type="number" value={formData.age} onChange={(e) => setFormData({...formData, age: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Gender *</label>
-                  <select value={formData.gender} onChange={(e) => setFormData({...formData, gender: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Gender *</label>
+                  <select value={formData.gender} onChange={(e) => setFormData({...formData, gender: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900">
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Blood Group</label>
-                  <input type="text" value={formData.bloodGroup} onChange={(e) => setFormData({...formData, bloodGroup: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" placeholder="e.g. O+" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Blood Group</label>
+                  <input type="text" value={formData.bloodGroup} onChange={(e) => setFormData({...formData, bloodGroup: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" placeholder="e.g. O+" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Nationality</label>
-                  <input type="text" value={formData.nationality} onChange={(e) => setFormData({...formData, nationality: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Nationality</label>
+                  <input type="text" value={formData.nationality} onChange={(e) => setFormData({...formData, nationality: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Religion</label>
-                  <input type="text" value={formData.religion} onChange={(e) => setFormData({...formData, religion: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Religion</label>
+                  <input type="text" value={formData.religion} onChange={(e) => setFormData({...formData, religion: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Mother Tongue</label>
-                  <input type="text" value={formData.motherTongue} onChange={(e) => setFormData({...formData, motherTongue: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Mother Tongue</label>
+                  <input type="text" value={formData.motherTongue} onChange={(e) => setFormData({...formData, motherTongue: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Aadhar Number</label>
-                  <input type="text" value={formData.aadharNumber} onChange={(e) => setFormData({...formData, aadharNumber: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" placeholder="12-digit number" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Aadhar Number</label>
+                  <input type="text" value={formData.aadharNumber} onChange={(e) => setFormData({...formData, aadharNumber: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" placeholder="12-digit number" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-3 mb-4">Contact Information</h3>
+            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Contact Information</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-3">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Home Address</label>
-                  <textarea value={formData.homeAddress} onChange={(e) => setFormData({...formData, homeAddress: e.target.value})} rows="2" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"></textarea>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Home Address</label>
+                  <textarea value={formData.homeAddress} onChange={(e) => setFormData({...formData, homeAddress: e.target.value})} rows="2" className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"></textarea>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Parent/Guardian Name</label>
-                  <input type="text" value={formData.parentName} onChange={(e) => setFormData({...formData, parentName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Parent/Guardian Name</label>
+                  <input type="text" value={formData.parentName} onChange={(e) => setFormData({...formData, parentName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Parent Email *</label>
-                  <input type="email" required value={formData.parentEmail} onChange={(e) => setFormData({...formData, parentEmail: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Parent Email *</label>
+                  <input type="email" required value={formData.parentEmail} onChange={(e) => setFormData({...formData, parentEmail: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Parent Phone Number</label>
-                  <input type="text" value={formData.parentPhone} onChange={(e) => setFormData({...formData, parentPhone: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Parent Phone Number</label>
+                  <input type="text" value={formData.parentPhone} onChange={(e) => setFormData({...formData, parentPhone: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Parent Occupation</label>
-                  <input type="text" value={formData.parentOccupation} onChange={(e) => setFormData({...formData, parentOccupation: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Parent Occupation</label>
+                  <input type="text" value={formData.parentOccupation} onChange={(e) => setFormData({...formData, parentOccupation: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Emergency Contact Number</label>
-                  <input type="text" value={formData.emergencyContact} onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Emergency Contact Number</label>
+                  <input type="text" value={formData.emergencyContact} onChange={(e) => setFormData({...formData, emergencyContact: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Annual Income</label>
-                  <input type="text" value={formData.annualIncome} onChange={(e) => setFormData({...formData, annualIncome: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Annual Income</label>
+                  <input type="text" value={formData.annualIncome} onChange={(e) => setFormData({...formData, annualIncome: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Sibling Name (Same School)</label>
-                  <input type="text" value={formData.siblingName} onChange={(e) => setFormData({...formData, siblingName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Sibling Name (Same School)</label>
+                  <input type="text" value={formData.siblingName} onChange={(e) => setFormData({...formData, siblingName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-3 mb-4">Academic Information</h3>
+            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Academic Information</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Assign to Class *</label>
-                  <select required value={formData.classId} onChange={(e) => setFormData({...formData, classId: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Assign to Class *</label>
+                  <select required value={formData.classId} onChange={(e) => setFormData({...formData, classId: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900">
                     <option value="">Select a Class...</option>
                     {classes.map(c => <option key={c.id} value={c.id}>{c.name} - Section {c.section}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Admission Number *</label>
-                  <input type="text" required value={formData.admissionNumber} onChange={(e) => setFormData({...formData, admissionNumber: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white uppercase font-mono" placeholder="e.g. ADM-001" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Admission Number *</label>
+                  <input type="text" required value={formData.admissionNumber} onChange={(e) => setFormData({...formData, admissionNumber: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 uppercase font-mono" placeholder="e.g. ADM-001" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Previous School Name</label>
-                  <input type="text" value={formData.previousSchool} onChange={(e) => setFormData({...formData, previousSchool: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Previous School Name</label>
+                  <input type="text" value={formData.previousSchool} onChange={(e) => setFormData({...formData, previousSchool: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Previous Records (Link/Note)</label>
-                  <input type="text" value={formData.previousRecords} onChange={(e) => setFormData({...formData, previousRecords: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Previous Records (Link/Note)</label>
+                  <input type="text" value={formData.previousRecords} onChange={(e) => setFormData({...formData, previousRecords: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Subjects Chosen (Higher Ed)</label>
-                  <input type="text" value={formData.subjectsChosen} onChange={(e) => setFormData({...formData, subjectsChosen: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Subjects Chosen (Higher Ed)</label>
+                  <input type="text" value={formData.subjectsChosen} onChange={(e) => setFormData({...formData, subjectsChosen: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-3 mb-4">Transportation Details</h3>
+            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Transportation Details</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">School Bus Route/Stop</label>
-                  <input type="text" value={formData.busRoute} onChange={(e) => setFormData({...formData, busRoute: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" placeholder="e.g. Route 4 - Main Street" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">School Bus Route/Stop</label>
+                  <input type="text" value={formData.busRoute} onChange={(e) => setFormData({...formData, busRoute: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" placeholder="e.g. Route 4 - Main Street" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-800 border-b border-slate-200 pb-3 mb-4">Fee Configuration</h3>
+            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Fee Configuration</h3>
               <div className="grid md:grid-cols-4 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Tuition Fee</label>
-                  <input type="number" value={formData.tuitionFee} onChange={(e) => setFormData({...formData, tuitionFee: e.target.value, totalFee: (Number(e.target.value || 0) + Number(formData.hostelFee || 0) + Number(formData.bookFee || 0) + Number(formData.otherFee || 0)).toString()})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Tuition Fee</label>
+                  <input type="number" value={formData.tuitionFee} onChange={(e) => setFormData({...formData, tuitionFee: e.target.value, totalFee: (Number(e.target.value || 0) + Number(formData.hostelFee || 0) + Number(formData.bookFee || 0) + Number(formData.otherFee || 0)).toString()})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Hostel Fee (If Req)</label>
-                  <input type="number" value={formData.hostelFee} onChange={(e) => setFormData({...formData, hostelFee: e.target.value, totalFee: (Number(formData.tuitionFee || 0) + Number(e.target.value || 0) + Number(formData.bookFee || 0) + Number(formData.otherFee || 0)).toString()})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Hostel Fee (If Req)</label>
+                  <input type="number" value={formData.hostelFee} onChange={(e) => setFormData({...formData, hostelFee: e.target.value, totalFee: (Number(formData.tuitionFee || 0) + Number(e.target.value || 0) + Number(formData.bookFee || 0) + Number(formData.otherFee || 0)).toString()})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Book Fee</label>
-                  <input type="number" value={formData.bookFee} onChange={(e) => setFormData({...formData, bookFee: e.target.value, totalFee: (Number(formData.tuitionFee || 0) + Number(formData.hostelFee || 0) + Number(e.target.value || 0) + Number(formData.otherFee || 0)).toString()})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Book Fee</label>
+                  <input type="number" value={formData.bookFee} onChange={(e) => setFormData({...formData, bookFee: e.target.value, totalFee: (Number(formData.tuitionFee || 0) + Number(formData.hostelFee || 0) + Number(e.target.value || 0) + Number(formData.otherFee || 0)).toString()})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Other Fee</label>
-                  <input type="number" value={formData.otherFee} onChange={(e) => setFormData({...formData, otherFee: e.target.value, totalFee: (Number(formData.tuitionFee || 0) + Number(formData.hostelFee || 0) + Number(formData.bookFee || 0) + Number(e.target.value || 0)).toString()})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white" />
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Other Fee</label>
+                  <input type="number" value={formData.otherFee} onChange={(e) => setFormData({...formData, otherFee: e.target.value, totalFee: (Number(formData.tuitionFee || 0) + Number(formData.hostelFee || 0) + Number(formData.bookFee || 0) + Number(e.target.value || 0)).toString()})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
                 </div>
                 <div className="md:col-span-4 bg-primary-50 p-4 rounded-xl flex items-center justify-between border border-primary-100">
                   <span className="font-bold text-primary-800">Total Calculated Fee:</span>
@@ -1516,8 +1516,8 @@ export default function StudentManagement() {
               </div>
             </div>
 
-            <div className="pt-6 mt-6 border-t border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">Additional Details</h3>
+            <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Additional Details</h3>
               <CustomFieldsRenderer
                 moduleKey="students"
                 customData={customData}
@@ -1525,10 +1525,10 @@ export default function StudentManagement() {
               />
             </div>
 
-            <div className="pt-4 border-t border-slate-100 flex justify-end gap-3">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 type="button" onClick={() => setShowForm(false)}
-                className="px-6 py-2.5 text-slate-600 font-medium hover:bg-slate-100 rounded-xl transition-colors"
+                className="px-6 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -1547,18 +1547,18 @@ export default function StudentManagement() {
           </form>
         </div>
       ) : activeDirectoryTab === 'enrolled' ? (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 bg-slate-50/30">
-            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-fade-in-up">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><GraduationCap size={20} /></div>
                 <div>
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Seats Enrolled</p>
-                  <p className="text-xl font-bold text-slate-900">{totalStudents} <span className="text-xs font-normal text-slate-400">/ {effectiveSeatLimit}</span></p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">{totalStudents} <span className="text-xs font-normal text-slate-400">/ {effectiveSeatLimit}</span></p>
                 </div>
               </div>
               <div className="mt-2.5">
-                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                   <div 
                     className={`h-full transition-all ${isSeatLimitReached ? 'bg-red-500' : isSeatLimitWarning ? 'bg-amber-500' : 'bg-primary-600'}`} 
                     style={{ width: `${seatUsagePercent}%` }}
@@ -1566,21 +1566,21 @@ export default function StudentManagement() {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><CheckCircle2 size={20} /></div>
-              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active</p><p className="text-xl font-bold text-slate-900">{activeStudents}</p></div>
+              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active</p><p className="text-xl font-bold text-slate-900 dark:text-white">{activeStudents}</p></div>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><UserPlus size={20} /></div>
-              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Boys</p><p className="text-xl font-bold text-slate-900">{maleStudents}</p></div>
+              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Boys</p><p className="text-xl font-bold text-slate-900 dark:text-white">{maleStudents}</p></div>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-pink-50 text-pink-600 rounded-xl"><UserPlus size={20} /></div>
-              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Girls</p><p className="text-xl font-bold text-slate-900">{femaleStudents}</p></div>
+              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Girls</p><p className="text-xl font-bold text-slate-900 dark:text-white">{femaleStudents}</p></div>
             </div>
           </div>
 
-          <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-white">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-white dark:bg-slate-900">
             <div className="relative flex-1 min-w-[250px] max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input 
@@ -1588,7 +1588,7 @@ export default function StudentManagement() {
                 placeholder="Search by student name or admission number..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
               />
               {searchQuery && (
                 <button 
@@ -1605,7 +1605,7 @@ export default function StudentManagement() {
               <select 
                 value={genderFilter}
                 onChange={(e) => setGenderFilter(e.target.value)}
-                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="all">All Genders</option>
                 <option value="Male">Male</option>
@@ -1615,7 +1615,7 @@ export default function StudentManagement() {
               <select 
                 value={classFilter}
                 onChange={(e) => setClassFilter(e.target.value)}
-                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="all">All Classes</option>
                 {classes.map(c => (
@@ -1625,7 +1625,7 @@ export default function StudentManagement() {
               <select 
                 value={rowsPerPage}
                 onChange={(e) => setRowsPerPage(Number(e.target.value))}
-                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value={10}>10 per page</option>
                 <option value={20}>20 per page</option>
@@ -1637,7 +1637,7 @@ export default function StudentManagement() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                   <th className="py-4 px-6">Student</th>
                   <th className="py-4 px-6">Admission No</th>
                   <th className="py-4 px-6">Class</th>
@@ -1645,13 +1645,13 @@ export default function StudentManagement() {
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-sm text-slate-600 font-medium">
+              <tbody className="divide-y divide-slate-100 text-sm text-slate-600 dark:text-slate-300 font-medium">
                 {paginatedStudents.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="py-12 text-center text-slate-400">
                       <div className="flex flex-col items-center justify-center">
                         <GraduationCap size={44} className="text-slate-300 mb-2" />
-                        <p className="font-semibold text-slate-700 text-base">
+                        <p className="font-semibold text-slate-700 dark:text-slate-200 text-base">
                           {searchQuery ? `No students matching "${searchQuery}"` : 'No enrolled students found'}
                         </p>
                         <p className="text-xs text-slate-400 mt-1">
@@ -1682,16 +1682,16 @@ export default function StudentManagement() {
                               <>{(student.firstName?.charAt(0) || student.name?.charAt(0) || 'S')}{(student.lastName?.charAt(0) || '')}</>
                             )}
                           </div>
-                          <div className="font-semibold text-slate-900 leading-snug">
+                          <div className="font-semibold text-slate-900 dark:text-white leading-snug">
                             {student.firstName || student.name || student.fullName || ''} {student.lastName || ''}
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 font-mono text-slate-600 font-medium">
+                      <td className="p-4 font-mono text-slate-600 dark:text-slate-300 font-medium">
                         {student.admissionNumber || student.admissionNo || student.rollNo || '-'}
                       </td>
-                      <td className="p-4 text-slate-700">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                      <td className="p-4 text-slate-700 dark:text-slate-200">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                           {getClassName(student.classId)}
                         </span>
                       </td>
@@ -1732,7 +1732,7 @@ export default function StudentManagement() {
                           )}
                            <button 
                              onClick={() => openAssignModal(student)}
-                             className="px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
+                             className="px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
                            >
                              {student.classId ? 'Change Class' : 'Assign'}
                            </button>
@@ -1746,7 +1746,7 @@ export default function StudentManagement() {
           </div>
 
           {totalPages > 1 && (
-            <div className="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50 rounded-b-3xl">
+            <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-b-3xl">
               <span className="text-sm text-slate-500">
                 Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, filteredStudents.length)} of {filteredStudents.length} entries
               </span>
@@ -1754,17 +1754,17 @@ export default function StudentManagement() {
                 <button 
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
                 >
                   Previous
                 </button>
-                <div className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-slate-700">
+                <div className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
                   Page {currentPage} of {totalPages}
                 </div>
                 <button 
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
                 >
                   Next
                 </button>
@@ -1774,41 +1774,41 @@ export default function StudentManagement() {
         </div>
       ) : (
         /* ADMISSION APPLICATIONS TAB VIEW */
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-fade-in-up">
           {/* Applications Stat Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 bg-slate-50/30">
-            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><UserCheck size={20} /></div>
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Received</p>
-                <p className="text-xl font-bold text-slate-900">{admissionApplications.length}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{admissionApplications.length}</p>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-amber-100 bg-amber-50/40 shadow-sm flex items-center gap-3">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-amber-100 bg-amber-50/40 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-amber-100 text-amber-600 rounded-xl"><Clock size={20} /></div>
               <div>
                 <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider">Pending Review</p>
                 <p className="text-xl font-bold text-amber-900">{pendingAppsCount}</p>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-emerald-100 bg-emerald-50/40 shadow-sm flex items-center gap-3">
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-emerald-100 bg-emerald-50/40 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><CheckCircle2 size={20} /></div>
               <div>
                 <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Approved & Admitted</p>
                 <p className="text-xl font-bold text-emerald-900">{approvedAppsCount}</p>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
-              <div className="p-3 bg-slate-100 text-slate-600 rounded-xl"><X size={20} /></div>
+            <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
+              <div className="p-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl"><X size={20} /></div>
               <div>
                 <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Rejected</p>
-                <p className="text-xl font-bold text-slate-900">{rejectedAppsCount}</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{rejectedAppsCount}</p>
               </div>
             </div>
           </div>
 
           {/* Search & Filter Header */}
-          <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-white">
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-white dark:bg-slate-900">
             <div className="relative flex-1 min-w-[250px] max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input 
@@ -1816,7 +1816,7 @@ export default function StudentManagement() {
                 placeholder="Search by student name, application no, parent phone..." 
                 value={appSearchQuery}
                 onChange={(e) => setAppSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
               />
               {appSearchQuery && (
                 <button 
@@ -1833,7 +1833,7 @@ export default function StudentManagement() {
               <select 
                 value={appStatusFilter}
                 onChange={(e) => setAppStatusFilter(e.target.value)}
-                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="all">All Statuses</option>
                 <option value="Pending">Pending Review</option>
@@ -1843,7 +1843,7 @@ export default function StudentManagement() {
               <select 
                 value={appRowsPerPage}
                 onChange={(e) => setAppRowsPerPage(Number(e.target.value))}
-                className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value={10}>10 per page</option>
                 <option value={20}>20 per page</option>
@@ -1856,7 +1856,7 @@ export default function StudentManagement() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                   <th className="py-4 px-6">App ID</th>
                   <th className="py-4 px-6">Applicant Student</th>
                   <th className="py-4 px-6">Target Class</th>
@@ -1866,7 +1866,7 @@ export default function StudentManagement() {
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-sm text-slate-600 font-medium">
+              <tbody className="divide-y divide-slate-100 text-sm text-slate-600 dark:text-slate-300 font-medium">
                 {paginatedApplications.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="py-16 text-center text-slate-400">
@@ -1874,7 +1874,7 @@ export default function StudentManagement() {
                         <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
                           <Share2 size={28} />
                         </div>
-                        <p className="font-bold text-slate-800 text-base">No Admission Applications Found</p>
+                        <p className="font-bold text-slate-800 dark:text-slate-100 text-base">No Admission Applications Found</p>
                         <p className="text-xs text-slate-400 mt-1 mb-4 text-center">
                           Share your school's public admission form link with parents or prospective students to receive online applications.
                         </p>
@@ -1891,7 +1891,7 @@ export default function StudentManagement() {
                   paginatedApplications.map((app) => (
                     <tr key={app.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="py-4 px-6">
-                        <span className="font-mono text-xs font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                        <span className="font-mono text-xs font-bold text-slate-800 dark:text-slate-100 bg-slate-100 dark:bg-slate-700 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
                           {app.applicationNumber || app.id?.substring(0, 8)}
                         </span>
                       </td>
@@ -1901,7 +1901,7 @@ export default function StudentManagement() {
                             <img 
                               src={app.photoUrl} 
                               alt={app.studentName || `${app.firstName} ${app.lastName}`} 
-                              className="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0"
+                              className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                             />
                           ) : (
                             <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm shrink-0">
@@ -1909,7 +1909,7 @@ export default function StudentManagement() {
                             </div>
                           )}
                           <div>
-                            <p className="font-semibold text-slate-900">
+                            <p className="font-semibold text-slate-900 dark:text-white">
                               {app.studentName || `${app.firstName || ''} ${app.lastName || ''}`.trim() || 'Prospective Student'}
                             </p>
                             <div className="flex items-center gap-2 mt-0.5">
@@ -1931,7 +1931,7 @@ export default function StudentManagement() {
                       </td>
                       <td className="py-4 px-6">
                         <div>
-                          <p className="text-slate-900 font-medium">{app.parentName || 'N/A'}</p>
+                          <p className="text-slate-900 dark:text-white font-medium">{app.parentName || 'N/A'}</p>
                           <p className="text-xs text-slate-400">{app.parentPhone || app.parentEmail || 'No contact'}</p>
                         </div>
                       </td>
@@ -1944,7 +1944,7 @@ export default function StudentManagement() {
                             <CheckCircle2 size={14} className="text-emerald-600" /> Approved & Admitted
                           </span>
                         ) : app.status === 'Rejected' ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                             <X size={14} className="text-slate-500" /> Rejected
                           </span>
                         ) : (
@@ -1959,7 +1959,7 @@ export default function StudentManagement() {
                             onClick={() => handleOpenReviewModal(app)}
                             className={`px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all ${
                               app.status === 'Approved'
-                                ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200'
                                 : 'bg-emerald-600 hover:bg-emerald-700 text-white'
                             }`}
                             title="Review Application Details & Admit"
@@ -1990,7 +1990,7 @@ export default function StudentManagement() {
           </div>
 
           {appTotalPages > 1 && (
-            <div className="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50 rounded-b-3xl">
+            <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-b-3xl">
               <span className="text-sm text-slate-500">
                 Showing {(appCurrentPage - 1) * appRowsPerPage + 1} to {Math.min(appCurrentPage * appRowsPerPage, filteredApplications.length)} of {filteredApplications.length} applications
               </span>
@@ -1998,17 +1998,17 @@ export default function StudentManagement() {
                 <button 
                   onClick={() => setAppCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={appCurrentPage === 1}
-                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
                 >
                   Previous
                 </button>
-                <div className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-slate-700">
+                <div className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
                   Page {appCurrentPage} of {appTotalPages}
                 </div>
                 <button 
                   onClick={() => setAppCurrentPage(prev => Math.min(prev + 1, appTotalPages))}
                   disabled={appCurrentPage === appTotalPages}
-                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
                 >
                   Next
                 </button>
@@ -2020,9 +2020,9 @@ export default function StudentManagement() {
 
       {uploadModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <FileText className="text-primary-600" />
                 {selectedStudentForUpload ? 'Upload Document' : 'Bulk Import Students'}
               </h2>
@@ -2033,17 +2033,17 @@ export default function StudentManagement() {
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
               {selectedStudentForUpload ? (
-                <p className="text-sm text-slate-600 mb-4">
-                  Upload a document (e.g. Birth Certificate) for <span className="font-bold text-slate-900">{selectedStudentForUpload.firstName} {selectedStudentForUpload.lastName}</span>. 
+                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+                  Upload a document (e.g. Birth Certificate) for <span className="font-bold text-slate-900 dark:text-white">{selectedStudentForUpload.firstName} {selectedStudentForUpload.lastName}</span>. 
                   <br/><span className="text-xs text-slate-400 mt-1 block">File will be securely stored in: {schoolName}/Students/...</span>
                 </p>
               ) : (
-                <p className="text-sm text-slate-600 mb-4">
+                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
                   Upload an Excel or CSV file to bulk import students. Ensure it has columns: Full Name, Admission Number.
                 </p>
               )}
 
-              <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 bg-slate-50 relative overflow-hidden group hover:border-primary-400 hover:bg-primary-50 transition-all text-center">
+              <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 bg-slate-50 dark:bg-slate-800 relative overflow-hidden group hover:border-primary-400 hover:bg-primary-50 transition-all text-center">
                 <input 
                   type="file" 
                   accept={selectedStudentForUpload ? "image/*, .pdf" : ".xlsx, .csv"}
@@ -2068,17 +2068,17 @@ export default function StudentManagement() {
                   </div>
                 ) : (
                   <div>
-                    <p className="font-semibold text-slate-700 text-sm">Click or drag file to upload</p>
+                    <p className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Click or drag file to upload</p>
                     <p className="text-xs text-slate-500 mt-1">{selectedStudentForUpload ? 'PDF, JPG, PNG up to 10MB' : 'Excel or CSV file'}</p>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
               <button 
                 onClick={() => setUploadModalOpen(false)}
-                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -2101,9 +2101,9 @@ export default function StudentManagement() {
 
       {viewStudentModalOpen && selectedStudentToView && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <GraduationCap className="text-indigo-600" />
                 {isEditMode ? 'Edit Student Details' : 'Student Details'}
               </h2>
@@ -2113,7 +2113,7 @@ export default function StudentManagement() {
             </div>
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
-              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+              <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
                 <div className="w-16 h-16 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-2xl shrink-0 overflow-hidden border-2 border-white shadow-sm">
                   {selectedStudentToView.photoUrl ? (
                     <img src={selectedStudentToView.photoUrl} alt="Profile" className="w-full h-full object-cover" />
@@ -2122,12 +2122,12 @@ export default function StudentManagement() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-bold text-slate-900 truncate">
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate">
                     {selectedStudentToView.firstName} {selectedStudentToView.middleName ? `${selectedStudentToView.middleName} ` : ''}{selectedStudentToView.lastName}
                   </h3>
                   <p className="text-sm font-medium text-slate-500">
                     Admission No:{' '}
-                    <span className="text-slate-800 font-mono font-bold">
+                    <span className="text-slate-800 dark:text-slate-100 font-mono font-bold">
                       {selectedStudentToView.admissionNumber}
                     </span>
                   </p>
@@ -2138,8 +2138,8 @@ export default function StudentManagement() {
                 /* VIEW MODE */
                 <div className="space-y-6">
                   {/* Personal Information */}
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Personal Information</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Personal Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">First Name</label>
@@ -2199,8 +2199,8 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Academic Information */}
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Academic Information</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Academic Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Class & Section</label>
@@ -2228,8 +2228,8 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Parent / Guardian Information */}
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Parent / Guardian Information</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Parent / Guardian Information</h4>
                     <div className="space-y-4">
                       {/* Father info */}
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-3 border-b border-slate-200/50">
@@ -2288,8 +2288,8 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Address Information */}
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Address Information</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Address Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="col-span-1 sm:col-span-3">
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Address Line 1</label>
@@ -2323,8 +2323,8 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Other Details */}
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Other Details</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Other Details</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Previous School</label>
@@ -2350,8 +2350,8 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Fee Configuration */}
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Fee Configuration</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Fee Configuration</h4>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tuition Fee</label>
@@ -2377,8 +2377,8 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Schema / Custom Fields */}
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Additional Details</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Additional Details</h4>
                     <CustomFieldsRenderer
                       moduleKey="students"
                       customData={selectedStudentToView.customData || {}}
@@ -2387,11 +2387,11 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Attendance Analytics */}
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/60 space-y-6">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider pb-2 border-b border-slate-200/80">Attendance Analytics</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/60 space-y-6">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider pb-2 border-b border-slate-200/80">Attendance Analytics</h4>
                     {studentStats ? (
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Running Rate</p>
                           <span className={`inline-block mt-2 text-xl font-black px-2.5 py-0.5 rounded-full border ${
                             studentStats.attendancePercentage >= 75 ? 'bg-green-50 text-green-700 border-green-200' :
@@ -2401,19 +2401,19 @@ export default function StudentManagement() {
                             {studentStats.attendancePercentage}%
                           </span>
                         </div>
-                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Days</p>
-                          <p className="text-xl font-extrabold text-slate-800 mt-2">{studentStats.totalDays}</p>
+                          <p className="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-2">{studentStats.totalDays}</p>
                         </div>
-                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Present / Late</p>
-                          <p className="text-xl font-extrabold text-slate-800 mt-2">
+                          <p className="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-2">
                             <span className="text-green-600">{studentStats.presentDays}</span>
                             <span className="text-slate-300 font-light mx-1">/</span>
                             <span className="text-amber-600">{studentStats.lateDays}</span>
                           </p>
                         </div>
-                        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Absences</p>
                           <p className="text-xl font-extrabold text-red-600 mt-2">{studentStats.absentDays}</p>
                         </div>
@@ -2431,11 +2431,11 @@ export default function StudentManagement() {
                       ) : studentHistory.length === 0 ? (
                         <p className="text-xs text-slate-400 italic">No daily logs found for the current month.</p>
                       ) : (
-                        <div className="max-h-[200px] overflow-y-auto border border-slate-200/60 rounded-xl divide-y divide-slate-100 bg-white">
+                        <div className="max-h-[200px] overflow-y-auto border border-slate-200/60 rounded-xl divide-y divide-slate-100 bg-white dark:bg-slate-900">
                           {studentHistory.map((item, idx) => (
                             <div key={idx} className="flex justify-between items-center px-4 py-2.5 text-xs">
                               <div>
-                                <span className="font-bold text-slate-800">{new Date(item.date).toLocaleDateString('en-GB')}</span>
+                                <span className="font-bold text-slate-800 dark:text-slate-100">{new Date(item.date).toLocaleDateString('en-GB')}</span>
                                 <span className="text-slate-400 ml-2 font-medium">({item.session})</span>
                               </div>
                               <span className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border text-[10px] ${
@@ -2454,22 +2454,22 @@ export default function StudentManagement() {
 
                   {/* System & Metadata Information */}
                   <div className="bg-slate-100/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-500 space-y-1">
-                    <p>Student ID: <span className="font-mono font-semibold text-slate-700">{selectedStudentToView.id}</span></p>
-                    <p>Created Date: <span className="font-semibold text-slate-700">{selectedStudentToView.createdAt ? new Date(selectedStudentToView.createdAt).toLocaleString() : 'N/A'}</span></p>
-                    {selectedStudentToView.createdBy && <p>Created By: <span className="font-semibold text-slate-700">{selectedStudentToView.createdBy}</span></p>}
-                    {selectedStudentToView.lastUpdatedAt && <p>Last Updated Date: <span className="font-semibold text-slate-700">{new Date(selectedStudentToView.lastUpdatedAt).toLocaleString()}</span></p>}
-                    {selectedStudentToView.lastUpdatedBy && <p>Last Updated By: <span className="font-semibold text-slate-700">{selectedStudentToView.lastUpdatedBy}</span></p>}
+                    <p>Student ID: <span className="font-mono font-semibold text-slate-700 dark:text-slate-200">{selectedStudentToView.id}</span></p>
+                    <p>Created Date: <span className="font-semibold text-slate-700 dark:text-slate-200">{selectedStudentToView.createdAt ? new Date(selectedStudentToView.createdAt).toLocaleString() : 'N/A'}</span></p>
+                    {selectedStudentToView.createdBy && <p>Created By: <span className="font-semibold text-slate-700 dark:text-slate-200">{selectedStudentToView.createdBy}</span></p>}
+                    {selectedStudentToView.lastUpdatedAt && <p>Last Updated Date: <span className="font-semibold text-slate-700 dark:text-slate-200">{new Date(selectedStudentToView.lastUpdatedAt).toLocaleString()}</span></p>}
+                    {selectedStudentToView.lastUpdatedBy && <p>Last Updated By: <span className="font-semibold text-slate-700 dark:text-slate-200">{selectedStudentToView.lastUpdatedBy}</span></p>}
                   </div>
                 </div>
               ) : (
                 /* EDIT MODE */
                 <div className="space-y-6 animate-fade-in">
                   {/* Personal Information Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Personal Information</h4>
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Personal Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="sm:col-span-3">
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Profile Photo (JPG/PNG)</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Profile Photo (JPG/PNG)</label>
                         <input type="file" accept="image/png, image/jpeg" onChange={(e) => {
                           if (e.target.files && e.target.files.length > 0) {
                             const file = e.target.files[0];
@@ -2484,9 +2484,9 @@ export default function StudentManagement() {
                             setCropModalOpen(true);
                             e.target.value = null;
                           }
-                        }} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500" />
+                        }} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500" />
                         {editPhotoFile ? (
-                          <div className="mt-2 text-xs text-slate-600 flex items-center gap-3">
+                          <div className="mt-2 text-xs text-slate-600 dark:text-slate-300 flex items-center gap-3">
                             <img src={URL.createObjectURL(editPhotoFile)} alt="Preview" className="w-10 h-10 rounded-full object-cover border shadow-sm" />
                             <div className="flex flex-col justify-center">
                               <span className="truncate font-medium">{editPhotoFile.name}</span>
@@ -2494,67 +2494,67 @@ export default function StudentManagement() {
                             </div>
                           </div>
                         ) : selectedStudentToView.photoUrl && (
-                           <div className="mt-2 text-xs text-slate-600 flex items-center gap-3">
+                           <div className="mt-2 text-xs text-slate-600 dark:text-slate-300 flex items-center gap-3">
                              <img src={selectedStudentToView.photoUrl} alt="Current profile" className="w-10 h-10 rounded-full object-cover border shadow-sm" />
                              <span className="font-medium">Current photo</span>
                            </div>
                         )}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">First Name *</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">First Name *</label>
                         <input
                           type="text"
                           value={editStudentData.firstName || ''}
                           onChange={e => handleEditFieldChange('firstName', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.firstName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.firstName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
                         {editErrors.firstName && <span className="text-red-500 text-xs mt-1 block">{editErrors.firstName}</span>}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Middle Name</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Middle Name</label>
                         <input
                           type="text"
                           value={editStudentData.middleName || ''}
                           onChange={e => handleEditFieldChange('middleName', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Last Name *</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Last Name *</label>
                         <input
                           type="text"
                           value={editStudentData.lastName || ''}
                           onChange={e => handleEditFieldChange('lastName', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
                         {editErrors.lastName && <span className="text-red-500 text-xs mt-1 block">{editErrors.lastName}</span>}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Admission Number *</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Admission Number *</label>
                         <input
                           type="text"
                           value={editStudentData.admissionNumber || ''}
                           onChange={e => handleEditFieldChange('admissionNumber', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.admissionNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.admissionNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
                         {editErrors.admissionNumber && <span className="text-red-500 text-xs mt-1 block">{editErrors.admissionNumber}</span>}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Date of Birth</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Date of Birth</label>
                         <input
                           type="date"
                           value={editStudentData.dob || ''}
                           onChange={e => handleEditFieldChange('dob', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.dob ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.dob ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
                         {editErrors.dob && <span className="text-red-500 text-xs mt-1 block">{editErrors.dob}</span>}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Gender</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Gender</label>
                         <select
                           value={editStudentData.gender || 'Male'}
                           onChange={e => handleEditFieldChange('gender', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
@@ -2562,69 +2562,69 @@ export default function StudentManagement() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Blood Group</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Blood Group</label>
                         <input
                           type="text"
                           value={editStudentData.bloodGroup || ''}
                           onChange={e => handleEditFieldChange('bloodGroup', e.target.value)}
                           placeholder="e.g. O+, A-"
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nationality</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Nationality</label>
                         <input
                           type="text"
                           value={editStudentData.nationality || ''}
                           onChange={e => handleEditFieldChange('nationality', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Religion</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Religion</label>
                         <input
                           type="text"
                           value={editStudentData.religion || ''}
                           onChange={e => handleEditFieldChange('religion', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mother Tongue</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Mother Tongue</label>
                         <input
                           type="text"
                           value={editStudentData.motherTongue || ''}
                           onChange={e => handleEditFieldChange('motherTongue', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Aadhaar Number</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Aadhaar Number</label>
                         <input
                           type="text"
                           value={editStudentData.aadharNumber || ''}
                           onChange={e => handleEditFieldChange('aadharNumber', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.aadharNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.aadharNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
                         {editErrors.aadharNumber && <span className="text-red-500 text-xs mt-1 block">{editErrors.aadharNumber}</span>}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Student Phone</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Student Phone</label>
                         <input
                           type="text"
                           value={editStudentData.studentPhone || ''}
                           onChange={e => handleEditFieldChange('studentPhone', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.studentPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.studentPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
                         {editErrors.studentPhone && <span className="text-red-500 text-xs mt-1 block">{editErrors.studentPhone}</span>}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Student Email</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Student Email</label>
                         <input
                           type="email"
                           value={editStudentData.studentEmail || ''}
                           onChange={e => handleEditFieldChange('studentEmail', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.studentEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.studentEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
                         {editErrors.studentEmail && <span className="text-red-500 text-xs mt-1 block">{editErrors.studentEmail}</span>}
                       </div>
@@ -2632,15 +2632,15 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Academic Information Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Academic Information</h4>
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Academic Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Class & Section</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Class & Section</label>
                         <select
                           value={editStudentData.classId || ''}
                           onChange={e => handleEditFieldChange('classId', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="">-- Unassigned --</option>
                           {classes.map(c => (
@@ -2649,30 +2649,30 @@ export default function StudentManagement() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Roll Number</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Roll Number</label>
                         <input
                           type="text"
                           value={editStudentData.rollNumber || ''}
                           onChange={e => handleEditFieldChange('rollNumber', e.target.value)}
-                          className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.rollNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.rollNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
                         {editErrors.rollNumber && <span className="text-red-500 text-xs mt-1 block">{editErrors.rollNumber}</span>}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Admission Date</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Admission Date</label>
                         <input
                           type="date"
                           value={editStudentData.admissionDate || ''}
                           onChange={e => handleEditFieldChange('admissionDate', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Student Status</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Student Status</label>
                         <select
                           value={editStudentData.status || 'Active'}
                           onChange={e => handleEditFieldChange('status', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="Active">Active</option>
                           <option value="Inactive">Inactive</option>
@@ -2682,47 +2682,47 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Parent / Guardian Information Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Parent / Guardian Information</h4>
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Parent / Guardian Information</h4>
                     <div className="space-y-4">
                       {/* Father details */}
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-3 border-b border-slate-200/50">
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Father's Name</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Father's Name</label>
                           <input
                             type="text"
                             value={editStudentData.parentName || ''}
                             onChange={e => handleEditFieldChange('parentName', e.target.value)}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Father's Phone</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Father's Phone</label>
                           <input
                             type="text"
                             value={editStudentData.parentPhone || ''}
                             onChange={e => handleEditFieldChange('parentPhone', e.target.value)}
-                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.parentPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.parentPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                           />
                           {editErrors.parentPhone && <span className="text-red-500 text-xs mt-1 block">{editErrors.parentPhone}</span>}
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Father's Email</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Father's Email</label>
                           <input
                             type="email"
                             value={editStudentData.parentEmail || ''}
                             onChange={e => handleEditFieldChange('parentEmail', e.target.value)}
-                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.parentEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.parentEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                           />
                           {editErrors.parentEmail && <span className="text-red-500 text-xs mt-1 block">{editErrors.parentEmail}</span>}
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Occupation</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Occupation</label>
                           <input
                             type="text"
                             value={editStudentData.parentOccupation || ''}
                             onChange={e => handleEditFieldChange('parentOccupation', e.target.value)}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                           />
                         </div>
                       </div>
@@ -2730,41 +2730,41 @@ export default function StudentManagement() {
                       {/* Mother details */}
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-3 border-b border-slate-200/50">
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mother's Name</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Mother's Name</label>
                           <input
                             type="text"
                             value={editStudentData.motherName || ''}
                             onChange={e => handleEditFieldChange('motherName', e.target.value)}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mother's Phone</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Mother's Phone</label>
                           <input
                             type="text"
                             value={editStudentData.motherPhone || ''}
                             onChange={e => handleEditFieldChange('motherPhone', e.target.value)}
-                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.motherPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.motherPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                           />
                           {editErrors.motherPhone && <span className="text-red-500 text-xs mt-1 block">{editErrors.motherPhone}</span>}
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mother's Email</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Mother's Email</label>
                           <input
                             type="email"
                             value={editStudentData.motherEmail || ''}
                             onChange={e => handleEditFieldChange('motherEmail', e.target.value)}
-                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.motherEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.motherEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                           />
                           {editErrors.motherEmail && <span className="text-red-500 text-xs mt-1 block">{editErrors.motherEmail}</span>}
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Occupation</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Occupation</label>
                           <input
                             type="text"
                             value={editStudentData.motherOccupation || ''}
                             onChange={e => handleEditFieldChange('motherOccupation', e.target.value)}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                           />
                         </div>
                       </div>
@@ -2772,31 +2772,31 @@ export default function StudentManagement() {
                       {/* Guardian details */}
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Guardian Name</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Guardian Name</label>
                           <input
                             type="text"
                             value={editStudentData.guardianName || ''}
                             onChange={e => handleEditFieldChange('guardianName', e.target.value)}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Guardian Phone</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Guardian Phone</label>
                           <input
                             type="text"
                             value={editStudentData.guardianPhone || ''}
                             onChange={e => handleEditFieldChange('guardianPhone', e.target.value)}
-                            className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 ${editErrors.guardianPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                            className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.guardianPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                           />
                           {editErrors.guardianPhone && <span className="text-red-500 text-xs mt-1 block">{editErrors.guardianPhone}</span>}
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Relationship</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Relationship</label>
                           <input
                             type="text"
                             value={editStudentData.guardianRelationship || ''}
                             onChange={e => handleEditFieldChange('guardianRelationship', e.target.value)}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                           />
                         </div>
                       </div>
@@ -2804,168 +2804,168 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Address Information Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Address Information</h4>
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Address Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="col-span-1 sm:col-span-3">
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Address Line 1</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Address Line 1</label>
                         <input
                           type="text"
                           value={editStudentData.addressLine1 || editStudentData.homeAddress || ''}
                           onChange={e => handleEditFieldChange('addressLine1', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div className="col-span-1 sm:col-span-3">
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Address Line 2</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Address Line 2</label>
                         <input
                           type="text"
                           value={editStudentData.addressLine2 || ''}
                           onChange={e => handleEditFieldChange('addressLine2', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">City</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">City</label>
                         <input
                           type="text"
                           value={editStudentData.city || ''}
                           onChange={e => handleEditFieldChange('city', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">District</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">District</label>
                         <input
                           type="text"
                           value={editStudentData.district || ''}
                           onChange={e => handleEditFieldChange('district', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">State</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">State</label>
                         <input
                           type="text"
                           value={editStudentData.state || ''}
                           onChange={e => handleEditFieldChange('state', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Country</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Country</label>
                         <input
                           type="text"
                           value={editStudentData.country || ''}
                           onChange={e => handleEditFieldChange('country', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Pincode</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Pincode</label>
                         <input
                           type="text"
                           value={editStudentData.pincode || ''}
                           onChange={e => handleEditFieldChange('pincode', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                     </div>
                   </div>
 
                   {/* Other Details Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-                    <h4 className="text-sm font-extrabold text-slate-700 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Other Details</h4>
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <h4 className="text-sm font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Other Details</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Previous School</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Previous School</label>
                         <input
                           type="text"
                           value={editStudentData.previousSchool || ''}
                           onChange={e => handleEditFieldChange('previousSchool', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Identification Marks</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Identification Marks</label>
                         <input
                           type="text"
                           value={editStudentData.identificationMarks || ''}
                           onChange={e => handleEditFieldChange('identificationMarks', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Transport Details</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Transport Details</label>
                         <input
                           type="text"
                           value={editStudentData.transportDetails || editStudentData.busRoute || ''}
                           onChange={e => handleEditFieldChange('transportDetails', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Hostel Details</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Hostel Details</label>
                         <input
                           type="text"
                           value={editStudentData.hostelDetails || ''}
                           onChange={e => handleEditFieldChange('hostelDetails', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div className="col-span-1 sm:col-span-2">
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Medical Information</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Medical Information</label>
                         <textarea
                           rows={3}
                           value={editStudentData.medicalInfo || ''}
                           onChange={e => handleEditFieldChange('medicalInfo', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                     </div>
                   </div>
 
                   {/* Fee Configuration Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-                    <h4 className="text-sm font-extrabold text-slate-700 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Fee Configuration</h4>
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <h4 className="text-sm font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Fee Configuration</h4>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Tuition Fee</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Tuition Fee</label>
                         <input
                           type="number"
                           value={editStudentData.tuitionFee || ''}
                           onChange={e => handleEditFeeChange('tuitionFee', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Hostel Fee</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Hostel Fee</label>
                         <input
                           type="number"
                           value={editStudentData.hostelFee || ''}
                           onChange={e => handleEditFeeChange('hostelFee', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Book Fee</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Book Fee</label>
                         <input
                           type="number"
                           value={editStudentData.bookFee || ''}
                           onChange={e => handleEditFeeChange('bookFee', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Other Fee</label>
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Other Fee</label>
                         <input
                           type="number"
                           value={editStudentData.otherFee || ''}
                           onChange={e => handleEditFeeChange('otherFee', e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500"
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
-                      <div className="col-span-2 sm:col-span-4 pt-2 border-t border-slate-200 flex justify-between items-center bg-primary-50/50 p-3 rounded-xl">
+                      <div className="col-span-2 sm:col-span-4 pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center bg-primary-50/50 p-3 rounded-xl">
                         <span className="text-xs font-bold text-primary-800 uppercase tracking-wider">Total Fee</span>
                         <span className="text-primary-700 font-black text-lg">₹{editStudentData.totalFee || '0'}</span>
                       </div>
@@ -2973,8 +2973,8 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Custom Fields Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200">
-                    <h4 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200">Additional Details</h4>
+                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Additional Details</h4>
                     <CustomFieldsRenderer
                       moduleKey="students"
                       customData={editCustomData}
@@ -2994,12 +2994,12 @@ export default function StudentManagement() {
               )}
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
               {isEditMode ? (
                 <>
                   <button 
                     onClick={handleModalCloseOrCancel}
-                    className="px-6 py-2.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                    className="px-6 py-2.5 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
@@ -3033,7 +3033,7 @@ export default function StudentManagement() {
                   )}
                   <button 
                     onClick={handleModalCloseOrCancel}
-                    className="px-6 py-2 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                    className="px-6 py-2 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
                   >
                     Close
                   </button>
@@ -3064,25 +3064,25 @@ export default function StudentManagement() {
 
       {assignModalOpen && selectedStudentForAssign && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">Assign Class</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Assign Class</h2>
               <button onClick={() => setAssignModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
-              <p className="text-slate-600 mb-6">
-                Select a class to assign <span className="font-bold text-slate-900">{selectedStudentForAssign.firstName} {selectedStudentForAssign.lastName}</span> to.
+              <p className="text-slate-600 dark:text-slate-300 mb-6">
+                Select a class to assign <span className="font-bold text-slate-900 dark:text-white">{selectedStudentForAssign.firstName} {selectedStudentForAssign.lastName}</span> to.
               </p>
 
               <div className="space-y-4">
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Select Class & Section</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Select Class & Section</label>
                 <select 
                   value={selectedClassIdForAssign}
                   onChange={(e) => setSelectedClassIdForAssign(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                 >
                   <option value="">-- Unassigned --</option>
                   {classes.map(c => (
@@ -3092,10 +3092,10 @@ export default function StudentManagement() {
               </div>
             </div>
 
-            <div className="p-6 border-t border-slate-100 bg-slate-50 shrink-0 flex justify-end gap-3">
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 shrink-0 flex justify-end gap-3">
               <button 
                 onClick={() => setAssignModalOpen(false)}
-                className="px-6 py-2.5 text-slate-600 font-bold hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-6 py-2.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -3150,10 +3150,10 @@ export default function StudentManagement() {
       {/* Export Columns & Filename Modal */}
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50 animate-fade-in">
-          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up border border-slate-100">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up border border-slate-100 dark:border-slate-800">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Export Student Directory</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Export Student Directory</h3>
                 <p className="text-xs text-slate-500 mt-0.5">Customize file settings and select columns to export.</p>
               </div>
               <button 
@@ -3174,9 +3174,9 @@ export default function StudentManagement() {
                     value={exportFileName}
                     onChange={(e) => setExportFileName(e.target.value)}
                     placeholder="Enter file name"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all pr-12 font-medium"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all pr-12 font-medium"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 px-2 py-1 rounded-md">.xlsx</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md">.xlsx</span>
                 </div>
               </div>
 
@@ -3200,14 +3200,14 @@ export default function StudentManagement() {
                       className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all ${
                         selectedFields[key] 
                           ? 'border-primary-200 bg-primary-50/30 text-primary-900 font-semibold' 
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                          : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-600 dark:text-slate-300'
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={selectedFields[key]}
                         onChange={() => handleFieldToggle(key)}
-                        className="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4 w-4"
+                        className="rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500 h-4 w-4"
                       />
                       <span className="text-xs">{label}</span>
                     </label>
@@ -3216,10 +3216,10 @@ export default function StudentManagement() {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors text-sm"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors text-sm"
               >
                 Cancel
               </button>
@@ -3238,15 +3238,15 @@ export default function StudentManagement() {
       {/* REVIEW & ADMIT APPLICATION MODAL */}
       {reviewAppModalOpen && selectedAppForReview && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
-          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-emerald-100 text-emerald-700 rounded-2xl">
                   <UserCheck size={24} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     Review Admission Application
                   </h2>
                   <p className="text-xs text-slate-500 font-mono mt-0.5">
@@ -3260,7 +3260,7 @@ export default function StudentManagement() {
                     <CheckCircle2 size={14} /> Admitted
                   </span>
                 ) : selectedAppForReview.status === 'Rejected' ? (
-                  <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-bold border border-slate-200">
+                  <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-full text-xs font-bold border border-slate-200 dark:border-slate-700">
                     Rejected
                   </span>
                 ) : (
@@ -3297,7 +3297,7 @@ export default function StudentManagement() {
                       <select
                         value={assigningAppClassId}
                         onChange={(e) => setAssigningAppClassId(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-emerald-300 rounded-xl font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                        className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-emerald-300 rounded-xl font-semibold text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
                       >
                         {classes.length === 0 ? (
                           <option value="">No classes available - Please create a class first</option>
@@ -3321,7 +3321,7 @@ export default function StudentManagement() {
                         value={assigningAppAdmissionNumber}
                         onChange={(e) => setAssigningAppAdmissionNumber(e.target.value)}
                         placeholder="e.g. ADM-2026-001"
-                        className="w-full px-4 py-2.5 bg-white border border-emerald-300 rounded-xl font-mono font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                        className="w-full px-4 py-2.5 bg-white dark:bg-slate-900 border border-emerald-300 rounded-xl font-mono font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
                       />
                       <p className="text-xs text-emerald-700 mt-1">Unique student identifier for directory & fees.</p>
                     </div>
@@ -3330,8 +3330,8 @@ export default function StudentManagement() {
               )}
 
               {/* Student Profile Overview */}
-              <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+              <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
                   <GraduationCap size={18} className="text-primary-600" /> Applicant Student Profile
                 </h3>
                 <div className="flex flex-col sm:flex-row gap-6 items-start">
@@ -3339,7 +3339,7 @@ export default function StudentManagement() {
                     <img 
                       src={selectedAppForReview.photoUrl} 
                       alt="Student" 
-                      className="w-24 h-24 rounded-2xl object-cover border-2 border-slate-300 shadow-sm shrink-0"
+                      className="w-24 h-24 rounded-2xl object-cover border-2 border-slate-300 dark:border-slate-600 shadow-sm shrink-0"
                     />
                   ) : (
                     <div className="w-24 h-24 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-2xl shrink-0 border border-emerald-200">
@@ -3349,80 +3349,80 @@ export default function StudentManagement() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1">
                     <div>
                       <p className="text-xs font-semibold text-slate-400">Full Name</p>
-                      <p className="text-sm font-bold text-slate-900">{selectedAppForReview.studentName || `${selectedAppForReview.firstName || ''} ${selectedAppForReview.lastName || ''}`.trim() || 'N/A'}</p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedAppForReview.studentName || `${selectedAppForReview.firstName || ''} ${selectedAppForReview.lastName || ''}`.trim() || 'N/A'}</p>
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-slate-400">Date of Birth</p>
-                      <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.dob || 'N/A'}</p>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.dob || 'N/A'}</p>
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-slate-400">Age & Gender</p>
-                      <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.age ? `${selectedAppForReview.age} yrs` : '-'}, {selectedAppForReview.gender || 'N/A'}</p>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.age ? `${selectedAppForReview.age} yrs` : '-'}, {selectedAppForReview.gender || 'N/A'}</p>
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-slate-400">Blood Group</p>
-                      <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.bloodGroup || 'N/A'}</p>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.bloodGroup || 'N/A'}</p>
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-slate-400">Religion & Mother Tongue</p>
-                      <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.religion || 'N/A'} {selectedAppForReview.motherTongue ? `(${selectedAppForReview.motherTongue})` : ''}</p>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.religion || 'N/A'} {selectedAppForReview.motherTongue ? `(${selectedAppForReview.motherTongue})` : ''}</p>
                     </div>
                     <div>
                       <p className="text-xs font-semibold text-slate-400">Aadhaar / Gov ID</p>
-                      <p className="text-sm font-semibold text-slate-800 font-mono">{selectedAppForReview.aadharNumber || 'N/A'}</p>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 font-mono">{selectedAppForReview.aadharNumber || 'N/A'}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Parent & Contact Details */}
-              <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+              <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
                   <Phone size={18} className="text-indigo-600" /> Parent & Guardian Contact Information
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   <div>
                     <p className="text-xs font-semibold text-slate-400">Parent Name</p>
-                    <p className="text-sm font-bold text-slate-900">{selectedAppForReview.parentName || 'N/A'}</p>
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedAppForReview.parentName || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-slate-400">Relationship</p>
-                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.parentRelationship || 'Father'}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.parentRelationship || 'Father'}</p>
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-slate-400">Phone Number</p>
-                    <p className="text-sm font-semibold text-slate-800 font-mono">{selectedAppForReview.parentPhone || 'N/A'}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 font-mono">{selectedAppForReview.parentPhone || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-slate-400">Email Address</p>
-                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.parentEmail || 'N/A'}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.parentEmail || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-slate-400">Occupation</p>
-                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.parentOccupation || 'N/A'}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.parentOccupation || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-slate-400">Annual Income</p>
-                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.annualIncome ? `₹${selectedAppForReview.annualIncome}` : 'N/A'}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.annualIncome ? `₹${selectedAppForReview.annualIncome}` : 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-slate-400">Emergency Contact</p>
-                    <p className="text-sm font-semibold text-slate-800 font-mono">{selectedAppForReview.emergencyContact || selectedAppForReview.parentPhone || 'N/A'}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 font-mono">{selectedAppForReview.emergencyContact || selectedAppForReview.parentPhone || 'N/A'}</p>
                   </div>
                   <div className="col-span-2">
                     <p className="text-xs font-semibold text-slate-400">Sibling in Same School</p>
-                    <p className="text-sm font-semibold text-slate-800">{selectedAppForReview.siblingName || 'None'}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.siblingName || 'None'}</p>
                   </div>
                 </div>
               </div>
 
               {/* Address & Academic Background */}
               <div className="grid sm:grid-cols-2 gap-6">
-                <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200">
-                  <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+                <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
                     <MapPin size={18} className="text-rose-600" /> Residential Address
                   </h3>
-                  <p className="text-sm text-slate-800 font-medium whitespace-pre-line leading-relaxed">
+                  <p className="text-sm text-slate-800 dark:text-slate-100 font-medium whitespace-pre-line leading-relaxed">
                     {selectedAppForReview.homeAddress || 'No address provided'}
                     {(selectedAppForReview.city || selectedAppForReview.state || selectedAppForReview.pincode) && (
                       <span className="block text-xs text-slate-500 mt-1">
@@ -3432,21 +3432,21 @@ export default function StudentManagement() {
                   </p>
                 </div>
 
-                <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200">
-                  <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 flex items-center gap-2">
+                <div className="bg-slate-50/70 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
                     <BookOpen size={18} className="text-amber-600" /> Academic & Transport
                   </h3>
                   <div className="space-y-2 text-sm">
-                    <p><span className="text-slate-400 text-xs block">Previous School:</span> <strong className="text-slate-800">{selectedAppForReview.previousSchool || 'N/A'}</strong></p>
-                    <p><span className="text-slate-400 text-xs block">Previous Records / Marks:</span> <strong className="text-slate-800">{selectedAppForReview.previousMarks || 'N/A'}</strong></p>
-                    <p><span className="text-slate-400 text-xs block">Bus Route:</span> <strong className="text-slate-800">{selectedAppForReview.busRoute || 'Not requested'}</strong></p>
+                    <p><span className="text-slate-400 text-xs block">Previous School:</span> <strong className="text-slate-800 dark:text-slate-100">{selectedAppForReview.previousSchool || 'N/A'}</strong></p>
+                    <p><span className="text-slate-400 text-xs block">Previous Records / Marks:</span> <strong className="text-slate-800 dark:text-slate-100">{selectedAppForReview.previousMarks || 'N/A'}</strong></p>
+                    <p><span className="text-slate-400 text-xs block">Bus Route:</span> <strong className="text-slate-800 dark:text-slate-100">{selectedAppForReview.busRoute || 'Not requested'}</strong></p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-wrap justify-between items-center gap-3 shrink-0">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex flex-wrap justify-between items-center gap-3 shrink-0">
               <div>
                 {selectedAppForReview.status === 'Pending' && (
                   <button
@@ -3465,7 +3465,7 @@ export default function StudentManagement() {
                     setReviewAppModalOpen(false);
                     setSelectedAppForReview(null);
                   }}
-                  className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-sm transition-colors"
+                  className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-sm transition-colors"
                 >
                   Close
                 </button>
@@ -3498,14 +3498,14 @@ export default function StudentManagement() {
       {/* SHARE ADMISSION LINK MODAL */}
       {shareLinkModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 bg-emerald-100 text-emerald-700 rounded-2xl">
                   <Share2 size={22} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">Share Public Admission Form</h2>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">Share Public Admission Form</h2>
                   <p className="text-xs text-slate-500">Provide this link to prospective students and parents</p>
                 </div>
               </div>
@@ -3526,7 +3526,7 @@ export default function StudentManagement() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">
                   Official Online Admission Form Link
                 </label>
                 <div className="flex gap-2">
@@ -3534,7 +3534,7 @@ export default function StudentManagement() {
                     type="text"
                     readOnly
                     value={`${window.location.origin}/admission/${schoolId}`}
-                    className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs text-slate-700 select-all focus:outline-none"
+                    className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-mono text-xs text-slate-700 dark:text-slate-200 select-all focus:outline-none"
                   />
                   <button
                     onClick={() => {
@@ -3560,25 +3560,25 @@ export default function StudentManagement() {
                   href={`/admission/${schoolId}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="p-3 rounded-xl border border-slate-200 hover:border-primary-300 hover:bg-primary-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
+                  className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:bg-primary-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
                 >
                   <ExternalLink size={20} className="text-primary-600 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold text-slate-800">Preview Form</span>
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Preview Form</span>
                   <span className="text-[10px] text-slate-400">Open in new tab</span>
                 </a>
 
                 <a
                   href={`mailto:?subject=Online Admission Application - ${encodeURIComponent(schoolName || 'School')}&body=Dear Parent / Student,%0D%0A%0D%0APlease fill out our online school admission form using the following link:%0D%0A${encodeURIComponent(`${window.location.origin}/admission/${schoolId}`)}%0D%0A%0D%0ABest regards,%0D%0A${encodeURIComponent(schoolName || 'School Administration')}`}
-                  className="p-3 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
+                  className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:bg-indigo-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
                 >
                   <Mail size={20} className="text-indigo-600 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold text-slate-800">Send via Email</span>
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Send via Email</span>
                   <span className="text-[10px] text-slate-400">Compose invitation</span>
                 </a>
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end">
               <button
                 onClick={() => {
                   setShareLinkModalOpen(false);

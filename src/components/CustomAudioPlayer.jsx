@@ -59,11 +59,11 @@ export default function CustomAudioPlayer({ src, isMe }) {
   };
 
   return (
-    <div className={`flex items-center gap-3 w-60 sm:w-64 p-2 rounded-full ${isMe ? 'bg-primary-700/50 backdrop-blur-sm border border-white/10' : 'bg-slate-100 border border-slate-200'} shadow-sm`}>
+    <div className={`flex items-center gap-3 w-60 sm:w-64 p-2 rounded-full ${isMe ? 'bg-primary-700/50 backdrop-blur-sm border border-white/10' : 'bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-700'} shadow-sm`}>
       <audio ref={audioRef} src={src} preload="metadata" />
       <button 
         onClick={togglePlayPause}
-        className={`w-9 h-9 flex items-center justify-center rounded-full shrink-0 shadow-sm transition-transform active:scale-95 ${isMe ? 'bg-white text-primary-600' : 'bg-primary-600 text-white'}`}
+        className={`w-9 h-9 flex items-center justify-center rounded-full shrink-0 shadow-sm transition-transform active:scale-95 ${isMe ? 'bg-white dark:bg-slate-900 text-primary-600' : 'bg-primary-600 text-white'}`}
       >
         {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-1" />}
       </button>

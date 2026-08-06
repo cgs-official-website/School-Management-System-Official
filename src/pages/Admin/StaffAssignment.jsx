@@ -862,7 +862,7 @@ export default function StaffAssignment() {
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Staff Directory & Attachments</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Staff Directory & Attachments</h1>
           <p className="text-slate-500 mt-1">Manage your teachers, upload documents, and assign classes.</p>
         </div>
         <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
@@ -905,29 +905,29 @@ export default function StaffAssignment() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in-up">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-fade-in-up">
         {/* Metrics Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 bg-slate-50/30">
-          <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Users size={20} /></div>
-            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Staff</p><p className="text-xl font-bold text-slate-900">{totalStaff}</p></div>
+            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Staff</p><p className="text-xl font-bold text-slate-900 dark:text-white">{totalStaff}</p></div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><CheckCircle2 size={20} /></div>
-            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active</p><p className="text-xl font-bold text-slate-900">{activeStaff}</p></div>
+            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active</p><p className="text-xl font-bold text-slate-900 dark:text-white">{activeStaff}</p></div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><UserPlus size={20} /></div>
-            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Teachers</p><p className="text-xl font-bold text-slate-900">{teachingStaff}</p></div>
+            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Teachers</p><p className="text-xl font-bold text-slate-900 dark:text-white">{teachingStaff}</p></div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-pink-50 text-pink-600 rounded-xl"><UserPlus size={20} /></div>
-            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Non-Teaching</p><p className="text-xl font-bold text-slate-900">{nonTeachingStaff}</p></div>
+            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Non-Teaching</p><p className="text-xl font-bold text-slate-900 dark:text-white">{nonTeachingStaff}</p></div>
           </div>
         </div>
 
         {/* Toolbar */}
-        <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-white">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-white dark:bg-slate-900">
           <div className="relative flex-1 min-w-[250px] max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
@@ -935,14 +935,14 @@ export default function StaffAssignment() {
               placeholder="Search staff by name or email..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
             />
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <select 
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="all">All Roles</option>
               <option value="Correspondent">Correspondent</option>
@@ -964,7 +964,7 @@ export default function StaffAssignment() {
             <select 
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="all">All Status</option>
               <option value="Active">Active</option>
@@ -978,7 +978,7 @@ export default function StaffAssignment() {
                 className={`px-3 py-2.5 rounded-xl border shadow-sm transition-all flex items-center gap-2 text-sm font-medium relative
                   ${staffTypeFilter !== 'all'
                     ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'
-                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
                   }`}
                 title="Filter Staff by Type"
               >
@@ -990,12 +990,12 @@ export default function StaffAssignment() {
               </button>
 
               {isFilterDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 p-2 z-50 animate-fade-in-up">
+                <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-100 dark:border-slate-800 p-2 z-50 animate-fade-in-up">
                   <div className="flex flex-col space-y-1">
                     <button
                       onClick={() => { setStaffTypeFilter('all'); setIsFilterDropdownOpen(false); }}
                       className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between ${
-                        staffTypeFilter === 'all' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 hover:bg-slate-50'
+                        staffTypeFilter === 'all' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50'
                       }`}
                     >
                       <span>All Staff</span>
@@ -1004,7 +1004,7 @@ export default function StaffAssignment() {
                     <button
                       onClick={() => { setStaffTypeFilter('teaching'); setIsFilterDropdownOpen(false); }}
                       className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between ${
-                        staffTypeFilter === 'teaching' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 hover:bg-slate-50'
+                        staffTypeFilter === 'teaching' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50'
                       }`}
                     >
                       <span>Teaching Staff</span>
@@ -1013,7 +1013,7 @@ export default function StaffAssignment() {
                     <button
                       onClick={() => { setStaffTypeFilter('non-teaching'); setIsFilterDropdownOpen(false); }}
                       className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between ${
-                        staffTypeFilter === 'non-teaching' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 hover:bg-slate-50'
+                        staffTypeFilter === 'non-teaching' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50'
                       }`}
                     >
                       <span>Non-Teaching Staff</span>
@@ -1028,7 +1028,7 @@ export default function StaffAssignment() {
             <select 
               value={rowsPerPage}
               onChange={(e) => setRowsPerPage(Number(e.target.value))}
-              className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value={10}>10 rows</option>
               <option value={20}>20 rows</option>
@@ -1041,7 +1041,7 @@ export default function StaffAssignment() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Staff Name</th>
                 <th className="p-4">Contact</th>
                 <th className="p-4">Class Assignments</th>
@@ -1053,7 +1053,7 @@ export default function StaffAssignment() {
                 <tr>
                   <td colSpan="4" className="p-12 text-center text-slate-500">
                     <ShieldCheck size={48} className="mx-auto mb-4 text-slate-300" />
-                    <p className="text-lg font-medium text-slate-900 mb-1">No staff members found</p>
+                    <p className="text-lg font-medium text-slate-900 dark:text-white mb-1">No staff members found</p>
                     <p>Generate a teacher invite link to start onboarding your faculty.</p>
                   </td>
                 </tr>
@@ -1069,13 +1069,13 @@ export default function StaffAssignment() {
                           <div className="w-10 h-10 shrink-0 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
                             {name.charAt(0)}
                           </div>
-                          <div className="font-semibold text-slate-900 leading-snug">
+                          <div className="font-semibold text-slate-900 dark:text-white leading-snug">
                             {name}
                           </div>
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="flex items-center gap-2 text-slate-600">
+                        <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                           <Mail size={14} className="text-slate-400" />
                           {member.email}
                         </div>
@@ -1141,7 +1141,7 @@ export default function StaffAssignment() {
                             {hasEditPermission && (
                               <button 
                                 onClick={() => openAssignModal(member)}
-                                className="px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors"
+                                className="px-2.5 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 dark:border-slate-700 rounded-md transition-colors"
                               >
                                 {isAssigned ? 'Edit' : 'Assign'}
                               </button>
@@ -1158,7 +1158,7 @@ export default function StaffAssignment() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="p-4 border-t border-slate-200 flex items-center justify-between bg-slate-50 rounded-b-3xl">
+          <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-b-3xl">
             <span className="text-sm text-slate-500">
               Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, filteredStaff.length)} of {filteredStaff.length} entries
             </span>
@@ -1166,17 +1166,17 @@ export default function StaffAssignment() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
               >
                 Previous
               </button>
-              <div className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-slate-700">
+              <div className="flex items-center justify-center px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200">
                 Page {currentPage} of {totalPages}
               </div>
               <button 
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 bg-white text-slate-700 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
               >
                 Next
               </button>
@@ -1188,26 +1188,26 @@ export default function StaffAssignment() {
       {/* Assignment Modal */}
       {assignModalOpen && selectedStaff && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">Assign Class</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Assign Class</h2>
               <button onClick={() => setAssignModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
-              <p className="text-slate-600 mb-6">
-                Manage assignments for <span className="font-bold text-slate-900">{selectedStaff.name || selectedStaff.firstName}</span>.
+              <p className="text-slate-600 dark:text-slate-300 mb-6">
+                Manage assignments for <span className="font-bold text-slate-900 dark:text-white">{selectedStaff.name || selectedStaff.firstName}</span>.
               </p>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Class Teacher Assignment (Optional)</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Class Teacher Assignment (Optional)</label>
                   <select 
                     value={selectedClassId}
                     onChange={(e) => setSelectedClassId(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                   >
                     <option value="">-- None --</option>
                     {classes.map(c => (
@@ -1217,8 +1217,8 @@ export default function StaffAssignment() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Subject Teacher Assignments</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border border-slate-200 rounded-xl bg-slate-50">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Subject Teacher Assignments</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800">
                     {classes.map(c => (
                       <label key={`subj-${c.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-100 rounded-lg cursor-pointer">
                         <input 
@@ -1231,9 +1231,9 @@ export default function StaffAssignment() {
                               setSelectedSubjectClassIds(selectedSubjectClassIds.filter(id => id !== c.id));
                             }
                           }}
-                          className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
+                          className="w-4 h-4 text-primary-600 rounded border-slate-300 dark:border-slate-600 focus:ring-primary-500"
                         />
-                        <span className="text-sm font-medium text-slate-700">{c.name} - Section {c.section}</span>
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{c.name} - Section {c.section}</span>
                       </label>
                     ))}
                     {classes.length === 0 && <span className="text-sm text-slate-500 italic p-2">No classes available.</span>}
@@ -1247,8 +1247,8 @@ export default function StaffAssignment() {
                 )}
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Subject Specializations</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border border-slate-200 rounded-xl bg-slate-50">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Subject Specializations</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800">
                     {subjects.map(s => (
                       <label key={`spec-${s.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-100 rounded-lg cursor-pointer">
                         <input 
@@ -1261,9 +1261,9 @@ export default function StaffAssignment() {
                               setSelectedSubjectIds(selectedSubjectIds.filter(id => id !== s.id));
                             }
                           }}
-                          className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
+                          className="w-4 h-4 text-primary-600 rounded border-slate-300 dark:border-slate-600 focus:ring-primary-500"
                         />
-                        <span className="text-sm font-medium text-slate-700">{s.name} {s.code ? `(${s.code})` : ''}</span>
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{s.name} {s.code ? `(${s.code})` : ''}</span>
                       </label>
                     ))}
                     {subjects.length === 0 && <span className="text-sm text-slate-500 italic p-2">No subjects available.</span>}
@@ -1272,10 +1272,10 @@ export default function StaffAssignment() {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 onClick={() => setAssignModalOpen(false)}
-                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -1294,9 +1294,9 @@ export default function StaffAssignment() {
       {/* Upload Document / Bulk Import Modal */}
       {uploadModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <FileText className="text-primary-600" />
                 {selectedStaffForUpload ? 'Upload Document' : 'Bulk Import Staff'}
               </h2>
@@ -1307,26 +1307,26 @@ export default function StaffAssignment() {
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
               {selectedStaffForUpload ? (
-                <p className="text-sm text-slate-600 mb-4">
-                  Upload a document (e.g. Resume, ID) for <span className="font-bold text-slate-900">{selectedStaffForUpload.name || selectedStaffForUpload.firstName}</span>. 
+                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+                  Upload a document (e.g. Resume, ID) for <span className="font-bold text-slate-900 dark:text-white">{selectedStaffForUpload.name || selectedStaffForUpload.firstName}</span>. 
                   <br/><span className="text-xs text-slate-400 mt-1 block">File will be securely stored in: {schoolName}/Teachers/...</span>
                 </p>
               ) : (
                 <div className="mb-4">
-                  <p className="text-sm text-slate-600 mb-2">
+                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-2">
                     Upload an Excel (.xlsx) or CSV file to bulk import staff.
                   </p>
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 mb-3 text-xs">
-                    <p className="font-bold text-slate-700 mb-1">Required Columns:</p>
+                  <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 mb-3 text-xs">
+                    <p className="font-bold text-slate-700 dark:text-slate-200 mb-1">Required Columns:</p>
                     <div className="flex flex-wrap gap-1.5">
                       {['Full Name', 'Email Address'].map(col => (
                         <span key={col} className="bg-red-100 text-red-700 font-semibold px-2 py-0.5 rounded-md">{col} *</span>
                       ))}
                     </div>
-                    <p className="font-bold text-slate-700 mt-2 mb-1">Optional (all other columns supported):</p>
+                    <p className="font-bold text-slate-700 dark:text-slate-200 mt-2 mb-1">Optional (all other columns supported):</p>
                     <div className="flex flex-wrap gap-1.5">
                       {['Staff ID', 'Mobile Number', 'Gender', 'Date of Birth', 'Blood Group', 'Role', 'Staff Type', 'Aadhar Number', 'PAN Number', 'PF Number', 'Bank Account Number'].map(col => (
-                        <span key={col} className="bg-slate-200 text-slate-700 font-medium px-2 py-0.5 rounded-md">{col}</span>
+                        <span key={col} className="bg-slate-200 text-slate-700 dark:text-slate-200 font-medium px-2 py-0.5 rounded-md">{col}</span>
                       ))}
                     </div>
                   </div>
@@ -1347,7 +1347,7 @@ export default function StaffAssignment() {
                 </div>
               )}
 
-              <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 bg-slate-50 relative overflow-hidden group hover:border-primary-400 hover:bg-primary-50 transition-all text-center">
+              <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 bg-slate-50 dark:bg-slate-800 relative overflow-hidden group hover:border-primary-400 hover:bg-primary-50 transition-all text-center">
                 <input 
                   type="file" 
                   accept={selectedStaffForUpload ? "image/*, .pdf" : ".xlsx, .csv"}
@@ -1362,17 +1362,17 @@ export default function StaffAssignment() {
                   </div>
                 ) : (
                   <div>
-                    <p className="font-semibold text-slate-700 text-sm">Click or drag file to upload</p>
+                    <p className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Click or drag file to upload</p>
                     <p className="text-xs text-slate-500 mt-1">{selectedStaffForUpload ? 'PDF, JPG, PNG up to 10MB' : 'Excel or CSV file'}</p>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 onClick={() => setUploadModalOpen(false)}
-                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -1391,9 +1391,9 @@ export default function StaffAssignment() {
       {/* Add Staff Modal */}
       {addStaffModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <UserPlus className="text-indigo-600" />
                 Add Staff Member
               </h2>
@@ -1414,7 +1414,7 @@ export default function StaffAssignment() {
             `}} />
 
             {/* Tabbed Navigation */}
-            <div className="flex border-b border-slate-200 overflow-x-auto bg-white shrink-0 hide-scrollbar scroll-smooth">
+            <div className="flex border-b border-slate-200 dark:border-slate-700 overflow-x-auto bg-white dark:bg-slate-900 shrink-0 hide-scrollbar scroll-smooth">
               <div className="flex w-full justify-start items-center">
                 {['Personal', 'Educational', 'Professional', 'Government & Identity', 'Employment', 'Banking', 'Uploads'].map(tab => {
                   const isActive = addStaffActiveTab === tab;
@@ -1442,7 +1442,7 @@ export default function StaffAssignment() {
               </div>
               </div>
               
-              <div className="pt-4 border-t border-slate-100">
+              <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
                 <CustomFieldsRenderer 
                   moduleKey="staff"
                   customData={newStaff.customData}
@@ -1464,35 +1464,35 @@ export default function StaffAssignment() {
                 <div className="space-y-4 animate-fade-in">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Staff ID *</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Staff ID *</label>
                       <input
                         type="text"
                         value={newStaff.staffId}
                         onChange={(e) => setNewStaff({ ...newStaff, staffId: e.target.value })}
                         placeholder="e.g. ST1001"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.staffId ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.staffId ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.staffId && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.staffId}</span>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">First Name *</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">First Name *</label>
                       <input
                         type="text"
                         value={newStaff.firstName}
                         onChange={(e) => setNewStaff({ ...newStaff, firstName: e.target.value })}
                         placeholder="e.g. John"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.firstName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.firstName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.firstName && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.firstName}</span>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Last Name *</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Last Name *</label>
                       <input
                         type="text"
                         value={newStaff.lastName}
                         onChange={(e) => setNewStaff({ ...newStaff, lastName: e.target.value })}
                         placeholder="e.g. Doe"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.lastName && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.lastName}</span>}
                     </div>
@@ -1500,45 +1500,45 @@ export default function StaffAssignment() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Email Address *</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Email Address *</label>
                       <input
                         type="email"
                         value={newStaff.email}
                         onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
                         placeholder="john.doe@example.com"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.email ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.email ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.email && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.email}</span>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mobile Number</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Mobile Number</label>
                       <input
                         type="text"
                         value={newStaff.mobileNumber}
                         onChange={(e) => setNewStaff({ ...newStaff, mobileNumber: e.target.value })}
                         placeholder="e.g. 9876543210"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.mobileNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.mobileNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.mobileNumber && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.mobileNumber}</span>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Date of Birth</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Date of Birth</label>
                       <input
                         type="date"
                         value={newStaff.dob}
                         onChange={(e) => setNewStaff({ ...newStaff, dob: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Gender</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Gender</label>
                       <select
                         value={newStaff.gender}
                         onChange={(e) => setNewStaff({ ...newStaff, gender: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       >
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -1546,21 +1546,21 @@ export default function StaffAssignment() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Nationality</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Nationality</label>
                       <input
                         type="text"
                         value={newStaff.nationality}
                         onChange={(e) => setNewStaff({ ...newStaff, nationality: e.target.value })}
                         placeholder="e.g. Indian"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Marital Status</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Marital Status</label>
                       <select
                         value={newStaff.maritalStatus}
                         onChange={(e) => setNewStaff({ ...newStaff, maritalStatus: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       >
                         <option value="Single">Single</option>
                         <option value="Married">Married</option>
@@ -1572,33 +1572,33 @@ export default function StaffAssignment() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Blood Group</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Blood Group</label>
                       <input
                         type="text"
                         value={newStaff.bloodGroup}
                         onChange={(e) => setNewStaff({ ...newStaff, bloodGroup: e.target.value })}
                         placeholder="e.g. O+, A-"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Father / Guardian Name</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Father / Guardian Name</label>
                       <input
                         type="text"
                         value={newStaff.fatherGuardianName}
                         onChange={(e) => setNewStaff({ ...newStaff, fatherGuardianName: e.target.value })}
                         placeholder="Father or Guardian Name"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Emergency Contact Details</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Emergency Contact Details</label>
                       <input
                         type="text"
                         value={newStaff.emergencyContact}
                         onChange={(e) => setNewStaff({ ...newStaff, emergencyContact: e.target.value })}
                         placeholder="Emergency Mobile No."
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.emergencyContact ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.emergencyContact ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.emergencyContact && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.emergencyContact}</span>}
                     </div>
@@ -1606,7 +1606,7 @@ export default function StaffAssignment() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="col-span-1 sm:col-span-3">
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Assigned Roles *</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Assigned Roles *</label>
                       <select
                         onChange={(e) => {
                           const val = e.target.value;
@@ -1623,7 +1623,7 @@ export default function StaffAssignment() {
                           }
                           e.target.value = ''; // reset selection
                         }}
-                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm cursor-pointer"
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm cursor-pointer"
                       >
                         <option value="">-- Choose a role to add --</option>
                         {allRoles.map(roleOption => {
@@ -1663,11 +1663,11 @@ export default function StaffAssignment() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Assign Class (Optional)</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Assign Class (Optional)</label>
                       <select
                         value={newStaff.assignedClassId}
                         onChange={(e) => setNewStaff({ ...newStaff, assignedClassId: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       >
                         <option value="">-- Unassigned --</option>
                         {classes.map(c => (
@@ -1676,11 +1676,11 @@ export default function StaffAssignment() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Staff Type *</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Staff Type *</label>
                       <select
                         value={newStaff.staff_type}
                         onChange={(e) => setNewStaff({ ...newStaff, staff_type: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       >
                         <option value="teaching">Teaching Staff</option>
                         <option value="non-teaching">Non-Teaching Staff</option>
@@ -1690,28 +1690,28 @@ export default function StaffAssignment() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Languages Known</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Languages Known</label>
                       <input
                         type="text"
                         value={newStaff.languagesKnown}
                         onChange={(e) => setNewStaff({ ...newStaff, languagesKnown: e.target.value })}
                         placeholder="e.g. English, Hindi, Tamil (comma separated)"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Residential Address</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Residential Address</label>
                       <textarea
                         rows={2}
                         value={newStaff.residentialAddress}
                         onChange={(e) => setNewStaff({ ...newStaff, residentialAddress: e.target.value })}
                         placeholder="Full Residential Address"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-slate-100">
+                  <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
                     <CustomFieldsRenderer
                       moduleKey="staff"
                       customData={newStaff.customData}
@@ -1726,46 +1726,46 @@ export default function StaffAssignment() {
                 <div className="space-y-4 animate-fade-in">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Highest Qualification</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Highest Qualification</label>
                       <input
                         type="text"
                         value={newStaff.highestQualification}
                         onChange={(e) => setNewStaff({ ...newStaff, highestQualification: e.target.value })}
                         placeholder="e.g. Master of Arts"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Degree(s) and Specialization</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Degree(s) and Specialization</label>
                       <input
                         type="text"
                         value={newStaff.degreeSpecialization}
                         onChange={(e) => setNewStaff({ ...newStaff, degreeSpecialization: e.target.value })}
                         placeholder="e.g. B.Ed in English Literature"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">University / College Name</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">University / College Name</label>
                       <input
                         type="text"
                         value={newStaff.universityName}
                         onChange={(e) => setNewStaff({ ...newStaff, universityName: e.target.value })}
                         placeholder="e.g. University of Delhi"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Year of Passing</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Year of Passing</label>
                       <input
                         type="number"
                         value={newStaff.yearOfPassing}
                         onChange={(e) => setNewStaff({ ...newStaff, yearOfPassing: e.target.value })}
                         placeholder="e.g. 2018"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.yearOfPassing ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.yearOfPassing ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.yearOfPassing && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.yearOfPassing}</span>}
                     </div>
@@ -1778,57 +1778,57 @@ export default function StaffAssignment() {
                 <div className="space-y-4 animate-fade-in">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Previous Experience (Years)</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Previous Experience (Years)</label>
                       <input
                         type="number"
                         value={newStaff.previousExperience}
                         onChange={(e) => setNewStaff({ ...newStaff, previousExperience: e.target.value })}
                         placeholder="e.g. 3"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.previousExperience ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.previousExperience ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.previousExperience && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.previousExperience}</span>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Previous School / Organization</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Previous School / Organization</label>
                       <input
                         type="text"
                         value={newStaff.previousOrganization}
                         onChange={(e) => setNewStaff({ ...newStaff, previousOrganization: e.target.value })}
                         placeholder="Previous School Name"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Subject Specialization</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Subject Specialization</label>
                       <input
                         type="text"
                         value={newStaff.subjectSpecialization}
                         onChange={(e) => setNewStaff({ ...newStaff, subjectSpecialization: e.target.value })}
                         placeholder="e.g. English Literature, Physics"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Grades / Classes Handled</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Grades / Classes Handled</label>
                       <input
                         type="text"
                         value={newStaff.gradesClassesHandled}
                         onChange={(e) => setNewStaff({ ...newStaff, gradesClassesHandled: e.target.value })}
                         placeholder="e.g. Class 9, Class 10 (comma separated)"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Professional Certifications</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Professional Certifications</label>
                       <input
                         type="text"
                         value={newStaff.professionalCertifications}
                         onChange={(e) => setNewStaff({ ...newStaff, professionalCertifications: e.target.value })}
                         placeholder="e.g. TEFL, CBSE In-Service Training"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                   </div>
@@ -1840,11 +1840,11 @@ export default function StaffAssignment() {
                 <div className="space-y-4 animate-fade-in">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Government-Issued ID Type</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Government-Issued ID Type</label>
                       <select
                         value={newStaff.govtIdType}
                         onChange={(e) => setNewStaff({ ...newStaff, govtIdType: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       >
                         <option value="Aadhaar">Aadhaar Card</option>
                         <option value="PAN">PAN Card</option>
@@ -1854,50 +1854,50 @@ export default function StaffAssignment() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Government-Issued ID Number</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Government-Issued ID Number</label>
                       <input
                         type="text"
                         value={newStaff.govtIdNumber}
                         onChange={(e) => setNewStaff({ ...newStaff, govtIdNumber: e.target.value })}
                         placeholder="ID Document Number"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Aadhaar Number (12 digits)</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Aadhaar Number (12 digits)</label>
                       <input
                         type="text"
                         value={newStaff.aadharNumber}
                         onChange={(e) => setNewStaff({ ...newStaff, aadharNumber: e.target.value })}
                         placeholder="e.g. 123456789012"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.aadharNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.aadharNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.aadharNumber && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.aadharNumber}</span>}
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">PAN Number</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">PAN Number</label>
                       <input
                         type="text"
                         value={newStaff.panNumber}
                         onChange={(e) => setNewStaff({ ...newStaff, panNumber: e.target.value })}
                         placeholder="e.g. ABCDE1234F"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.panNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.panNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.panNumber && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.panNumber}</span>}
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Tax Identification Details (if different)</label>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Tax Identification Details (if different)</label>
                     <input
                       type="text"
                       value={newStaff.taxIdDetails}
                       onChange={(e) => setNewStaff({ ...newStaff, taxIdDetails: e.target.value })}
                       placeholder="Tax ID particulars"
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                     />
                   </div>
                 </div>
@@ -1908,33 +1908,33 @@ export default function StaffAssignment() {
                 <div className="space-y-4 animate-fade-in">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">PF Number</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">PF Number</label>
                       <input
                         type="text"
                         value={newStaff.pfNumber}
                         onChange={(e) => setNewStaff({ ...newStaff, pfNumber: e.target.value })}
                         placeholder="Provident Fund Number"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">ESIC Number</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">ESIC Number</label>
                       <input
                         type="text"
                         value={newStaff.esicNumber}
                         onChange={(e) => setNewStaff({ ...newStaff, esicNumber: e.target.value })}
                         placeholder="ESIC Registration Number"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">UAN Number</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">UAN Number</label>
                       <input
                         type="text"
                         value={newStaff.uanNumber}
                         onChange={(e) => setNewStaff({ ...newStaff, uanNumber: e.target.value })}
                         placeholder="Universal Account Number"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                   </div>
@@ -1946,23 +1946,23 @@ export default function StaffAssignment() {
                 <div className="space-y-4 animate-fade-in">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Bank Name</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Bank Name</label>
                       <input
                         type="text"
                         value={newStaff.bankName}
                         onChange={(e) => setNewStaff({ ...newStaff, bankName: e.target.value })}
                         placeholder="e.g. State Bank of India"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Bank Account Number</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Bank Account Number</label>
                       <input
                         type="text"
                         value={newStaff.bankAccountNumber}
                         onChange={(e) => setNewStaff({ ...newStaff, bankAccountNumber: e.target.value })}
                         placeholder="Digits only"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.bankAccountNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.bankAccountNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.bankAccountNumber && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.bankAccountNumber}</span>}
                     </div>
@@ -1970,23 +1970,23 @@ export default function StaffAssignment() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Branch Name</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Branch Name</label>
                       <input
                         type="text"
                         value={newStaff.branchName}
                         onChange={(e) => setNewStaff({ ...newStaff, branchName: e.target.value })}
                         placeholder="e.g. Connaught Place Branch"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">IFSC Code</label>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">IFSC Code</label>
                       <input
                         type="text"
                         value={newStaff.ifscCode}
                         onChange={(e) => setNewStaff({ ...newStaff, ifscCode: e.target.value })}
                         placeholder="e.g. SBIN0001234"
-                        className={`w-full px-3 py-2 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.ifscCode ? 'border-red-500 focus:ring-red-500' : 'border-slate-200'}`}
+                        className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm ${addStaffErrors.ifscCode ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {addStaffErrors.ifscCode && <span className="text-red-500 text-xs mt-1 block">{addStaffErrors.ifscCode}</span>}
                     </div>
@@ -1998,8 +1998,8 @@ export default function StaffAssignment() {
               {addStaffActiveTab === 'Uploads' && (
                 <div className="space-y-4 animate-fade-in">
                   {/* Photo upload */}
-                  <div className="border border-slate-200 rounded-2xl p-4 bg-slate-50/50">
-                    <label className="block text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-2">Photograph (JPG/PNG)</label>
+                  <div className="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-slate-50/50">
+                    <label className="block text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">Photograph (JPG/PNG)</label>
                     <input
                       type="file"
                       accept="image/*"
@@ -2007,8 +2007,8 @@ export default function StaffAssignment() {
                       className="text-sm"
                     />
                     {addStaffFiles.photo && (
-                      <div className="mt-2 flex items-center justify-between bg-white border border-slate-200 rounded-lg p-2 text-xs">
-                        <span className="truncate text-slate-700 font-semibold">{addStaffFiles.photo.name}</span>
+                      <div className="mt-2 flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs">
+                        <span className="truncate text-slate-700 dark:text-slate-200 font-semibold">{addStaffFiles.photo.name}</span>
                         <button type="button" onClick={() => setAddStaffFiles(prev => ({ ...prev, photo: null }))} className="text-red-500 hover:text-red-700 font-bold px-2">Remove</button>
                       </div>
                     )}
@@ -2025,8 +2025,8 @@ export default function StaffAssignment() {
                     { key: 'govtIdDocument', label: 'Government-issued ID Document (PDF/Images)' },
                     { key: 'salarySlips', label: 'Salary Slips (PDF/Images, Optional)' }
                   ].map(({ key, label }) => (
-                    <div key={key} className="border border-slate-200 rounded-2xl p-4 bg-slate-50/50">
-                      <label className="block text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-2">{label}</label>
+                    <div key={key} className="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-slate-50/50">
+                      <label className="block text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">{label}</label>
                       <input
                         type="file"
                         multiple
@@ -2052,8 +2052,8 @@ export default function StaffAssignment() {
                       {(addStaffFiles[key] || []).length > 0 && (
                         <div className="mt-2 space-y-1">
                           {(addStaffFiles[key] || []).map((file, idx) => (
-                            <div key={`${key}_${idx}`} className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-2 text-xs">
-                              <span className="truncate text-slate-700 font-semibold">{file.name}</span>
+                            <div key={`${key}_${idx}`} className="flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs">
+                              <span className="truncate text-slate-700 dark:text-slate-200 font-semibold">{file.name}</span>
                               <button
                                 type="button"
                                 onClick={() => {
@@ -2078,10 +2078,10 @@ export default function StaffAssignment() {
               )}
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
               <button
                 onClick={() => setAddStaffModalOpen(false)}
-                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -2107,9 +2107,9 @@ export default function StaffAssignment() {
       {/* View Staff Details Modal */}
       {viewStaffModalOpen && selectedStaffToView && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Users className="text-indigo-600" />
                 {isStaffEditMode ? 'Edit Staff Details' : 'Staff Details'}
               </h2>
@@ -2135,7 +2135,7 @@ export default function StaffAssignment() {
                   onClick={() => setAddStaffActiveTab(tab)}
                   className={`px-5 py-3.5 text-sm font-semibold border-b-2 whitespace-nowrap transition-all ${
                     addStaffActiveTab === tab
-                      ? 'border-indigo-600 text-indigo-700 bg-white'
+                      ? 'border-indigo-600 text-indigo-700 bg-white dark:bg-slate-900'
                       : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
                   }`}
                 >
@@ -2159,48 +2159,48 @@ export default function StaffAssignment() {
                           ['emergencyContact','Emergency Contact'], ['fatherName','Father / Guardian Name']
                         ].map(([field, label]) => (
                           <div key={field}>
-                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">{label}</label>
+                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">{label}</label>
                             <input
                               type={field === 'dob' ? 'date' : field === 'email' ? 'email' : 'text'}
                               value={editStaffData[field] || ''}
                               onChange={e => setEditStaffData({...editStaffData, [field]: e.target.value})}
-                              className={`w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 ${editStaffErrors[field] ? 'border-red-400 bg-red-50' : 'border-slate-200 bg-white'}`}
+                              className={`w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 ${editStaffErrors[field] ? 'border-red-400 bg-red-50' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'}`}
                             />
                             {editStaffErrors[field] && <p className="text-red-500 text-xs mt-1">{editStaffErrors[field]}</p>}
                           </div>
                         ))}
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Gender</label>
-                          <select value={editStaffData.gender || 'Male'} onChange={e => setEditStaffData({...editStaffData, gender: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Gender</label>
+                          <select value={editStaffData.gender || 'Male'} onChange={e => setEditStaffData({...editStaffData, gender: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
                             {['Male','Female','Other'].map(g => <option key={g}>{g}</option>)}
                           </select>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Marital Status</label>
-                          <select value={editStaffData.maritalStatus || 'Single'} onChange={e => setEditStaffData({...editStaffData, maritalStatus: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Marital Status</label>
+                          <select value={editStaffData.maritalStatus || 'Single'} onChange={e => setEditStaffData({...editStaffData, maritalStatus: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
                             {['Single','Married','Divorced','Widowed'].map(s => <option key={s}>{s}</option>)}
                           </select>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Status</label>
-                          <select value={editStaffData.status || 'Active'} onChange={e => setEditStaffData({...editStaffData, status: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Status</label>
+                          <select value={editStaffData.status || 'Active'} onChange={e => setEditStaffData({...editStaffData, status: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
                             <option>Active</option><option>Inactive</option>
                           </select>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Staff Type</label>
-                          <select value={editStaffData.staff_type || 'teaching'} onChange={e => setEditStaffData({...editStaffData, staff_type: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Staff Type</label>
+                          <select value={editStaffData.staff_type || 'teaching'} onChange={e => setEditStaffData({...editStaffData, staff_type: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
                             <option value="teaching">Teaching Staff</option>
                             <option value="non-teaching">Non-Teaching Staff</option>
                           </select>
                         </div>
                         <div className="sm:col-span-3">
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Residential Address</label>
-                          <textarea rows={2} value={editStaffData.residentialAddress || ''} onChange={e => setEditStaffData({...editStaffData, residentialAddress: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Residential Address</label>
+                          <textarea rows={2} value={editStaffData.residentialAddress || ''} onChange={e => setEditStaffData({...editStaffData, residentialAddress: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                         </div>
                       </div>
 
-                      <div className="mt-6 pt-6 border-t border-slate-100">
+                      <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
                         <CustomFieldsRenderer
                           moduleKey="staff"
                           customData={editStaffData.customData}
@@ -2226,12 +2226,12 @@ export default function StaffAssignment() {
                           ['professionalCertifications','Professional Certifications']
                         ].map(([field, label]) => (
                           <div key={field}>
-                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">{label}</label>
-                            <input type="text" value={editStaffData[field] || ''} onChange={e => setEditStaffData({...editStaffData, [field]: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
+                            <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">{label}</label>
+                            <input type="text" value={editStaffData[field] || ''} onChange={e => setEditStaffData({...editStaffData, [field]: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
                           </div>
                         ))}
                         <div className="col-span-1 sm:col-span-2">
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Assigned Roles *</label>
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Assigned Roles *</label>
                           <select
                             onChange={(e) => {
                               const val = e.target.value;
@@ -2248,7 +2248,7 @@ export default function StaffAssignment() {
                               }
                               e.target.value = '';
                             }}
-                            className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+                            className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
                           >
                             <option value="">-- Choose a role to add --</option>
                             {allRoles.map(roleOption => {
@@ -2288,8 +2288,8 @@ export default function StaffAssignment() {
                           </div>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Staff Type</label>
-                          <select value={editStaffData.staff_type || 'teaching'} onChange={e => setEditStaffData({...editStaffData, staff_type: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                          <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Staff Type</label>
+                          <select value={editStaffData.staff_type || 'teaching'} onChange={e => setEditStaffData({...editStaffData, staff_type: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
                             <option value="teaching">Teaching Staff</option>
                             <option value="non-teaching">Non-Teaching Staff</option>
                           </select>
@@ -2312,8 +2312,8 @@ export default function StaffAssignment() {
                             ['branchName','Branch Name'], ['ifscCode','IFSC Code']
                           ].map(([field, label]) => (
                             <div key={field}>
-                              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">{label}</label>
-                              <input type="text" value={editStaffData[field] || ''} onChange={e => setEditStaffData({...editStaffData, [field]: e.target.value})} className={`w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 ${editStaffErrors[field] ? 'border-red-400 bg-red-50' : 'border-slate-200 bg-white'}`} />
+                              <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">{label}</label>
+                              <input type="text" value={editStaffData[field] || ''} onChange={e => setEditStaffData({...editStaffData, [field]: e.target.value})} className={`w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 ${editStaffErrors[field] ? 'border-red-400 bg-red-50' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'}`} />
                               {editStaffErrors[field] && <p className="text-red-500 text-xs mt-1">{editStaffErrors[field]}</p>}
                             </div>
                           ))}
@@ -2342,14 +2342,14 @@ export default function StaffAssignment() {
                         const existingFiles = editStaffData[key] || selectedStaffToView[key] || [];
                         const newFiles = editStaffDocFiles[key] || [];
                         return (
-                          <div key={key} className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
-                            <label className="block text-xs font-extrabold text-slate-600 uppercase tracking-wider mb-2">{label}</label>
+                          <div key={key} className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50">
+                            <label className="block text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">{label}</label>
 
                             {/* Existing uploaded files */}
                             {existingFiles.length > 0 && (
                               <div className="grid grid-cols-1 gap-2 mb-3">
                                 {existingFiles.map((file, idx) => (
-                                  <div key={idx} className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-2 text-xs">
+                                  <div key={idx} className="flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2 text-xs">
                                     <button
                                       type="button"
                                       onClick={() => setPreviewUrl(file.url)}
@@ -2365,7 +2365,7 @@ export default function StaffAssignment() {
                                         newList.splice(idx, 1);
                                         setEditStaffData(prev => ({ ...prev, [key]: newList }));
                                       }}
-                                      className="text-red-500 hover:text-red-700 font-bold px-3 shrink-0 border-l border-slate-100 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                      className="text-red-500 hover:text-red-700 font-bold px-3 shrink-0 border-l border-slate-100 dark:border-slate-800 flex items-center justify-center p-1 hover:bg-red-50 rounded"
                                       title="Delete Document"
                                     >
                                       <Trash size={16} />
@@ -2438,16 +2438,16 @@ export default function StaffAssignment() {
                 <>
               {addStaffActiveTab === 'Personal Info' && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="flex items-center gap-4 pb-6 border-b border-slate-100">
+                  <div className="flex items-center gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
                     {selectedStaffToView.photoUrl ? (
-                      <img src={selectedStaffToView.photoUrl} alt="Staff Photograph" className="w-16 h-16 rounded-full object-cover border border-slate-200" />
+                      <img src={selectedStaffToView.photoUrl} alt="Staff Photograph" className="w-16 h-16 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
                     ) : (
                       <div className="w-16 h-16 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-2xl">
                         {(selectedStaffToView.name || `${selectedStaffToView.firstName} ${selectedStaffToView.lastName}`).charAt(0)}
                       </div>
                     )}
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900">
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                         {selectedStaffToView.name || `${selectedStaffToView.firstName} ${selectedStaffToView.lastName}`}
                       </h3>
                       <div className="flex flex-wrap gap-1 mt-1">
@@ -2461,66 +2461,66 @@ export default function StaffAssignment() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Staff ID</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.staffId || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.staffId || '—'}</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Email Address</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.email || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.email || '—'}</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mobile Number</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.mobileNumber || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.mobileNumber || '—'}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date of Birth</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.dob || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.dob || '—'}</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gender</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.gender || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.gender || '—'}</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nationality</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.nationality || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.nationality || '—'}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Marital Status</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.maritalStatus || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.maritalStatus || '—'}</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Blood Group</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.bloodGroup || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.bloodGroup || '—'}</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Emergency Contact</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.emergencyContact || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.emergencyContact || '—'}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Father / Guardian Name</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.fatherGuardianName || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.fatherGuardianName || '—'}</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Languages Known</label>
-                      <p className="text-slate-900 font-semibold">{selectedStaffToView.languagesKnown || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.languagesKnown || '—'}</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Joined Date</label>
-                      <p className="text-slate-900 font-semibold">
+                      <p className="text-slate-900 dark:text-white font-semibold">
                         {selectedStaffToView.createdAt ? new Date(selectedStaffToView.createdAt).toLocaleDateString('en-GB') : 'N/A'}
                       </p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Staff Type</label>
-                      <p className="text-slate-900 font-semibold capitalize">
+                      <p className="text-slate-900 dark:text-white font-semibold capitalize">
                         {selectedStaffToView.staff_type || 'teaching'}
                       </p>
                     </div>
@@ -2528,10 +2528,10 @@ export default function StaffAssignment() {
 
                   <div>
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Residential Address</label>
-                    <p className="text-slate-900 font-semibold whitespace-pre-line">{selectedStaffToView.residentialAddress || '—'}</p>
+                    <p className="text-slate-900 dark:text-white font-semibold whitespace-pre-line">{selectedStaffToView.residentialAddress || '—'}</p>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-slate-100">
+                  <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
                     <CustomFieldsRenderer 
                       moduleKey="staff"
                       customData={selectedStaffToView.customData || {}}
@@ -2543,50 +2543,50 @@ export default function StaffAssignment() {
 
               {addStaffActiveTab === 'Education & Work' && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
-                    <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Academic Qualifications</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200/60">
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Academic Qualifications</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Highest Qualification</label>
-                        <p className="text-slate-900 font-semibold">{selectedStaffToView.highestQualification || '—'}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.highestQualification || '—'}</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Degree & Specialization</label>
-                        <p className="text-slate-900 font-semibold">{selectedStaffToView.degreeSpecialization || '—'}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.degreeSpecialization || '—'}</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">University / College</label>
-                        <p className="text-slate-900 font-semibold">{selectedStaffToView.universityName || '—'}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.universityName || '—'}</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Year of Passing</label>
-                        <p className="text-slate-900 font-semibold">{selectedStaffToView.yearOfPassing || '—'}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.yearOfPassing || '—'}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
-                    <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Professional Experience</h4>
+                  <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200/60">
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Professional Experience</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Previous Experience (Years)</label>
-                        <p className="text-slate-900 font-semibold">{selectedStaffToView.previousExperience || '0'}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.previousExperience || '0'}</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Previous Organization</label>
-                        <p className="text-slate-900 font-semibold">{selectedStaffToView.previousOrganization || '—'}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.previousOrganization || '—'}</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subject Specialization</label>
-                        <p className="text-slate-900 font-semibold">{selectedStaffToView.subjectSpecialization || '—'}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.subjectSpecialization || '—'}</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Grades/Classes Handled</label>
-                        <p className="text-slate-900 font-semibold">{selectedStaffToView.gradesClassesHandled || '—'}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.gradesClassesHandled || '—'}</p>
                       </div>
                       <div className="col-span-1 sm:col-span-2">
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Professional Certifications</label>
-                        <p className="text-slate-900 font-semibold">{selectedStaffToView.professionalCertifications || '—'}</p>
+                        <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.professionalCertifications || '—'}</p>
                       </div>
                     </div>
                   </div>
@@ -2598,62 +2598,62 @@ export default function StaffAssignment() {
                   {/* Authorized check */}
                   {(userProfile?.role?.toLowerCase() === 'admin' || userProfile?.role?.toLowerCase() === 'superadmin') ? (
                     <>
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
-                        <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Government Identity & Payroll</h4>
+                      <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200/60">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Government Identity & Payroll</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Government ID Type</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.govtIdType || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.govtIdType || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Government ID Number</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.govtIdNumber || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.govtIdNumber || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Aadhaar Number</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.aadharNumber || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.aadharNumber || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">PAN Number</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.panNumber || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.panNumber || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">PF Number</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.pfNumber || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.pfNumber || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ESIC Number</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.esicNumber || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.esicNumber || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">UAN Number</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.uanNumber || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.uanNumber || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tax Identification Details</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.taxIdDetails || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.taxIdDetails || '—'}</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
-                        <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">Banking Details</h4>
+                      <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200/60">
+                        <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Banking Details</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Bank Name</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.bankName || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.bankName || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Bank Account Number</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.bankAccountNumber || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.bankAccountNumber || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Branch Name</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.branchName || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.branchName || '—'}</p>
                           </div>
                           <div>
                             <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">IFSC Code</label>
-                            <p className="text-slate-900 font-semibold">{selectedStaffToView.ifscCode || '—'}</p>
+                            <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.ifscCode || '—'}</p>
                           </div>
                         </div>
                       </div>
@@ -2680,7 +2680,7 @@ export default function StaffAssignment() {
                   ].map(({ key, label }) => {
                     const files = selectedStaffToView[key] || [];
                     return (
-                      <div key={key} className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                      <div key={key} className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50">
                         <label className="block text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">{label}</label>
                         {files.length > 0 ? (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -2689,7 +2689,7 @@ export default function StaffAssignment() {
                                 key={idx}
                                 type="button"
                                 onClick={() => setPreviewUrl(file.url)}
-                                className="flex items-center gap-2 p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-xs font-semibold text-indigo-600 text-left"
+                                className="flex items-center gap-2 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 transition-colors text-xs font-semibold text-indigo-600 text-left"
                               >
                                 <Eye size={14} />
                                 <span className="truncate">{file.name}</span>
@@ -2708,12 +2708,12 @@ export default function StaffAssignment() {
               )}
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
               {isStaffEditMode ? (
                 <>
                   <button
                     onClick={() => { setIsStaffEditMode(false); setEditStaffData(null); setEditStaffErrors({}); setEditStaffDocFiles({}); }}
-                    className="px-6 py-2.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                    className="px-6 py-2.5 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
@@ -2745,7 +2745,7 @@ export default function StaffAssignment() {
                   </button>
                   <button
                     onClick={() => { setViewStaffModalOpen(false); setIsStaffEditMode(false); setEditStaffData(null); setEditStaffDocFiles({}); }}
-                    className="px-6 py-2.5 bg-slate-200 text-slate-700 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                    className="px-6 py-2.5 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
                   >
                     Close
                   </button>
@@ -2771,10 +2771,10 @@ export default function StaffAssignment() {
       {/* Export Columns & Filename Modal */}
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50 animate-fade-in">
-          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up border border-slate-100">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up border border-slate-100 dark:border-slate-800">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Export Staff Directory</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Export Staff Directory</h3>
                 <p className="text-xs text-slate-500 mt-0.5">Customize file settings and select columns to export.</p>
               </div>
               <button 
@@ -2795,9 +2795,9 @@ export default function StaffAssignment() {
                     value={exportFileName}
                     onChange={(e) => setExportFileName(e.target.value)}
                     placeholder="Enter file name"
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all pr-12 font-medium"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all pr-12 font-medium"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 px-2 py-1 rounded-md">.xlsx</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md">.xlsx</span>
                 </div>
               </div>
 
@@ -2819,14 +2819,14 @@ export default function StaffAssignment() {
                       className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all ${
                         selectedFields[key] 
                           ? 'border-primary-200 bg-primary-50/30 text-primary-900 font-semibold' 
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                          : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-600 dark:text-slate-300'
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={selectedFields[key]}
                         onChange={() => handleFieldToggle(key)}
-                        className="rounded border-slate-300 text-primary-600 focus:ring-primary-500 h-4 w-4"
+                        className="rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500 h-4 w-4"
                       />
                       <span className="text-xs">{label}</span>
                     </label>
@@ -2835,10 +2835,10 @@ export default function StaffAssignment() {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors text-sm"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors text-sm"
               >
                 Cancel
               </button>

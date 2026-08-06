@@ -35,18 +35,18 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/70 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col animate-fade-in-up">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col animate-fade-in-up">
         
         {/* Header */}
-        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-          <h3 className="text-lg font-bold text-slate-800">Crop Profile Photo</h3>
+        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
+          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Crop Profile Photo</h3>
           <button onClick={onCancel} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
             <LuX size={20} />
           </button>
         </div>
 
         {/* Cropper Container */}
-        <div className="relative w-full h-64 sm:h-80 bg-slate-100">
+        <div className="relative w-full h-64 sm:h-80 bg-slate-100 dark:bg-slate-700">
           <Cropper
             image={imageSrc}
             crop={crop}
@@ -61,7 +61,7 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
         </div>
 
         {/* Controls */}
-        <div className="p-6 bg-white space-y-6">
+        <div className="p-6 bg-white dark:bg-slate-900 space-y-6">
           <div className="flex items-center gap-4">
             <LuZoomOut className="text-slate-400" />
             <input
@@ -80,7 +80,7 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
           <div className="flex gap-3 justify-end">
             <button
               onClick={onCancel}
-              className="px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+              className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 rounded-xl transition-colors"
             >
               Cancel
             </button>

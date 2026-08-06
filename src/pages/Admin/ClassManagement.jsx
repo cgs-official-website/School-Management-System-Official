@@ -250,14 +250,14 @@ export default function ClassManagement() {
     <div className="p-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Class & Section Management</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Class & Section Management</h1>
           <p className="text-slate-500 mt-1">Define the academic structure and categories of your institution.</p>
         </div>
         <div className="flex gap-3">
           {hasCreatePermission && (
             <button 
               onClick={() => setShowCategoryModal(true)}
-              className="px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-xl font-medium hover:bg-slate-50 shadow-sm flex items-center gap-2 transition-colors"
+              className="px-4 py-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl font-medium hover:bg-slate-50 shadow-sm flex items-center gap-2 transition-colors"
             >
               <LuTags size={18} /> Manage Categories
             </button>
@@ -280,15 +280,15 @@ export default function ClassManagement() {
       </div>
 
       {showForm && (
-        <div className="mb-8 p-6 bg-white rounded-2xl border border-slate-200 shadow-sm animate-fade-in-down">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">{editingId ? 'Edit Class' : 'Add New Class'}</h3>
+        <div className="mb-8 p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm animate-fade-in-down">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">{editingId ? 'Edit Class' : 'Add New Class'}</h3>
           <form onSubmit={handleCreate} className="flex flex-col md:flex-row gap-4 items-end">
             <div className="w-full md:w-64">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Category <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Category <span className="text-red-500">*</span></label>
               <select
                 value={formData.categoryId}
                 onChange={(e) => setFormData({...formData, categoryId: e.target.value})}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white shadow-sm"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 shadow-sm"
                 required
               >
                 <option value="">Select Category...</option>
@@ -298,24 +298,24 @@ export default function ClassManagement() {
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Class/Grade Name <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Class/Grade Name <span className="text-red-500">*</span></label>
               <input 
                 type="text" 
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
                 placeholder="e.g., Grade 10, Freshman"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 required
               />
             </div>
             <div className="w-full md:w-48">
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Section/Group <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Section/Group <span className="text-red-500">*</span></label>
               <input 
                 type="text" 
                 value={formData.section}
                 onChange={(e) => setFormData({...formData, section: e.target.value})}
                 placeholder="e.g., A, B, Science"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent uppercase transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent uppercase transition-all"
                 required
               />
             </div>
@@ -331,7 +331,7 @@ export default function ClassManagement() {
       )}
 
       {classes.length > 0 && (
-        <div className="mb-6 p-4 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col md:flex-row gap-4 items-center">
+        <div className="mb-6 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm flex flex-col md:flex-row gap-4 items-center">
           <div className="flex items-center gap-2 text-slate-500 font-medium">
             <LuFilter size={18} />
             <span>Filters:</span>
@@ -339,7 +339,7 @@ export default function ClassManagement() {
           <select 
             value={filters.categoryId}
             onChange={(e) => setFilters({...filters, categoryId: e.target.value})}
-            className="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary-500 outline-none"
+            className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary-500 outline-none"
           >
             <option value="All">All Categories</option>
             {allCategories.map(cat => (
@@ -350,7 +350,7 @@ export default function ClassManagement() {
           <select 
             value={filters.className}
             onChange={(e) => setFilters({...filters, className: e.target.value})}
-            className="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary-500 outline-none"
+            className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary-500 outline-none"
           >
             <option value="All">All Classes</option>
             {uniqueClassNames.map(name => (
@@ -361,7 +361,7 @@ export default function ClassManagement() {
           <select 
             value={filters.section}
             onChange={(e) => setFilters({...filters, section: e.target.value})}
-            className="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary-500 outline-none"
+            className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary-500 outline-none"
           >
             <option value="All">All Sections</option>
             {uniqueSections.map(sec => (
@@ -381,11 +381,11 @@ export default function ClassManagement() {
       )}
 
       {filteredClasses.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 shadow-sm">
-          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
             <BookOpen size={32} className="text-slate-400" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">{classes.length === 0 ? 'No classes found' : 'No classes match filters'}</h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">{classes.length === 0 ? 'No classes found' : 'No classes match filters'}</h3>
           <p className="text-slate-500 mt-1 mb-6">
             {classes.length === 0 ? 'Start by creating classes and sections before admitting students.' : 'Try adjusting or clearing your filters.'}
           </p>
@@ -404,7 +404,7 @@ export default function ClassManagement() {
             <div 
               key={cls.id} 
               onClick={() => hasEditPermission && handleEditClick(cls)}
-              className={`bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow relative group ${hasEditPermission ? 'cursor-pointer' : 'cursor-default'}`}
+              className={`bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 hover:shadow-md transition-shadow relative group ${hasEditPermission ? 'cursor-pointer' : 'cursor-default'}`}
             >
               <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 z-10 transition-opacity">
                 {hasEditPermission && (
@@ -432,9 +432,9 @@ export default function ClassManagement() {
                   <BookOpen size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">{cls.name}</h3>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">{cls.name}</h3>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                       Section {cls.section}
                     </span>
                     {cls.categoryId && (
@@ -446,7 +446,7 @@ export default function ClassManagement() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-slate-500 text-sm mt-4 pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-2 text-slate-500 text-sm mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <Users size={16} />
                 <span>{classStats[cls.id] || 0} Students currently assigned</span>
               </div>
@@ -458,24 +458,24 @@ export default function ClassManagement() {
       {/* Category Management Modal */}
       {showCategoryModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-xl animate-scale-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md overflow-hidden shadow-xl animate-scale-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Manage Categories</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Manage Categories</h3>
                 <p className="text-sm text-slate-500">Add or remove custom class categories</p>
               </div>
               <button onClick={() => setShowCategoryModal(false)} className="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-50 transition-colors">
                 <LuX size={20} />
               </button>
             </div>
-            <div className="p-6 bg-slate-50">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800">
               <form onSubmit={handleAddCategory} className="flex gap-2">
                 <input 
                   type="text" 
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
                   placeholder="New category name..."
-                  className="flex-1 px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  className="flex-1 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
                   required
                 />
                 <button 
@@ -488,10 +488,10 @@ export default function ClassManagement() {
             </div>
             <div className="max-h-64 overflow-y-auto p-2">
               {allCategories.map(cat => (
-                <div key={cat.id} className="flex items-center justify-between p-3 mx-2 my-1 bg-white rounded-xl border border-slate-100 hover:border-slate-200 transition-colors">
-                  <span className="font-semibold text-slate-700">{cat.name}</span>
+                <div key={cat.id} className="flex items-center justify-between p-3 mx-2 my-1 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 transition-colors">
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">{cat.name}</span>
                   {cat.isDefault ? (
-                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-500 rounded-md">Default</span>
+                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 rounded-md">Default</span>
                   ) : (
                     <button 
                       onClick={() => handleDeleteCategory(cat.id)}
@@ -504,10 +504,10 @@ export default function ClassManagement() {
                 </div>
               ))}
             </div>
-            <div className="p-4 border-t border-slate-100 bg-slate-50 text-right">
+            <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-right">
               <button 
                 onClick={() => setShowCategoryModal(false)}
-                className="px-6 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                className="px-6 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors"
               >
                 Close
               </button>

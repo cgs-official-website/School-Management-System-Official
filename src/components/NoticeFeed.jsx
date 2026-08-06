@@ -33,7 +33,7 @@ export default function NoticeFeed({ audienceRole }) {
   return (
     <div className="p-8 max-w-4xl mx-auto pb-24">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
           <Bell className="text-primary-600" />
           Noticeboard
         </h1>
@@ -42,9 +42,9 @@ export default function NoticeFeed({ audienceRole }) {
 
       <div className="space-y-4">
         {notices.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center text-slate-500">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500">
             <Bell size={48} className="mx-auto mb-4 text-slate-300" />
-            <p className="text-lg font-medium text-slate-900">No active notices</p>
+            <p className="text-lg font-medium text-slate-900 dark:text-white">No active notices</p>
             <p>You're all caught up!</p>
           </div>
         ) : (
@@ -53,8 +53,8 @@ export default function NoticeFeed({ audienceRole }) {
             return (
               <div 
                 key={notice.id} 
-                className={`bg-white rounded-3xl border p-6 flex flex-col gap-4 shadow-sm transition-all
-                  ${isHighPriority ? 'border-red-200 bg-red-50/10' : 'border-slate-200'}
+                className={`bg-white dark:bg-slate-900 rounded-3xl border p-6 flex flex-col gap-4 shadow-sm transition-all
+                  ${isHighPriority ? 'border-red-200 bg-red-50/10' : 'border-slate-200 dark:border-slate-700'}
                 `}
               >
                 <div>
@@ -70,14 +70,14 @@ export default function NoticeFeed({ audienceRole }) {
                       })}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900">{notice.title}</h3>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">{notice.title}</h3>
                 </div>
                 
-                <div className="text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">
+                <div className="text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap font-medium">
                   {notice.message}
                 </div>
                 
-                <div className="text-sm font-medium text-slate-400 pt-2 border-t border-slate-100">
+                <div className="text-sm font-medium text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
                   Posted by: {notice.authorName}
                 </div>
               </div>

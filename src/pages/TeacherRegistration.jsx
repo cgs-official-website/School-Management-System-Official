@@ -145,8 +145,8 @@ export default function TeacherRegistration() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center p-4 sm:p-8">
-      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[90vh] max-h-[800px] min-h-[600px] border border-slate-100">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center p-4 sm:p-8">
+      <div className="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[90vh] max-h-[800px] min-h-[600px] border border-slate-100 dark:border-slate-800">
         
         {/* Left Gradient Panel */}
         <div className="w-full md:w-1/2 p-4 hidden md:flex flex-col relative overflow-hidden">
@@ -170,7 +170,7 @@ export default function TeacherRegistration() {
         </div>
 
         {/* Right Form Panel */}
-        <div className="w-full md:w-1/2 p-6 sm:p-8 lg:p-12 flex flex-col bg-white relative overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <div className="w-full md:w-1/2 p-6 sm:p-8 lg:p-12 flex flex-col bg-white dark:bg-slate-900 relative overflow-y-auto overflow-x-hidden custom-scrollbar">
           
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
@@ -191,7 +191,7 @@ export default function TeacherRegistration() {
                       </div>
                     )}
                     <div>
-                      <h2 className="text-lg font-bold text-slate-900 leading-tight">{school.schoolName || school.name}</h2>
+                      <h2 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">{school.schoolName || school.name}</h2>
                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Staff</p>
                     </div>
                   </div>
@@ -204,7 +204,7 @@ export default function TeacherRegistration() {
               </div>
 
               <div className="mb-8">
-                <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">Create an account</h2>
+                <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">Create an account</h2>
                 <p className="text-sm text-slate-500">Access your tasks, notes, and projects anytime, anywhere - and keep everything flowing in one place.</p>
               </div>
 
@@ -217,20 +217,20 @@ export default function TeacherRegistration() {
               <form className="w-full space-y-5" onSubmit={handleRegister}>
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <label className="block text-sm font-bold text-slate-700">Full Name</label>
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200">Full Name</label>
                     <input
                       name="name"
                       type="text"
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
                       placeholder="John Doe"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-sm font-bold text-slate-700">Your email</label>
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200">Your email</label>
                     <input
                       name="email"
                       type="email"
@@ -238,13 +238,13 @@ export default function TeacherRegistration() {
                       disabled={!!urlEmail}
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
                       placeholder="you@example.com"
                     />
                   </div>
                   
                   <div className="space-y-1">
-                    <label className="block text-sm font-bold text-slate-700">Employee ID</label>
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200">Employee ID</label>
                     <input
                       name="employeeId"
                       type="text"
@@ -252,20 +252,20 @@ export default function TeacherRegistration() {
                       disabled={!!urlEmpId}
                       value={formData.employeeId}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
                       placeholder="EMP-1024"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-sm font-bold text-slate-700">Password</label>
+                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200">Password</label>
                     <input
                       name="password"
                       type="password"
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
                       placeholder="••••••••"
                     />
                   </div>
@@ -273,17 +273,17 @@ export default function TeacherRegistration() {
 
                 {/* Dynamic Custom Fields */}
                 {formConfig.length > 0 && (
-                  <div className="space-y-4 pt-4 border-t border-slate-100 mt-4">
+                  <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4">
                     {formConfig.map((field) => (
                       <div key={field.name} className="space-y-1">
-                        <label className="block text-sm font-bold text-slate-700">{field.label}</label>
+                        <label className="block text-sm font-bold text-slate-700 dark:text-slate-200">{field.label}</label>
                         <input
                           name={field.name}
                           type="text"
                           required={field.required}
                           value={customFieldsData[field.name] || ''}
                           onChange={handleCustomFieldChange}
-                          className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50 placeholder-slate-400"
+                          className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
                           placeholder={field.label}
                         />
                       </div>
@@ -292,7 +292,7 @@ export default function TeacherRegistration() {
                 )}
 
                 <div className="pt-2">
-                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                  <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
                     <Captcha ref={captchaRef} onChange={setCaptchaValid} />
                   </div>
                 </div>

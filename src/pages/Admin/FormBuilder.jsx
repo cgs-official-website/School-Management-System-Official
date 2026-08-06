@@ -464,7 +464,7 @@ export default function FormBuilder() {
     <div className="p-8 max-w-5xl mx-auto pb-24">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <Settings className="text-primary-600" />
             Module Customization
           </h1>
@@ -473,16 +473,16 @@ export default function FormBuilder() {
       </div>
 
       {/* Tabs */}
-        <div className="flex bg-white rounded-xl shadow-sm border border-slate-200 p-1 mb-6">
+        <div className="flex bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-1 mb-6">
           <button
             onClick={() => setActiveTab('schema')}
-            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === 'schema' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 hover:bg-slate-50'}`}
+            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === 'schema' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50'}`}
           >
             Form Schema Builder
           </button>
           <button
             onClick={() => setActiveTab('manager')}
-            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === 'manager' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 hover:bg-slate-50'}`}
+            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === 'manager' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50'}`}
           >
             Sidebar & Modules Manager
           </button>
@@ -490,10 +490,10 @@ export default function FormBuilder() {
 
         {/* --- Sidebar & Modules Manager Tab --- */}
         {activeTab === 'manager' && (
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <div>
-                <h2 className="text-lg font-semibold text-slate-800">Sidebar & Modules Manager</h2>
+                <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Sidebar & Modules Manager</h2>
                 <p className="text-sm text-slate-500 mt-1">Create custom modules or drag ANY module to reorder your sidebar.</p>
               </div>
             </div>
@@ -506,7 +506,7 @@ export default function FormBuilder() {
                   placeholder="Enter new custom module name (e.g. Alumni)"
                   value={newModuleName}
                   onChange={e => setNewModuleName(e.target.value)}
-                  className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all outline-none"
+                  className="flex-1 px-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all outline-none"
                 />
                 <button
                   onClick={handleCreateModule}
@@ -519,20 +519,20 @@ export default function FormBuilder() {
 
               {/* Unified List */}
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-slate-600 uppercase tracking-wider mb-4">Sidebar Order</h3>
+                <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-4">Sidebar Order</h3>
                 {loadingModules ? (
                   <div className="text-slate-500 text-sm">Loading modules...</div>
                 ) : unifiedModules.length === 0 ? (
                   <div className="text-slate-500 text-sm text-center py-8">No modules found.</div>
                 ) : (
                   unifiedModules.map((mod, idx) => (
-                    <div key={mod.id} className={`flex items-center justify-between p-4 bg-white border ${mod.isCore ? 'border-slate-200' : 'border-primary-100'} rounded-xl hover:shadow-md transition-shadow group`}>
+                    <div key={mod.id} className={`flex items-center justify-between p-4 bg-white dark:bg-slate-900 border ${mod.isCore ? 'border-slate-200 dark:border-slate-700' : 'border-primary-100'} rounded-xl hover:shadow-md transition-shadow group`}>
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${mod.isCore ? 'bg-slate-100 text-slate-600' : 'bg-primary-50 text-primary-600'}`}>
+                        <div className={`p-2 rounded-lg ${mod.isCore ? 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300' : 'bg-primary-50 text-primary-600'}`}>
                           {mod.isCore ? <Settings size={18} /> : <LayoutGrid size={18} />}
                         </div>
                         <div>
-                          <p className="font-medium text-slate-800">{mod.name}</p>
+                          <p className="font-medium text-slate-800 dark:text-slate-100">{mod.name}</p>
                           <p className="text-xs text-slate-500">{mod.isCore ? 'Built-in Module' : 'Custom Module'}</p>
                         </div>
                       </div>
@@ -579,7 +579,7 @@ export default function FormBuilder() {
             <select
               value={activeModule}
               onChange={(e) => setActiveModule(e.target.value)}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white shadow-sm flex-1 md:w-64 font-semibold text-slate-700"
+              className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 shadow-sm flex-1 md:w-64 font-semibold text-slate-700 dark:text-slate-200"
             >
               {allModulesOptions.map(m => (
                 <option key={m.id} value={m.id}>{m.name}</option>
@@ -589,7 +589,7 @@ export default function FormBuilder() {
             <div className="flex items-center gap-3 flex-wrap">
               <div className="flex items-center gap-2">
                 <select
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white shadow-sm text-sm font-semibold text-slate-700"
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 shadow-sm text-sm font-semibold text-slate-700 dark:text-slate-200"
                   value={importModuleId}
                   onChange={(e) => setImportModuleId(e.target.value)}
                 >
@@ -628,9 +628,9 @@ export default function FormBuilder() {
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <Folder size={20} className="text-primary-500" />
                 Module Structure
               </h2>
@@ -648,9 +648,9 @@ export default function FormBuilder() {
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
                 </div>
               ) : sections.length === 0 ? (
-                <div className="text-center p-16 text-slate-500 border-2 border-dashed border-slate-200 rounded-2xl bg-white">
+                <div className="text-center p-16 text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-900">
                   <Folder size={48} className="mx-auto mb-4 text-slate-300" />
-                  <p className="text-lg font-bold text-slate-700 mb-2">No sections defined yet</p>
+                  <p className="text-lg font-bold text-slate-700 dark:text-slate-200 mb-2">No sections defined yet</p>
                   <p className="mb-6">Start building this module by adding a section.</p>
                   <button 
                     onClick={addSection}
@@ -662,9 +662,9 @@ export default function FormBuilder() {
               ) : (
                 <div className="space-y-8">
                   {sections.map((section, sIndex) => (
-                    <div key={section.id} className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden transition-colors hover:border-primary-200">
+                    <div key={section.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden transition-colors hover:border-primary-200">
                       {/* Section Header */}
-                      <div className="p-4 border-b border-slate-100 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-3 flex-1">
                           <div className="flex flex-col justify-center gap-1 shrink-0 text-slate-400">
                             <button onClick={() => moveSection(sIndex, 'up')} disabled={sIndex === 0} className="p-1 hover:text-primary-600 hover:bg-primary-50 rounded disabled:opacity-30">
@@ -678,7 +678,7 @@ export default function FormBuilder() {
                             type="text"
                             value={section.title}
                             onChange={(e) => updateSectionTitle(section.id, e.target.value)}
-                            className="flex-1 max-w-sm px-3 py-2 text-lg font-bold text-slate-800 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500"
+                            className="flex-1 max-w-sm px-3 py-2 text-lg font-bold text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary-500"
                             placeholder="Section Title"
                           />
                         </div>
@@ -695,12 +695,12 @@ export default function FormBuilder() {
                       {/* Section Fields */}
                       <div className="p-4 space-y-4">
                         {section.fields.length === 0 ? (
-                          <div className="text-center p-6 text-sm font-medium text-slate-400 border border-dashed border-slate-200 rounded-xl">
+                          <div className="text-center p-6 text-sm font-medium text-slate-400 border border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
                             No fields in this section.
                           </div>
                         ) : (
                           section.fields.map((field, fIndex) => (
-                            <div key={field.id} className="p-4 border border-slate-200 rounded-xl bg-slate-50/50 flex gap-4 hover:border-slate-300 transition-colors flex-wrap md:flex-nowrap">
+                            <div key={field.id} className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 flex gap-4 hover:border-slate-300 transition-colors flex-wrap md:flex-nowrap">
                               <div className="flex flex-col justify-center gap-1 shrink-0 text-slate-400">
                                 <button onClick={() => moveField(section.id, fIndex, 'up')} disabled={fIndex === 0} className="p-1 hover:text-primary-600 hover:bg-primary-50 rounded disabled:opacity-30">
                                   <MoveUp size={16} />
@@ -717,7 +717,7 @@ export default function FormBuilder() {
                                     type="text" 
                                     value={field.label}
                                     onChange={(e) => updateField(section.id, field.id, 'label', e.target.value)}
-                                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary-500 text-sm font-medium"
+                                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-sm font-medium"
                                     placeholder="e.g. Blood Group"
                                   />
                                 </div>
@@ -727,7 +727,7 @@ export default function FormBuilder() {
                                   <select 
                                     value={field.type}
                                     onChange={(e) => updateField(section.id, field.id, 'type', e.target.value)}
-                                    className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary-500 text-sm bg-white font-medium text-slate-700"
+                                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-slate-900 font-medium text-slate-700 dark:text-slate-200"
                                   >
                                     {fieldTypes.map(t => (
                                       <option key={t.value} value={t.value}>{t.label}</option>
@@ -743,7 +743,7 @@ export default function FormBuilder() {
                                         type="text" 
                                         value={field.options || ''}
                                         onChange={(e) => updateField(section.id, field.id, 'options', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary-500 text-sm"
+                                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-sm"
                                         placeholder="e.g. A+, O+, B-"
                                       />
                                     </div>
@@ -754,7 +754,7 @@ export default function FormBuilder() {
                                       <select 
                                         value={field.relationModule || ''}
                                         onChange={(e) => updateField(section.id, field.id, 'relationModule', e.target.value)}
-                                        className="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary-500 text-sm bg-white"
+                                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-slate-900"
                                       >
                                         <option value="">-- Select Module --</option>
                                         {allModulesOptions.map(m => (
@@ -771,7 +771,7 @@ export default function FormBuilder() {
                                       type="checkbox" 
                                       checked={field.required}
                                       onChange={(e) => updateField(section.id, field.id, 'required', e.target.checked)}
-                                      className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                                      className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500"
                                     />
                                     <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-700">Req.</span>
                                   </label>

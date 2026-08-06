@@ -184,7 +184,7 @@ export default function MyChildren() {
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">My Children</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">My Children</h1>
           <p className="text-slate-500 mt-1">Manage personal details of your children.</p>
         </div>
         <button 
@@ -196,11 +196,11 @@ export default function MyChildren() {
       </div>
 
       {children.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-3xl border border-slate-200 shadow-sm">
-          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-primary-500">
+        <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4 text-primary-500">
             <Baby size={32} />
           </div>
-          <h3 className="text-xl font-bold text-slate-900 mb-2">No Children Added</h3>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No Children Added</h3>
           <p className="text-slate-500 max-w-md mx-auto mb-6">You haven't added any children yet. Click the button above to add their details.</p>
           <button 
             onClick={() => setIsModalOpen(true)}
@@ -212,7 +212,7 @@ export default function MyChildren() {
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {children.map((child, index) => (
-            <div key={child.id || index} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-all group relative">
+            <div key={child.id || index} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 hover:shadow-md transition-all group relative">
               <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
                   onClick={() => handleEdit(index)}
@@ -235,9 +235,9 @@ export default function MyChildren() {
                   {child.name.substring(0, 2).toUpperCase()}
                 </div>
                 <div className="min-w-0 pr-16">
-                  <h3 className="text-xl font-bold text-slate-900 truncate">{child.name}</h3>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate">{child.name}</h3>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                       {child.relationship}
                     </span>
                     {child.studentId ? (
@@ -264,14 +264,14 @@ export default function MyChildren() {
                 </div>
               )}
 
-              <div className="space-y-3 text-sm mt-4 pt-4 border-t border-slate-100">
+              <div className="space-y-3 text-sm mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 font-medium">Date of Birth</span>
-                  <span className="font-semibold text-slate-900">{new Date(child.dob).toLocaleDateString('en-GB')}</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">{new Date(child.dob).toLocaleDateString('en-GB')}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 font-medium">Gender</span>
-                  <span className="font-semibold text-slate-900">{child.gender}</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">{child.gender}</span>
                 </div>
                 {child.bloodGroup && (
                   <div className="flex justify-between items-center">
@@ -282,7 +282,7 @@ export default function MyChildren() {
                 {child.schoolName && (
                   <div className="flex justify-between items-center">
                     <span className="text-slate-500 font-medium">School</span>
-                    <span className="font-semibold text-slate-900 truncate max-w-[150px]">{child.schoolName}</span>
+                    <span className="font-semibold text-slate-900 dark:text-white truncate max-w-[150px]">{child.schoolName}</span>
                   </div>
                 )}
               </div>
@@ -294,9 +294,9 @@ export default function MyChildren() {
       {/* Add/Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-scale-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h3 className="text-xl font-bold text-slate-900">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-scale-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 {editingIndex !== null ? 'Edit Child Details' : 'Add Child Details'}
               </h3>
               <button 
@@ -309,37 +309,37 @@ export default function MyChildren() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Full Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Full Name <span className="text-red-500">*</span></label>
                 <input 
                   type="text" 
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="e.g. John Doe"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Date of Birth <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Date of Birth <span className="text-red-500">*</span></label>
                   <input 
                     type="date" 
                     name="dob"
                     value={formData.dob}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-slate-700"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-slate-700 dark:text-slate-200"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Gender</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Gender</label>
                   <select 
                     name="gender"
                     value={formData.gender}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all bg-white dark:bg-slate-900"
                   >
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -350,12 +350,12 @@ export default function MyChildren() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Relationship</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Relationship</label>
                   <select 
                     name="relationship"
                     value={formData.relationship}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all bg-white dark:bg-slate-900"
                   >
                     <option value="Child">Child</option>
                     <option value="Sibling">Sibling</option>
@@ -363,12 +363,12 @@ export default function MyChildren() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Blood Group</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Blood Group</label>
                   <select 
                     name="bloodGroup"
                     value={formData.bloodGroup}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all bg-white dark:bg-slate-900"
                   >
                     <option value="">Select...</option>
                     {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
@@ -379,22 +379,22 @@ export default function MyChildren() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">School Name (Optional)</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">School Name (Optional)</label>
                 <input 
                   type="text" 
                   name="schoolName"
                   value={formData.schoolName}
                   onChange={handleInputChange}
                   placeholder="If studying elsewhere..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
                 />
               </div>
 
-              <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+              <div className="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
                 <button 
                   type="button" 
                   onClick={closeModal}
-                  className="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                  className="px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors"
                 >
                   Cancel
                 </button>
@@ -413,9 +413,9 @@ export default function MyChildren() {
       {/* Link Official Account Modal */}
       {isLinkModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h3 className="text-xl font-bold text-slate-900">Link Official Account</h3>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">Link Official Account</h3>
               <button 
                 onClick={() => setIsLinkModalOpen(false)} 
                 className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors"
@@ -436,22 +436,22 @@ export default function MyChildren() {
               )}
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Admission Number <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Admission Number <span className="text-red-500">*</span></label>
                 <input 
                   type="text" 
                   required
                   value={linkingAdmission}
                   onChange={(e) => setLinkingAdmission(e.target.value)}
                   placeholder="e.g. ADM-2024-001"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
                 />
               </div>
 
-              <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+              <div className="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
                 <button 
                   type="button" 
                   onClick={() => setIsLinkModalOpen(false)}
-                  className="px-6 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                  className="px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors"
                 >
                   Cancel
                 </button>

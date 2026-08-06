@@ -170,7 +170,7 @@ export default function TeacherNoticeboard() {
     <div className="p-8 max-w-5xl mx-auto pb-24">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <Megaphone className="text-primary-600" />
             Noticeboard
           </h1>
@@ -191,7 +191,7 @@ export default function TeacherNoticeboard() {
         )}
       </div>
 
-      <div className="flex gap-4 mb-6 border-b border-slate-200">
+      <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700">
         <button
           onClick={() => setActiveTab('global')}
           className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'global' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 hover:text-slate-700'}`}
@@ -213,9 +213,9 @@ export default function TeacherNoticeboard() {
       ) : (
         <div className="space-y-4">
           {displayedNotices.length === 0 ? (
-            <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center text-slate-500">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500">
               <Bell size={48} className="mx-auto mb-4 text-slate-300" />
-              <p className="text-lg font-medium text-slate-900">No active notices</p>
+              <p className="text-lg font-medium text-slate-900 dark:text-white">No active notices</p>
               <p>{activeTab === 'global' ? "You're all caught up!" : "Create your first notice for your class."}</p>
             </div>
           ) : (
@@ -227,8 +227,8 @@ export default function TeacherNoticeboard() {
               return (
                 <div 
                   key={notice.id} 
-                  className={`bg-white rounded-3xl border p-6 flex flex-col md:flex-row gap-6 shadow-sm transition-all hover:shadow-md
-                    ${isHighPriority ? 'border-red-200 bg-red-50/10' : 'border-slate-200'}
+                  className={`bg-white dark:bg-slate-900 rounded-3xl border p-6 flex flex-col md:flex-row gap-6 shadow-sm transition-all hover:shadow-md
+                    ${isHighPriority ? 'border-red-200 bg-red-50/10' : 'border-slate-200 dark:border-slate-700'}
                   `}
                 >
                   <div className="flex-1 space-y-4">
@@ -239,7 +239,7 @@ export default function TeacherNoticeboard() {
                             <AlertTriangle size={14} /> High Priority
                           </span>
                         )}
-                        <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-700`}>
+                        <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200`}>
                           <Users size={14} /> To: {notice.audience === 'specific_parents' ? `Selected Parents (${notice.targetStudentIds?.length || 0})` : (notice.audience || 'all').replace('_', ' & ')}
                         </span>
                         <span className="text-sm font-medium text-slate-400">
@@ -257,15 +257,15 @@ export default function TeacherNoticeboard() {
                           </button>
                         )}
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 mt-2">{notice.title}</h3>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-2">{notice.title}</h3>
                     </div>
                     
-                    <div className="text-slate-600 leading-relaxed whitespace-pre-wrap font-medium">
+                    <div className="text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap font-medium">
                       {notice.message}
                     </div>
                     
-                    <div className="text-sm font-medium text-slate-400 pt-2 border-t border-slate-100 flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                    <div className="text-sm font-medium text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center border border-slate-200 dark:border-slate-700">
                         <Users size={12} className="text-slate-500" />
                       </div>
                       Posted by: {notice.authorName}
@@ -300,9 +300,9 @@ export default function TeacherNoticeboard() {
       {/* Create / Edit Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Megaphone className="text-primary-600" /> {editingNotice ? 'Edit Class Notice' : 'Broadcast Class Notice'}
               </h2>
               <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
@@ -313,37 +313,37 @@ export default function TeacherNoticeboard() {
             <form onSubmit={handleSaveNotice} className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
               <div className="p-6 space-y-6 flex-1">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Notice Title</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Notice Title</label>
                   <input 
                     type="text" required
                     value={newNotice.title}
                     onChange={(e) => setNewNotice({...newNotice, title: e.target.value})}
                     placeholder="e.g. Bring your textbooks tomorrow"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-medium"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Message</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Message</label>
                   <textarea 
                     required rows="4"
                     value={newNotice.message}
                     onChange={(e) => setNewNotice({...newNotice, message: e.target.value})}
                     placeholder="Type the full announcement here..."
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-medium resize-none"
                   ></textarea>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Target Audience</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Target Audience</label>
                     <select 
                       value={newNotice.audience}
                       onChange={(e) => {
                         const val = e.target.value;
                         setNewNotice({...newNotice, audience: val, targetStudentIds: val === 'specific_parents' ? [] : newNotice.targetStudentIds});
                       }}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-medium"
                     >
                       <option value="all">Everyone in Class</option>
                       <option value="parents">All Parents</option>
@@ -351,11 +351,11 @@ export default function TeacherNoticeboard() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Priority</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Priority</label>
                     <select 
                       value={newNotice.priority}
                       onChange={(e) => setNewNotice({...newNotice, priority: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-medium"
                     >
                       <option value="normal">Normal</option>
                       <option value="high">High (Urgent)</option>
@@ -364,9 +364,9 @@ export default function TeacherNoticeboard() {
                 </div>
 
                 {newNotice.audience === 'specific_parents' && (
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Select Students (Parents of these students will receive the notice)</label>
-                    <div className="max-h-48 overflow-y-auto custom-scrollbar bg-white rounded-lg border border-slate-200 p-2 space-y-1">
+                  <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Select Students (Parents of these students will receive the notice)</label>
+                    <div className="max-h-48 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-2 space-y-1">
                       {students.map(student => (
                         <label key={student.id} className="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors">
                           <input 
@@ -379,9 +379,9 @@ export default function TeacherNoticeboard() {
                                 setNewNotice({...newNotice, targetStudentIds: newNotice.targetStudentIds.filter(id => id !== student.id)});
                               }
                             }}
-                            className="w-4 h-4 text-primary-600 border-slate-300 rounded focus:ring-primary-500"
+                            className="w-4 h-4 text-primary-600 border-slate-300 dark:border-slate-600 rounded focus:ring-primary-500"
                           />
-                          <span className="text-sm font-medium text-slate-700">{student.firstName} {student.lastName}</span>
+                          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{student.firstName} {student.lastName}</span>
                         </label>
                       ))}
                       {students.length === 0 && <p className="text-sm text-slate-500 p-2">No students found in this class.</p>}
@@ -390,8 +390,8 @@ export default function TeacherNoticeboard() {
                 )}
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowCreateModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
+                <button type="button" onClick={() => setShowCreateModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">
                   Cancel
                 </button>
                 <button type="submit" disabled={creating} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm flex items-center gap-2 transition-colors">
@@ -406,9 +406,9 @@ export default function TeacherNoticeboard() {
       {/* Viewers Modal */}
       {showViewersModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[80vh]">
-            <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[80vh]">
+            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Eye className="text-primary-600" /> Read Receipts ({selectedViewers.length})
               </h2>
               <button onClick={() => setShowViewersModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
@@ -425,7 +425,7 @@ export default function TeacherNoticeboard() {
                   {selectedViewers.map((viewer, index) => (
                     <div key={index} className="p-3 flex items-center justify-between hover:bg-slate-50 rounded-xl">
                       <div>
-                        <div className="font-bold text-slate-900">{viewer.name}</div>
+                        <div className="font-bold text-slate-900 dark:text-white">{viewer.name}</div>
                         <div className="text-xs text-slate-500 capitalize">{viewer.role} {viewer.classId ? `- Class: ${classesMap[viewer.classId] || viewer.classId}` : ''}</div>
                       </div>
                     </div>

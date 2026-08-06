@@ -107,7 +107,7 @@ export default function Performance() {
       case 'stable': return 'text-blue-700 bg-blue-100';
       case 'warning': return 'text-amber-700 bg-amber-100';
       case 'critical': return 'text-red-700 bg-red-100';
-      default: return 'text-slate-700 bg-slate-100';
+      default: return 'text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700';
     }
   };
 
@@ -116,7 +116,7 @@ export default function Performance() {
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto pb-24">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
           <LuTrendingUp className="text-primary-600" /> Academic Performance
         </h1>
         <p className="text-slate-500 mt-1">Review your child's academic progress and teacher feedback.</p>
@@ -127,47 +127,47 @@ export default function Performance() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
           <p className="text-primary-100 font-bold mb-1">Teacher's Status</p>
           <div className="flex items-center gap-3">
-            <span className={`px-4 py-1.5 rounded-xl text-sm font-black uppercase tracking-widest ${getStatusColor(trendStatus)} bg-white shadow-sm`}>
+            <span className={`px-4 py-1.5 rounded-xl text-sm font-black uppercase tracking-widest ${getStatusColor(trendStatus)} bg-white dark:bg-slate-900 shadow-sm`}>
               {trendStatus}
             </span>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-6">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-6">
           <div className="w-16 h-16 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center shrink-0">
             <LuAward size={32} />
           </div>
           <div>
             <p className="text-sm font-bold text-slate-500">Overall Grade</p>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-black text-slate-900">{avgGrade}</span>
+              <span className="text-3xl font-black text-slate-900 dark:text-white">{avgGrade}</span>
               <span className="text-sm font-semibold text-slate-500">{avgPerc > 0 ? `${avgPerc.toFixed(1)}%` : ''}</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-center">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-center">
           <p className="text-sm font-bold text-slate-500 mb-1">Attendance</p>
-          <span className={`text-3xl font-black ${attendancePerc < 75 ? 'text-red-600' : 'text-slate-900'}`}>{attendancePerc}%</span>
+          <span className={`text-3xl font-black ${attendancePerc < 75 ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>{attendancePerc}%</span>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center gap-3 bg-slate-50">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3 bg-slate-50 dark:bg-slate-800">
           <LuBookOpen className="text-primary-600" size={24} />
-          <h2 className="text-xl font-bold text-slate-900">Recent Assessments</h2>
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recent Assessments</h2>
         </div>
         <div className="p-6">
           {recentAssessments.length > 0 ? (
             <div className="space-y-4">
               {recentAssessments.map(assessment => (
-                <div key={assessment.id} className="flex justify-between items-center p-4 rounded-2xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50/30 transition-all">
+                <div key={assessment.id} className="flex justify-between items-center p-4 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50/30 transition-all">
                   <div>
-                    <h3 className="font-bold text-slate-900">{assessment.title}</h3>
+                    <h3 className="font-bold text-slate-900 dark:text-white">{assessment.title}</h3>
                     <p className="text-sm font-medium text-slate-500">{new Date(assessment.date).toLocaleDateString('en-GB')}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-black text-lg text-slate-900">{assessment.score} <span className="text-slate-400 text-sm font-bold">/ {assessment.totalMarks}</span></p>
+                    <p className="font-black text-lg text-slate-900 dark:text-white">{assessment.score} <span className="text-slate-400 text-sm font-bold">/ {assessment.totalMarks}</span></p>
                     <p className="text-xs font-bold text-primary-600">{assessment.perc}%</p>
                   </div>
                 </div>

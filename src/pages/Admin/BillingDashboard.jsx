@@ -92,31 +92,31 @@ export default function BillingDashboard() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Billing & Subscriptions</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Billing & Subscriptions</h1>
         <p className="text-slate-500 mt-1">Manage your plan, limits, and billing history.</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Left Col: Current Plan & Usage */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 relative overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-8 relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-50 rounded-full mix-blend-multiply opacity-50"></div>
             
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
               <div>
                 <p className="text-sm font-bold text-amber-600 uppercase tracking-wider mb-1">Current Plan</p>
-                <h2 className="text-3xl font-extrabold text-slate-900">
+                <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white">
                   Enterprise Plan
                 </h2>
                 {(currentPlan || school?.plan) && (
                   <p className="text-slate-500 mt-2">
-                    Billing cycle: <span className="font-semibold text-slate-700 capitalize">{school?.billingCycle || 'monthly'}</span> &middot; Next charge: <span className="font-semibold text-slate-700">Next cycle</span>
+                    Billing cycle: <span className="font-semibold text-slate-700 dark:text-slate-200 capitalize">{school?.billingCycle || 'monthly'}</span> &middot; Next charge: <span className="font-semibold text-slate-700 dark:text-slate-200">Next cycle</span>
                   </p>
                 )}
               </div>
               <div className="text-right">
-                <div className="text-4xl font-extrabold text-slate-900 mb-2">
+                <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2">
                   ₹{school?.calculatedTotalAmount || 0}<span className="text-lg text-slate-500 font-medium">/{school?.billingCycle === 'yearly' ? 'yr' : 'mo'}</span>
                 </div>
                 <button 
@@ -128,17 +128,17 @@ export default function BillingDashboard() {
               </div>
             </div>
 
-            <div className="space-y-6 pt-6 border-t border-slate-100 relative z-10">
-              <h3 className="text-lg font-bold text-slate-900">Current Usage</h3>
+            <div className="space-y-6 pt-6 border-t border-slate-100 dark:border-slate-800 relative z-10">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Current Usage</h3>
               
               {currentPlan ? (
                 <>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="font-medium text-slate-700">Students</span>
-                      <span className="text-slate-500"><span className="font-bold text-slate-900">{mockUsage.students}</span> / {currentPlan.userLimit > 0 ? currentPlan.userLimit : 'Unlimited'}</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200">Students</span>
+                      <span className="text-slate-500"><span className="font-bold text-slate-900 dark:text-white">{mockUsage.students}</span> / {currentPlan.userLimit > 0 ? currentPlan.userLimit : 'Unlimited'}</span>
                     </div>
-                    <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div 
                         className={`h-full rounded-full ${getPercentage(mockUsage.students, currentPlan.userLimit || 1) > 90 ? 'bg-red-500' : 'bg-primary-500'}`} 
                         style={{ width: `${getPercentage(mockUsage.students, currentPlan.userLimit || 10000)}%` }}
@@ -147,10 +147,10 @@ export default function BillingDashboard() {
                   </div>
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="font-medium text-slate-700">Staff Accounts</span>
-                      <span className="text-slate-500"><span className="font-bold text-slate-900">{mockUsage.staff}</span> / {currentPlan.userLimit > 0 ? Math.floor(currentPlan.userLimit * 0.1) : 'Unlimited'}</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200">Staff Accounts</span>
+                      <span className="text-slate-500"><span className="font-bold text-slate-900 dark:text-white">{mockUsage.staff}</span> / {currentPlan.userLimit > 0 ? Math.floor(currentPlan.userLimit * 0.1) : 'Unlimited'}</span>
                     </div>
-                    <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div 
                         className={`h-full rounded-full ${getPercentage(mockUsage.staff, (currentPlan.userLimit * 0.1) || 1) > 90 ? 'bg-red-500' : 'bg-primary-500'}`} 
                         style={{ width: `${getPercentage(mockUsage.staff, (currentPlan.userLimit * 0.1) || 1000)}%` }}
@@ -159,7 +159,7 @@ export default function BillingDashboard() {
                   </div>
                 </>
               ) : (
-                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 text-slate-600 text-sm">
+                <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm">
                   You are currently on a free trial with limited capacity. Upgrade to a paid plan to unlock features.
                 </div>
               )}
@@ -167,13 +167,13 @@ export default function BillingDashboard() {
           </div>
 
           {/* Invoices */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">Billing History</h3>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Billing History</h3>
             </div>
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                   <th className="p-4 pl-6">Invoice</th>
                   <th className="p-4">Date</th>
                   <th className="p-4">Amount</th>
@@ -191,11 +191,11 @@ export default function BillingDashboard() {
                 ) : (
                   invoices.map(inv => (
                     <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="p-4 pl-6 font-medium text-slate-900 flex items-center gap-2">
+                      <td className="p-4 pl-6 font-medium text-slate-900 dark:text-white flex items-center gap-2">
                         <FileText size={16} className="text-slate-400" /> {inv.id}
                       </td>
-                      <td className="p-4 text-slate-600">{new Date(inv.date).toLocaleDateString('en-GB')}</td>
-                      <td className="p-4 font-semibold text-slate-900">₹{inv.amount}</td>
+                      <td className="p-4 text-slate-600 dark:text-slate-300">{new Date(inv.date).toLocaleDateString('en-GB')}</td>
+                      <td className="p-4 font-semibold text-slate-900 dark:text-white">₹{inv.amount}</td>
                       <td className="p-4">
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-green-50 text-green-700">
                           <CheckCircle2 size={12} /> Paid
@@ -216,18 +216,18 @@ export default function BillingDashboard() {
 
         {/* Right Col: Payment Method */}
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-slate-900">Payment Method</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Payment Method</h3>
               <button className="text-primary-600 hover:text-primary-700 text-sm font-medium">Edit</button>
             </div>
             
-            <div className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl bg-slate-50">
-              <div className="w-12 h-8 bg-slate-200 rounded flex items-center justify-center font-bold text-slate-600 text-xs tracking-wider">
+            <div className="flex items-center gap-4 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800">
+              <div className="w-12 h-8 bg-slate-200 rounded flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 text-xs tracking-wider">
                 VISA
               </div>
               <div>
-                <p className="font-semibold text-slate-900">•••• •••• •••• 4242</p>
+                <p className="font-semibold text-slate-900 dark:text-white">•••• •••• •••• 4242</p>
                 <p className="text-xs text-slate-500">Expires 12/28</p>
               </div>
             </div>
@@ -236,15 +236,15 @@ export default function BillingDashboard() {
             </p>
           </div>
 
-          <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6">
-            <div className="flex gap-3 text-slate-700 mb-2">
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+            <div className="flex gap-3 text-slate-700 dark:text-slate-200 mb-2">
               <AlertCircle size={20} className="text-amber-500 shrink-0" />
-              <h3 className="font-bold text-slate-900">Need Help?</h3>
+              <h3 className="font-bold text-slate-900 dark:text-white">Need Help?</h3>
             </div>
-            <p className="text-sm text-slate-600 mb-4 pl-8">
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 pl-8">
               If you have questions about your billing or need a custom enterprise plan, please contact our support team.
             </p>
-            <button className="w-full py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium hover:bg-slate-50 transition-colors">
+            <button className="w-full py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium hover:bg-slate-50 transition-colors">
               Contact Support
             </button>
           </div>

@@ -88,11 +88,11 @@ export default function ReportTemplateBuilder({ onBack }) {
       {/* Top Bar */}
       <div className="flex items-center justify-between mb-6 shrink-0">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-2 hover:bg-white rounded-xl transition-colors shadow-sm bg-slate-50 border border-slate-200">
-            <LuArrowLeft size={20} className="text-slate-600" />
+          <button onClick={onBack} className="p-2 hover:bg-white rounded-xl transition-colors shadow-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <LuArrowLeft size={20} className="text-slate-600 dark:text-slate-300" />
           </button>
           <div>
-            <h1 className="text-2xl font-black text-slate-900">Template Builder</h1>
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white">Template Builder</h1>
             <p className="text-sm font-medium text-slate-500">Design your school's official report card</p>
           </div>
         </div>
@@ -108,9 +108,9 @@ export default function ReportTemplateBuilder({ onBack }) {
 
       <div className="flex gap-6 flex-1 min-h-0">
         {/* Left: Controls Panel */}
-        <div className="w-1/3 bg-white border border-slate-200 rounded-3xl shadow-sm overflow-y-auto custom-scrollbar flex flex-col">
-          <div className="p-6 border-b border-slate-100 bg-slate-50 sticky top-0 z-10">
-            <h2 className="font-bold text-slate-900 flex items-center gap-2">
+        <div className="w-1/3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-sm overflow-y-auto custom-scrollbar flex flex-col">
+          <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 sticky top-0 z-10">
+            <h2 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <LuSettings className="text-primary-600" /> Configuration
             </h2>
           </div>
@@ -129,7 +129,7 @@ export default function ReportTemplateBuilder({ onBack }) {
                   onChange={(e) => setTemplate({...template, themeColor: e.target.value})}
                   className="w-10 h-10 rounded-lg cursor-pointer border-0 p-0"
                 />
-                <span className="text-sm font-semibold text-slate-700">Primary Color ({template.themeColor})</span>
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">Primary Color ({template.themeColor})</span>
               </div>
             </div>
 
@@ -140,27 +140,27 @@ export default function ReportTemplateBuilder({ onBack }) {
               </h3>
               <div className="space-y-3">
                 <div>
-                  <label className="text-sm font-semibold text-slate-700 block mb-1">Report Title</label>
-                  <input type="text" value={template.header.title} onChange={e => updateHeader('title', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500" />
+                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block mb-1">Report Title</label>
+                  <input type="text" value={template.header.title} onChange={e => updateHeader('title', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div>
-                  <label className="text-sm font-semibold text-slate-700 block mb-1">Subtitle / Session</label>
-                  <input type="text" value={template.header.subtitle} onChange={e => updateHeader('subtitle', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500" />
+                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block mb-1">Subtitle / Session</label>
+                  <input type="text" value={template.header.subtitle} onChange={e => updateHeader('subtitle', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:ring-2 focus:ring-primary-500" />
                 </div>
                 <div className="pt-2 grid grid-cols-2 gap-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
                     <input type="checkbox" checked={template.header.showLogo} onChange={e => updateHeader('showLogo', e.target.checked)} className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4" />
                     School Logo
                   </label>
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
                     <input type="checkbox" checked={template.header.showAddress} onChange={e => updateHeader('showAddress', e.target.checked)} className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4" />
                     Address
                   </label>
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
                     <input type="checkbox" checked={template.header.showPhone} onChange={e => updateHeader('showPhone', e.target.checked)} className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4" />
                     Phone No.
                   </label>
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
                     <input type="checkbox" checked={template.header.showEmail} onChange={e => updateHeader('showEmail', e.target.checked)} className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4" />
                     Email
                   </label>
@@ -175,7 +175,7 @@ export default function ReportTemplateBuilder({ onBack }) {
               </h3>
               <div className="grid grid-cols-2 gap-3">
                 {Object.keys(template.studentFields).map(key => (
-                  <label key={key} className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+                  <label key={key} className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
                     <input type="checkbox" checked={template.studentFields[key]} onChange={e => updateStudentFields(key, e.target.checked)} className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4" />
                     {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                   </label>
@@ -190,19 +190,19 @@ export default function ReportTemplateBuilder({ onBack }) {
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-semibold text-slate-700 block mb-2">Grading Style</label>
-                  <select value={template.grading.style} onChange={e => updateGrading('style', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500">
+                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block mb-2">Grading Style</label>
+                  <select value={template.grading.style} onChange={e => updateGrading('style', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:ring-2 focus:ring-primary-500">
                     <option value="marks">Marks Only</option>
                     <option value="grades">Grades Only</option>
                     <option value="marks_and_grades">Marks & Grades</option>
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
                     <input type="checkbox" checked={template.grading.showTotal} onChange={e => updateGrading('showTotal', e.target.checked)} className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4" />
                     Show Total
                   </label>
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
                     <input type="checkbox" checked={template.grading.showPercentage} onChange={e => updateGrading('showPercentage', e.target.checked)} className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4" />
                     Show Percentage
                   </label>
@@ -217,15 +217,15 @@ export default function ReportTemplateBuilder({ onBack }) {
               </h3>
               <div className="space-y-3">
                 <div>
-                  <label className="text-sm font-semibold text-slate-700 block mb-1">Grading Scale Text (Optional)</label>
+                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block mb-1">Grading Scale Text (Optional)</label>
                   <textarea 
                     value={template.footer.gradingScaleText} 
                     onChange={e => updateFooter('gradingScaleText', e.target.value)} 
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:ring-2 focus:ring-primary-500 h-20"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm focus:ring-2 focus:ring-primary-500 h-20"
                     placeholder="E.g., A1: 91-100 | A2: 81-90..."
                   />
                 </div>
-                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 cursor-pointer">
+                <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200 cursor-pointer">
                   <input type="checkbox" checked={template.footer.remarks} onChange={e => updateFooter('remarks', e.target.checked)} className="rounded text-primary-600 focus:ring-primary-500 w-4 h-4" />
                   Show Teacher Remarks Area
                 </label>
@@ -236,7 +236,7 @@ export default function ReportTemplateBuilder({ onBack }) {
         </div>
 
         {/* Right: Live Preview Pane */}
-        <div className="w-2/3 bg-slate-200/50 rounded-3xl border border-slate-200 flex flex-col overflow-hidden">
+        <div className="w-2/3 bg-slate-200/50 rounded-3xl border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden">
           <div className="p-4 bg-slate-800 text-white flex items-center justify-between">
             <h2 className="font-bold flex items-center gap-2 text-sm"><LuEye /> Live PDF Preview</h2>
             <span className="text-xs font-medium text-slate-400 bg-slate-700 px-2 py-1 rounded">A4 Portrait</span>
@@ -244,19 +244,19 @@ export default function ReportTemplateBuilder({ onBack }) {
           
           <div className="flex-1 overflow-y-auto p-8 flex justify-center custom-scrollbar">
             {/* The A4 Paper representation */}
-            <div className="bg-white shadow-2xl w-full max-w-[794px] min-h-[1123px] flex flex-col" style={{ fontFamily: "'Times New Roman', serif" }}>
+            <div className="bg-white dark:bg-slate-900 shadow-2xl w-full max-w-[794px] min-h-[1123px] flex flex-col" style={{ fontFamily: "'Times New Roman', serif" }}>
               
               {/* Report Card Header */}
               <div className="p-8 pb-4 flex items-center border-b-[3px]" style={{ borderColor: template.themeColor }}>
                 {template.header.showLogo && (
-                  <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center border-2 shrink-0" style={{ borderColor: template.themeColor }}>
+                  <div className="w-24 h-24 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center border-2 shrink-0" style={{ borderColor: template.themeColor }}>
                     <span className="text-xs text-slate-400 font-sans font-bold">LOGO</span>
                   </div>
                 )}
                 <div className={`flex-1 ${template.header.showLogo ? 'text-center' : 'text-left'}`}>
-                  <h1 className="text-3xl font-black uppercase text-slate-900" style={{ color: template.themeColor }}>{userProfile?.schoolName || 'YOUR SCHOOL NAME'}</h1>
+                  <h1 className="text-3xl font-black uppercase text-slate-900 dark:text-white" style={{ color: template.themeColor }}>{userProfile?.schoolName || 'YOUR SCHOOL NAME'}</h1>
                   
-                  <div className="text-sm mt-2 text-slate-700">
+                  <div className="text-sm mt-2 text-slate-700 dark:text-slate-200">
                     {template.header.showAddress && <span>123 Education Street, Learning City, 10001<br/></span>}
                     <span className="font-medium">
                       {template.header.showPhone && <span>Tel: +1 234 567 8900 </span>}
@@ -272,53 +272,53 @@ export default function ReportTemplateBuilder({ onBack }) {
                 <h2 className="text-2xl font-bold uppercase underline decoration-2 underline-offset-4" style={{ decorationColor: template.themeColor }}>
                   {template.header.title}
                 </h2>
-                <p className="text-md font-semibold text-slate-600 mt-2">{template.header.subtitle}</p>
+                <p className="text-md font-semibold text-slate-600 dark:text-slate-300 mt-2">{template.header.subtitle}</p>
               </div>
 
               {/* Student Details Grid */}
               <div className="px-10 pb-8">
-                <div className="grid grid-cols-2 gap-x-12 gap-y-3 p-4 rounded-xl border border-slate-300 bg-slate-50 font-sans">
-                  <div className="flex justify-between border-b border-slate-200 pb-1">
-                    <span className="font-bold text-slate-600 text-sm">Student Name:</span>
-                    <span className="font-bold text-slate-900 text-sm">John Doe</span>
+                <div className="grid grid-cols-2 gap-x-12 gap-y-3 p-4 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 font-sans">
+                  <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1">
+                    <span className="font-bold text-slate-600 dark:text-slate-300 text-sm">Student Name:</span>
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">John Doe</span>
                   </div>
-                  <div className="flex justify-between border-b border-slate-200 pb-1">
-                    <span className="font-bold text-slate-600 text-sm">Class & Section:</span>
-                    <span className="font-bold text-slate-900 text-sm">10 - A</span>
+                  <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1">
+                    <span className="font-bold text-slate-600 dark:text-slate-300 text-sm">Class & Section:</span>
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">10 - A</span>
                   </div>
-                  <div className="flex justify-between border-b border-slate-200 pb-1">
-                    <span className="font-bold text-slate-600 text-sm">Roll No:</span>
-                    <span className="font-bold text-slate-900 text-sm">42</span>
+                  <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1">
+                    <span className="font-bold text-slate-600 dark:text-slate-300 text-sm">Roll No:</span>
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">42</span>
                   </div>
 
                   {template.studentFields.admissionNo && (
-                    <div className="flex justify-between border-b border-slate-200 pb-1">
-                      <span className="font-bold text-slate-600 text-sm">Admission No:</span>
-                      <span className="font-bold text-slate-900 text-sm">SCH/2020/012</span>
+                    <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1">
+                      <span className="font-bold text-slate-600 dark:text-slate-300 text-sm">Admission No:</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">SCH/2020/012</span>
                     </div>
                   )}
                   {template.studentFields.dob && (
-                    <div className="flex justify-between border-b border-slate-200 pb-1">
-                      <span className="font-bold text-slate-600 text-sm">Date of Birth:</span>
-                      <span className="font-bold text-slate-900 text-sm">15-Aug-2010</span>
+                    <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1">
+                      <span className="font-bold text-slate-600 dark:text-slate-300 text-sm">Date of Birth:</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">15-Aug-2010</span>
                     </div>
                   )}
                   {template.studentFields.fatherName && (
-                    <div className="flex justify-between border-b border-slate-200 pb-1">
-                      <span className="font-bold text-slate-600 text-sm">Father's Name:</span>
-                      <span className="font-bold text-slate-900 text-sm">Richard Doe</span>
+                    <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1">
+                      <span className="font-bold text-slate-600 dark:text-slate-300 text-sm">Father's Name:</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">Richard Doe</span>
                     </div>
                   )}
                   {template.studentFields.motherName && (
-                    <div className="flex justify-between border-b border-slate-200 pb-1">
-                      <span className="font-bold text-slate-600 text-sm">Mother's Name:</span>
-                      <span className="font-bold text-slate-900 text-sm">Jane Doe</span>
+                    <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1">
+                      <span className="font-bold text-slate-600 dark:text-slate-300 text-sm">Mother's Name:</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">Jane Doe</span>
                     </div>
                   )}
                   {template.studentFields.attendance && (
-                    <div className="flex justify-between border-b border-slate-200 pb-1">
-                      <span className="font-bold text-slate-600 text-sm">Attendance:</span>
-                      <span className="font-bold text-slate-900 text-sm">185 / 200</span>
+                    <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1">
+                      <span className="font-bold text-slate-600 dark:text-slate-300 text-sm">Attendance:</span>
+                      <span className="font-bold text-slate-900 dark:text-white text-sm">185 / 200</span>
                     </div>
                   )}
                 </div>
@@ -337,16 +337,16 @@ export default function ReportTemplateBuilder({ onBack }) {
                   </thead>
                   <tbody>
                     {['English', 'Mathematics', 'Science', 'Social Studies', 'Computer Science'].map((sub, i) => (
-                      <tr key={sub} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                      <tr key={sub} className={i % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50 dark:bg-slate-800'}>
                         <td className="border border-slate-400 p-2 font-medium">{sub}</td>
                         <td className="border border-slate-400 p-2 text-center">100</td>
-                        {['marks', 'marks_and_grades'].includes(template.grading.style) && <td className="border border-slate-400 p-2 text-center font-bold text-slate-800">{85 + i}</td>}
-                        {['grades', 'marks_and_grades'].includes(template.grading.style) && <td className="border border-slate-400 p-2 text-center font-bold text-slate-800">A2</td>}
+                        {['marks', 'marks_and_grades'].includes(template.grading.style) && <td className="border border-slate-400 p-2 text-center font-bold text-slate-800 dark:text-slate-100">{85 + i}</td>}
+                        {['grades', 'marks_and_grades'].includes(template.grading.style) && <td className="border border-slate-400 p-2 text-center font-bold text-slate-800 dark:text-slate-100">A2</td>}
                       </tr>
                     ))}
                     {/* Totals */}
                     {(template.grading.showTotal || template.grading.showPercentage) && (
-                      <tr className="bg-slate-100 font-bold">
+                      <tr className="bg-slate-100 dark:bg-slate-700 font-bold">
                         <td className="border border-slate-400 p-2 text-right">TOTAL</td>
                         <td className="border border-slate-400 p-2 text-center">500</td>
                         {['marks', 'marks_and_grades'].includes(template.grading.style) && <td className="border border-slate-400 p-2 text-center text-primary-700" style={{ color: template.themeColor }}>435</td>}
@@ -366,8 +366,8 @@ export default function ReportTemplateBuilder({ onBack }) {
               {/* Remarks Area */}
               {template.footer.remarks && (
                 <div className="px-10 mt-8">
-                  <div className="border-2 border-slate-300 p-4 rounded-xl min-h-[80px]">
-                    <span className="font-bold text-sm text-slate-700 block mb-1">Class Teacher's Remarks:</span>
+                  <div className="border-2 border-slate-300 dark:border-slate-600 p-4 rounded-xl min-h-[80px]">
+                    <span className="font-bold text-sm text-slate-700 dark:text-slate-200 block mb-1">Class Teacher's Remarks:</span>
                     <span className="text-sm font-medium italic text-slate-500">John has shown excellent progress in mathematics. Keep up the good work!</span>
                   </div>
                 </div>
@@ -381,16 +381,16 @@ export default function ReportTemplateBuilder({ onBack }) {
                   {template.footer.signatures.map((sig, index) => (
                     <div key={index} className="flex flex-col items-center">
                       <div className="w-32 border-b-2 border-slate-900 mb-2"></div>
-                      <span className="text-xs font-bold text-slate-600 uppercase">{sig}</span>
+                      <span className="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase">{sig}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Grading Scale */}
                 {template.footer.gradingScaleText && (
-                  <div className="border-t border-slate-300 pt-4 text-center">
+                  <div className="border-t border-slate-300 dark:border-slate-600 pt-4 text-center">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1">Grading Scale</span>
-                    <p className="text-xs text-slate-600 font-medium">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
                       {template.footer.gradingScaleText}
                     </p>
                   </div>

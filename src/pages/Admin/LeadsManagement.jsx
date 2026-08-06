@@ -351,9 +351,9 @@ export default function LeadsManagement() {
   return (
     <div className="space-y-6 font-sans">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
             <LuUsers className="text-primary-600" /> Leads Management
           </h1>
           <p className="text-sm text-slate-500 mt-1">Design lead forms, embed links, and track enquiries.</p>
@@ -364,7 +364,7 @@ export default function LeadsManagement() {
             className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${
               activeTab === 'leads'
                 ? 'bg-primary-600 text-white shadow-md shadow-primary-600/10'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50'
             }`}
           >
             Leads Directory
@@ -374,7 +374,7 @@ export default function LeadsManagement() {
             className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${
               activeTab === 'forms'
                 ? 'bg-primary-600 text-white shadow-md shadow-primary-600/10'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50'
             }`}
           >
             Form Builder
@@ -392,7 +392,7 @@ export default function LeadsManagement() {
         /* ========================================================================= */
         <div className="space-y-6">
           {/* Filters & Search Toolbar */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Search Bar */}
               <div className="relative col-span-1 md:col-span-2">
@@ -402,7 +402,7 @@ export default function LeadsManagement() {
                   placeholder="Search leads by name, email, or content..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-11 pr-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
+                  className="w-full pl-11 pr-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow text-sm"
                 />
               </div>
 
@@ -411,7 +411,7 @@ export default function LeadsManagement() {
                 <select 
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 bg-white rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
                 >
                   <option value="all">All Statuses</option>
                   <option value="Hot">Hot</option>
@@ -425,7 +425,7 @@ export default function LeadsManagement() {
                 <select 
                   value={filterForm}
                   onChange={(e) => setFilterForm(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 bg-white rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
+                  className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
                 >
                   <option value="all">All Source Forms</option>
                   {forms.map(f => (
@@ -436,7 +436,7 @@ export default function LeadsManagement() {
             </div>
 
             {/* Advanced Date Range + Export */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2 border-t border-slate-100">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pt-2 border-t border-slate-100 dark:border-slate-800">
               <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">From:</span>
@@ -444,7 +444,7 @@ export default function LeadsManagement() {
                     type="date" 
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="px-3 py-1.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary-500"
+                    className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div className="flex items-center gap-2">
@@ -453,7 +453,7 @@ export default function LeadsManagement() {
                     type="date" 
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="px-3 py-1.5 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary-500"
+                    className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 {(startDate || endDate) && (
@@ -478,7 +478,7 @@ export default function LeadsManagement() {
           </div>
 
           {/* Leads Grid/Table */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
             {filteredLeads.length === 0 ? (
               <div className="p-20 text-center text-slate-500">
                 No matching leads found.
@@ -487,7 +487,7 @@ export default function LeadsManagement() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/50">
+                    <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/50">
                       <th className="p-4 text-xs font-bold text-slate-400 pl-6">Submitted Date</th>
                       <th className="p-4 text-xs font-bold text-slate-400">Source Form</th>
                       <th className="p-4 text-xs font-bold text-slate-400">Primary Contact / Details</th>
@@ -503,13 +503,13 @@ export default function LeadsManagement() {
 
                       return (
                         <tr key={lead.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 pl-6 text-sm text-slate-600 font-semibold">
+                          <td className="p-4 pl-6 text-sm text-slate-600 dark:text-slate-300 font-semibold">
                             {lead.submittedAt ? new Date(lead.submittedAt).toLocaleString() : '-'}
                           </td>
-                          <td className="p-4 text-sm font-bold text-slate-900">
+                          <td className="p-4 text-sm font-bold text-slate-900 dark:text-white">
                             {lead.formTitle || 'Untitled Form'}
                           </td>
-                          <td className="p-4 text-sm text-slate-600 truncate max-w-xs">
+                          <td className="p-4 text-sm text-slate-600 dark:text-slate-300 truncate max-w-xs">
                             {summaryPreview || <span className="text-slate-400 italic">No details submitted</span>}
                           </td>
                           <td className="p-4">
@@ -547,9 +547,9 @@ export default function LeadsManagement() {
         /* ========================================================================= */
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* List of active forms */}
-          <div className="lg:col-span-1 bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-4">
-            <div className="flex justify-between items-center pb-3 border-b border-slate-100">
-              <h2 className="font-bold text-lg text-slate-900">Configured Forms</h2>
+          <div className="lg:col-span-1 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 space-y-4">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h2 className="font-bold text-lg text-slate-900 dark:text-white">Configured Forms</h2>
               <button
                 onClick={() => handleStartEditForm({ id: 'new', title: '', description: '', successMessage: '', fields: [] })}
                 className="bg-primary-600 text-white hover:bg-primary-700 py-1.5 px-3 font-bold rounded-xl text-xs transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer"
@@ -563,16 +563,16 @@ export default function LeadsManagement() {
             ) : (
               <div className="space-y-3">
                 {forms.map(f => (
-                  <div key={f.id} className="p-4 border border-slate-200 rounded-2xl bg-slate-50 hover:bg-slate-100/50 transition-colors space-y-3">
+                  <div key={f.id} className="p-4 border border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100/50 transition-colors space-y-3">
                     <div>
                       <h3 className="font-bold text-slate-950 text-sm">{f.title}</h3>
                       <p className="text-xs text-slate-500 mt-0.5 truncate">{f.description || 'No description'}</p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200">
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
                       <button
                         onClick={() => handleCopyLink(f.id)}
-                        className="p-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                        className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer"
                         title="Copy Public Link"
                       >
                         <LuCopy size={13} /> Link
@@ -581,20 +581,20 @@ export default function LeadsManagement() {
                         href={`/leads/form/${schoolId}/${f.id}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold flex items-center gap-1"
+                        className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1"
                         title="Test Public Form"
                       >
                         <LuExternalLink size={13} /> View
                       </a>
                       <button
                         onClick={() => handleStartEditForm(f)}
-                        className="p-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-primary-600 rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                        className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-primary-600 rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer"
                       >
                         <LuPencilLine size={13} /> Edit
                       </button>
                       <button
                         onClick={() => handleDeleteFormClick(f.id, f.title)}
-                        className="p-1.5 bg-white border border-slate-200 hover:bg-red-50 hover:text-red-600 text-slate-400 rounded-lg text-xs font-semibold flex items-center gap-1 ml-auto cursor-pointer"
+                        className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-red-50 hover:text-red-600 text-slate-400 rounded-lg text-xs font-semibold flex items-center gap-1 ml-auto cursor-pointer"
                       >
                         <LuTrash2 size={13} />
                       </button>
@@ -606,23 +606,23 @@ export default function LeadsManagement() {
           </div>
 
           {/* Form Editing Workspace */}
-          <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-6">
+          <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 space-y-6">
             {!editingForm ? (
               <div className="p-20 text-center text-slate-500 space-y-3">
                 <LuPencilLine className="mx-auto text-slate-300" size={48} />
-                <h3 className="font-bold text-slate-700">Form Designer Workspace</h3>
+                <h3 className="font-bold text-slate-700 dark:text-slate-200">Form Designer Workspace</h3>
                 <p className="text-xs text-slate-400 max-w-sm mx-auto">Select an existing form configuration or click "Add Form" to design a new one.</p>
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="flex justify-between items-center pb-3 border-b border-slate-100">
-                  <h2 className="font-bold text-lg text-slate-900">
+                <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <h2 className="font-bold text-lg text-slate-900 dark:text-white">
                     {editingForm.id === 'new' ? 'Create Form Configuration' : `Edit: ${editingForm.title}`}
                   </h2>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setEditingForm(null)}
-                      className="border border-slate-200 text-slate-600 font-bold py-1.5 px-3 rounded-xl text-xs hover:bg-slate-50 transition-colors cursor-pointer"
+                      className="border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold py-1.5 px-3 rounded-xl text-xs hover:bg-slate-50 transition-colors cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -644,7 +644,7 @@ export default function LeadsManagement() {
                       placeholder="e.g. Admission Enquiry 2026"
                       value={formTitle}
                       onChange={(e) => setFormTitle(e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
+                      className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -654,7 +654,7 @@ export default function LeadsManagement() {
                       placeholder="Display prompt or helper text for enquiries"
                       value={formDescription}
                       onChange={(e) => setFormDescription(e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
+                      className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
                     />
                   </div>
                   <div className="space-y-1.5 md:col-span-2">
@@ -664,17 +664,17 @@ export default function LeadsManagement() {
                       placeholder="e.g., Thank you. Your enquiry has been received!"
                       value={formSuccessMsg}
                       onChange={(e) => setFormSuccessMsg(e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
+                      className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm"
                     />
                   </div>
                 </div>
 
                 {/* Fields Builder list */}
-                <div className="space-y-4 pt-4 border-t border-slate-100">
-                  <h3 className="font-bold text-slate-900 text-sm">Form Inputs & Field Configurations</h3>
+                <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm">Form Inputs & Field Configurations</h3>
 
                   {/* Add Field Inputs Control panel */}
-                  <div className="p-4 border border-slate-200 rounded-2xl bg-slate-50 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                  <div className="p-4 border border-slate-200 dark:border-slate-700 rounded-2xl bg-slate-50 dark:bg-slate-800 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                     <div className="space-y-1.5">
                       <label className="block text-xs font-bold text-slate-500 uppercase">Input Label</label>
                       <input 
@@ -682,7 +682,7 @@ export default function LeadsManagement() {
                         placeholder="e.g. Email Address"
                         value={newFieldLabel}
                         onChange={(e) => setNewFieldLabel(e.target.value)}
-                        className="w-full px-3 py-1.5 border border-slate-200 bg-white rounded-lg text-xs outline-none"
+                        className="w-full px-3 py-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-xs outline-none"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -690,7 +690,7 @@ export default function LeadsManagement() {
                       <select 
                         value={newFieldType}
                         onChange={(e) => setNewFieldType(e.target.value)}
-                        className="w-full px-3 py-1.5 border border-slate-200 bg-white rounded-lg text-xs outline-none"
+                        className="w-full px-3 py-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-xs outline-none"
                       >
                         <option value="text">Text Input</option>
                         <option value="number">Number Input</option>
@@ -705,7 +705,7 @@ export default function LeadsManagement() {
                     </div>
                     <div className="space-y-1.5 col-span-1">
                       <label className="block text-xs font-bold text-slate-500 uppercase">Required Field</label>
-                      <div className="flex items-center gap-2 mt-1 bg-white border border-slate-200 rounded-lg p-2">
+                      <div className="flex items-center gap-2 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2">
                         <input 
                           type="checkbox" 
                           id="newFieldReq"
@@ -713,7 +713,7 @@ export default function LeadsManagement() {
                           onChange={(e) => setNewFieldRequired(e.target.checked)}
                           className="text-primary-600 focus:ring-primary-500 rounded"
                         />
-                        <label htmlFor="newFieldReq" className="text-xs text-slate-600 cursor-pointer">Yes, Required</label>
+                        <label htmlFor="newFieldReq" className="text-xs text-slate-600 dark:text-slate-300 cursor-pointer">Yes, Required</label>
                       </div>
                     </div>
                     <div className="col-span-1">
@@ -734,7 +734,7 @@ export default function LeadsManagement() {
                           placeholder="e.g. Option A, Option B, Option C"
                           value={newFieldOptions}
                           onChange={(e) => setNewFieldOptions(e.target.value)}
-                          className="w-full px-3 py-1.5 border border-slate-200 bg-white rounded-lg text-xs outline-none"
+                          className="w-full px-3 py-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg text-xs outline-none"
                         />
                       </div>
                     )}
@@ -743,11 +743,11 @@ export default function LeadsManagement() {
                   {/* Render build schema fields list */}
                   <div className="space-y-2">
                     {formFields.map((field, index) => (
-                      <div key={field.id} className="p-3 border border-slate-200 rounded-xl bg-white flex items-center justify-between gap-4">
+                      <div key={field.id} className="p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-black text-slate-400">#{index + 1}</span>
-                          <span className="text-sm font-bold text-slate-900">{field.label}</span>
-                          <span className="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-mono uppercase">{field.type}</span>
+                          <span className="text-sm font-bold text-slate-900 dark:text-white">{field.label}</span>
+                          <span className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-500 px-2 py-0.5 rounded font-mono uppercase">{field.type}</span>
                           {field.required && (
                             <span className="text-[10px] bg-red-50 text-red-600 border border-red-100 px-2 py-0.5 rounded font-bold uppercase">Required</span>
                           )}
@@ -791,10 +791,10 @@ export default function LeadsManagement() {
       {/* ========================= DETAIL VIEW MODAL ========================= */}
       {selectedLead && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-[2rem] shadow-2xl max-w-xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-slate-100 animate-scale-in">
-            <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl max-w-xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-slate-100 dark:border-slate-800 animate-scale-in">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <div>
-                <h3 className="font-black text-xl text-slate-900">Lead Details</h3>
+                <h3 className="font-black text-xl text-slate-900 dark:text-white">Lead Details</h3>
                 <p className="text-xs text-slate-500 mt-0.5">Submitted via {selectedLead.formTitle}</p>
               </div>
               <button 
@@ -807,7 +807,7 @@ export default function LeadsManagement() {
 
             <div className="p-6 overflow-y-auto space-y-6 flex-1">
               {/* Submission metadata */}
-              <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <div className="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <div>
                   <span className="block text-[10px] font-black text-slate-400 uppercase">Status</span>
                   <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold border mt-1 ${getStatusColor(selectedLead.status)}`}>
@@ -816,7 +816,7 @@ export default function LeadsManagement() {
                 </div>
                 <div>
                   <span className="block text-[10px] font-black text-slate-400 uppercase">Submitted Date</span>
-                  <span className="block text-sm font-bold text-slate-800 mt-1">
+                  <span className="block text-sm font-bold text-slate-800 dark:text-slate-100 mt-1">
                     {selectedLead.submittedAt ? new Date(selectedLead.submittedAt).toLocaleString() : '-'}
                   </span>
                 </div>
@@ -824,7 +824,7 @@ export default function LeadsManagement() {
 
               {/* Submitted dynamic values */}
               <div className="space-y-4">
-                <h4 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">Enquiry Response Data</h4>
+                <h4 className="font-bold text-slate-900 dark:text-white text-sm border-b border-slate-100 dark:border-slate-800 pb-2">Enquiry Response Data</h4>
                 <div className="space-y-4">
                   {Object.entries(selectedLead.data || {}).map(([key, val]) => {
                     const matchingForm = forms.find(f => f.id === selectedLead.formId);
@@ -834,7 +834,7 @@ export default function LeadsManagement() {
                     return (
                       <div key={key} className="space-y-1">
                         <span className="block text-xs font-bold text-slate-500 uppercase">{label}</span>
-                        <span className="block text-sm font-semibold text-slate-800 bg-slate-50/50 border border-slate-200 p-3 rounded-xl leading-relaxed">
+                        <span className="block text-sm font-semibold text-slate-800 dark:text-slate-100 bg-slate-50/50 border border-slate-200 dark:border-slate-700 p-3 rounded-xl leading-relaxed">
                           {Array.isArray(val) ? val.join(', ') : (val || '-')}
                         </span>
                       </div>
@@ -844,10 +844,10 @@ export default function LeadsManagement() {
               </div>
             </div>
 
-            <div className="p-6 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <div className="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex justify-end">
               <button
                 onClick={() => setSelectedLead(null)}
-                className="border border-slate-200 text-slate-600 font-bold py-2 px-6 rounded-xl text-sm hover:bg-slate-100 transition-all cursor-pointer"
+                className="border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold py-2 px-6 rounded-xl text-sm hover:bg-slate-100 transition-all cursor-pointer"
               >
                 Close
               </button>
@@ -859,10 +859,10 @@ export default function LeadsManagement() {
       {/* ===================== FIELD SELECTOR EXPORT MODAL ==================== */}
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-[2rem] shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col border border-slate-100 animate-scale-in">
-            <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+          <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl max-w-lg w-full max-h-[80vh] overflow-hidden flex flex-col border border-slate-100 dark:border-slate-800 animate-scale-in">
+            <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <div>
-                <h3 className="font-black text-xl text-slate-900">Select Export Columns</h3>
+                <h3 className="font-black text-xl text-slate-900 dark:text-white">Select Export Columns</h3>
                 <p className="text-xs text-slate-500 mt-0.5">Customize columns to output to Excel.</p>
               </div>
               <button 
@@ -875,7 +875,7 @@ export default function LeadsManagement() {
 
             <div className="p-6 overflow-y-auto space-y-4 flex-1">
               {/* Custom Filename Input */}
-              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+              <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
@@ -883,13 +883,13 @@ export default function LeadsManagement() {
                     placeholder="e.g. leads_export"
                     value={exportFileName}
                     onChange={(e) => setExportFileName(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
                   <span className="absolute right-4 top-3 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
                 <span className="text-xs font-bold text-slate-500 uppercase">Available Columns ({availableFields.length})</span>
                 <div className="space-x-2">
                   <button 
@@ -911,7 +911,7 @@ export default function LeadsManagement() {
                 {availableFields.map(field => (
                   <label 
                     key={field.key} 
-                    className="flex items-center gap-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-100 bg-slate-50/50 cursor-pointer transition-colors"
+                    className="flex items-center gap-3 p-3 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-100 bg-slate-50/50 cursor-pointer transition-colors"
                   >
                     <input 
                       type="checkbox"
@@ -919,16 +919,16 @@ export default function LeadsManagement() {
                       onChange={() => handleFieldToggle(field.key)}
                       className="text-primary-600 focus:ring-primary-500 rounded h-4 w-4"
                     />
-                    <span className="text-sm font-bold text-slate-800">{field.label}</span>
+                    <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{field.label}</span>
                   </label>
                 ))}
               </div>
             </div>
 
-            <div className="p-6 border-t border-slate-200 bg-slate-50 flex justify-end gap-3">
+            <div className="p-6 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3">
               <button
                 onClick={() => setShowExportModal(false)}
-                className="border border-slate-200 text-slate-600 font-bold py-2 px-4 rounded-xl text-sm hover:bg-slate-100 transition-all cursor-pointer"
+                className="border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold py-2 px-4 rounded-xl text-sm hover:bg-slate-100 transition-all cursor-pointer"
               >
                 Cancel
               </button>

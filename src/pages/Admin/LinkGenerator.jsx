@@ -108,13 +108,13 @@ export default function LinkGenerator() {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="mb-10">
-        <h1 className="text-3xl font-bold text-slate-900">Generate Access Links</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Generate Access Links</h1>
         <p className="text-slate-500 mt-2 text-lg">Easily onboard your teachers and parents by sharing these unique registration links.</p>
       </div>
 
       <div className="space-y-6">
         {links.map((link) => (
-          <div key={link.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 flex flex-col md:flex-row gap-8 items-start">
+          <div key={link.id} className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-8 flex flex-col md:flex-row gap-8 items-start">
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${
               link.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' : link.color === 'blue' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
             }`}>
@@ -122,11 +122,11 @@ export default function LinkGenerator() {
             </div>
 
             <div className="flex-1">
-              <h2 className="text-xl font-bold text-slate-900 mb-2">{link.title}</h2>
-              <p className="text-slate-600 mb-6">{link.description}</p>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{link.title}</h2>
+              <p className="text-slate-600 dark:text-slate-300 mb-6">{link.description}</p>
               
               <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1 flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-mono text-sm text-slate-700 overflow-hidden relative">
+                <div className="flex-1 flex items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-mono text-sm text-slate-700 dark:text-slate-200 overflow-hidden relative">
                   <LinkIcon size={16} className="text-slate-400 shrink-0 mr-3" />
                   <span className="truncate">{link.url}</span>
                 </div>
@@ -150,14 +150,14 @@ export default function LinkGenerator() {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 text-slate-500 hover:text-primary-600 hover:bg-primary-50 border border-slate-200 rounded-xl transition-colors flex items-center justify-center"
+                    className="p-3 text-slate-500 hover:text-primary-600 hover:bg-primary-50 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors flex items-center justify-center"
                     title="Open Link in New Tab"
                   >
                     <ExternalLink size={20} />
                   </a>
                   <button 
                     onClick={() => handleEmailShare(link.url, link.title)}
-                    className="p-3 text-slate-500 hover:text-primary-600 hover:bg-primary-50 border border-slate-200 rounded-xl transition-colors"
+                    className="p-3 text-slate-500 hover:text-primary-600 hover:bg-primary-50 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors"
                     title="Share via Email"
                   >
                     <Mail size={20} />
@@ -169,29 +169,29 @@ export default function LinkGenerator() {
         ))}
       </div>
 
-      <div className="mt-12 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+      <div className="mt-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-8 shadow-sm">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
             <Settings2 size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900">Customize Staff Registration Form</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Customize Staff Registration Form</h2>
             <p className="text-sm text-slate-500">Select which additional fields should appear on the teacher registration form.</p>
           </div>
         </div>
 
         <div className="space-y-4 mb-8">
           {availableFields.map(field => (
-            <div key={field.name} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
+            <div key={field.name} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 transition-colors">
               <div>
-                <p className="font-bold text-slate-700">{field.label}</p>
+                <p className="font-bold text-slate-700 dark:text-slate-200">{field.label}</p>
                 <p className="text-xs text-slate-500">Require teachers to provide their {field.label.toLowerCase()} during registration.</p>
               </div>
               <button 
                 onClick={() => toggleField(field.name)}
                 className={`w-12 h-6 rounded-full transition-colors relative ${enabledFields.includes(field.name) ? 'bg-primary-500' : 'bg-slate-200'}`}
               >
-                <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform ${enabledFields.includes(field.name) ? 'translate-x-7' : 'translate-x-1'}`}></div>
+                <div className={`w-4 h-4 bg-white dark:bg-slate-900 rounded-full absolute top-1 transition-transform ${enabledFields.includes(field.name) ? 'translate-x-7' : 'translate-x-1'}`}></div>
               </button>
             </div>
           ))}
@@ -214,8 +214,8 @@ export default function LinkGenerator() {
         </div>
       </div>
 
-      <div className="mt-8 bg-slate-50 border border-slate-200 rounded-2xl p-6 text-sm text-slate-600">
-        <h4 className="font-bold text-slate-900 mb-2">Security Notice</h4>
+      <div className="mt-8 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 text-sm text-slate-600 dark:text-slate-300">
+        <h4 className="font-bold text-slate-900 dark:text-white mb-2">Security Notice</h4>
         <p>These links are specific to your school environment. Anyone with these links can attempt to register. Teacher accounts will automatically be added to your Staff Directory, while Parent accounts require a valid Admission Number to link to student records. All forms are protected by Captcha verification.</p>
       </div>
     </div>

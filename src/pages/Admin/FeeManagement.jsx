@@ -228,7 +228,7 @@ export default function FeeManagement() {
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Fee Management</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Fee Management</h1>
           <p className="text-slate-500 mt-1">Track revenue, manage student payments, and monitor fee dues alerts.</p>
         </div>
         {hasCreatePermission && (
@@ -253,14 +253,14 @@ export default function FeeManagement() {
                 <span className="bg-red-200 text-red-950 text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full">
                   ⚠️ Overdue Fees Alert
                 </span>
-                <span className="bg-white text-red-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-red-200">
+                <span className="bg-white dark:bg-slate-900 text-red-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-red-200">
                   {feeAlerts.overdueCount} Overdue Invoices
                 </span>
               </div>
-              <h2 className="text-xl font-black text-slate-900 mt-1">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white mt-1">
                 ₹{feeAlerts.overdueAmount.toLocaleString()} Overdue Across {feeAlerts.overdueStudentsCount} Student(s)
               </h2>
-              <p className="text-sm text-slate-600 mt-0.5">
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5">
                 Total outstanding: ₹{stats.outstanding.toLocaleString()} ({feeAlerts.unpaidCount} unpaid invoices across {feeAlerts.unpaidStudentsCount} students).
               </p>
             </div>
@@ -280,7 +280,7 @@ export default function FeeManagement() {
             {statusFilter !== 'all' && (
               <button
                 onClick={() => setStatusFilter('all')}
-                className="px-3 py-2.5 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-sm font-semibold border border-slate-200 transition-colors"
+                className="px-3 py-2.5 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 transition-colors"
               >
                 Reset Filter
               </button>
@@ -297,10 +297,10 @@ export default function FeeManagement() {
               <span className="bg-amber-200 text-amber-950 text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
                 💳 Pending Collection Alert
               </span>
-              <h2 className="text-lg font-black text-slate-900 mt-1">
+              <h2 className="text-lg font-black text-slate-900 dark:text-white mt-1">
                 ₹{stats.outstanding.toLocaleString()} Pending Collection ({feeAlerts.unpaidCount} Invoices)
               </h2>
-              <p className="text-xs text-slate-600 mt-0.5">
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
                 Pending across {feeAlerts.unpaidStudentsCount} students within their active payment deadlines.
               </p>
             </div>
@@ -320,7 +320,7 @@ export default function FeeManagement() {
             {statusFilter !== 'all' && (
               <button
                 onClick={() => setStatusFilter('all')}
-                className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold border border-slate-200"
+                className="px-3 py-2 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700"
               >
                 Reset
               </button>
@@ -331,27 +331,27 @@ export default function FeeManagement() {
 
       {/* Dashboard Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
           <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
             <Receipt size={28} />
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Expected</p>
-            <p className="text-2xl font-black text-slate-900">₹{stats.expected.toLocaleString()}</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white">₹{stats.expected.toLocaleString()}</p>
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
           <div className="w-14 h-14 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center">
             <TrendingUp size={28} />
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Collected Revenue</p>
-            <p className="text-2xl font-black text-slate-900">₹{stats.collected.toLocaleString()}</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white">₹{stats.collected.toLocaleString()}</p>
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
           <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${
             feeAlerts.overdueCount > 0 ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
           }`}>
@@ -361,7 +361,7 @@ export default function FeeManagement() {
             <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
               {feeAlerts.overdueCount > 0 ? 'Outstanding (Overdue Alert)' : 'Outstanding'}
             </p>
-            <p className={`text-2xl font-black ${feeAlerts.overdueCount > 0 ? 'text-red-600' : 'text-slate-900'}`}>
+            <p className={`text-2xl font-black ${feeAlerts.overdueCount > 0 ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>
               ₹{stats.outstanding.toLocaleString()}
             </p>
             {feeAlerts.overdueCount > 0 && (
@@ -374,8 +374,8 @@ export default function FeeManagement() {
       </div>
 
       {/* Invoices Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -384,7 +384,7 @@ export default function FeeManagement() {
               placeholder="Search by student, admission no, or fee name..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm transition-all bg-white"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm transition-all bg-white dark:bg-slate-900"
             />
           </div>
 
@@ -395,7 +395,7 @@ export default function FeeManagement() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white text-slate-700 font-medium"
+                className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-medium"
               >
                 <option value="all">All Invoices ({invoices.length})</option>
                 {feeAlerts.overdueCount > 0 && (
@@ -413,7 +413,7 @@ export default function FeeManagement() {
                 <select
                   value={filterPeriodId}
                   onChange={(e) => setFilterPeriodId(e.target.value)}
-                  className="px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white text-slate-700 font-medium"
+                  className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-medium"
                 >
                   <option value="">All Periods</option>
                   {periods.map(p => (
@@ -429,7 +429,7 @@ export default function FeeManagement() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Student</th>
                 <th className="p-4">Fee Details</th>
                 <th className="p-4">Collection Period</th>
@@ -443,7 +443,7 @@ export default function FeeManagement() {
                 <tr>
                   <td colSpan="6" className="p-16 text-center text-slate-500">
                     <CreditCard size={48} className="mx-auto mb-4 text-slate-300" />
-                    <p className="font-bold text-slate-900 mb-1">No invoices found</p>
+                    <p className="font-bold text-slate-900 dark:text-white mb-1">No invoices found</p>
                     <p>
                       {statusFilter !== 'all' || filterPeriodId || searchQuery 
                         ? 'Try clearing the active filters or search terms.' 
@@ -469,11 +469,11 @@ export default function FeeManagement() {
                       <td className="p-4 pl-6">
                         {student ? (
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm border border-slate-200 shrink-0">
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold text-sm border border-slate-200 dark:border-slate-700 shrink-0">
                               {(student.firstName?.charAt(0) || '')}{(student.lastName?.charAt(0) || '')}
                             </div>
                             <div>
-                              <div className="font-bold text-slate-900">
+                              <div className="font-bold text-slate-900 dark:text-white">
                                 {student.firstName} {student.lastName}
                               </div>
                               <div className="text-xs text-slate-500 font-mono mt-0.5">
@@ -486,7 +486,7 @@ export default function FeeManagement() {
                         )}
                       </td>
                       <td className="p-4">
-                        <div className="font-bold text-slate-900">{inv.feeName}</div>
+                        <div className="font-bold text-slate-900 dark:text-white">{inv.feeName}</div>
                         <div className={`text-xs mt-0.5 ${isOverdue ? 'text-red-600 font-bold' : 'text-slate-500'}`}>
                           Due: {inv.dueDate || 'N/A'}
                         </div>
@@ -500,7 +500,7 @@ export default function FeeManagement() {
                           <span className="text-xs text-slate-400 italic">General</span>
                         )}
                       </td>
-                      <td className="p-4 font-mono font-bold text-slate-700">
+                      <td className="p-4 font-mono font-bold text-slate-700 dark:text-slate-200">
                         ₹{Number(inv.amount || 0).toLocaleString()}
                       </td>
                       <td className="p-4">
@@ -544,9 +544,9 @@ export default function FeeManagement() {
       {/* Create Fee Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900">Assign New Fee</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Assign New Fee</h2>
               <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
                 <X size={20} />
               </button>
@@ -557,7 +557,7 @@ export default function FeeManagement() {
 
                 {/* Collection Period Selector */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">
                     Collection Period
                     {periods.length === 0 && (
                       <span className="ml-2 text-xs font-normal text-amber-600">
@@ -569,7 +569,7 @@ export default function FeeManagement() {
                     <select
                       value={newFee.collectionPeriodId}
                       onChange={(e) => handlePeriodChange(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     >
                       <option value="">No Period (General)</option>
                       {periods.filter(p => p.status === 'active').map(p => (
@@ -577,7 +577,7 @@ export default function FeeManagement() {
                       ))}
                     </select>
                   ) : (
-                    <div className="px-4 py-2.5 rounded-xl border border-dashed border-slate-300 text-sm text-slate-400 bg-slate-50">
+                    <div className="px-4 py-2.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 text-sm text-slate-400 bg-slate-50 dark:bg-slate-800">
                       No periods configured. Fee will be saved as "General".
                     </div>
                   )}
@@ -585,7 +585,7 @@ export default function FeeManagement() {
 
                 {/* Fee Name (auto-filled from period, but editable) */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">
                     Fee Description
                     <span className="ml-1 text-xs font-normal text-slate-400">(auto-filled from period, editable)</span>
                   </label>
@@ -594,39 +594,39 @@ export default function FeeManagement() {
                     value={newFee.name}
                     onChange={(e) => setNewFee({...newFee, name: e.target.value})}
                     placeholder="e.g. Term 1 Tuition"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                   />
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Amount (₹)</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Amount (₹)</label>
                     <input 
                       type="number" required min="0" step="0.01"
                       value={newFee.amount}
                       onChange={(e) => setNewFee({...newFee, amount: e.target.value})}
                       placeholder="e.g. 1500"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Due Date</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Due Date</label>
                     <input 
                       type="date" required
                       value={newFee.dueDate}
                       onChange={(e) => setNewFee({...newFee, dueDate: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Apply to Class</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Apply to Class</label>
                   <select 
                     required
                     value={newFee.classId}
                     onChange={(e) => setNewFee({...newFee, classId: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                   >
                     <option value="">Select a class...</option>
                     {classes.map(c => (
@@ -638,7 +638,7 @@ export default function FeeManagement() {
                   </p>
                 </div>
 
-                <div className="pt-6 border-t border-slate-100 mt-6">
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
                   <CustomFieldsRenderer
                     moduleKey="fees"
                     customData={newFee.customData}
@@ -647,11 +647,11 @@ export default function FeeManagement() {
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
                 <button 
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>

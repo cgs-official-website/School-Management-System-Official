@@ -273,9 +273,9 @@ export default function PublicAdmissionForm() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-4">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-800 flex flex-col justify-center items-center p-4">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary-600 border-t-transparent mb-4"></div>
-        <p className="text-slate-600 font-semibold">Loading School Admission Portal...</p>
+        <p className="text-slate-600 dark:text-slate-300 font-semibold">Loading School Admission Portal...</p>
       </div>
     );
   }
@@ -284,7 +284,7 @@ export default function PublicAdmissionForm() {
   if (submittedData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-primary-50/30 to-indigo-50/40 p-4 sm:p-8 flex items-center justify-center">
-        <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl border border-slate-100 p-8 sm:p-12 text-center animate-fade-in">
+        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 p-8 sm:p-12 text-center animate-fade-in">
           <div className="w-20 h-20 bg-green-100 text-green-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/20 animate-bounce">
             <CheckCircle2 size={42} />
           </div>
@@ -293,16 +293,16 @@ export default function PublicAdmissionForm() {
             Application Received
           </span>
 
-          <h1 className="text-3xl font-black text-slate-900 mt-4 mb-2">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white mt-4 mb-2">
             Admission Application Submitted!
           </h1>
-          <p className="text-slate-600 max-w-md mx-auto text-sm">
-            Thank you for applying to <span className="font-bold text-slate-900">{school?.schoolName || 'our school'}</span>. Your application has been logged into our admissions office.
+          <p className="text-slate-600 dark:text-slate-300 max-w-md mx-auto text-sm">
+            Thank you for applying to <span className="font-bold text-slate-900 dark:text-white">{school?.schoolName || 'our school'}</span>. Your application has been logged into our admissions office.
           </p>
 
           {/* Reference Card */}
-          <div className="my-8 p-6 rounded-2xl bg-slate-50 border border-slate-200/80 text-left space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-3 gap-2">
+          <div className="my-8 p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 text-left space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3 gap-2">
               <div>
                 <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Application Reference No.</p>
                 <p className="text-2xl font-mono font-black text-primary-600">{submittedData.applicationNumber}</p>
@@ -315,19 +315,19 @@ export default function PublicAdmissionForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-xs text-slate-400 font-semibold">Applicant Name</p>
-                <p className="font-bold text-slate-800">{submittedData.studentName}</p>
+                <p className="font-bold text-slate-800 dark:text-slate-100">{submittedData.studentName}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-400 font-semibold">Applying For Class</p>
-                <p className="font-bold text-slate-800">{submittedData.targetClassName || 'General Admission'}</p>
+                <p className="font-bold text-slate-800 dark:text-slate-100">{submittedData.targetClassName || 'General Admission'}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-400 font-semibold">Parent / Guardian</p>
-                <p className="font-bold text-slate-800">{submittedData.parentName} ({submittedData.parentRelationship})</p>
+                <p className="font-bold text-slate-800 dark:text-slate-100">{submittedData.parentName} ({submittedData.parentRelationship})</p>
               </div>
               <div>
                 <p className="text-xs text-slate-400 font-semibold">Primary Contact</p>
-                <p className="font-bold text-slate-800">{submittedData.parentPhone}</p>
+                <p className="font-bold text-slate-800 dark:text-slate-100">{submittedData.parentPhone}</p>
               </div>
             </div>
           </div>
@@ -339,7 +339,7 @@ export default function PublicAdmissionForm() {
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={() => window.print()}
-              className="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition-colors flex items-center gap-2 text-sm"
+              className="px-6 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold rounded-2xl transition-colors flex items-center gap-2 text-sm"
             >
               <Printer size={18} /> Print Application
             </button>
@@ -370,11 +370,11 @@ export default function PublicAdmissionForm() {
 
   // --- Main Admission Form View ---
   return (
-    <div className="min-h-screen bg-slate-50/70 text-slate-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50/70 text-slate-900 dark:text-white py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         
         {/* School Header Banner */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center gap-6 relative overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-center gap-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary-500/10 to-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-600 to-indigo-700 text-white flex items-center justify-center shrink-0 shadow-md shadow-primary-600/20 overflow-hidden border border-white">
@@ -389,7 +389,7 @@ export default function PublicAdmissionForm() {
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/80 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-2">
               <Sparkles size={14} /> Official Online Admission Portal
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
               {school?.schoolName || 'School Student Admission'}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
@@ -402,20 +402,20 @@ export default function PublicAdmissionForm() {
         <form onSubmit={handleSubmit} className="space-y-8">
           
           {/* Section 1: Student Information */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
+            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100 dark:border-slate-800">
               <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                 <User size={20} />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900">Student Personal Details</h3>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Student Personal Details</h3>
                 <p className="text-xs text-slate-500">Provide personal identity details of the applicant student</p>
               </div>
             </div>
 
             {/* Photo Upload Box */}
             <div className="flex flex-col sm:flex-row items-center gap-6 p-5 bg-emerald-50/40 rounded-2xl border border-emerald-100">
-              <div className="w-28 h-28 rounded-2xl bg-white border-2 border-dashed border-emerald-300 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
+              <div className="w-28 h-28 rounded-2xl bg-white dark:bg-slate-900 border-2 border-dashed border-emerald-300 flex items-center justify-center overflow-hidden shrink-0 shadow-sm">
                 {photoPreview ? (
                   <img src={photoPreview} alt="Student Preview" className="w-full h-full object-cover" />
                 ) : (
@@ -426,9 +426,9 @@ export default function PublicAdmissionForm() {
                 )}
               </div>
               <div className="text-center sm:text-left">
-                <p className="text-sm font-bold text-slate-800 mb-1">Upload Student Photo (Optional)</p>
+                <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Upload Student Photo (Optional)</p>
                 <p className="text-xs text-slate-500 mb-3">Accepted formats: JPG, PNG, WEBP (Max 5MB)</p>
-                <label className="inline-flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl cursor-pointer shadow-sm transition-all">
+                <label className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl cursor-pointer shadow-sm transition-all">
                   <UploadCloud size={16} /> Choose Photo
                     <input type="file" accept="image/*" onChange={handlePhotoSelect} className="hidden" />
                   </label>
@@ -438,7 +438,7 @@ export default function PublicAdmissionForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
               {/* First Name */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   First Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -448,7 +448,7 @@ export default function PublicAdmissionForm() {
                   onChange={handleChange}
                   placeholder="e.g. Aarav"
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:ring-2 focus:ring-primary-500 focus:outline-none ${
-                    errors.firstName ? 'border-red-400 bg-red-50/20' : 'border-slate-200 bg-white'
+                    errors.firstName ? 'border-red-400 bg-red-50/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
                   }`}
                 />
                 {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
@@ -456,7 +456,7 @@ export default function PublicAdmissionForm() {
 
               {/* Last Name */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Last Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -466,7 +466,7 @@ export default function PublicAdmissionForm() {
                   onChange={handleChange}
                   placeholder="e.g. Sharma"
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:ring-2 focus:ring-primary-500 focus:outline-none ${
-                    errors.lastName ? 'border-red-400 bg-red-50/20' : 'border-slate-200 bg-white'
+                    errors.lastName ? 'border-red-400 bg-red-50/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
                   }`}
                 />
                 {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
@@ -474,7 +474,7 @@ export default function PublicAdmissionForm() {
 
               {/* Date of Birth */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Date of Birth <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -483,7 +483,7 @@ export default function PublicAdmissionForm() {
                   value={formData.dob}
                   onChange={handleChange}
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:ring-2 focus:ring-primary-500 focus:outline-none ${
-                    errors.dob ? 'border-red-400 bg-red-50/20' : 'border-slate-200 bg-white'
+                    errors.dob ? 'border-red-400 bg-red-50/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
                   }`}
                 />
                 {errors.dob && <p className="text-xs text-red-500 mt-1">{errors.dob}</p>}
@@ -491,14 +491,14 @@ export default function PublicAdmissionForm() {
 
               {/* Gender */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Gender <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -508,14 +508,14 @@ export default function PublicAdmissionForm() {
 
               {/* Blood Group */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Blood Group
                 </label>
                 <select
                   name="bloodGroup"
                   value={formData.bloodGroup}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 >
                   <option value="">Select Blood Group</option>
                   <option value="A+">A+</option>
@@ -531,7 +531,7 @@ export default function PublicAdmissionForm() {
 
               {/* Nationality */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Nationality
                 </label>
                 <input
@@ -540,13 +540,13 @@ export default function PublicAdmissionForm() {
                   value={formData.nationality}
                   onChange={handleChange}
                   placeholder="Indian"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
               {/* Religion */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Religion
                 </label>
                 <input
@@ -555,13 +555,13 @@ export default function PublicAdmissionForm() {
                   value={formData.religion}
                   onChange={handleChange}
                   placeholder="e.g. Hindu / Muslim / Christian"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
               {/* Mother Tongue */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Mother Tongue
                 </label>
                 <input
@@ -570,13 +570,13 @@ export default function PublicAdmissionForm() {
                   value={formData.motherTongue}
                   onChange={handleChange}
                   placeholder="e.g. Hindi / English / Tamil"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
               {/* Aadhaar Number */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Aadhaar / National ID (12 Digits)
                 </label>
                 <input
@@ -586,20 +586,20 @@ export default function PublicAdmissionForm() {
                   onChange={handleChange}
                   maxLength="12"
                   placeholder="12 digit Aadhaar"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none font-mono"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none font-mono"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 2: Academic Selection */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
+            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100 dark:border-slate-800">
               <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
                 <BookOpen size={20} />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">2. Academic & Target Class</h2>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">2. Academic & Target Class</h2>
                 <p className="text-xs text-slate-500">Select grade and past schooling details</p>
               </div>
             </div>
@@ -607,14 +607,14 @@ export default function PublicAdmissionForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {/* Target Class */}
               <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Applying for Class / Section
                 </label>
                 <select
                   name="targetClassId"
                   value={formData.targetClassId}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 >
                   <option value="">Select Target Class</option>
                   {classes.map(c => (
@@ -627,7 +627,7 @@ export default function PublicAdmissionForm() {
 
               {/* Previous School */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Previous School Name
                 </label>
                 <input
@@ -636,13 +636,13 @@ export default function PublicAdmissionForm() {
                   value={formData.previousSchool}
                   onChange={handleChange}
                   placeholder="e.g. St. Xavier's High School"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
               {/* Previous Marks / Grade */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Previous Grade / Percentage
                 </label>
                 <input
@@ -651,13 +651,13 @@ export default function PublicAdmissionForm() {
                   value={formData.previousMarks}
                   onChange={handleChange}
                   placeholder="e.g. 88% or A Grade"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
               {/* Subjects Chosen */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Preferred Electives / Stream
                 </label>
                 <input
@@ -666,13 +666,13 @@ export default function PublicAdmissionForm() {
                   value={formData.subjectsChosen}
                   onChange={handleChange}
                   placeholder="e.g. Science with Computer Science"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
               {/* School Bus Route */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Transportation / Bus Stop
                 </label>
                 <input
@@ -681,20 +681,20 @@ export default function PublicAdmissionForm() {
                   value={formData.busRoute}
                   onChange={handleChange}
                   placeholder="e.g. Route 4 - Sector 12 Gate"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 3: Parent & Guardian Details */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
+            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100 dark:border-slate-800">
               <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
                 <Users size={20} />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">3. Parent & Guardian Information</h2>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">3. Parent & Guardian Information</h2>
                 <p className="text-xs text-slate-500">Contact details for correspondence and emergency</p>
               </div>
             </div>
@@ -702,7 +702,7 @@ export default function PublicAdmissionForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {/* Parent Name */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Parent / Guardian Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -712,7 +712,7 @@ export default function PublicAdmissionForm() {
                   onChange={handleChange}
                   placeholder="e.g. Rajesh Sharma"
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:ring-2 focus:ring-primary-500 focus:outline-none ${
-                    errors.parentName ? 'border-red-400 bg-red-50/20' : 'border-slate-200 bg-white'
+                    errors.parentName ? 'border-red-400 bg-red-50/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
                   }`}
                 />
                 {errors.parentName && <p className="text-xs text-red-500 mt-1">{errors.parentName}</p>}
@@ -720,14 +720,14 @@ export default function PublicAdmissionForm() {
 
               {/* Relationship */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Relationship <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="parentRelationship"
                   value={formData.parentRelationship}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 >
                   <option value="Father">Father</option>
                   <option value="Mother">Mother</option>
@@ -737,7 +737,7 @@ export default function PublicAdmissionForm() {
 
               {/* Parent Phone */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Primary Mobile / WhatsApp <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -748,7 +748,7 @@ export default function PublicAdmissionForm() {
                   maxLength="10"
                   placeholder="10 digit number"
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:ring-2 focus:ring-primary-500 focus:outline-none font-mono ${
-                    errors.parentPhone ? 'border-red-400 bg-red-50/20' : 'border-slate-200 bg-white'
+                    errors.parentPhone ? 'border-red-400 bg-red-50/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
                   }`}
                 />
                 {errors.parentPhone && <p className="text-xs text-red-500 mt-1">{errors.parentPhone}</p>}
@@ -756,7 +756,7 @@ export default function PublicAdmissionForm() {
 
               {/* Parent Email */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Email Address <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -766,7 +766,7 @@ export default function PublicAdmissionForm() {
                   onChange={handleChange}
                   placeholder="e.g. parent@example.com"
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:ring-2 focus:ring-primary-500 focus:outline-none ${
-                    errors.parentEmail ? 'border-red-400 bg-red-50/20' : 'border-slate-200 bg-white'
+                    errors.parentEmail ? 'border-red-400 bg-red-50/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
                   }`}
                 />
                 {errors.parentEmail && <p className="text-xs text-red-500 mt-1">{errors.parentEmail}</p>}
@@ -774,7 +774,7 @@ export default function PublicAdmissionForm() {
 
               {/* Parent Occupation */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Occupation / Profession
                 </label>
                 <input
@@ -783,13 +783,13 @@ export default function PublicAdmissionForm() {
                   value={formData.parentOccupation}
                   onChange={handleChange}
                   placeholder="e.g. Software Engineer / Doctor"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
               {/* Emergency Contact */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Emergency Contact Phone
                 </label>
                 <input
@@ -798,27 +798,27 @@ export default function PublicAdmissionForm() {
                   value={formData.emergencyContact}
                   onChange={handleChange}
                   placeholder="Secondary phone number"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none font-mono"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none font-mono"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 4: Residential Address */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
+            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100 dark:border-slate-800">
               <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
                 <MapPin size={20} />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">4. Residential Address</h2>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">4. Residential Address</h2>
                 <p className="text-xs text-slate-500">Current home address for correspondence</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               <div className="sm:col-span-2 lg:col-span-4">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   House No. / Building / Street Address <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -828,14 +828,14 @@ export default function PublicAdmissionForm() {
                   onChange={handleChange}
                   placeholder="Complete residential address"
                   className={`w-full px-4 py-2.5 rounded-xl border text-sm transition-all focus:ring-2 focus:ring-primary-500 focus:outline-none ${
-                    errors.homeAddress ? 'border-red-400 bg-red-50/20' : 'border-slate-200 bg-white'
+                    errors.homeAddress ? 'border-red-400 bg-red-50/20' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
                   }`}
                 />
                 {errors.homeAddress && <p className="text-xs text-red-500 mt-1">{errors.homeAddress}</p>}
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   City / Town
                 </label>
                 <input
@@ -844,12 +844,12 @@ export default function PublicAdmissionForm() {
                   value={formData.city}
                   onChange={handleChange}
                   placeholder="City"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   State
                 </label>
                 <input
@@ -858,12 +858,12 @@ export default function PublicAdmissionForm() {
                   value={formData.state}
                   onChange={handleChange}
                   placeholder="State"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1.5">
                   Postal / Pincode
                 </label>
                 <input
@@ -873,35 +873,35 @@ export default function PublicAdmissionForm() {
                   onChange={handleChange}
                   maxLength="6"
                   placeholder="6 digit PIN"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none font-mono"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none font-mono"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 5: Declaration & Anti-Spam Verification */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8">
-            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8">
+            <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-100 dark:border-slate-800">
               <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
                 <ShieldCheck size={20} />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">5. Declaration & Security Verification</h2>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">5. Declaration & Security Verification</h2>
                 <p className="text-xs text-slate-500">Confirm accuracy of information</p>
               </div>
             </div>
 
             {/* Declaration Checkbox */}
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-6">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 mb-6">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   name="declaration"
                   checked={formData.declaration}
                   onChange={handleChange}
-                  className="mt-1 w-4 h-4 rounded text-primary-600 focus:ring-primary-500 border-slate-300"
+                  className="mt-1 w-4 h-4 rounded text-primary-600 focus:ring-primary-500 border-slate-300 dark:border-slate-600"
                 />
-                <span className="text-xs text-slate-700 font-medium leading-relaxed">
+                <span className="text-xs text-slate-700 dark:text-slate-200 font-medium leading-relaxed">
                   I hereby declare that all information furnished in this admission application is true, complete, and accurate to the best of my knowledge. I understand that any false statement or omission may lead to rejection of this application or subsequent cancellation of admission.
                 </span>
               </label>
@@ -914,7 +914,7 @@ export default function PublicAdmissionForm() {
             </div>
 
             {/* Submit CTA */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
               <p className="text-xs text-slate-400 text-center sm:text-left">
                 By submitting, your application will be queued for administrative review.
               </p>

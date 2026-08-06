@@ -184,9 +184,9 @@ export default function AcademicCalendar({ isAdmin }) {
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 overflow-hidden flex flex-col h-[700px]">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 overflow-hidden flex flex-col h-[700px]">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <CalendarIcon className="text-primary-600" />
           Academic Calendar
         </h2>
@@ -229,9 +229,9 @@ export default function AcademicCalendar({ isAdmin }) {
               return (
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
                   <div className="flex items-center gap-4">
-                    <button onClick={goToBack} className="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors shadow-sm"><LuChevronLeft size={20} /></button>
-                    <span className="text-2xl font-black text-slate-900 min-w-[180px] text-center">{toolbar.label}</span>
-                    <button onClick={goToNext} className="w-10 h-10 flex items-center justify-center border border-slate-200 rounded-xl hover:bg-slate-50 text-slate-600 transition-colors shadow-sm"><LuChevronRight size={20} /></button>
+                    <button onClick={goToBack} className="w-10 h-10 flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 text-slate-600 dark:text-slate-300 transition-colors shadow-sm"><LuChevronLeft size={20} /></button>
+                    <span className="text-2xl font-black text-slate-900 dark:text-white min-w-[180px] text-center">{toolbar.label}</span>
+                    <button onClick={goToNext} className="w-10 h-10 flex items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 text-slate-600 dark:text-slate-300 transition-colors shadow-sm"><LuChevronRight size={20} /></button>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex gap-2 mr-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -256,9 +256,9 @@ export default function AcademicCalendar({ isAdmin }) {
 
       {showModal && isAdmin && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="text-xl font-bold text-slate-900">{selectedEvent ? 'Edit Event' : 'Add New Event'}</h3>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">{selectedEvent ? 'Edit Event' : 'Add New Event'}</h3>
               <button onClick={() => setShowModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
                 <X size={20} />
               </button>
@@ -266,11 +266,11 @@ export default function AcademicCalendar({ isAdmin }) {
             
             <form onSubmit={handleAddEvent} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Event Title</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Event Title</label>
                 <input 
                   type="text" required
                   value={newEvent.title} onChange={e => setNewEvent({...newEvent, title: e.target.value})}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               
@@ -280,38 +280,38 @@ export default function AcademicCalendar({ isAdmin }) {
                   id="customDatesToggle"
                   checked={newEvent.isCustomDates}
                   onChange={e => setNewEvent({...newEvent, isCustomDates: e.target.checked})}
-                  className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
+                  className="w-4 h-4 text-primary-600 rounded border-slate-300 dark:border-slate-600 focus:ring-primary-500"
                 />
-                <label htmlFor="customDatesToggle" className="text-sm font-semibold text-slate-700 cursor-pointer">Add multiple custom dates</label>
+                <label htmlFor="customDatesToggle" className="text-sm font-semibold text-slate-700 dark:text-slate-200 cursor-pointer">Add multiple custom dates</label>
               </div>
 
               {!newEvent.isCustomDates ? (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Start Date</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Start Date</label>
                     <input 
                       type="date" required={!newEvent.isCustomDates}
                       value={newEvent.start} onChange={e => setNewEvent({...newEvent, start: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">End Date</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">End Date</label>
                     <input 
                       type="date" required={!newEvent.isCustomDates}
                       value={newEvent.end} onChange={e => setNewEvent({...newEvent, end: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                     />
                   </div>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Select Dates</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Select Dates</label>
                   <div className="flex gap-2">
                     <input 
                       type="date" 
                       id="customDateInput"
-                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                     <button 
                       type="button"
@@ -322,7 +322,7 @@ export default function AcademicCalendar({ isAdmin }) {
                           document.getElementById('customDateInput').value = '';
                         }
                       }}
-                      className="px-4 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-sm border border-slate-200"
+                      className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-sm border border-slate-200 dark:border-slate-700"
                     >
                       Add
                     </button>
@@ -347,10 +347,10 @@ export default function AcademicCalendar({ isAdmin }) {
               )}
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Event Type</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Event Type</label>
                 <select 
                   value={newEvent.type} onChange={e => setNewEvent({...newEvent, type: e.target.value})}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="event">General Event</option>
                   <option value="holiday">Holiday</option>
@@ -358,7 +358,7 @@ export default function AcademicCalendar({ isAdmin }) {
                 </select>
               </div>
 
-              <div className="pt-4 flex justify-end gap-3 border-t border-slate-100">
+              <div className="pt-4 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
                 {selectedEvent && (
                   <button 
                     type="button" onClick={handleDeleteEvent}
@@ -369,7 +369,7 @@ export default function AcademicCalendar({ isAdmin }) {
                 )}
                 <button 
                   type="button" onClick={() => setShowModal(false)}
-                  className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>

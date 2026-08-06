@@ -56,7 +56,7 @@ export default function SubscriptionsList() {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Subscriptions Overview</h1>
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Subscriptions Overview</h1>
         <p className="text-slate-500 mt-1">Monitor active tenant subscriptions and revenue.</p>
       </div>
 
@@ -68,50 +68,50 @@ export default function SubscriptionsList() {
         <>
           {/* Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-green-100 text-green-700 rounded-lg">
                   <TrendingUp size={20} />
                 </div>
-                <h3 className="font-semibold text-slate-600">Total MRR</h3>
+                <h3 className="font-semibold text-slate-600 dark:text-slate-300">Total MRR</h3>
               </div>
-              <p className="text-3xl font-bold text-slate-900">₹{calculateMRR().toLocaleString()}</p>
+              <p className="text-3xl font-bold text-slate-900 dark:text-white">₹{calculateMRR().toLocaleString()}</p>
             </div>
             
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-blue-100 text-blue-700 rounded-lg">
                   <CreditCard size={20} />
                 </div>
-                <h3 className="font-semibold text-slate-600">Active Subscriptions</h3>
+                <h3 className="font-semibold text-slate-600 dark:text-slate-300">Active Subscriptions</h3>
               </div>
-              <p className="text-3xl font-bold text-slate-900">
+              <p className="text-3xl font-bold text-slate-900 dark:text-white">
                 {schools.filter(s => s.status === 'approved' && s.planId).length}
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-amber-100 text-amber-700 rounded-lg">
                   <AlertCircle size={20} />
                 </div>
-                <h3 className="font-semibold text-slate-600">Free Tier / Pending</h3>
+                <h3 className="font-semibold text-slate-600 dark:text-slate-300">Free Tier / Pending</h3>
               </div>
-              <p className="text-3xl font-bold text-slate-900">
+              <p className="text-3xl font-bold text-slate-900 dark:text-white">
                 {schools.filter(s => !s.planId).length}
               </p>
             </div>
           </div>
 
           {/* Table */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-              <h2 className="text-lg font-bold text-slate-900">Tenant Subscriptions</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Tenant Subscriptions</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                  <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                     <th className="p-4 pl-6">School Name</th>
                     <th className="p-4">Current Plan</th>
                     <th className="p-4">Billing Cycle</th>
@@ -124,7 +124,7 @@ export default function SubscriptionsList() {
                     const plan = plans.find(p => p.id === school.planId);
                     return (
                       <tr key={school.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="p-4 pl-6 font-semibold text-slate-900">{school.name}</td>
+                        <td className="p-4 pl-6 font-semibold text-slate-900 dark:text-white">{school.name}</td>
                         <td className="p-4">
                           {plan ? (
                             <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-primary-100 text-primary-800">
@@ -134,7 +134,7 @@ export default function SubscriptionsList() {
                             <span className="text-slate-500 italic">No Plan (Free/Trial)</span>
                           )}
                         </td>
-                        <td className="p-4 text-slate-600">
+                        <td className="p-4 text-slate-600 dark:text-slate-300">
                           {plan ? (school.billingCycle || 'Monthly') : '-'}
                         </td>
                         <td className="p-4">
@@ -170,19 +170,19 @@ export default function SubscriptionsList() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <span className="text-sm text-slate-500 font-medium">
-                  Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
-                  <span className="font-semibold text-slate-900">
+                  Showing <span className="font-semibold text-slate-900 dark:text-white">{startIndex + 1}</span> to{' '}
+                  <span className="font-semibold text-slate-900 dark:text-white">
                     {Math.min(startIndex + itemsPerPage, approvedSchools.length)}
                   </span>{' '}
-                  of <span className="font-semibold text-slate-900">{approvedSchools.length}</span> subscriptions
+                  of <span className="font-semibold text-slate-900 dark:text-white">{approvedSchools.length}</span> subscriptions
                 </span>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     Previous
                   </button>
@@ -195,7 +195,7 @@ export default function SubscriptionsList() {
                         className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                           currentPage === pageNum
                             ? 'bg-primary-600 text-white shadow-sm'
-                            : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                            : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
                         }`}
                       >
                         {pageNum}
@@ -205,7 +205,7 @@ export default function SubscriptionsList() {
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     Next
                   </button>

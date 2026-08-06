@@ -50,11 +50,11 @@ export default function SuperAdminLayout() {
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive 
-                    ? 'bg-primary-500 text-slate-900 font-bold shadow-lg shadow-primary-500/30' 
+                    ? 'bg-primary-500 text-slate-900 dark:text-white font-bold shadow-lg shadow-primary-500/30' 
                     : 'text-slate-400 hover:bg-white/10 hover:text-white font-medium'
                 }`}
               >
-                <item.icon size={20} className={isActive ? 'text-slate-900' : 'text-slate-400'} />
+                <item.icon size={20} className={isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400'} />
                 {item.label}
               </Link>
             )
@@ -64,7 +64,7 @@ export default function SuperAdminLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 bg-slate-50 m-2 lg:mb-4 lg:mr-4 rounded-[1.5rem] flex flex-col min-w-0 overflow-hidden shadow-inner relative z-10">
+      <main className="flex-1 bg-slate-50 dark:bg-slate-800 m-2 lg:mb-4 lg:mr-4 rounded-[1.5rem] flex flex-col min-w-0 overflow-hidden shadow-inner relative z-10">
         <div className="flex-1 overflow-y-auto p-4 lg:p-8 custom-scrollbar">
           <Outlet />
         </div>

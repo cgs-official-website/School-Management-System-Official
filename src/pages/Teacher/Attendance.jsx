@@ -345,7 +345,7 @@ export default function Attendance() {
       case 'Present': return 'bg-green-100 text-green-700 border-green-200';
       case 'Absent': return 'bg-red-100 text-red-700 border-red-200';
       case 'Late': return 'bg-amber-100 text-amber-700 border-amber-200';
-      default: return 'bg-slate-100 text-slate-700 border-slate-200';
+      default: return 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700';
     }
   };
 
@@ -378,15 +378,15 @@ export default function Attendance() {
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 shrink-0">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Mark Attendance</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Mark Attendance</h2>
           <p className="text-slate-500 mt-1">Select date/session to register or view class attendance statistics.</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50/50 p-2 rounded-2xl border border-slate-100">
+        <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50/50 p-2 rounded-2xl border border-slate-100 dark:border-slate-800">
           <select 
             value={viewMode}
             onChange={(e) => setViewMode(e.target.value)}
-            className="border-slate-200 rounded-xl focus:ring-primary-500 text-slate-700 font-semibold py-2 pl-4 pr-10 bg-white shadow-sm outline-none"
+            className="border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary-500 text-slate-700 dark:text-slate-200 font-semibold py-2 pl-4 pr-10 bg-white dark:bg-slate-900 shadow-sm outline-none"
           >
             <option value="daily">Daily Marking</option>
             <option value="weekly">This Week Report</option>
@@ -395,7 +395,7 @@ export default function Attendance() {
           </select>
           {viewMode === 'daily' && (
             <div className="flex items-center gap-2 shrink-0">
-              <div className="flex items-center gap-2 bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+              <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                 <div className="pl-2 text-slate-400">
                   <CalendarIcon size={20} />
                 </div>
@@ -403,13 +403,13 @@ export default function Attendance() {
                   type="date" 
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="border-none focus:ring-0 text-slate-700 font-medium py-1 pr-2 bg-transparent cursor-pointer outline-none"
+                  className="border-none focus:ring-0 text-slate-700 dark:text-slate-200 font-medium py-1 pr-2 bg-transparent cursor-pointer outline-none"
                 />
               </div>
               <select 
                 value={selectedSession}
                 onChange={(e) => setSelectedSession(e.target.value)}
-                className="border border-slate-200 rounded-xl focus:ring-primary-500 text-slate-700 font-bold py-2.5 px-4 bg-white shadow-sm outline-none"
+                className="border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary-500 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-4 bg-white dark:bg-slate-900 shadow-sm outline-none"
               >
                 <option value="FN">FN (Forenoon)</option>
                 <option value="AN">AN (Afternoon)</option>
@@ -436,10 +436,10 @@ export default function Attendance() {
         </div>
       )}
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {/* Table Header */}
-        <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-600 pl-2">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 flex justify-between items-center">
+          <div className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 pl-2">
             <Users size={18} />
             <span>{students.length} Students</span>
           </div>
@@ -476,13 +476,13 @@ export default function Attendance() {
           </div>
         </div>
         
-        <div className="p-4 border-b border-slate-200 bg-white">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
           <input 
             type="text" 
             placeholder="Search student by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full md:w-1/3 px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
+            className="w-full md:w-1/3 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-shadow"
           />
         </div>
 
@@ -493,7 +493,7 @@ export default function Attendance() {
           </div>
         ) : students.length === 0 ? (
           <div className="p-16 text-center text-slate-500">
-            <p className="text-lg font-bold text-slate-900 mb-1">No students found</p>
+            <p className="text-lg font-bold text-slate-900 dark:text-white mb-1">No students found</p>
             <p>There are no students enrolled in this class yet.</p>
           </div>
         ) : viewMode === 'daily' ? (
@@ -506,11 +506,11 @@ export default function Attendance() {
               return (
                 <div key={student.id} className="p-4 pl-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50/50 transition-colors">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center font-bold text-sm border border-slate-200 shadow-sm">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold text-sm border border-slate-200 dark:border-slate-700 shadow-sm">
                       {student.firstName.charAt(0)}{student.lastName.charAt(0)}
                     </div>
                     <div>
-                      <div className="font-bold text-slate-900">
+                      <div className="font-bold text-slate-900 dark:text-white">
                         {student.firstName} {student.lastName}
                       </div>
                       <div className="text-xs text-slate-500 font-mono">
@@ -520,11 +520,11 @@ export default function Attendance() {
                   </div>
 
                   {/* Status Toggles */}
-                  <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200 w-full sm:w-auto">
+                  <div className="flex bg-slate-100 dark:bg-slate-700 p-1 rounded-lg border border-slate-200 dark:border-slate-700 w-full sm:w-auto">
                     <button 
                       onClick={() => handleStatusChange(student.id, 'Present')}
                       className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        currentStatus === 'Present' ? 'bg-white text-green-700 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'
+                        currentStatus === 'Present' ? 'bg-white dark:bg-slate-900 text-green-700 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'
                       }`}
                     >
                       {currentStatus === 'Present' && <CheckCircle2 size={16} className="text-green-500"/>}
@@ -534,7 +534,7 @@ export default function Attendance() {
                     <button 
                       onClick={() => handleStatusChange(student.id, 'Absent')}
                       className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        currentStatus === 'Absent' ? 'bg-white text-red-700 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'
+                        currentStatus === 'Absent' ? 'bg-white dark:bg-slate-900 text-red-700 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'
                       }`}
                     >
                       {currentStatus === 'Absent' && <XCircle size={16} className="text-red-500"/>}
@@ -544,7 +544,7 @@ export default function Attendance() {
                     <button 
                       onClick={() => handleStatusChange(student.id, 'Late')}
                       className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        currentStatus === 'Late' ? 'bg-white text-amber-700 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'
+                        currentStatus === 'Late' ? 'bg-white dark:bg-slate-900 text-amber-700 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'
                       }`}
                     >
                       {currentStatus === 'Late' && <AlertCircle size={16} className="text-amber-500"/>}
@@ -559,7 +559,7 @@ export default function Attendance() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                   <th className="p-4 pl-6">Student Name</th>
                   <th className="p-4">Total Classes</th>
                   <th className="p-4 text-green-600">Present</th>
@@ -578,10 +578,10 @@ export default function Attendance() {
                   return (
                     <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="p-4 pl-6">
-                        <div className="font-bold text-slate-900">{student.firstName} {student.lastName}</div>
+                        <div className="font-bold text-slate-900 dark:text-white">{student.firstName} {student.lastName}</div>
                         <div className="text-xs text-slate-500 font-mono mt-0.5">{student.admissionNumber}</div>
                       </td>
-                      <td className="p-4 font-semibold text-slate-600">{stat.total}</td>
+                      <td className="p-4 font-semibold text-slate-600 dark:text-slate-300">{stat.total}</td>
                       <td className="p-4 font-semibold text-green-600">{stat.present}</td>
                       <td className="p-4 font-semibold text-red-600">{stat.absent}</td>
                       <td className="p-4 font-semibold text-amber-600">{stat.late}</td>
@@ -606,11 +606,11 @@ export default function Attendance() {
       {/* Export Field Selector Modal */}
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold text-slate-900">Export Attendance</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Attendance</h3>
                 <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
               </div>
               <button 
@@ -624,7 +624,7 @@ export default function Attendance() {
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               {/* File Name Input */}
-              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+              <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
@@ -632,7 +632,7 @@ export default function Attendance() {
                     placeholder="e.g. Attendance_Report"
                     value={exportFileName}
                     onChange={(e) => setExportFileName(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
                   <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
                 </div>
@@ -650,7 +650,7 @@ export default function Attendance() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
                 >
                   Deselect All
                 </button>
@@ -661,7 +661,7 @@ export default function Attendance() {
                 {availableFieldsList.map((field) => (
                   <label 
                     key={field.key}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
                   >
                     <input 
                       type="checkbox"
@@ -669,18 +669,18 @@ export default function Attendance() {
                       onChange={() => handleFieldToggle(field.key)}
                       className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
                     />
-                    <span className="text-sm font-semibold text-slate-700">{field.label}</span>
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{field.label}</span>
                   </label>
                 ))}
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

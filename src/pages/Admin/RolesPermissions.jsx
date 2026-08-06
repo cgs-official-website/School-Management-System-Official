@@ -271,7 +271,7 @@ export default function RolesPermissions() {
     <div className="p-8 max-w-7xl mx-auto h-[calc(100vh-80px)] flex flex-col">
       <div className="flex justify-between items-end mb-6 shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuShield className="text-primary-600" />
             Roles & Permissions
           </h1>
@@ -289,9 +289,9 @@ export default function RolesPermissions() {
 
       <div className="flex gap-6 flex-1 min-h-0">
         {/* Roles List */}
-        <div className="w-64 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden shrink-0">
-          <div className="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-            <span className="font-bold text-slate-700 uppercase tracking-wider text-xs">Select Role</span>
+        <div className="w-64 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden shrink-0">
+          <div className="p-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+            <span className="font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider text-xs">Select Role</span>
             <button 
               onClick={() => setIsAddingRole(true)}
               className="p-1 hover:bg-slate-200 rounded text-slate-500 hover:text-primary-600 transition-colors"
@@ -309,7 +309,7 @@ export default function RolesPermissions() {
                   value={newRoleName}
                   onChange={e => setNewRoleName(e.target.value)}
                   placeholder="Role Name"
-                  className="w-full bg-white px-2 py-1.5 rounded-lg text-sm border border-primary-200 focus:outline-none focus:border-primary-500"
+                  className="w-full bg-white dark:bg-slate-900 px-2 py-1.5 rounded-lg text-sm border border-primary-200 focus:outline-none focus:border-primary-500"
                 />
                 <button type="submit" className="p-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700"><LuCheck size={14}/></button>
                 <button type="button" onClick={() => setIsAddingRole(false)} className="p-1.5 text-slate-400 hover:text-slate-600"><LuX size={14}/></button>
@@ -323,7 +323,7 @@ export default function RolesPermissions() {
                 className={`w-full text-left px-4 py-3 rounded-xl mb-1 font-semibold text-sm transition-all flex items-center justify-between cursor-pointer group ${
                   activeRole === role 
                     ? 'bg-primary-50 text-primary-700 shadow-sm border border-primary-100' 
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent'
+                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 hover:text-slate-900 border border-transparent'
                 }`}
               >
                 <span className="truncate pr-2">{role}</span>
@@ -342,18 +342,18 @@ export default function RolesPermissions() {
         </div>
 
         {/* Permissions Matrix */}
-        <div className="flex-1 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
-          <div className="p-6 bg-slate-50 border-b border-slate-200 flex justify-between items-center shrink-0">
+        <div className="flex-1 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden">
+          <div className="p-6 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center shrink-0">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">{activeRole} Permissions</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">{activeRole} Permissions</h2>
               <p className="text-xs text-slate-500 mt-1">Select the modules and actions this role can access.</p>
             </div>
             <div className="flex items-center gap-3">
-              <label className="text-sm font-semibold text-slate-600">Target Login Panel:</label>
+              <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">Target Login Panel:</label>
               <select
                 value={loginPanels[activeRole] || 'admin'}
                 onChange={e => setLoginPanels(prev => ({ ...prev, [activeRole]: e.target.value }))}
-                className="px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-sm font-medium focus:ring-2 focus:ring-primary-500"
+                className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-medium focus:ring-2 focus:ring-primary-500"
               >
                 <option value="admin">Admin Panel</option>
                 <option value="teacher">Teacher Panel</option>
@@ -363,8 +363,8 @@ export default function RolesPermissions() {
           
           <div className="flex-1 overflow-y-auto custom-scrollbar p-0">
             <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 bg-white shadow-sm z-10">
-                <tr className="border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <thead className="sticky top-0 bg-white dark:bg-slate-900 shadow-sm z-10">
+                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                   <th className="p-4 pl-6">Module Name</th>
                   <th className="p-4 text-center">Read / View</th>
                   <th className="p-4 text-center">Create / Add</th>
@@ -398,7 +398,7 @@ export default function RolesPermissions() {
 
                     return (
                       <tr key={module.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="p-4 pl-6 font-semibold text-slate-700">
+                        <td className="p-4 pl-6 font-semibold text-slate-700 dark:text-slate-200">
                           {module.label}
                         </td>
                         <td className="p-4 text-center">
@@ -407,7 +407,7 @@ export default function RolesPermissions() {
                               type="checkbox" 
                               checked={p.read} 
                               onChange={() => handleToggle(module.id, 'read')}
-                              className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer" 
+                              className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500 cursor-pointer" 
                             />
                           </label>
                         </td>
@@ -417,7 +417,7 @@ export default function RolesPermissions() {
                               type="checkbox" 
                               checked={p.create} 
                               onChange={() => handleToggle(module.id, 'create')}
-                              className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer" 
+                              className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500 cursor-pointer" 
                             />
                           </label>
                         </td>
@@ -427,7 +427,7 @@ export default function RolesPermissions() {
                               type="checkbox" 
                               checked={p.edit} 
                               onChange={() => handleToggle(module.id, 'edit')}
-                              className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer" 
+                              className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500 cursor-pointer" 
                             />
                           </label>
                         </td>
@@ -437,7 +437,7 @@ export default function RolesPermissions() {
                               type="checkbox" 
                               checked={p.delete} 
                               onChange={() => handleToggle(module.id, 'delete')}
-                              className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer" 
+                              className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500 cursor-pointer" 
                             />
                           </label>
                         </td>
@@ -446,7 +446,7 @@ export default function RolesPermissions() {
                             onClick={() => handleToggleAll(module.id, !isAll)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                               isAll 
-                                ? 'bg-slate-100 text-slate-500 hover:bg-slate-200' 
+                                ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200' 
                                 : 'bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200'
                             }`}
                           >

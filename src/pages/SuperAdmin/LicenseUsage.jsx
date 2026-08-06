@@ -166,10 +166,10 @@ export default function LicenseUsage() {
     return (
       <div className="w-full">
         <div className="flex justify-between text-xs mb-1 font-semibold">
-          <span className="text-slate-700 font-bold">{current} used</span>
+          <span className="text-slate-700 dark:text-slate-200 font-bold">{current} used</span>
           <span className="text-slate-500">{limit} limit</span>
         </div>
-        <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
           <div className={`h-full ${colorClass} transition-all`} style={{ width: `${percentage}%` }}></div>
         </div>
       </div>
@@ -180,7 +180,7 @@ export default function LicenseUsage() {
     <div className="p-8 max-w-7xl mx-auto flex flex-col">
       <div className="mb-8 shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuKey className="text-primary-600" /> License & Usage Management
           </h1>
           <p className="text-slate-500 mt-1">
@@ -191,16 +191,16 @@ export default function LicenseUsage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 shrink-0">
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
             <LuKey size={24} />
           </div>
           <div>
             <p className="text-sm font-bold text-slate-500">Total Active License Capacity</p>
-            <p className="text-2xl font-black text-slate-900">{totalActiveLicenses.toLocaleString()} Seats</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white">{totalActiveLicenses.toLocaleString()} Seats</p>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
             <LuTriangleAlert size={24} />
           </div>
@@ -209,7 +209,7 @@ export default function LicenseUsage() {
             <p className="text-2xl font-black text-amber-600">{schoolsNearLimit}</p>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
             <LuTrendingUp size={24} />
           </div>
@@ -221,8 +221,8 @@ export default function LicenseUsage() {
       </div>
 
       {/* Data Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden mb-6">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex gap-4 shrink-0">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden mb-6">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input 
@@ -230,7 +230,7 @@ export default function LicenseUsage() {
               placeholder="Search schools by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
             />
           </div>
         </div>
@@ -243,8 +243,8 @@ export default function LicenseUsage() {
             </div>
           ) : (
             <table className="w-full text-left border-collapse min-w-[850px]">
-              <thead className="sticky top-0 bg-white shadow-sm z-10">
-                <tr className="bg-slate-50 text-slate-600 text-sm border-b border-slate-200">
+              <thead className="sticky top-0 bg-white dark:bg-slate-900 shadow-sm z-10">
+                <tr className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm border-b border-slate-200 dark:border-slate-700">
                   <th className="p-4 font-bold">School Name</th>
                   <th className="p-4 font-bold">Current Plan</th>
                   <th className="p-4 font-bold w-1/4">Student Usage & Limit</th>
@@ -258,14 +258,14 @@ export default function LicenseUsage() {
                   <tr>
                     <td colSpan="6" className="p-12 text-center text-slate-500">
                       <LuBuilding2 size={40} className="mx-auto mb-3 text-slate-300" />
-                      <p className="font-bold text-slate-800">No schools found</p>
+                      <p className="font-bold text-slate-800 dark:text-slate-100">No schools found</p>
                       <p className="text-sm">Try adjusting your search query.</p>
                     </td>
                   </tr>
                 ) : (
                   paginatedSchools.map((school) => (
                     <tr key={school.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="p-4 font-bold text-slate-900">
+                      <td className="p-4 font-bold text-slate-900 dark:text-white">
                         <div>
                           <span>{school.name}</span>
                           {school.adminEmail && (
@@ -274,7 +274,7 @@ export default function LicenseUsage() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className="px-3 py-1 bg-slate-100 text-slate-700 font-bold rounded-lg text-xs uppercase tracking-wider border border-slate-200">
+                        <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-xs uppercase tracking-wider border border-slate-200 dark:border-slate-700">
                           {school.plan}
                         </span>
                       </td>
@@ -306,19 +306,19 @@ export default function LicenseUsage() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
             <span className="text-sm text-slate-500 font-medium">
-              Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
-              <span className="font-semibold text-slate-900">
+              Showing <span className="font-semibold text-slate-900 dark:text-white">{startIndex + 1}</span> to{' '}
+              <span className="font-semibold text-slate-900 dark:text-white">
                 {Math.min(startIndex + itemsPerPage, filteredSchools.length)}
               </span>{' '}
-              of <span className="font-semibold text-slate-900">{filteredSchools.length}</span> schools
+              of <span className="font-semibold text-slate-900 dark:text-white">{filteredSchools.length}</span> schools
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -331,7 +331,7 @@ export default function LicenseUsage() {
                     className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                       currentPage === pageNum
                         ? 'bg-primary-600 text-white shadow-sm'
-                        : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {pageNum}
@@ -341,7 +341,7 @@ export default function LicenseUsage() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>
@@ -353,9 +353,9 @@ export default function LicenseUsage() {
       {/* Expand Limit Modal */}
       {expandModalOpen && selectedSchool && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in-up flex flex-col">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <LuShieldCheck className="text-primary-600" />
                 Expand License Limit
               </h2>
@@ -368,23 +368,23 @@ export default function LicenseUsage() {
             </div>
 
             <div className="p-6 space-y-6">
-              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                <h3 className="font-bold text-slate-900 text-lg">{selectedSchool.name}</h3>
-                <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200 text-xs">
+              <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+                <h3 className="font-bold text-slate-900 dark:text-white text-lg">{selectedSchool.name}</h3>
+                <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs">
                   <div>
                     <span className="text-slate-500 font-medium">Current Students:</span>
-                    <p className="font-bold text-slate-900 text-sm mt-0.5">{selectedSchool.students.current} enrolled</p>
+                    <p className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">{selectedSchool.students.current} enrolled</p>
                   </div>
                   <div>
                     <span className="text-slate-500 font-medium">Current Teachers:</span>
-                    <p className="font-bold text-slate-900 text-sm mt-0.5">{selectedSchool.teachers.current} registered</p>
+                    <p className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">{selectedSchool.teachers.current} registered</p>
                   </div>
                 </div>
               </div>
 
               {/* Student Seat Limit */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-2">
                   New Student Seat Limit (Database Rule Enforcement)
                 </label>
                 <div className="flex items-center gap-2">
@@ -393,7 +393,7 @@ export default function LicenseUsage() {
                     min={selectedSchool.students.current || 1}
                     value={newSeatLimit}
                     onChange={(e) => setNewSeatLimit(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 font-black text-slate-900 bg-white text-lg"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 font-black text-slate-900 dark:text-white bg-white dark:bg-slate-900 text-lg"
                   />
                 </div>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
@@ -413,7 +413,7 @@ export default function LicenseUsage() {
 
               {/* Teacher Limit */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-2">
                   New Teacher Limit
                 </label>
                 <div className="flex items-center gap-2">
@@ -422,7 +422,7 @@ export default function LicenseUsage() {
                     min={selectedSchool.teachers.current || 1}
                     value={newTeacherLimit}
                     onChange={(e) => setNewTeacherLimit(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 font-black text-slate-900 bg-white text-lg"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 font-black text-slate-900 dark:text-white bg-white dark:bg-slate-900 text-lg"
                   />
                 </div>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
@@ -432,7 +432,7 @@ export default function LicenseUsage() {
                       key={inc}
                       type="button"
                       onClick={() => setNewTeacherLimit(prev => Number(prev) + inc)}
-                      className="text-xs px-2.5 py-1 rounded-lg font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 transition-colors"
+                      className="text-xs px-2.5 py-1 rounded-lg font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 border border-slate-200 dark:border-slate-700 transition-colors"
                     >
                       +{inc} Teachers
                     </button>
@@ -441,11 +441,11 @@ export default function LicenseUsage() {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
               <button 
                 type="button" 
                 onClick={() => setExpandModalOpen(false)} 
-                className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
               >
                 Cancel
               </button>

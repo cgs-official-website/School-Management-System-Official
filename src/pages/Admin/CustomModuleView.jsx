@@ -221,7 +221,7 @@ export default function CustomModuleView() {
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuLayoutGrid className="text-primary-600" />
             {moduleMetadata?.name || 'Custom Module'}
           </h1>
@@ -245,15 +245,15 @@ export default function CustomModuleView() {
       </div>
 
       {!schema || schema.length === 0 ? (
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 text-center text-slate-500">
+        <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-700 text-center text-slate-500">
           <p className="font-bold text-lg mb-2">Schema Not Configured</p>
           <p>Please go to the Custom Modules Manager and build the Form Schema for this module first.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+              <thead className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700">
                 <tr>
                   {tableColumns.map(col => (
                     <th key={col.id} className="px-6 py-4">{col.label}</th>
@@ -306,9 +306,9 @@ export default function CustomModuleView() {
       {/* Form Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur z-10">
-              <h2 className="text-xl font-bold text-slate-800">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center sticky top-0 bg-white/80 backdrop-blur z-10">
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">
                 {editingId ? 'Edit Record' : 'Add Record'}
               </h2>
               <button onClick={handleCloseModal} className="p-2 text-slate-400 hover:bg-slate-100 rounded-xl transition-colors">
@@ -319,11 +319,11 @@ export default function CustomModuleView() {
             <form onSubmit={handleSave} className="p-6 space-y-8">
               {schema.map(section => (
                 <div key={section.id} className="space-y-4">
-                  <h3 className="text-lg font-bold text-slate-700 border-b border-slate-100 pb-2">{section.title}</h3>
+                  <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-2">{section.title}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {section.fields.map(field => (
                       <div key={field.id} className="space-y-1">
-                        <label className="block text-sm font-semibold text-slate-600">
+                        <label className="block text-sm font-semibold text-slate-600 dark:text-slate-300">
                           {field.label} {field.required && <span className="text-red-500">*</span>}
                         </label>
                         
@@ -332,7 +332,7 @@ export default function CustomModuleView() {
                             required={field.required}
                             value={formData[field.id] || ''}
                             onChange={(e) => handleInputChange(field.id, e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                           >
                             <option value="">-- Select --</option>
                             {(field.options || '').split(',').map(opt => opt.trim()).filter(Boolean).map(opt => (
@@ -345,7 +345,7 @@ export default function CustomModuleView() {
                             required={field.required}
                             checked={!!formData[field.id]}
                             onChange={(e) => handleInputChange(field.id, e.target.checked)}
-                            className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                            className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500"
                           />
                         ) : field.type === 'relation' ? (
                           // For relation, we use a text input for now. In a full implementation, you'd fetch the relation module's data.
@@ -354,7 +354,7 @@ export default function CustomModuleView() {
                             required={field.required}
                             value={formData[field.id] || ''}
                             onChange={(e) => handleInputChange(field.id, e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 placeholder-slate-400"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 placeholder-slate-400"
                             placeholder={`Enter related ${field.relationModule || 'record'} ID`}
                           />
                         ) : field.type === 'file' ? (
@@ -363,7 +363,7 @@ export default function CustomModuleView() {
                               type="file"
                               required={field.required && !formData[field.id]}
                               onChange={(e) => handleFileChange(field.id, e.target.files[0])}
-                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                             />
                             {formFiles[field.id] && (
                               <span className="text-xs text-green-600 flex items-center gap-1">
@@ -382,7 +382,7 @@ export default function CustomModuleView() {
                             required={field.required}
                             value={formData[field.id] || ''}
                             onChange={(e) => handleInputChange(field.id, e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                           />
                         )}
                       </div>
@@ -391,7 +391,7 @@ export default function CustomModuleView() {
                 </div>
               ))}
               
-              <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
                 <button 
                   type="button" 
                   onClick={handleCloseModal}

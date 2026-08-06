@@ -196,10 +196,10 @@ export default function ClassRoster() {
   if (!classId) {
     return (
       <div className="p-8 text-center mt-20">
-        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
           <Users size={32} className="text-slate-400" />
         </div>
-        <p className="text-xl font-bold text-slate-900 mb-2">Not a Class Teacher</p>
+        <p className="text-xl font-bold text-slate-900 dark:text-white mb-2">Not a Class Teacher</p>
         <p className="text-slate-500">You must be assigned as a primary Class Teacher to view the class roster.</p>
       </div>
     );
@@ -227,39 +227,39 @@ export default function ClassRoster() {
 
       {/* Stats Widgets */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start mb-2">
             <span className="text-slate-500 font-medium text-sm">Class Strength</span>
             <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
               <Users size={18} />
             </div>
           </div>
-          <div className="text-3xl font-black text-slate-900">{totalStudents}</div>
+          <div className="text-3xl font-black text-slate-900 dark:text-white">{totalStudents}</div>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start mb-2">
             <span className="text-slate-500 font-medium text-sm">Boys</span>
             <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
               <LuUser size={18} />
             </div>
           </div>
-          <div className="text-3xl font-black text-slate-900">{boysCount}</div>
+          <div className="text-3xl font-black text-slate-900 dark:text-white">{boysCount}</div>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start mb-2">
             <span className="text-slate-500 font-medium text-sm">Girls</span>
             <div className="p-2 bg-pink-50 text-pink-600 rounded-lg">
               <LuUserRound size={18} />
             </div>
           </div>
-          <div className="text-3xl font-black text-slate-900">{girlsCount}</div>
+          <div className="text-3xl font-black text-slate-900 dark:text-white">{girlsCount}</div>
         </div>
 
         <div 
           onClick={() => navigate('/teacher/attendance')}
-          className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-primary-200 transition-all hover:bg-slate-50/50"
+          className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-primary-200 transition-all hover:bg-slate-50/50"
         >
           <div className="flex justify-between items-start mb-2">
             <span className="text-slate-500 font-medium text-sm">Today's Attendance</span>
@@ -280,9 +280,9 @@ export default function ClassRoster() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {/* Toolbar */}
-        <div className="p-4 border-b border-slate-200 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
@@ -290,7 +290,7 @@ export default function ClassRoster() {
               placeholder="Search students by name or admission number..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all"
             />
           </div>
           
@@ -315,7 +315,7 @@ export default function ClassRoster() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Student Name</th>
                 <th className="p-4">Admission No.</th>
                 <th className="p-4">Gender</th>
@@ -328,10 +328,10 @@ export default function ClassRoster() {
               {filteredStudents.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="p-16 text-center text-slate-500">
-                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
                       <GraduationCap size={32} className="text-slate-400" />
                     </div>
-                    <p className="text-lg font-bold text-slate-900 mb-1">No students found</p>
+                    <p className="text-lg font-bold text-slate-900 dark:text-white mb-1">No students found</p>
                     <p>There are no students matching your search, or none assigned to this class yet.</p>
                   </td>
                 </tr>
@@ -344,7 +344,7 @@ export default function ClassRoster() {
                           {student.firstName.charAt(0)}{student.lastName.charAt(0)}
                         </div>
                         <div>
-                          <div className="font-bold text-slate-900">
+                          <div className="font-bold text-slate-900 dark:text-white">
                             {student.firstName} {student.lastName}
                           </div>
                           <div className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
@@ -353,25 +353,25 @@ export default function ClassRoster() {
                         </div>
                       </div>
                     </td>
-                    <td className="p-4 font-mono font-medium text-slate-600 bg-slate-50/30">
+                    <td className="p-4 font-mono font-medium text-slate-600 dark:text-slate-300 bg-slate-50/30">
                       {student.admissionNumber}
                     </td>
-                    <td className="p-4 text-slate-600">
+                    <td className="p-4 text-slate-600 dark:text-slate-300">
                       {student.gender || '—'}
                     </td>
-                    <td className="p-4 text-slate-600">
+                    <td className="p-4 text-slate-600 dark:text-slate-300">
                       <div className="flex items-center gap-2">
                         <LuBus size={14} className="text-slate-400" />
                         {student.busRoute || student.transportDetails || <span className="text-slate-400 italic">—</span>}
                       </div>
                     </td>
-                    <td className="p-4 text-slate-600">
+                    <td className="p-4 text-slate-600 dark:text-slate-300">
                       {(() => {
                          const routeName = student.busRoute || student.transportDetails;
                          if (!routeName) return <span className="text-slate-400 italic">—</span>;
                          const matchedRoute = transportRoutes.find(r => r.name === routeName || r.id === routeName);
                          return matchedRoute?.vehicleNumber ? (
-                           <span className="font-mono bg-slate-100 px-2 py-1 rounded text-xs border border-slate-200">
+                           <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-xs border border-slate-200 dark:border-slate-700">
                              {matchedRoute.vehicleNumber}
                            </span>
                          ) : <span className="text-slate-400 italic">Unknown</span>;
@@ -382,13 +382,13 @@ export default function ClassRoster() {
                       <div className="flex justify-end gap-2">
                         <button 
                           onClick={() => navigate('/teacher/grades')}
-                          className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 hover:border-primary-200 rounded-lg transition-colors"
+                          className="px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 dark:border-slate-700 hover:border-primary-200 rounded-lg transition-colors"
                         >
                           Add Grade
                         </button>
                         <button 
                           onClick={() => navigate('/teacher/attendance')}
-                          className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-green-700 hover:bg-green-50 border border-slate-200 hover:border-green-200 rounded-lg transition-colors"
+                          className="px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-green-700 hover:bg-green-50 border border-slate-200 dark:border-slate-700 hover:border-green-200 rounded-lg transition-colors"
                         >
                           Attendance
                         </button>
@@ -404,11 +404,11 @@ export default function ClassRoster() {
 
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold text-slate-900">Export Student Roster</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Student Roster</h3>
                 <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
               </div>
               <button 
@@ -422,7 +422,7 @@ export default function ClassRoster() {
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               {/* File Name Input */}
-              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+              <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
@@ -430,7 +430,7 @@ export default function ClassRoster() {
                     placeholder="e.g. Class_Roster_Students"
                     value={exportFileName}
                     onChange={(e) => setExportFileName(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
                   <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
                 </div>
@@ -448,7 +448,7 @@ export default function ClassRoster() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
                 >
                   Deselect All
                 </button>
@@ -459,7 +459,7 @@ export default function ClassRoster() {
                 {availableFieldsList.map((field) => (
                   <label 
                     key={field.key}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
                   >
                     <input 
                       type="checkbox"
@@ -467,18 +467,18 @@ export default function ClassRoster() {
                       onChange={() => handleFieldToggle(field.key)}
                       className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
                     />
-                    <span className="text-sm font-semibold text-slate-700">{field.label}</span>
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{field.label}</span>
                   </label>
                 ))}
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

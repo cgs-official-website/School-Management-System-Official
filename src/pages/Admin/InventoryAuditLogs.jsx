@@ -218,12 +218,12 @@ export default function InventoryAuditLogs() {
         <div className="flex items-center gap-3">
           <button 
             onClick={() => navigate('/admin/inventory')}
-            className="p-2 hover:bg-slate-100 rounded-xl transition-colors border border-slate-200 bg-white"
+            className="p-2 hover:bg-slate-100 rounded-xl transition-colors border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
           >
-            <ArrowLeft size={18} className="text-slate-800" />
+            <ArrowLeft size={18} className="text-slate-800 dark:text-slate-100" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
               <LuClipboardList className="text-primary-600" /> Inventory Audit Logs
             </h1>
             <p className="text-slate-500 mt-1">Review, filter, and track all stock inbound/outbound records.</p>
@@ -233,7 +233,7 @@ export default function InventoryAuditLogs() {
         <div className="flex gap-2">
           <button 
             onClick={clearAllFilters}
-            className="flex items-center gap-2 border border-slate-200 bg-white text-slate-600 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
+            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
           >
             <RefreshCw size={16} /> Reset
           </button>
@@ -242,17 +242,17 @@ export default function InventoryAuditLogs() {
             <button className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2 rounded-xl hover:bg-primary-700 transition-all font-semibold shadow-sm">
               <Download size={18} /> Export Logs
             </button>
-            <div className="absolute right-0 mt-2 w-40 bg-white border border-slate-200 rounded-2xl shadow-xl hidden group-hover:block hover:block z-50">
-              <button onClick={() => handleExport('xlsx')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-700 rounded-t-2xl">Excel (.xlsx)</button>
-              <button onClick={() => handleExport('csv')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-700">CSV (.csv)</button>
-              <button onClick={() => handleExport('pdf')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-700 rounded-b-2xl">PDF Document</button>
+            <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl hidden group-hover:block hover:block z-50">
+              <button onClick={() => handleExport('xlsx')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-700 dark:text-slate-200 rounded-t-2xl">Excel (.xlsx)</button>
+              <button onClick={() => handleExport('csv')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-700 dark:text-slate-200">CSV (.csv)</button>
+              <button onClick={() => handleExport('pdf')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-700 dark:text-slate-200 rounded-b-2xl">PDF Document</button>
             </div>
           </div>
         </div>
       </div>
 
       {/* Filter Toolbar Card */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm mb-6 shrink-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-5 shadow-sm mb-6 shrink-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {/* Search */}
         <div className="relative md:col-span-2">
           <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Search Logs</label>
@@ -263,7 +263,7 @@ export default function InventoryAuditLogs() {
               placeholder="Search product, product ID, user name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 bg-white text-black font-medium"
+              className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 text-black font-medium"
             />
           </div>
         </div>
@@ -277,7 +277,7 @@ export default function InventoryAuditLogs() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 bg-white text-black font-semibold"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 text-black font-semibold"
             />
           </div>
         </div>
@@ -291,7 +291,7 @@ export default function InventoryAuditLogs() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 bg-white text-black font-semibold"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 text-black font-semibold"
             />
           </div>
         </div>
@@ -302,7 +302,7 @@ export default function InventoryAuditLogs() {
           <select 
             value={productFilter}
             onChange={(e) => setProductFilter(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 font-semibold"
+            className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold"
           >
             <option value="All">All Products</option>
             {productsList.map((p, i) => <option key={i} value={p}>{p}</option>)}
@@ -315,7 +315,7 @@ export default function InventoryAuditLogs() {
           <select 
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 font-semibold"
+            className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold"
           >
             <option value="All">All Categories</option>
             {categoriesList.map((c, i) => <option key={i} value={c}>{c}</option>)}
@@ -328,7 +328,7 @@ export default function InventoryAuditLogs() {
           <select 
             value={userFilter}
             onChange={(e) => setUserFilter(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 font-semibold"
+            className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold"
           >
             <option value="All">All Users</option>
             {usersList.map((u, i) => <option key={i} value={u}>{u}</option>)}
@@ -341,7 +341,7 @@ export default function InventoryAuditLogs() {
           <select 
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 font-semibold"
+            className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold"
           >
             <option value="All">All Actions</option>
             {actionsList.map((a, i) => <option key={i} value={a}>{a}</option>)}
@@ -354,7 +354,7 @@ export default function InventoryAuditLogs() {
           <select 
             value={transactionFilter}
             onChange={(e) => setTransactionFilter(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 font-semibold"
+            className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold"
           >
             <option value="All">All Transactions</option>
             <option value="inbound">Inbound Stock</option>
@@ -364,10 +364,10 @@ export default function InventoryAuditLogs() {
       </div>
 
       {/* Logs Table Card */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden mb-6">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden mb-6">
         <div className="flex-1 overflow-auto custom-scrollbar">
           <table className="w-full text-left border-collapse min-w-[1000px]">
-            <thead className="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+            <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
               <tr className="text-slate-500 text-xs font-semibold uppercase">
                 <th className="p-4 pl-6">Timestamp</th>
                 <th className="p-4">User</th>
@@ -385,8 +385,8 @@ export default function InventoryAuditLogs() {
                   <td className="p-4 pl-6 font-semibold text-slate-500">
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
-                  <td className="p-4 font-bold text-slate-900">{log.userName}</td>
-                  <td className="p-4 capitalize text-slate-600 font-semibold">{log.userRole}</td>
+                  <td className="p-4 font-bold text-slate-900 dark:text-white">{log.userName}</td>
+                  <td className="p-4 capitalize text-slate-600 dark:text-slate-300 font-semibold">{log.userRole}</td>
                   <td className="p-4">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${
                       log.actionType?.toLowerCase().includes('create') ? 'bg-green-100 text-green-700' :
@@ -398,8 +398,8 @@ export default function InventoryAuditLogs() {
                       {log.actionType}
                     </span>
                   </td>
-                  <td className="p-4 font-semibold text-slate-900">{log.productName || '—'}</td>
-                  <td className="p-4 text-slate-600 font-medium">{log.category || '—'}</td>
+                  <td className="p-4 font-semibold text-slate-900 dark:text-white">{log.productName || '—'}</td>
+                  <td className="p-4 text-slate-600 dark:text-slate-300 font-medium">{log.category || '—'}</td>
                   <td className="p-4">
                     {log.quantityChanged !== undefined ? (
                       <div className="flex flex-col text-xs">
@@ -412,7 +412,7 @@ export default function InventoryAuditLogs() {
                       </div>
                     ) : '—'}
                   </td>
-                  <td className="p-4 text-slate-600 font-medium max-w-xs truncate" title={log.remarks}>
+                  <td className="p-4 text-slate-600 dark:text-slate-300 font-medium max-w-xs truncate" title={log.remarks}>
                     {log.remarks || '—'}
                   </td>
                 </tr>

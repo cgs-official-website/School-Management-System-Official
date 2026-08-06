@@ -103,16 +103,16 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
   };
 
   return (
-    <div className="bg-white border-t border-slate-200">
+    <div className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
       {/* Media Preview Area */}
       {mediaFile && (
-        <div className="p-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+        <div className="p-3 bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center">
               {mediaFile.type.includes('image') ? <Image size={20} /> : (mediaFile.type.includes('audio') || mediaFile.name === 'voice_message.webm') ? <Mic size={20} /> : <FileIcon size={20} />}
             </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-bold text-slate-700 truncate max-w-[200px] md:max-w-xs">{mediaFile.name}</p>
+              <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate max-w-[200px] md:max-w-xs">{mediaFile.name}</p>
               <p className="text-xs text-slate-500">{(mediaFile.size / 1024).toFixed(1)} KB</p>
             </div>
           </div>
@@ -127,7 +127,7 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
       )}
 
       {/* Input Area */}
-      <form onSubmit={handleSubmit} className="p-3 md:p-4 flex items-end gap-2 bg-slate-50">
+      <form onSubmit={handleSubmit} className="p-3 md:p-4 flex items-end gap-2 bg-slate-50 dark:bg-slate-800">
         
         {!isRecording ? (
           <>
@@ -147,13 +147,13 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
               />
             </button>
             
-            <div className="flex-1 bg-white rounded-[24px] border border-slate-200 overflow-hidden shadow-sm focus-within:ring-4 focus-within:ring-primary-500/10 focus-within:border-primary-400 transition-all flex items-center px-2">
+            <div className="flex-1 bg-white dark:bg-slate-900 rounded-[24px] border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm focus-within:ring-4 focus-within:ring-primary-500/10 focus-within:border-primary-400 transition-all flex items-center px-2">
               <textarea 
                 rows="1"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Type a message..."
-                className="w-full max-h-32 px-4 py-3 bg-transparent border-none focus:outline-none focus:ring-0 resize-none font-medium custom-scrollbar text-sm text-slate-700 placeholder-slate-400"
+                className="w-full max-h-32 px-4 py-3 bg-transparent border-none focus:outline-none focus:ring-0 resize-none font-medium custom-scrollbar text-sm text-slate-700 dark:text-slate-200 placeholder-slate-400"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -179,7 +179,7 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
               <button 
                 type="button"
                 onClick={startRecording}
-                className="p-3 text-slate-500 hover:text-primary-600 hover:bg-white rounded-full transition-all shrink-0 shadow-sm border border-slate-200 hover:border-primary-200"
+                className="p-3 text-slate-500 hover:text-primary-600 hover:bg-white rounded-full transition-all shrink-0 shadow-sm border border-slate-200 dark:border-slate-700 hover:border-primary-200"
                 title="Hold to Record"
               >
                 <Mic size={20} />
@@ -195,7 +195,7 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
             <button 
               type="button"
               onClick={stopRecording}
-              className="p-2 bg-white text-red-600 rounded-full shadow-sm hover:bg-red-100 border border-red-200"
+              className="p-2 bg-white dark:bg-slate-900 text-red-600 rounded-full shadow-sm hover:bg-red-100 border border-red-200"
             >
               <Square size={16} fill="currentColor" />
             </button>

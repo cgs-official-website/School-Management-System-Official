@@ -171,7 +171,7 @@ export default function ChatMonitor() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto h-[calc(100vh-2rem)] flex flex-col">
       <div className="mb-6 shrink-0 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <ShieldAlert className="text-red-500" />
             Chat Monitor
           </h1>
@@ -182,8 +182,8 @@ export default function ChatMonitor() {
       <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0">
         
         {/* Sidebar - Threads List */}
-        <div className="w-full lg:w-96 flex flex-col bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm shrink-0">
-          <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+        <div className="w-full lg:w-96 flex flex-col bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl overflow-hidden shadow-sm shrink-0">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input
@@ -191,7 +191,7 @@ export default function ChatMonitor() {
                 placeholder="Search threads..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
               />
             </div>
           </div>
@@ -211,15 +211,15 @@ export default function ChatMonitor() {
                   }`}
                 >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${
-                    activeThread?.id === thread.id ? 'bg-red-600 text-white' : 'bg-slate-100 text-slate-600'
+                    activeThread?.id === thread.id ? 'bg-red-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                   }`}>
                     {thread.teacherId ? (usersMap.get(thread.teacherId) || '..').substring(0,2).toUpperCase() : '..'}
                   </div>
                   <div className="overflow-hidden flex-1">
-                    <div className="font-bold text-slate-900 truncate text-sm">
+                    <div className="font-bold text-slate-900 dark:text-white truncate text-sm">
                       Thread: {studentsMap.get(thread.studentId) || thread.studentId}
                     </div>
-                    <div className="text-xs text-slate-700 truncate font-medium">Parent: {usersMap.get(thread.parentId) || thread.parentId}</div>
+                    <div className="text-xs text-slate-700 dark:text-slate-200 truncate font-medium">Parent: {usersMap.get(thread.parentId) || thread.parentId}</div>
                     <div className="text-xs text-slate-500 truncate">Staff: {usersMap.get(thread.teacherId) || thread.teacherId}</div>
                     <div className="text-xs text-slate-400 truncate mt-1">
                       {thread.lastMessage || 'No recent messages'}
@@ -232,16 +232,16 @@ export default function ChatMonitor() {
         </div>
 
         {/* Main Chat Viewer Area */}
-        <div className="flex-1 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col min-h-0 overflow-hidden relative">
+        <div className="flex-1 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col min-h-0 overflow-hidden relative">
           {activeThread ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-slate-100 bg-red-50 flex items-center gap-4 shrink-0">
+              <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-red-50 flex items-center gap-4 shrink-0">
                 <div className="w-10 h-10 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold text-lg">
                   <ShieldAlert size={20} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-slate-900 text-lg">
+                  <h2 className="font-bold text-slate-900 dark:text-white text-lg">
                     Monitoring: Thread {activeThread.id}
                   </h2>
                   <p className="text-xs text-red-600 font-semibold uppercase tracking-wider">
@@ -269,7 +269,7 @@ export default function ChatMonitor() {
                           <div className={`rounded-2xl p-4 w-full ${
                             isTeacher 
                               ? 'bg-slate-800 text-white rounded-tr-none' 
-                              : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm'
+                              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-tl-none shadow-sm'
                           }`}>
                             {renderMessageContent(msg, isTeacher)}
                             <span className={`text-xs mt-2 block ${isTeacher ? 'text-slate-400' : 'text-slate-400'}`}>
@@ -288,7 +288,7 @@ export default function ChatMonitor() {
             <div className="flex-1 flex items-center justify-center text-slate-400 text-center p-8 bg-slate-50/50">
               <div>
                 <ShieldAlert size={48} className="mx-auto mb-4 text-slate-300" />
-                <p className="text-lg font-medium text-slate-600">Select a thread to monitor</p>
+                <p className="text-lg font-medium text-slate-600 dark:text-slate-300">Select a thread to monitor</p>
                 <p className="text-sm mt-1">Audit logs are read-only and confidential.</p>
               </div>
             </div>
@@ -325,15 +325,15 @@ export default function ChatMonitor() {
                 <iframe 
                   src={previewFile.url} 
                   title="Document Preview"
-                  className="w-[85vw] md:w-[70vw] h-[75vh] rounded-2xl border border-white/10 bg-white shadow-2xl"
+                  className="w-[85vw] md:w-[70vw] h-[75vh] rounded-2xl border border-white/10 bg-white dark:bg-slate-900 shadow-2xl"
                 />
               ) : (
-                <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-200 text-center flex flex-col items-center gap-6">
-                  <div className="w-20 h-20 bg-slate-50 text-slate-500 rounded-3xl flex items-center justify-center shadow-inner">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700 text-center flex flex-col items-center gap-6">
+                  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 text-slate-500 rounded-3xl flex items-center justify-center shadow-inner">
                     <FileIcon size={40} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 truncate max-w-xs mx-auto">
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate max-w-xs mx-auto">
                       {decodeURIComponent(previewFile.url.split('/').pop().split('?')[0]) || 'Attachment Document'}
                     </h3>
                     <p className="text-sm text-slate-400 mt-2">Preview is not supported for this file extension.</p>

@@ -281,14 +281,14 @@ export default function LibraryManagement() {
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Library Management</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Library Management</h1>
           <p className="text-slate-500 mt-1">Manage book inventory, issuing, and returns.</p>
         </div>
         <div className="flex gap-3">
           {hasEditPermission && (
             <button
               onClick={() => setShowIssueModal(true)}
-              className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl font-medium hover:bg-slate-50 shadow-sm flex items-center gap-2 transition-colors"
+              className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-medium hover:bg-slate-50 shadow-sm flex items-center gap-2 transition-colors"
             >
               <Library size={18} /> Issue Book
             </button>
@@ -304,19 +304,19 @@ export default function LibraryManagement() {
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col min-h-[500px]">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col min-h-[500px]">
         {/* Header Tabs & Search */}
-        <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50 rounded-t-3xl">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50 dark:bg-slate-800 rounded-t-3xl">
           <div className="flex gap-2 p-1 bg-slate-200/50 rounded-xl">
             <button
               onClick={() => setActiveTab('inventory')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'inventory' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'inventory' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             >
               Book Inventory ({books.length})
             </button>
             <button
               onClick={() => setActiveTab('issued')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'issued' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'issued' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
             >
               Issued Logs ({issuedBooks.filter(i => i.status === 'issued').length})
             </button>
@@ -329,7 +329,7 @@ export default function LibraryManagement() {
               placeholder="Search books or students..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 text-sm"
+              className="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 text-sm"
             />
           </div>
         </div>
@@ -339,7 +339,7 @@ export default function LibraryManagement() {
           {activeTab === 'inventory' ? (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 text-slate-500 text-sm">
+                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 text-sm">
                   <th className="p-4 font-semibold w-2/5">Book Details</th>
                   <th className="p-4 font-semibold">Category</th>
                   <th className="p-4 font-semibold">ISBN</th>
@@ -359,17 +359,17 @@ export default function LibraryManagement() {
                       <tr key={book.id} className="hover:bg-slate-50 transition-colors">
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center shrink-0">
+                            <div className="h-10 w-10 bg-slate-100 dark:bg-slate-700 text-slate-400 rounded-xl flex items-center justify-center shrink-0">
                               <Book size={20} />
                             </div>
                             <div>
-                              <div className="font-bold text-slate-900">{book.title}</div>
+                              <div className="font-bold text-slate-900 dark:text-white">{book.title}</div>
                               <div className="text-xs text-slate-500 mt-0.5">by {book.author}</div>
                             </div>
                           </div>
                         </td>
                         <td className="p-4">
-                          <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-bold uppercase tracking-wider">
+                          <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-bold uppercase tracking-wider">
                             {book.category}
                           </span>
                         </td>
@@ -377,11 +377,11 @@ export default function LibraryManagement() {
                         <td className="p-4">
                           <div className="flex flex-col items-end gap-1">
                             <div className="flex items-center gap-2">
-                              <span className={`text-sm font-bold ${isEmpty ? 'text-red-500' : 'text-slate-900'}`}>
+                              <span className={`text-sm font-bold ${isEmpty ? 'text-red-500' : 'text-slate-900 dark:text-white'}`}>
                                 {book.availableQuantity} / {book.totalQuantity}
                               </span>
                             </div>
-                            <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="w-24 h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                               <div
                                 className={`h-full rounded-full ${isEmpty ? 'bg-red-500' : percentage > 50 ? 'bg-green-500' : 'bg-amber-500'}`}
                                 style={{ width: `${percentage}%` }}
@@ -398,7 +398,7 @@ export default function LibraryManagement() {
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 text-slate-500 text-sm">
+                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 text-sm">
                   <th className="p-4 font-semibold w-1/3">Book</th>
                   <th className="p-4 font-semibold w-1/3">Issued To</th>
                   <th className="p-4 font-semibold">Due Date</th>
@@ -415,17 +415,17 @@ export default function LibraryManagement() {
                     const overdue = issue.status === 'issued' && isOverdue(issue.dueDate);
                     return (
                       <tr key={issue.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="p-4 font-bold text-slate-900">
+                        <td className="p-4 font-bold text-slate-900 dark:text-white">
                           {getBookTitle(issue.bookId)}
                         </td>
                         <td className="p-4">
-                          <div className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                          <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 font-medium">
                             <Users size={14} className="text-slate-400" />
                             {getStudentName(issue.studentId)}
                           </div>
                         </td>
                         <td className="p-4">
-                          <div className={`flex items-center gap-1.5 text-sm font-medium ${overdue ? 'text-red-600' : 'text-slate-600'}`}>
+                          <div className={`flex items-center gap-1.5 text-sm font-medium ${overdue ? 'text-red-600' : 'text-slate-600 dark:text-slate-300'}`}>
                             {overdue && <AlertCircle size={14} />}
                             {new Date(issue.dueDate).toLocaleDateString('en-GB')}
                           </div>
@@ -439,7 +439,7 @@ export default function LibraryManagement() {
                             hasEditPermission && (
                               <button
                                 onClick={() => handleReturnBookClick(issue.id, issue.bookId)}
-                                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold rounded-lg transition-colors inline-flex items-center gap-1.5"
+                                className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-lg transition-colors inline-flex items-center gap-1.5"
                               >
                                 <Undo2 size={14} /> Mark Returned
                               </button>
@@ -459,9 +459,9 @@ export default function LibraryManagement() {
       {/* Add Book Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Book className="text-primary-600" /> Catalog New Book
               </h2>
               <button onClick={() => setShowAddModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
@@ -473,38 +473,38 @@ export default function LibraryManagement() {
               <div className="p-6 space-y-6 flex-1">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Book Title</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Book Title</label>
                     <input
                       type="text" required
                       value={newBook.title}
                       onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Author</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Author</label>
                     <input
                       type="text" required
                       value={newBook.author}
                       onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">ISBN</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">ISBN</label>
                     <input
                       type="text" required
                       value={newBook.isbn}
                       onChange={(e) => setNewBook({ ...newBook, isbn: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-mono text-sm"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-mono text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Category</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Category</label>
                     <select
                       required
                       value={newBook.category}
@@ -515,7 +515,7 @@ export default function LibraryManagement() {
                           setNewBook({ ...newBook, category: e.target.value });
                         }
                       }}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-medium text-slate-700 dark:text-slate-200"
                     >
                       <option value="">Select Category...</option>
                       {allCategories.map(cat => (
@@ -527,16 +527,16 @@ export default function LibraryManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Total Copies</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Total Copies</label>
                   <input
                     type="number" min="1" required
                     value={newBook.totalQuantity}
                     onChange={(e) => setNewBook({ ...newBook, totalQuantity: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                   />
                 </div>
 
-                <div className="pt-6 border-t border-slate-100 mt-6">
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
                   <CustomFieldsRenderer
                     moduleKey="library"
                     customData={newBook.customData}
@@ -545,8 +545,8 @@ export default function LibraryManagement() {
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowAddModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
+                <button type="button" onClick={() => setShowAddModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">
                   Cancel
                 </button>
                 <button type="submit" disabled={addingBook} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">
@@ -561,16 +561,16 @@ export default function LibraryManagement() {
       {/* Add Category Modal */}
       {showAddCategoryModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h2 className="text-lg font-bold text-slate-900">Add New Library Category</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Add New Library Category</h2>
               <button onClick={() => setShowAddCategoryModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleAddCategory} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Category Name</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Category Name</label>
                 <input
                   type="text"
                   required
@@ -578,14 +578,14 @@ export default function LibraryManagement() {
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
                   placeholder="e.g. Biography & Memoir"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-medium"
                 />
               </div>
               <div className="pt-4 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowAddCategoryModal(false)}
-                  className="px-4 py-2 text-slate-600 font-medium hover:bg-slate-100 rounded-xl"
+                  className="px-4 py-2 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 rounded-xl"
                 >
                   Cancel
                 </button>
@@ -605,9 +605,9 @@ export default function LibraryManagement() {
       {/* Issue Book Modal */}
       {showIssueModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 sm:p-6">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
-              <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Library className="text-primary-600" /> Issue Book
               </h2>
               <button onClick={() => setShowIssueModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
@@ -619,12 +619,12 @@ export default function LibraryManagement() {
               <div className="p-6 space-y-6 flex-1">
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Select Book</label>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Select Book</label>
                     <select
                       required
                       value={issueData.bookId}
                       onChange={(e) => setIssueData({ ...issueData, bookId: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-medium text-slate-700 dark:text-slate-200"
                     >
                       <option value="">Choose an available book...</option>
                       {books.filter(b => b.availableQuantity > 0).map(b => (
@@ -637,11 +637,11 @@ export default function LibraryManagement() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1">Select Class</label>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Select Class</label>
                       <select
                         value={issueData.classId}
                         onChange={(e) => setIssueData({ ...issueData, classId: e.target.value, studentId: '' })}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-medium text-slate-700 dark:text-slate-200"
                       >
                         <option value="">All Classes / Select Class...</option>
                         {classes.map(c => (
@@ -653,12 +653,12 @@ export default function LibraryManagement() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-1">Select Student</label>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Select Student</label>
                       <select
                         required
                         value={issueData.studentId}
                         onChange={(e) => setIssueData({ ...issueData, studentId: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white font-medium text-slate-700"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-medium text-slate-700 dark:text-slate-200"
                       >
                         <option value="">
                           {issueData.classId ? "Choose a student from this class..." : "Choose a student..."}
@@ -678,19 +678,19 @@ export default function LibraryManagement() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1">Due Date</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Due Date</label>
                   <input
                     type="date" required
                     value={issueData.dueDate}
                     min={new Date().toISOString().split('T')[0]}
                     onChange={(e) => setIssueData({ ...issueData, dueDate: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
                   />
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowIssueModal(false)} className="px-5 py-2.5 text-slate-600 font-medium hover:bg-slate-200 rounded-xl transition-colors">
+              <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
+                <button type="button" onClick={() => setShowIssueModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">
                   Cancel
                 </button>
                 <button type="submit" disabled={issuingBook} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">

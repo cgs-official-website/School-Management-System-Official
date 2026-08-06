@@ -72,7 +72,7 @@ export default function AuditLogs() {
       case 'billing': return 'bg-purple-100 text-purple-700';
       case 'system': return 'bg-blue-100 text-blue-700';
       case 'data': return 'bg-amber-100 text-amber-700';
-      default: return 'bg-slate-100 text-slate-700';
+      default: return 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200';
     }
   };
 
@@ -80,7 +80,7 @@ export default function AuditLogs() {
     <div className="p-8 max-w-7xl mx-auto flex flex-col">
       <div className="mb-8 shrink-0 flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuClipboardList className="text-primary-600" /> Audit Logs
           </h1>
           <p className="text-slate-500 mt-1">Track all critical actions, security events, and configuration changes.</p>
@@ -93,8 +93,8 @@ export default function AuditLogs() {
         </button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden mb-6">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50 grid grid-cols-1 sm:grid-cols-4 gap-4 shrink-0">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden mb-6">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 grid grid-cols-1 sm:grid-cols-4 gap-4 shrink-0">
           <div className="relative w-full sm:col-span-2">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input 
@@ -102,21 +102,21 @@ export default function AuditLogs() {
               placeholder="Search logs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
             />
           </div>
-          <button className="w-full justify-center px-4 py-2.5 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
+          <button className="w-full justify-center px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
             <LuFilter size={18} /> Event Type
           </button>
-          <button className="w-full justify-center px-4 py-2.5 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
+          <button className="w-full justify-center px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
             <LuCalendar size={18} /> Date Range
           </button>
         </div>
 
         <div className="flex-1 overflow-auto">
           <table className="w-full text-left border-collapse min-w-[800px]">
-            <thead className="sticky top-0 bg-white shadow-sm z-10">
-              <tr className="bg-slate-50 text-slate-600 text-sm border-b border-slate-200">
+            <thead className="sticky top-0 bg-white dark:bg-slate-900 shadow-sm z-10">
+              <tr className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm border-b border-slate-200 dark:border-slate-700">
                 <th className="p-4 font-bold">Timestamp</th>
                 <th className="p-4 font-bold">Action Event</th>
                 <th className="p-4 font-bold">User / Initiator</th>
@@ -133,7 +133,7 @@ export default function AuditLogs() {
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       <span className={`w-2 h-2 rounded-full ${getTypeColor(log.type).split(' ')[0]}`}></span>
-                      <span className="font-bold text-slate-900">{log.action}</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{log.action}</span>
                     </div>
                   </td>
                   <td className="p-4">
@@ -141,14 +141,14 @@ export default function AuditLogs() {
                       <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
                         <LuUser size={12} />
                       </div>
-                      <span className="text-sm font-semibold text-slate-700">{log.user}</span>
+                      <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{log.user}</span>
                     </div>
                   </td>
-                  <td className="p-4 text-sm text-slate-600">
+                  <td className="p-4 text-sm text-slate-600 dark:text-slate-300">
                     {log.details}
                   </td>
                   <td className="p-4">
-                    <code className="px-2 py-1 bg-slate-100 text-slate-500 rounded font-mono text-xs">
+                    <code className="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 rounded font-mono text-xs">
                       {log.ip}
                     </code>
                   </td>
@@ -160,19 +160,19 @@ export default function AuditLogs() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
             <span className="text-sm text-slate-500 font-medium">
-              Showing <span className="font-semibold text-slate-900">{startIndex + 1}</span> to{' '}
-              <span className="font-semibold text-slate-900">
+              Showing <span className="font-semibold text-slate-900 dark:text-white">{startIndex + 1}</span> to{' '}
+              <span className="font-semibold text-slate-900 dark:text-white">
                 {Math.min(startIndex + itemsPerPage, filteredLogs.length)}
               </span>{' '}
-              of <span className="font-semibold text-slate-900">{filteredLogs.length}</span> audit logs
+              of <span className="font-semibold text-slate-900 dark:text-white">{filteredLogs.length}</span> audit logs
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -185,7 +185,7 @@ export default function AuditLogs() {
                     className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                       currentPage === pageNum
                         ? 'bg-primary-600 text-white shadow-sm'
-                        : 'border border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {pageNum}
@@ -195,7 +195,7 @@ export default function AuditLogs() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>

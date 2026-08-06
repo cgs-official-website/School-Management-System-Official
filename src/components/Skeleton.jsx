@@ -17,13 +17,13 @@ export default function Skeleton({ className, count = 1 }) {
 
 export const TableSkeleton = ({ rows = 5, columns = 4 }) => {
   return (
-    <div className="w-full bg-white rounded-2xl border border-slate-200 shadow-sm p-4 overflow-hidden">
+    <div className="w-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-4 overflow-hidden">
       <div className="flex justify-between items-center mb-6">
         <Skeleton className="h-10 w-64 rounded-xl" />
         <Skeleton className="h-10 w-32 rounded-xl" />
       </div>
       <div className="w-full">
-        <div className="flex border-b border-slate-100 pb-4 mb-4 gap-4">
+        <div className="flex border-b border-slate-100 dark:border-slate-800 pb-4 mb-4 gap-4">
           {Array(columns).fill(0).map((_, i) => (
             <Skeleton key={`h-${i}`} className="h-4 flex-1" />
           ))}

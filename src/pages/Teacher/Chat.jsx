@@ -405,21 +405,21 @@ export default function TeacherChat() {
   }
 
   return (
-    <div className="p-0 sm:p-4 md:p-8 max-w-7xl mx-auto h-[100dvh] md:h-[calc(100vh-2rem)] flex flex-col bg-slate-50 md:bg-transparent">
-      <div className="mb-4 md:mb-6 shrink-0 p-4 md:p-0 bg-white md:bg-transparent border-b border-slate-200 md:border-transparent">
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Parent Messaging</h1>
+    <div className="p-0 sm:p-4 md:p-8 max-w-7xl mx-auto h-[100dvh] md:h-[calc(100vh-2rem)] flex flex-col bg-slate-50 dark:bg-slate-800 md:bg-transparent">
+      <div className="mb-4 md:mb-6 shrink-0 p-4 md:p-0 bg-white dark:bg-slate-900 md:bg-transparent border-b border-slate-200 dark:border-slate-700 md:border-transparent">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Parent Messaging</h1>
         <p className="text-sm md:text-base text-slate-500 mt-1">Communicate directly with parents of your students.</p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-0 md:gap-6 flex-1 min-h-0 bg-white md:bg-transparent">
+      <div className="flex flex-col lg:flex-row gap-0 md:gap-6 flex-1 min-h-0 bg-white dark:bg-slate-900 md:bg-transparent">
         
         {/* Sidebar */}
-        <div className={`w-full lg:w-80 flex-col bg-white md:border md:border-slate-200 md:rounded-3xl overflow-hidden md:shadow-sm shrink-0 ${
+        <div className={`w-full lg:w-80 flex-col bg-white dark:bg-slate-900 md:border md:border-slate-200 md:rounded-3xl overflow-hidden md:shadow-sm shrink-0 ${
           activeStudent || activeChannel ? 'hidden lg:flex' : 'flex'
         }`}>
-          <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-4">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col gap-4">
             <div className="flex justify-between items-center">
-              <h2 className="font-bold text-slate-700">Messaging</h2>
+              <h2 className="font-bold text-slate-700 dark:text-slate-200">Messaging</h2>
               {activeTab === 'dms' && (
                 <button 
                   onClick={handleDownloadExcel}
@@ -439,16 +439,16 @@ export default function TeacherChat() {
                 </button>
               )}
             </div>
-            <div className="flex bg-slate-100 rounded-xl p-1">
+            <div className="flex bg-slate-100 dark:bg-slate-700 rounded-xl p-1">
               <button 
                 onClick={() => { setActiveTab('dms'); setActiveChannel(null); }}
-                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'dms' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'dms' ? 'bg-white dark:bg-slate-900 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 DMs
               </button>
               <button 
                 onClick={() => { setActiveTab('channels'); setActiveStudent(null); }}
-                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'channels' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'channels' ? 'bg-white dark:bg-slate-900 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700'}`}
               >
                 Channels
               </button>
@@ -471,12 +471,12 @@ export default function TeacherChat() {
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
-                      activeStudent?.id === student.id ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                      activeStudent?.id === student.id ? 'bg-primary-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                     }`}>
                       {student.firstName.charAt(0)}{student.lastName.charAt(0)}
                     </div>
                     <div className="overflow-hidden flex-1">
-                      <div className="font-bold text-slate-900 truncate flex items-center justify-between">
+                      <div className="font-bold text-slate-900 dark:text-white truncate flex items-center justify-between">
                         <span>{student.firstName} {student.lastName}</span>
                         {student.unreadCount > 0 && (
                           <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
@@ -506,12 +506,12 @@ export default function TeacherChat() {
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
-                      activeChannel?.id === channel.id ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-600'
+                      activeChannel?.id === channel.id ? 'bg-primary-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                     }`}>
                       #
                     </div>
                     <div className="overflow-hidden flex-1">
-                      <div className="font-bold text-slate-900 truncate flex items-center justify-between">
+                      <div className="font-bold text-slate-900 dark:text-white truncate flex items-center justify-between">
                         <span>{channel.name}</span>
                       </div>
                       <div className="text-xs text-slate-500 truncate">{channel.description || 'Channel'}</div>
@@ -524,13 +524,13 @@ export default function TeacherChat() {
         </div>
 
         {/* Main Chat Area */}
-        <div className={`flex-1 bg-white md:rounded-3xl md:border border-slate-200 md:shadow-sm flex-col min-h-0 overflow-hidden relative ${
+        <div className={`flex-1 bg-white dark:bg-slate-900 md:rounded-3xl md:border border-slate-200 dark:border-slate-700 md:shadow-sm flex-col min-h-0 overflow-hidden relative ${
           !activeStudent && !activeChannel ? 'hidden lg:flex' : 'flex'
         }`}>
           {activeTab === 'dms' && activeStudent && (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
+              <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-4">
                   <button 
                     onClick={() => setActiveStudent(null)}
@@ -542,7 +542,7 @@ export default function TeacherChat() {
                     {activeStudent.firstName.charAt(0)}{activeStudent.lastName.charAt(0)}
                   </div>
                   <div>
-                    <h2 className="font-bold text-slate-900 text-lg">
+                    <h2 className="font-bold text-slate-900 dark:text-white text-lg">
                       {parentName ? `Parent: ${parentName}` : `${activeStudent.firstName} ${activeStudent.lastName}`}
                     </h2>
                     <p className="text-xs text-slate-500 flex items-center gap-1">
@@ -564,7 +564,7 @@ export default function TeacherChat() {
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
                       chatRoomData?.status === 'completed'
                         ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50'
                     }`}
                   >
                     {chatRoomData?.status === 'completed' ? (
@@ -621,16 +621,16 @@ export default function TeacherChat() {
                             {/* Message Options (Me) */}
                             {isMe && !msg.isDeletedForEveryone && (
                               <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10 shrink-0">
-                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Copy"><Copy size={14}/></button>}
-                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Forward"><Forward size={14}/></button>}
-                                <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: true})} className="p-1.5 bg-white text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200" title="Delete"><Trash2 size={14}/></button>
+                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200 dark:border-slate-700" title="Copy"><Copy size={14}/></button>}
+                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200 dark:border-slate-700" title="Forward"><Forward size={14}/></button>}
+                                <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: true})} className="p-1.5 bg-white dark:bg-slate-900 text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200 dark:border-slate-700" title="Delete"><Trash2 size={14}/></button>
                               </div>
                             )}
 
                             <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
                               isMe 
                                 ? (msg.isDeletedForEveryone ? 'bg-primary-500 text-white/80 rounded-tr-sm' : 'bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-tr-sm shadow-md shadow-primary-500/20')
-                                : (msg.isDeletedForEveryone ? 'bg-slate-50 text-slate-500 rounded-tl-sm shadow-sm' : 'bg-white border-0 text-slate-800 rounded-tl-sm shadow-md shadow-slate-200/50')
+                                : (msg.isDeletedForEveryone ? 'bg-slate-50 dark:bg-slate-800 text-slate-500 rounded-tl-sm shadow-sm' : 'bg-white dark:bg-slate-900 border-0 text-slate-800 dark:text-slate-100 rounded-tl-sm shadow-md shadow-slate-200/50')
                             } relative`}>
                               
                               {renderMessageContent(msg, isMe)}
@@ -647,9 +647,9 @@ export default function TeacherChat() {
                             {/* Message Options (Non-Me) */}
                             {!isMe && !msg.isDeletedForEveryone && (
                               <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10 shrink-0">
-                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Copy"><Copy size={14}/></button>}
-                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Forward"><Forward size={14}/></button>}
-                                <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: false})} className="p-1.5 bg-white text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200" title="Delete"><Trash2 size={14}/></button>
+                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200 dark:border-slate-700" title="Copy"><Copy size={14}/></button>}
+                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200 dark:border-slate-700" title="Forward"><Forward size={14}/></button>}
+                                <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: false})} className="p-1.5 bg-white dark:bg-slate-900 text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200 dark:border-slate-700" title="Delete"><Trash2 size={14}/></button>
                               </div>
                             )}
                           </div>
@@ -672,10 +672,10 @@ export default function TeacherChat() {
 
           {activeTab === 'dms' && !activeStudent && (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50/50">
-              <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+              <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-4">
                 <MessageSquare size={32} className="text-slate-300" />
               </div>
-              <h3 className="text-lg font-bold text-slate-700 mb-2">Select a student</h3>
+              <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200 mb-2">Select a student</h3>
               <p className="max-w-xs">Choose a student from the roster to view their parent's chat history or start a new conversation.</p>
             </div>
           )}
@@ -683,7 +683,7 @@ export default function TeacherChat() {
           {activeTab === 'channels' && activeChannel && (
             <>
               {/* Channel Header */}
-                <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
+                <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-4">
                     <button 
                       onClick={() => setActiveChannel(null)}
@@ -695,7 +695,7 @@ export default function TeacherChat() {
                       #
                     </div>
                     <div>
-                      <h2 className="font-bold text-slate-900 text-lg">
+                      <h2 className="font-bold text-slate-900 dark:text-white text-lg">
                         {activeChannel.name}
                       </h2>
                       <p className="text-xs text-slate-500">
@@ -724,7 +724,7 @@ export default function TeacherChat() {
                           <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 shadow-sm ${
                             isTeacher 
                               ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white rounded-tr-none' 
-                              : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none'
+                              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-tl-none'
                           }`}>
                             {msg.text && <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.text}</p>}
                             {msg.mediaUrl && (
@@ -741,7 +741,7 @@ export default function TeacherChat() {
                                 )}
                                 {msg.mediaType === 'document' && (
                                   <button onClick={() => handleDownload(msg.mediaUrl)} className={`flex items-center gap-3 p-3 rounded-xl transition-colors w-full text-left ${
-                                    isTeacher ? 'bg-primary-500 hover:bg-primary-400 text-white' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200'
+                                    isTeacher ? 'bg-primary-500 hover:bg-primary-400 text-white' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700'
                                   }`}>
                                     <div className={`p-2 rounded-lg shrink-0 ${isTeacher ? 'bg-primary-400 text-white' : 'bg-indigo-100 text-indigo-600'}`}>
                                       <FileIcon size={20} />
@@ -769,7 +769,7 @@ export default function TeacherChat() {
                 </div>
 
                 {/* Channel Message Input */}
-                <div className="shrink-0 bg-white">
+                <div className="shrink-0 bg-white dark:bg-slate-900">
                   <ChatInput onSendMessage={handleSendMessage} />
                 </div>
               </>
@@ -777,10 +777,10 @@ export default function TeacherChat() {
 
           {activeTab === 'channels' && !activeChannel && (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50/50">
-              <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+              <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-4">
                 <MessageSquare size={32} className="text-slate-300" />
               </div>
-              <h3 className="text-lg font-bold text-slate-700 mb-2">Select a channel</h3>
+              <h3 className="text-lg font-bold text-slate-700 dark:text-slate-200 mb-2">Select a channel</h3>
               <p className="max-w-xs">Choose a channel to start sending announcements.</p>
             </div>
           )}
@@ -796,8 +796,8 @@ export default function TeacherChat() {
 
       {deleteModal.isOpen && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[90]">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl">
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Delete Message</h3>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 w-full max-w-sm shadow-xl">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Delete Message</h3>
             <p className="text-sm text-slate-500 mb-6">Are you sure you want to delete this message?</p>
             <div className="flex flex-col gap-2">
               {deleteModal.isMe && (
@@ -810,13 +810,13 @@ export default function TeacherChat() {
               )}
               <button 
                 onClick={() => handleDeleteAction('for_me')}
-                className="w-full py-3 px-4 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-xl font-bold transition-colors"
+                className="w-full py-3 px-4 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-xl font-bold transition-colors"
               >
                 Delete for Me
               </button>
               <button 
                 onClick={() => setDeleteModal({ isOpen: false, msgId: null, isMe: false })}
-                className="w-full py-3 px-4 bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 rounded-xl font-bold transition-colors mt-2"
+                className="w-full py-3 px-4 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 rounded-xl font-bold transition-colors mt-2"
               >
                 Cancel
               </button>
@@ -855,15 +855,15 @@ export default function TeacherChat() {
                 <iframe 
                   src={previewFile.url} 
                   title="Document Preview"
-                  className="w-[85vw] md:w-[70vw] h-[75vh] rounded-2xl border border-white/10 bg-white shadow-2xl"
+                  className="w-[85vw] md:w-[70vw] h-[75vh] rounded-2xl border border-white/10 bg-white dark:bg-slate-900 shadow-2xl"
                 />
               ) : (
-                <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-200 text-center flex flex-col items-center gap-6">
-                  <div className="w-20 h-20 bg-slate-50 text-slate-500 rounded-3xl flex items-center justify-center shadow-inner">
+                <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700 text-center flex flex-col items-center gap-6">
+                  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 text-slate-500 rounded-3xl flex items-center justify-center shadow-inner">
                     <FileIcon size={40} />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 truncate max-w-xs mx-auto">
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate max-w-xs mx-auto">
                       {decodeURIComponent(previewFile.url.split('/').pop().split('?')[0]) || 'Attachment Document'}
                     </h3>
                     <p className="text-sm text-slate-400 mt-2">Preview is not supported for this file extension.</p>
@@ -884,7 +884,7 @@ export default function TeacherChat() {
       {/* Create Channel Modal */}
       {showCreateChannelModal && (
         <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl p-6 relative">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl p-6 relative">
             <button 
               onClick={() => setShowCreateChannelModal(false)}
               className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
@@ -892,7 +892,7 @@ export default function TeacherChat() {
               <XIcon size={20} />
             </button>
             
-            <h2 className="text-xl font-bold text-slate-900 mb-6">Create New Channel</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Create New Channel</h2>
             
             <form onSubmit={async (e) => {
               e.preventDefault();
@@ -924,37 +924,37 @@ export default function TeacherChat() {
               }
             }} className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Channel Name</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Channel Name</label>
                 <input 
                   type="text" 
                   name="name" 
                   required 
                   placeholder="e.g. 10A Science Announcements"
-                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Description (Optional)</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Description (Optional)</label>
                 <textarea 
                   name="description" 
                   placeholder="What is this channel for?"
-                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none resize-none"
+                  className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none resize-none"
                   rows="3"
                 ></textarea>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Target Audience</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Target Audience</label>
                 <select 
                   name="targetClass" 
-                  className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none bg-white"
+                  className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:outline-none bg-white dark:bg-slate-900"
                 >
                   <option value={classId}>My Assigned Class Only</option>
                   <option value="all">Entire School</option>
                 </select>
               </div>
               <div className="flex items-center gap-2">
-                <input type="checkbox" id="isReadOnly" name="isReadOnly" defaultChecked className="w-4 h-4 text-primary-600 rounded border-slate-300 focus:ring-primary-500" />
-                <label htmlFor="isReadOnly" className="text-sm font-medium text-slate-700">Read-Only (Parents cannot reply)</label>
+                <input type="checkbox" id="isReadOnly" name="isReadOnly" defaultChecked className="w-4 h-4 text-primary-600 rounded border-slate-300 dark:border-slate-600 focus:ring-primary-500" />
+                <label htmlFor="isReadOnly" className="text-sm font-medium text-slate-700 dark:text-slate-200">Read-Only (Parents cannot reply)</label>
               </div>
               <button 
                 type="submit" 

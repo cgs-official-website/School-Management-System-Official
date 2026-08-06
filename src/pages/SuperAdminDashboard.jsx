@@ -35,7 +35,7 @@ export default function SuperAdminDashboard() {
   ];
 
   return (
-    <div className="flex h-screen bg-[#f4f7fe] font-sans overflow-hidden p-4 gap-4">
+    <div className="flex h-screen bg-[#f4f7fe] dark:bg-[#0b0f19] font-sans overflow-hidden p-4 gap-4">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
@@ -46,18 +46,18 @@ export default function SuperAdminDashboard() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-4 left-4 z-50 w-64 bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
+        fixed inset-y-4 left-4 z-50 w-64 bg-white dark:bg-slate-900 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-[120%]'}
       `}>
         <div className="px-6 pb-6 pt-8 flex justify-between items-start">
 
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center p-1 shrink-0">
+            <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center p-1 shrink-0">
               <img src="/logo.png" alt="School" className="w-full h-full object-contain" onError={(e) => { e.target.style.display='none'; e.target.nextElementSibling.style.display='block'; }} />
-              <div style={{display: 'none'}} className="font-black text-slate-900 text-xl">Z</div>
+              <div style={{display: 'none'}} className="font-black text-slate-900 dark:text-white text-xl">Z</div>
             </div>
             <div className="min-w-0">
-              <h2 className="text-xl font-black text-slate-900 leading-tight truncate">School</h2>
+              <h2 className="text-xl font-black text-slate-900 dark:text-white leading-tight truncate">School</h2>
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">SuperAdmin</p>
             </div>
           </div>
@@ -94,13 +94,13 @@ export default function SuperAdminDashboard() {
         </nav>
 
         <div className="p-4 shrink-0 mt-auto">
-          <div className="bg-slate-50 rounded-2xl p-4 flex items-center justify-between border border-slate-100">
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 flex items-center justify-between border border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold shrink-0">
                 {userProfile?.email ? userProfile.email.substring(0, 2).toUpperCase() : 'SU'}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-bold text-slate-900 truncate">{userProfile?.email?.split('@')[0] || 'SuperAdmin'}</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{userProfile?.email?.split('@')[0] || 'SuperAdmin'}</p>
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">Platform Owner</p>
               </div>
             </div>

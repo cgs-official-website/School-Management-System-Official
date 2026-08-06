@@ -216,7 +216,7 @@ export default function PerformanceTracking() {
       case 'stable': return 'text-blue-700 bg-blue-100';
       case 'warning': return 'text-amber-700 bg-amber-100';
       case 'critical': return 'text-red-700 bg-red-100';
-      default: return 'text-slate-700 bg-slate-100';
+      default: return 'text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700';
     }
   };
 
@@ -240,7 +240,7 @@ export default function PerformanceTracking() {
     <div className="p-4 md:p-8 max-w-7xl mx-auto h-full flex flex-col">
       <div className="mb-8 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuTrendingUp className="text-primary-600" /> Student Performance
           </h1>
           <p className="text-slate-500 mt-1">Track academic progress and attendance trends dynamically.</p>
@@ -263,30 +263,30 @@ export default function PerformanceTracking() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 shrink-0">
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm col-span-1 md:col-span-2 flex items-center gap-6">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm col-span-1 md:col-span-2 flex items-center gap-6">
           <div className="w-16 h-16 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
             <LuAward size={32} />
           </div>
           <div>
             <p className="text-sm font-bold text-slate-500">Class Average</p>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="text-3xl font-black text-slate-900">{classAvgGrade}</span>
+              <span className="text-3xl font-black text-slate-900 dark:text-white">{classAvgGrade}</span>
               <span className="text-sm font-semibold text-slate-500">{classAvgPerc > 0 ? `${classAvgPerc.toFixed(1)}%` : 'No data'}</span>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-center">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-center">
           <p className="text-sm font-bold text-slate-500 mb-1">Students at Risk</p>
           <span className="text-3xl font-black text-red-600">{atRiskCount}</span>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-center">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-center">
           <p className="text-sm font-bold text-slate-500 mb-1">Avg Attendance</p>
-          <span className="text-3xl font-black text-slate-900">{classAvgAttendance}%</span>
+          <span className="text-3xl font-black text-slate-900 dark:text-white">{classAvgAttendance}%</span>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex gap-4 shrink-0">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
             <input 
@@ -294,15 +294,15 @@ export default function PerformanceTracking() {
               placeholder="Search students..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 bg-white"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
             />
           </div>
         </div>
 
         <div className="flex-1 overflow-auto">
           <table className="w-full text-left border-collapse min-w-[800px]">
-            <thead className="sticky top-0 bg-white shadow-sm z-10">
-              <tr className="bg-slate-50 text-slate-600 text-sm border-b border-slate-200">
+            <thead className="sticky top-0 bg-white dark:bg-slate-900 shadow-sm z-10">
+              <tr className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm border-b border-slate-200 dark:border-slate-700">
                 <th className="p-4 font-bold pl-6">Student Name</th>
                 <th className="p-4 font-bold text-center">Attendance %</th>
                 <th className="p-4 font-bold text-center">Last Exam Score</th>
@@ -314,16 +314,16 @@ export default function PerformanceTracking() {
               {filteredStudents.map((student) => (
                 <tr key={student.id} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="p-4 pl-6">
-                    <p className="font-bold text-slate-900 group-hover:text-primary-600 transition-colors">{student.firstName} {student.lastName}</p>
+                    <p className="font-bold text-slate-900 dark:text-white group-hover:text-primary-600 transition-colors">{student.firstName} {student.lastName}</p>
                     <p className="text-xs text-slate-400 font-semibold">{student.admissionNumber}</p>
                   </td>
                   <td className="p-4 text-center">
-                    <span className={`font-bold ${student.attendancePerc < 75 ? 'text-red-600' : 'text-slate-700'}`}>
+                    <span className={`font-bold ${student.attendancePerc < 75 ? 'text-red-600' : 'text-slate-700 dark:text-slate-200'}`}>
                       {student.attendancePerc}%
                     </span>
                   </td>
                   <td className="p-4 text-center">
-                    <span className="font-bold text-slate-700">{student.lastExamScore}</span>
+                    <span className="font-bold text-slate-700 dark:text-slate-200">{student.lastExamScore}</span>
                   </td>
                   <td className="p-4 text-center">
                     <span className={`text-lg font-black ${getGradeColor(student.avgGrade)}`}>
@@ -360,11 +360,11 @@ export default function PerformanceTracking() {
       {/* Export Field Selector Modal */}
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold text-slate-900">Export Performance Report</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Performance Report</h3>
                 <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
               </div>
               <button 
@@ -378,7 +378,7 @@ export default function PerformanceTracking() {
             {/* Modal Body */}
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               {/* File Name Input */}
-              <div className="space-y-1.5 pb-3 border-b border-slate-100">
+              <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
@@ -386,7 +386,7 @@ export default function PerformanceTracking() {
                     placeholder="e.g. Student_Performance_Report"
                     value={exportFileName}
                     onChange={(e) => setExportFileName(e.target.value)}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
                   <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
                 </div>
@@ -404,7 +404,7 @@ export default function PerformanceTracking() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
                 >
                   Deselect All
                 </button>
@@ -415,7 +415,7 @@ export default function PerformanceTracking() {
                 {availableFieldsList.map((field) => (
                   <label 
                     key={field.key}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50/50 cursor-pointer select-none transition-colors"
                   >
                     <input 
                       type="checkbox"
@@ -423,18 +423,18 @@ export default function PerformanceTracking() {
                       onChange={() => handleFieldToggle(field.key)}
                       className="rounded text-primary-600 focus:ring-primary-500 h-4 w-4"
                     />
-                    <span className="text-sm font-semibold text-slate-700">{field.label}</span>
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{field.label}</span>
                   </label>
                 ))}
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-3 shrink-0">
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-end gap-3 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-700 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

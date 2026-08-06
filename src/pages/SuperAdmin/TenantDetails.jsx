@@ -63,7 +63,7 @@ export default function TenantDetails() {
   if (!school) {
     return (
       <div className="p-8 text-center">
-        <h2 className="text-2xl font-bold text-slate-900">Tenant not found</h2>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Tenant not found</h2>
         <button onClick={() => navigate('/superadmin')} className="mt-4 text-primary-600 hover:underline">
           Return to Tenants List
         </button>
@@ -76,8 +76,8 @@ export default function TenantDetails() {
       case 'approved': return 'bg-green-100 text-green-800 border-green-200';
       case 'pending': return 'bg-amber-100 text-amber-800 border-amber-200';
       case 'suspended': return 'bg-red-100 text-red-800 border-red-200';
-      case 'rejected': return 'bg-slate-200 text-slate-800 border-slate-300';
-      default: return 'bg-slate-100 text-slate-800 border-slate-200';
+      case 'rejected': return 'bg-slate-200 text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-600';
+      default: return 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border-slate-200 dark:border-slate-700';
     }
   };
 
@@ -94,7 +94,7 @@ export default function TenantDetails() {
           </button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold text-slate-900">{school.name}</h1>
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{school.name}</h1>
               <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getStatusColor(school.status)}`}>
                 {school.status}
               </span>
@@ -116,7 +116,7 @@ export default function TenantDetails() {
               <button 
                 onClick={() => handleStatusChangeClick('rejected')}
                 disabled={updating}
-                className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 font-medium border border-slate-300 disabled:opacity-50"
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-200 font-medium border border-slate-300 dark:border-slate-600 disabled:opacity-50"
               >
                 Reject
               </button>
@@ -148,48 +148,48 @@ export default function TenantDetails() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Left Column: Details */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <h2 className="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">Contact & Location</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">Contact & Location</h2>
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="flex items-start gap-3">
                 <Mail className="text-slate-400 mt-0.5" size={20} />
                 <div>
                   <p className="text-sm font-medium text-slate-500">Contact Email</p>
-                  <p className="text-slate-900 mt-1">{school.contactEmail || 'Not provided'}</p>
+                  <p className="text-slate-900 dark:text-white mt-1">{school.contactEmail || 'Not provided'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Phone className="text-slate-400 mt-0.5" size={20} />
                 <div>
                   <p className="text-sm font-medium text-slate-500">Phone Number</p>
-                  <p className="text-slate-900 mt-1">{school.contactPhone || 'Not provided'}</p>
+                  <p className="text-slate-900 dark:text-white mt-1">{school.contactPhone || 'Not provided'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <MapPin className="text-slate-400 mt-0.5" size={20} />
                 <div>
                   <p className="text-sm font-medium text-slate-500">Location</p>
-                  <p className="text-slate-900 mt-1">{school.location || 'Not provided'}</p>
+                  <p className="text-slate-900 dark:text-white mt-1">{school.location || 'Not provided'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Calendar className="text-slate-400 mt-0.5" size={20} />
                 <div>
                   <p className="text-sm font-medium text-slate-500">Registered On</p>
-                  <p className="text-slate-900 mt-1">{new Date(school.createdAt).toLocaleDateString('en-GB')}</p>
+                  <p className="text-slate-900 dark:text-white mt-1">{new Date(school.createdAt).toLocaleDateString('en-GB')}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <h2 className="text-lg font-bold text-slate-900 mb-4 border-b border-slate-100 pb-3">Administrator Details</h2>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">Administrator Details</h2>
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center">
                 <UserCircle size={32} />
               </div>
               <div>
-                <p className="text-lg font-bold text-slate-900">Admin Account</p>
+                <p className="text-lg font-bold text-slate-900 dark:text-white">Admin Account</p>
                 <p className="text-slate-500 font-mono text-sm mt-0.5">UID: {school.adminId}</p>
               </div>
             </div>

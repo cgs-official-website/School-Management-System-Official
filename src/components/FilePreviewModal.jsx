@@ -90,11 +90,11 @@ export default function FilePreviewModal({ fileUrl, isOpen, onClose }) {
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-5xl h-[85vh] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+          className="relative w-full max-w-5xl h-[85vh] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl flex flex-col overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white">
-            <h3 className="font-bold text-slate-800 text-lg">File Preview</h3>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">File Preview</h3>
             <div className="flex items-center gap-3">
               <button
                 onClick={handleDownload}
@@ -114,19 +114,19 @@ export default function FilePreviewModal({ fileUrl, isOpen, onClose }) {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 bg-slate-100 p-4 overflow-auto flex items-center justify-center">
+          <div className="flex-1 bg-slate-100 dark:bg-slate-700 p-4 overflow-auto flex items-center justify-center">
             {fileType === 'image' && (
               <img 
                 src={fileUrl} 
                 alt="Preview" 
-                className="max-w-full max-h-full object-contain rounded shadow-sm bg-white"
+                className="max-w-full max-h-full object-contain rounded shadow-sm bg-white dark:bg-slate-900"
               />
             )}
 
             {fileType === 'pdf' && (
               <iframe 
                 src={fileUrl} 
-                className="w-full h-full rounded shadow-sm bg-white border-0"
+                className="w-full h-full rounded shadow-sm bg-white dark:bg-slate-900 border-0"
                 title="PDF Preview"
               />
             )}
@@ -134,17 +134,17 @@ export default function FilePreviewModal({ fileUrl, isOpen, onClose }) {
             {fileType === 'office' && (
               <iframe 
                 src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`}
-                className="w-full h-full rounded shadow-sm bg-white border-0"
+                className="w-full h-full rounded shadow-sm bg-white dark:bg-slate-900 border-0"
                 title="Office Document Preview"
               />
             )}
 
             {fileType === 'other' && (
-              <div className="flex flex-col items-center justify-center text-center p-8 bg-white rounded-xl shadow-sm max-w-md w-full">
-                <div className="w-20 h-20 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mb-4">
+              <div className="flex flex-col items-center justify-center text-center p-8 bg-white dark:bg-slate-900 rounded-xl shadow-sm max-w-md w-full">
+                <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 text-slate-400 rounded-full flex items-center justify-center mb-4">
                   <LuFileText size={40} />
                 </div>
-                <h4 className="font-bold text-slate-800 text-lg mb-2">No Preview Available</h4>
+                <h4 className="font-bold text-slate-800 dark:text-slate-100 text-lg mb-2">No Preview Available</h4>
                 <p className="text-slate-500 mb-6">
                   This file type cannot be previewed directly in the browser. Please download the file to view it on your device.
                 </p>

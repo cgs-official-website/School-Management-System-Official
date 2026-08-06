@@ -178,12 +178,12 @@ export default function ReportsAnalytics() {
     <div className="p-4 sm:p-8 max-w-7xl mx-auto h-[calc(100vh-2rem)] flex flex-col overflow-y-auto custom-scrollbar">
       <div className="flex justify-between items-end mb-8 shrink-0">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Reports & Analytics</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Reports & Analytics</h1>
           <p className="text-slate-500 mt-1">Key performance metrics and school insights.</p>
         </div>
         <button 
           onClick={handleDownload}
-          className="bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm active:scale-95"
+          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm active:scale-95"
         >
           Download Full Report
         </button>
@@ -191,7 +191,7 @@ export default function ReportsAnalytics() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 shrink-0">
         {displayMetrics.map((metric, idx) => (
-          <div key={idx} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+          <div key={idx} className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start mb-4">
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white ${metric.color}`}>
                 <metric.icon size={24} />
@@ -199,7 +199,7 @@ export default function ReportsAnalytics() {
             </div>
             <div>
               <p className="text-slate-500 text-sm font-semibold uppercase tracking-wider">{metric.title}</p>
-              <h2 className="text-3xl font-bold text-slate-900 mt-1">{metric.value}</h2>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mt-1">{metric.value}</h2>
             </div>
           </div>
         ))}
@@ -207,9 +207,9 @@ export default function ReportsAnalytics() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-[400px]">
         {/* Revenue Chart */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col">
-          <h3 className="text-lg font-bold text-slate-900 mb-6">Revenue Overview</h3>
-          <div className="flex-1 flex items-end justify-between gap-2 border-b border-slate-100 pb-2">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Revenue Overview</h3>
+          <div className="flex-1 flex items-end justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
             {revenueData.map((data, i) => (
               <div key={i} className="w-full bg-emerald-100 rounded-t-md relative group hover:bg-emerald-200 transition-colors" style={{ height: `${Math.max(data.pct, 5)}%` }}>
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
@@ -224,9 +224,9 @@ export default function ReportsAnalytics() {
         </div>
 
         {/* Attendance Chart */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col">
-          <h3 className="text-lg font-bold text-slate-900 mb-6">Attendance Trends (Last 7 Days)</h3>
-          <div className="flex-1 flex items-end justify-between gap-2 border-b border-slate-100 pb-2">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Attendance Trends (Last 7 Days)</h3>
+          <div className="flex-1 flex items-end justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
             {attendanceData.map((data, i) => (
               <div key={i} className="w-full bg-indigo-100 rounded-t-md relative group hover:bg-indigo-200 transition-colors" style={{ height: `${data.attendance}%` }}>
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">

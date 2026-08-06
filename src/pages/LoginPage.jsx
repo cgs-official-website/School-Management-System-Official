@@ -85,12 +85,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center p-4 sm:p-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white font-sans selection:bg-primary-500 selection:text-white flex flex-col items-center justify-center p-4 sm:p-8">
       <motion.div 
         initial={{ opacity: 0, y: reducedMotion ? 0 : 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="w-full max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[90vh] max-h-[800px] min-h-[600px] border border-slate-100"
+        className="w-full max-w-5xl bg-white dark:bg-slate-900 rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[90vh] max-h-[800px] min-h-[600px] border border-slate-100 dark:border-slate-800"
       >
         {/* Left Gradient Panel */}
         <div className="w-full md:w-1/2 p-4 hidden md:flex flex-col relative overflow-hidden">
@@ -115,7 +115,7 @@ export default function LoginPage() {
         </div>
 
         {/* Right Form Panel */}
-        <div className="w-full md:w-1/2 p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-white relative overflow-y-auto overflow-x-hidden custom-scrollbar">
+        <div className="w-full md:w-1/2 p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-white dark:bg-slate-900 relative overflow-y-auto overflow-x-hidden custom-scrollbar">
           
           {/* Back to Home Button */}
           <div className="mb-4 sm:mb-8 flex">
@@ -132,20 +132,20 @@ export default function LoginPage() {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-2">Log in to your account</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">Log in to your account</h2>
             <p className="text-sm text-slate-500">Access your tasks, notes, and projects anytime, anywhere - and keep everything flowing in one place.</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-1">
-              <label htmlFor="identifier" className="block text-sm font-bold text-slate-700">Email or Admission No.</label>
+              <label htmlFor="identifier" className="block text-sm font-bold text-slate-700 dark:text-slate-200">Email or Admission No.</label>
               <input 
                 type="text" 
                 id="identifier" 
                 name="identifier"
                 value={formData.identifier}
                 onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50" 
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50" 
                 placeholder="you@example.com" 
                 disabled={loading || success}
                 required 
@@ -153,7 +153,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1 relative">
-              <label htmlFor="password" className="block text-sm font-bold text-slate-700">Password</label>
+              <label htmlFor="password" className="block text-sm font-bold text-slate-700 dark:text-slate-200">Password</label>
               <div className="relative">
                 <input 
                   type={showPassword ? "text" : "password"} 
@@ -161,7 +161,7 @@ export default function LoginPage() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full pl-4 pr-12 py-3 rounded-lg bg-white border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 disabled:opacity-50" 
+                  className="w-full pl-4 pr-12 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50" 
                   placeholder="••••••••" 
                   disabled={loading || success}
                   required 
@@ -180,7 +180,7 @@ export default function LoginPage() {
 
             <div className="flex items-center justify-between text-sm pt-2">
               <label className="flex items-center gap-2 cursor-pointer group">
-                <input type="checkbox" className="w-4 h-4 rounded border-slate-300 bg-white text-primary-500 focus:ring-primary-500 focus:ring-offset-white transition-colors cursor-pointer" />
+                <input type="checkbox" className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-primary-500 focus:ring-primary-500 focus:ring-offset-white transition-colors cursor-pointer" />
                 <span className="text-slate-500 group-hover:text-slate-700 transition-colors">Remember me</span>
               </label>
               <Link to="/forgot-password" className="font-bold text-primary-600 hover:text-primary-700 transition-colors focus:outline-none focus:underline">

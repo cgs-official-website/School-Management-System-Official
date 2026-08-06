@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children, allowedRoles, moduleKey }) => {
 
   if (authLoading || (currentUser && userProfile && userProfile.role !== 'admin' && permissionsLoading)) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50">
+      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-800">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
       </div>
     );
