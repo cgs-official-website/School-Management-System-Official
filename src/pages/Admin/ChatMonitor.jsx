@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getChatThreads, subscribeToMessages } from '../../firebase/firestore';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuSearch as Search, LuShieldAlert as ShieldAlert, LuDownload as DownloadIcon, LuX as XIcon } from 'react-icons/lu';
+import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuSearch as Search, LuShieldAlert as ShieldAlert, LuDownload as DownloadIcon, LuX as XIcon, LuBan as Ban } from 'react-icons/lu';
 import CustomAudioPlayer from '../../components/CustomAudioPlayer';
 
 export default function ChatMonitor() {
@@ -125,8 +125,13 @@ export default function ChatMonitor() {
   const renderMessageContent = (msg, isTeacher) => {
     return (
       <div className="flex flex-col gap-2">
+        {msg.isDeletedForEveryone && (
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded-md self-start">
+            <Ban size={12} /> Deleted by Sender
+          </div>
+        )}
         {msg.mediaUrl && (
-          <div className="mb-1">
+          <div className="mb-1 opacity-80">
             {msg.mediaType === 'image' && (
               <button 
                 onClick={() => setPreviewFile({ url: msg.mediaUrl, type: 'image' })} 
@@ -149,7 +154,7 @@ export default function ChatMonitor() {
             )}
           </div>
         )}
-        {msg.text && <p className="text-sm whitespace-pre-wrap">{msg.text}</p>}
+        {msg.text && <p className={`text-sm whitespace-pre-wrap ${msg.isDeletedForEveryone ? 'text-slate-500 italic' : ''}`}>{msg.text}</p>}
       </div>
     );
   };

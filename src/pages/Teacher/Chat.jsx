@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getStudentsByClass, subscribeToMessages, sendMessage, checkParentRegistration, deleteChatMessage, updateChatRoomStatus, subscribeToChatRoom, getChatsForTeacher, markChatRead, createChannel, getChannelsForUser, subscribeToChannelMessages, sendChannelMessage } from '../../firebase/firestore';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuTrash2 as Trash2, LuCircleCheck as CheckCircle, LuClock as Clock, LuDownload as DownloadIcon, LuX as XIcon } from 'react-icons/lu';
+import { LuMessageSquare as MessageSquare, LuFile as FileIcon, LuTrash2 as Trash2, LuCircleCheck as CheckCircle, LuClock as Clock, LuDownload as DownloadIcon, LuX as XIcon, LuCopy as Copy, LuForward as Forward, LuBan as Ban } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import ChatInput from '../../components/ChatInput';
 import CustomAudioPlayer from '../../components/CustomAudioPlayer';
@@ -34,6 +34,7 @@ export default function TeacherChat() {
 
   const [linkedParentId, setLinkedParentId] = useState(null);
   const [previewFile, setPreviewFile] = useState(null); // { url, type }
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, msgId: null, isMe: false });
 
   const handleDownload = async (url, customName = 'file') => {
     try {
@@ -275,23 +276,58 @@ export default function TeacherChat() {
     }
   };
 
-  const handleDeleteMessage = (msgId) => {
-    setConfirmModal({
-      isOpen: true,
-      message: "Are you sure you want to delete this message?",
-      onConfirm: async () => {
-        setConfirmModal({ ...confirmModal, isOpen: false });
-        try {
-          await deleteChatMessage(schoolId, `${activeStudent.id}_${currentUser.uid}`, msgId);
-          toast.success("Message deleted");
-        } catch (err) {
-          toast.error("Failed to delete message");
-        }
+  const handleDeleteAction = async (type) => {
+    try {
+      if (activeTab === 'dms') {
+        await deleteChatMessage(schoolId, `${activeStudent.id}_${currentUser.uid}`, deleteModal.msgId, type, currentUser.uid);
+      } else if (activeTab === 'channels') {
+        await deleteChatMessage(schoolId, activeChannel.id, deleteModal.msgId, type, currentUser.uid);
       }
-    });
+      setDeleteModal({ isOpen: false, msgId: null, isMe: false });
+      toast.success("Message deleted");
+    } catch (err) {
+      toast.error("Failed to delete message");
+    }
+  };
+
+  const handleCopy = (text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    toast.success("Message copied");
+  };
+
+  const handleForward = (text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    toast.success("Message copied to clipboard for forwarding");
+  };
+
+  const formatDateSeparator = (dateString) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) return 'Today';
+    if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    
+    const diffTime = Math.abs(today - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays < 7) {
+      return date.toLocaleDateString(undefined, { weekday: 'long' });
+    }
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   const renderMessageContent = (msg, isMe) => {
+    if (msg.isDeletedForEveryone) {
+      return (
+        <p className="text-sm italic flex items-center gap-1 opacity-70">
+          <Ban size={14} /> This message was deleted
+        </p>
+      );
+    }
+
     return (
       <div className="flex flex-col gap-2">
         {msg.mediaUrl && (
@@ -542,42 +578,72 @@ export default function TeacherChat() {
                   (() => {
                     let unreadCounter = chatRoomData?.unreadCount_parent || 0;
                     const readStatus = {};
-                    for (let i = messages.length - 1; i >= 0; i--) {
-                      if (messages[i].senderId === currentUser.uid) {
-                        readStatus[messages[i].id] = unreadCounter <= 0;
+                    const visibleMessages = messages.filter(m => !m.deletedFor?.includes(currentUser.uid));
+
+                    for (let i = visibleMessages.length - 1; i >= 0; i--) {
+                      if (visibleMessages[i].senderId === currentUser.uid) {
+                        readStatus[visibleMessages[i].id] = unreadCounter <= 0;
                         unreadCounter--;
                       }
                     }
 
-                    return messages.map(msg => {
+                    let lastDateString = null;
+
+                    return visibleMessages.map(msg => {
                       const isMe = msg.senderId === currentUser.uid;
+                      const msgDate = new Date(msg.createdAt).toDateString();
+                      const showDateSeparator = msgDate !== lastDateString;
+                      if (showDateSeparator) {
+                        lastDateString = msgDate;
+                      }
+
                       return (
-                        <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'} group relative`}>
-                          <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
-                            isMe 
-                              ? 'bg-primary-600 text-white rounded-tr-none' 
-                              : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm'
-                          } relative`}>
-                            {isMe && (
-                              <button 
-                                onClick={() => handleDeleteMessage(msg.id)}
-                                className="absolute -left-10 top-2 p-2 bg-red-100 text-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200 shadow-sm"
-                                title="Delete Message"
-                              >
-                                <Trash2 size={14} />
-                              </button>
+                        <React.Fragment key={msg.id}>
+                          {showDateSeparator && (
+                            <div className="flex justify-center my-2">
+                              <span className="bg-slate-200/50 text-slate-500 text-xs font-bold px-3 py-1 rounded-full">
+                                {formatDateSeparator(msg.createdAt)}
+                              </span>
+                            </div>
+                          )}
+                          <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} group relative`}>
+                            
+                            {/* Message Options (Non-Me) */}
+                            {!isMe && !msg.isDeletedForEveryone && (
+                              <div className="absolute -right-24 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Copy"><Copy size={14}/></button>}
+                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Forward"><Forward size={14}/></button>}
+                                <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: false})} className="p-1.5 bg-white text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200" title="Delete"><Trash2 size={14}/></button>
+                              </div>
                             )}
-                            {renderMessageContent(msg, isMe)}
-                            <span className={`text-[10px] mt-1 flex items-center gap-1 ${isMe ? 'text-primary-200 justify-end' : 'text-slate-400 justify-start'}`}>
-                              {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              {isMe && (
-                                <span title={readStatus[msg.id] ? "Seen" : "Sent"} className="font-bold ml-1 tracking-tighter">
-                                  {readStatus[msg.id] ? "✓✓" : "✓"}
-                                </span>
+
+                            <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
+                              isMe 
+                                ? (msg.isDeletedForEveryone ? 'bg-primary-500 text-white/80 rounded-tr-none' : 'bg-primary-600 text-white rounded-tr-none')
+                                : (msg.isDeletedForEveryone ? 'bg-slate-50 border border-slate-200 text-slate-500 rounded-tl-none shadow-sm' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm')
+                            } relative`}>
+                              
+                              {/* Message Options (Me) */}
+                              {isMe && !msg.isDeletedForEveryone && (
+                                <div className="absolute -left-24 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                                  {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Copy"><Copy size={14}/></button>}
+                                  {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Forward"><Forward size={14}/></button>}
+                                  <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: true})} className="p-1.5 bg-white text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200" title="Delete"><Trash2 size={14}/></button>
+                                </div>
                               )}
-                            </span>
+                              
+                              {renderMessageContent(msg, isMe)}
+                              <span className={`text-[10px] mt-1 flex items-center gap-1 ${isMe ? 'text-primary-200 justify-end' : 'text-slate-400 justify-start'}`}>
+                                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                {isMe && (
+                                  <span title={readStatus[msg.id] ? "Seen" : "Sent"} className="font-bold ml-1 tracking-tighter">
+                                    {readStatus[msg.id] ? "✓✓" : "✓"}
+                                  </span>
+                                )}
+                              </span>
+                            </div>
                           </div>
-                        </div>
+                        </React.Fragment>
                       );
                     });
                   })()
@@ -711,6 +777,37 @@ export default function TeacherChat() {
         message={confirmModal.message}
         title="Delete Message"
       />
+
+      {deleteModal.isOpen && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[90]">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl">
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Delete Message</h3>
+            <p className="text-sm text-slate-500 mb-6">Are you sure you want to delete this message?</p>
+            <div className="flex flex-col gap-2">
+              {deleteModal.isMe && (
+                <button 
+                  onClick={() => handleDeleteAction('for_everyone')}
+                  className="w-full py-3 px-4 bg-red-50 text-red-700 hover:bg-red-100 rounded-xl font-bold transition-colors"
+                >
+                  Delete for Everyone
+                </button>
+              )}
+              <button 
+                onClick={() => handleDeleteAction('for_me')}
+                className="w-full py-3 px-4 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-xl font-bold transition-colors"
+              >
+                Delete for Me
+              </button>
+              <button 
+                onClick={() => setDeleteModal({ isOpen: false, msgId: null, isMe: false })}
+                className="w-full py-3 px-4 bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 rounded-xl font-bold transition-colors mt-2"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {previewFile && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center z-[9999] p-4 animate-fade-in">

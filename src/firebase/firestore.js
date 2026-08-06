@@ -711,10 +711,23 @@ export const subscribeToMessages = (schoolId, studentId, teacherId, callback) =>
   });
 };
 
-export const deleteChatMessage = async (schoolId, chatRoomId, messageId) => {
+export const deleteChatMessage = async (schoolId, chatRoomId, messageId, deleteType = 'for_everyone', userId = null) => {
   try {
     const messageRef = doc(db, `schools/${schoolId}/chats/${chatRoomId}/messages`, messageId);
-    await deleteDoc(messageRef);
+    
+    if (deleteType === 'for_everyone') {
+      await setDoc(messageRef, {
+        isDeletedForEveryone: true,
+        deletedAt: new Date().toISOString()
+      }, { merge: true });
+    } else if (deleteType === 'for_me' && userId) {
+      await setDoc(messageRef, {
+        deletedFor: arrayUnion(userId)
+      }, { merge: true });
+    } else {
+      // Legacy hard delete fallback if needed
+      await deleteDoc(messageRef);
+    }
   } catch (error) {
     console.error("Error deleting message:", error);
     throw error;
