@@ -92,17 +92,16 @@ export default function TeacherRegistration() {
           teacherDoc = d;
           teacherData = d.data();
           
-          // Verify employeeId if provided in url, or fallback to formData verification
           const urlEmpId = searchParams.get('empId');
           const docEmpId = (teacherData.employeeId || teacherData.staffId || '').toString().trim().toLowerCase();
           const expectedEmpId = (urlEmpId || formData.employeeId || '').toString().trim().toLowerCase();
           
-          if (docEmpId !== expectedEmpId) {
-             teacherDoc = null; // Fails validation
+          // Only validate employee ID if one exists in the database
+          if (docEmpId && docEmpId !== expectedEmpId) {
+             teacherDoc = null; 
           }
         }
       } else {
-        // Fallback for older links without ID
         const q = query(
           collection(db, `schools/${schoolId}/teachers`),
           where("email", "==", formData.email.trim())
@@ -113,7 +112,9 @@ export default function TeacherRegistration() {
           const data = d.data();
           const docEmpId = (data.employeeId || data.staffId || '').toString().trim().toLowerCase();
           const inputEmpId = formData.employeeId.trim().toLowerCase();
-          if (docEmpId === inputEmpId) {
+          
+          // Match if emp ID matches, OR if the database has no emp ID
+          if (!docEmpId || docEmpId === inputEmpId) {
             teacherDoc = d;
             teacherData = data;
             break;
@@ -149,6 +150,7 @@ export default function TeacherRegistration() {
         userId: user.uid,
         name: formData.name,
         status: 'Active',
+        ...(!teacherData.employeeId && !teacherData.staffId && formData.employeeId ? { employeeId: formData.employeeId } : {}),
         ...customFieldsData
       });
 
