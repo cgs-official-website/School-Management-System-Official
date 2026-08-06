@@ -125,36 +125,63 @@ export const findStudentByAdmission = async (schoolId, admissionNumber, dob) => 
     const normalizeDate = (dStr) => {
       if (!dStr) return '';
       
+      const getLocalDateString = (dateObj) => {
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const d = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      };
+
       // Support Firestore Timestamps
       if (typeof dStr === 'object' && typeof dStr.toDate === 'function') {
-        return dStr.toDate().toISOString().split('T')[0];
+        return getLocalDateString(dStr.toDate());
       }
       
       // Support JS Date objects
       if (dStr instanceof Date) {
-        return dStr.toISOString().split('T')[0];
+        return getLocalDateString(dStr);
       }
 
       // String formats
       if (typeof dStr === 'string') {
-        // Try parsing with JS Date
-        const parsed = new Date(dStr);
-        if (!isNaN(parsed.getTime())) {
-          return parsed.toISOString().split('T')[0];
-        }
-        // Manual regex split for formats like DD-MM-YYYY or DD/MM/YYYY
+        dStr = dStr.trim();
         const parts = dStr.split(/[-/.]/);
+        
         if (parts.length === 3) {
-          // YYYY-MM-DD
+          // If YYYY-MM-DD, return directly. Bypasses JS Date UTC timezone bugs.
           if (parts[0].length === 4) {
             return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
           }
-          // DD-MM-YYYY or MM-DD-YYYY
+          
+          // If DD-MM-YYYY or MM-DD-YYYY
           if (parts[2].length === 4) {
-            return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            let p0 = parts[0];
+            let p1 = parts[1];
+            
+            // If first part > 12, it must be DD-MM-YYYY
+            if (parseInt(p0) > 12) {
+              return `${parts[2]}-${p1.padStart(2, '0')}-${p0.padStart(2, '0')}`;
+            }
+            // If second part > 12, it must be MM-DD-YYYY
+            if (parseInt(p1) > 12) {
+              return `${parts[2]}-${p0.padStart(2, '0')}-${p1.padStart(2, '0')}`;
+            }
+            
+            // Ambiguous (e.g. 12-10-2021). Use JS Date which parses XX-XX-YYYY in Local Time (no UTC shift bug).
+            const parsed = new Date(dStr);
+            if (!isNaN(parsed.getTime())) {
+              return getLocalDateString(parsed);
+            }
           }
         }
-        return dStr.trim();
+        
+        // Fallback for completely weird strings
+        const parsedFallback = new Date(dStr);
+        if (!isNaN(parsedFallback.getTime())) {
+          return getLocalDateString(parsedFallback);
+        }
+        
+        return dStr;
       }
       
       return String(dStr);

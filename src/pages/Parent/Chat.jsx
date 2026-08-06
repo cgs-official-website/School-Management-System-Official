@@ -82,7 +82,8 @@ export default function ParentChat() {
               const chatData = chatsMap.get(teacher.id);
               return {
                 ...teacher,
-                unreadCount: chatData?.unreadCount_parent || 0
+                unreadCount: chatData?.unreadCount_parent || 0,
+                otherUnreadCount: chatData?.unreadCount_teacher || 0
               };
             });
             
@@ -396,32 +397,49 @@ export default function ParentChat() {
                     <p className="text-sm">Say hello to start the conversation.</p>
                   </div>
                 ) : (
-                  messages.map(msg => {
-                    const isMe = msg.senderId === currentUser.uid;
-                    return (
-                      <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'} group relative`}>
-                        <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
-                          isMe 
-                            ? 'bg-primary-600 text-white rounded-tr-none' 
-                            : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm'
-                        } relative`}>
-                          {isMe && (
-                            <button 
-                              onClick={() => handleDeleteMessage(msg.id)}
-                              className="absolute -left-10 top-2 p-2 bg-red-100 text-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200 shadow-sm"
-                              title="Delete Message"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          )}
-                          {renderMessageContent(msg, isMe)}
-                          <span className={`text-xs mt-2 block ${isMe ? 'text-primary-200' : 'text-slate-400'}`}>
-                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
+                  (() => {
+                    const currentTeacher = teachers.find(t => t.id === activeTeacher?.id);
+                    let unreadCounter = currentTeacher?.otherUnreadCount || 0;
+                    const readStatus = {};
+                    for (let i = messages.length - 1; i >= 0; i--) {
+                      if (messages[i].senderId === currentUser.uid) {
+                        readStatus[messages[i].id] = unreadCounter <= 0;
+                        unreadCounter--;
+                      }
+                    }
+
+                    return messages.map(msg => {
+                      const isMe = msg.senderId === currentUser.uid;
+                      return (
+                        <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'} group relative`}>
+                          <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
+                            isMe 
+                              ? 'bg-primary-600 text-white rounded-tr-none' 
+                              : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm'
+                          } relative`}>
+                            {isMe && (
+                              <button 
+                                onClick={() => handleDeleteMessage(msg.id)}
+                                className="absolute -left-10 top-2 p-2 bg-red-100 text-red-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-200 shadow-sm"
+                                title="Delete Message"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            )}
+                            {renderMessageContent(msg, isMe)}
+                            <span className={`text-[10px] mt-1 flex items-center gap-1 ${isMe ? 'text-primary-200 justify-end' : 'text-slate-400 justify-start'}`}>
+                              {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              {isMe && (
+                                <span title={readStatus[msg.id] ? "Seen" : "Sent"} className="font-bold ml-1 tracking-tighter">
+                                  {readStatus[msg.id] ? "✓✓" : "✓"}
+                                </span>
+                              )}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })
+                      );
+                    });
+                  })()
                 )}
                 <div ref={messagesEndRef} />
               </div>
