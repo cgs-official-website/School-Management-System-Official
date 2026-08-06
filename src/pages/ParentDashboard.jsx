@@ -307,7 +307,7 @@ export default function ParentDashboard() {
           <div className="mb-4 relative px-4">
             <button 
               onClick={() => setIsChildDropdownOpen(!isChildDropdownOpen)}
-              className="w-full flex items-center justify-between bg-primary-50 hover:bg-primary-100 text-primary-900 px-4 py-2.5 rounded-xl border border-primary-100 transition-colors"
+              className="w-full flex items-center justify-between bg-primary-50 dark:bg-slate-800 hover:bg-primary-100 dark:hover:bg-slate-700 text-primary-900 dark:text-primary-100 px-4 py-2.5 rounded-xl border border-primary-100 dark:border-slate-700 transition-colors"
             >
               <div className="flex flex-col items-start min-w-0">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-primary-600">Viewing</span>
@@ -324,8 +324,8 @@ export default function ParentDashboard() {
                     onClick={() => handleSwitchChild(child.studentId, child.classId)}
                     className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
                       child.studentId === userProfile.linkedStudentId 
-                        ? 'bg-primary-50 text-primary-700 font-bold' 
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 hover:text-slate-900 font-medium'
+                        ? 'bg-primary-50 dark:bg-primary-900/40 text-primary-700 dark:text-primary-200 font-bold' 
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white font-medium'
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold ${
@@ -362,8 +362,8 @@ export default function ParentDashboard() {
               className={({ isActive }) =>
                 `relative flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200 font-semibold text-sm ${
                   isActive 
-                    ? 'bg-primary-50 text-primary-900 shadow-md shadow-slate-900/20' 
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                    ? 'bg-primary-50 dark:bg-primary-900/40 text-primary-900 dark:text-primary-100 shadow-md shadow-slate-900/20 dark:shadow-none' 
+                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                 }`
               }
             >
