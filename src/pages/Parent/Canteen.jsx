@@ -64,7 +64,7 @@ export default function Canteen() {
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Emergency Canteen Requests</h1>
-        <p className="text-slate-500 mt-1">If your child forgot their meal, you can request a meal from the school canteen for today.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">If your child forgot their meal, you can request a meal from the school canteen for today.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -74,7 +74,7 @@ export default function Canteen() {
             <Coffee size={32} />
           </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Breakfast</h2>
-          <p className="text-slate-500 mb-6">Request breakfast for today. Meal will be provided during morning break.</p>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">Request breakfast for today. Meal will be provided during morning break.</p>
           
           {requestedBreakfast ? (
             <div className="w-full py-3 bg-green-50 text-green-700 rounded-xl font-bold flex items-center justify-center gap-2 border border-green-200">
@@ -97,7 +97,7 @@ export default function Canteen() {
             <Utensils size={32} />
           </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Lunch</h2>
-          <p className="text-slate-500 mb-6">Request lunch for today. Meal will be provided during lunch break.</p>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">Request lunch for today. Meal will be provided during lunch break.</p>
           
           {requestedLunch ? (
             <div className="w-full py-3 bg-green-50 text-green-700 rounded-xl font-bold flex items-center justify-center gap-2 border border-green-200">
@@ -119,13 +119,13 @@ export default function Canteen() {
       <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Request History</h2>
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {requests.length === 0 ? (
-          <div className="p-8 text-center text-slate-500">
+          <div className="p-8 text-center text-slate-500 dark:text-slate-400">
             No past canteen requests found.
           </div>
         ) : (
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Date</th>
                 <th className="p-4">Meal Type</th>
                 <th className="p-4 pr-6 text-right">Status</th>
@@ -133,7 +133,7 @@ export default function Canteen() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {requests.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).map((req) => (
-                <tr key={req.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={req.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                   <td className="p-4 pl-6 font-medium text-slate-900 dark:text-white">{req.date}</td>
                   <td className="p-4 text-slate-600 dark:text-slate-300">{req.mealType}</td>
                   <td className="p-4 pr-6 text-right">

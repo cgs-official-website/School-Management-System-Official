@@ -131,7 +131,7 @@ export default function LeaveRequests() {
       <div className="mb-8 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Leave Requests</h1>
-          <p className="text-slate-500 mt-1">Apply for leaves and track your approval status.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Apply for leaves and track your approval status.</p>
         </div>
         <button 
           onClick={handleOpenModal}
@@ -143,9 +143,9 @@ export default function LeaveRequests() {
 
       {/* Main Request History Box */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex items-center justify-between shrink-0">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex items-center justify-between shrink-0">
           <h3 className="font-bold text-slate-900 dark:text-white text-lg">Leave History</h3>
-          <span className="text-xs text-slate-400 font-semibold">{leaves.length} Applications</span>
+          <span className="text-xs text-slate-400 dark:text-slate-300 font-semibold">{leaves.length} Applications</span>
         </div>
 
         <div className="flex-1 overflow-auto p-6">
@@ -166,8 +166,8 @@ export default function LeaveRequests() {
                     </div>
 
                     <div className="space-y-2 mb-4">
-                      <p className="text-xs font-bold text-slate-400 flex items-center gap-2">
-                        <LuCalendar size={14} className="text-slate-400" />
+                      <p className="text-xs font-bold text-slate-400 dark:text-slate-300 flex items-center gap-2">
+                        <LuCalendar size={14} className="text-slate-400 dark:text-slate-300" />
                         {new Date(leave.startDate).toLocaleDateString('en-GB')} — {new Date(leave.endDate).toLocaleDateString('en-GB')}
                       </p>
                       <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-relaxed line-clamp-3">
@@ -177,10 +177,10 @@ export default function LeaveRequests() {
                   </div>
 
                   {leave.supportingDoc && (
-                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-slate-500">
+                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400">
                       <div className="flex items-center gap-1 overflow-hidden mr-2">
                         <span className="truncate max-w-[120px]">{leave.supportingDoc.name}</span>
-                        <span className="text-slate-400 shrink-0">({leave.supportingDoc.size})</span>
+                        <span className="text-slate-400 dark:text-slate-300 shrink-0">({leave.supportingDoc.size})</span>
                       </div>
                       <a
                         href={leave.supportingDoc.url}
@@ -203,7 +203,7 @@ export default function LeaveRequests() {
               ))}
 
               {leaves.length === 0 && (
-                <div className="col-span-full text-center py-12 text-slate-500">
+                <div className="col-span-full text-center py-12 text-slate-500 dark:text-slate-400">
                   <LuCalendar size={48} className="mx-auto mb-4 text-slate-300" />
                   <p className="text-lg font-medium text-slate-700 dark:text-slate-200">No leave requests submitted yet.</p>
                 </div>
@@ -225,7 +225,7 @@ export default function LeaveRequests() {
               <button 
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl transition-colors"
               >
                 <LuX size={20} />
               </button>
@@ -298,9 +298,9 @@ export default function LeaveRequests() {
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Supporting Document (Optional)</label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 dark:border-slate-700 border-dashed rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer relative group">
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 dark:border-slate-700 border-dashed rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer relative group">
                   <div className="space-y-1 text-center">
-                    <LuFolderDown className="mx-auto h-12 w-12 text-slate-400 group-hover:text-primary-500 transition-colors" />
+                    <LuFolderDown className="mx-auto h-12 w-12 text-slate-400 dark:text-slate-300 group-hover:text-primary-500 transition-colors" />
                     <div className="flex text-sm text-slate-600 dark:text-slate-300 justify-center">
                       <label className="relative cursor-pointer bg-white dark:bg-slate-900 rounded-md font-bold text-primary-600 hover:text-primary-700 focus-within:outline-none">
                         <span>{selectedFile ? 'Change file' : 'Select a file'}</span>
@@ -321,11 +321,11 @@ export default function LeaveRequests() {
                         />
                       </label>
                     </div>
-                    <p className="text-xs text-slate-500">PDF, PNG, JPG up to 3MB</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">PDF, PNG, JPG up to 3MB</p>
                     {selectedFile && (
                       <div className="mt-2 p-2 bg-slate-100/80 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-between gap-3">
                         <span className="truncate max-w-[200px]">{selectedFile.name}</span>
-                        <span className="text-slate-500 shrink-0">({selectedFile.size > 1024 * 1024 ? (selectedFile.size / (1024 * 1024)).toFixed(1) + ' MB' : (selectedFile.size / 1024).toFixed(0) + ' KB'})</span>
+                        <span className="text-slate-500 dark:text-slate-400 shrink-0">({selectedFile.size > 1024 * 1024 ? (selectedFile.size / (1024 * 1024)).toFixed(1) + ' MB' : (selectedFile.size / 1024).toFixed(0) + ' KB'})</span>
                       </div>
                     )}
                   </div>
@@ -337,7 +337,7 @@ export default function LeaveRequests() {
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

@@ -179,11 +179,11 @@ export default function ReportsAnalytics() {
       <div className="flex justify-between items-end mb-8 shrink-0">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Reports & Analytics</h1>
-          <p className="text-slate-500 mt-1">Key performance metrics and school insights.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Key performance metrics and school insights.</p>
         </div>
         <button 
           onClick={handleDownload}
-          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm active:scale-95"
+          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-medium shadow-sm active:scale-95"
         >
           Download Full Report
         </button>
@@ -198,7 +198,7 @@ export default function ReportsAnalytics() {
               </div>
             </div>
             <div>
-              <p className="text-slate-500 text-sm font-semibold uppercase tracking-wider">{metric.title}</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold uppercase tracking-wider">{metric.title}</p>
               <h2 className="text-3xl font-bold text-slate-900 dark:text-white mt-1">{metric.value}</h2>
             </div>
           </div>
@@ -218,7 +218,7 @@ export default function ReportsAnalytics() {
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-xs text-slate-400 mt-2 font-medium px-2">
+          <div className="flex justify-between text-xs text-slate-400 dark:text-slate-300 mt-2 font-medium px-2">
             {revenueData.map((data, i) => <span key={i}>{data.month}</span>)}
           </div>
         </div>
@@ -235,7 +235,7 @@ export default function ReportsAnalytics() {
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-xs text-slate-400 mt-2 font-medium px-2">
+          <div className="flex justify-between text-xs text-slate-400 dark:text-slate-300 mt-2 font-medium px-2">
             {attendanceData.map((data, i) => <span key={i}>{data.day}</span>)}
           </div>
         </div>

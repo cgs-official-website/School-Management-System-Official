@@ -77,7 +77,7 @@ export default function PTM() {
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
           <LuCalendarClock className="text-primary-600" /> Parent-Teacher Meetings
         </h1>
-        <p className="text-slate-500 mt-1">View your scheduled meetings with teachers.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">View your scheduled meetings with teachers.</p>
       </div>
 
       <div className="space-y-8">
@@ -92,12 +92,12 @@ export default function PTM() {
               <div key={meeting.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow-md transition-all flex flex-col group">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-300 shrink-0">
                       <LuUsers size={24} />
                     </div>
                     <div>
                       <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">Class Teacher</h3>
-                      <p className="text-xs font-semibold text-slate-500 mt-0.5">Ref: {meeting.studentName}</p>
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Ref: {meeting.studentName}</p>
                     </div>
                   </div>
                   {getStatusBadge(meeting.status)}
@@ -106,11 +106,11 @@ export default function PTM() {
                 <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 mb-4 flex-1">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date & Time</p>
+                      <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Date & Time</p>
                       <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{new Date(meeting.date).toLocaleDateString('en-GB')} at {meeting.time}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Type</p>
+                      <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Type</p>
                       <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1">
                         {meeting.type === 'online' ? <LuVideo size={14} className="text-blue-500" /> : <LuMapPin size={14} className="text-amber-500" />}
                         <span className="capitalize">{meeting.type}</span>
@@ -129,7 +129,7 @@ export default function PTM() {
               </div>
             ))}
             {upcomingMeetings.length === 0 && (
-              <div className="col-span-full py-8 text-center text-slate-500 font-medium bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700">
+              <div className="col-span-full py-8 text-center text-slate-500 dark:text-slate-400 font-medium bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700">
                 You have no upcoming meetings scheduled.
               </div>
             )}
@@ -139,7 +139,7 @@ export default function PTM() {
         {pastMeetings.length > 0 && (
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <LuCalendarClock className="text-slate-400" size={24} />
+              <LuCalendarClock className="text-slate-400 dark:text-slate-300" size={24} />
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Past Meetings</h2>
             </div>
             
@@ -148,12 +148,12 @@ export default function PTM() {
                 <div key={meeting.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col group">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-300 shrink-0">
                         <LuUsers size={24} />
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">Class Teacher</h3>
-                        <p className="text-xs font-semibold text-slate-500 mt-0.5">Ref: {meeting.studentName}</p>
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Ref: {meeting.studentName}</p>
                       </div>
                     </div>
                     {getStatusBadge(meeting.status)}
@@ -162,11 +162,11 @@ export default function PTM() {
                   <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 flex-1">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date & Time</p>
+                        <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Date & Time</p>
                         <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{new Date(meeting.date).toLocaleDateString('en-GB')} at {meeting.time}</p>
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Type</p>
+                        <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Type</p>
                         <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1">
                           {meeting.type === 'online' ? <LuVideo size={14} className="text-blue-500" /> : <LuMapPin size={14} className="text-amber-500" />}
                           <span className="capitalize">{meeting.type}</span>

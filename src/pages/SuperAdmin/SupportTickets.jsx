@@ -248,14 +248,14 @@ export default function SupportTickets() {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuLifeBuoy className="text-primary-600" /> Support Tickets
           </h1>
-          <p className="text-slate-500 mt-1">Manage live support requests and technical issues across all tenant school admins.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage live support requests and technical issues across all tenant school admins.</p>
         </div>
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden mb-6">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex gap-4 shrink-0">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
-            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={20} />
             <input 
               type="text"
               placeholder="Search by ticket ID, school, or subject..."
@@ -289,20 +289,20 @@ export default function SupportTickets() {
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="text-sm font-black text-slate-400 group-hover:text-primary-500 transition-colors">#{ticket.id}</span>
+                      <span className="text-sm font-black text-slate-400 dark:text-slate-300 group-hover:text-primary-500 transition-colors">#{ticket.id}</span>
                       {getStatusBadge(ticket.status)}
                       <span className={`px-2 py-0.5 text-xs font-bold uppercase tracking-wider rounded-md border ${getPriorityColor(ticket.priority)}`}>
                         {ticket.priority || 'medium'} priority
                       </span>
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">{ticket.subject}</h3>
-                    <p className="text-sm text-slate-500 font-medium">From: <span className="text-slate-700 dark:text-slate-200 font-semibold">{ticket.school || ticket.clientName || 'School Admin'}</span></p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">From: <span className="text-slate-700 dark:text-slate-200 font-semibold">{ticket.school || ticket.clientName || 'School Admin'}</span></p>
                   </div>
                   <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0 border-t sm:border-t-0 sm:border-l border-slate-100 dark:border-slate-800 pt-4 sm:pt-0 sm:pl-6">
-                    <div className="text-sm font-semibold text-slate-500 flex items-center gap-1">
+                    <div className="text-sm font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1">
                       <LuMessageSquare size={16} /> {msgCount} messages
                     </div>
-                    <div className="text-xs text-slate-400 font-medium">
+                    <div className="text-xs text-slate-400 dark:text-slate-300 font-medium">
                       Created {dateStr}
                     </div>
                   </div>
@@ -311,7 +311,7 @@ export default function SupportTickets() {
             })}
 
             {filteredTickets.length === 0 && (
-              <div className="text-center py-12 text-slate-500">
+              <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                 <LuLifeBuoy size={48} className="mx-auto mb-4 text-slate-300" />
                 <p className="text-lg font-medium text-slate-700 dark:text-slate-200">No support tickets found.</p>
               </div>
@@ -321,8 +321,8 @@ export default function SupportTickets() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-sm text-slate-500 font-medium">
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               Showing <span className="font-semibold text-slate-900 dark:text-white">{startIndex + 1}</span> to{' '}
               <span className="font-semibold text-slate-900 dark:text-white">
                 {Math.min(startIndex + itemsPerPage, filteredTickets.length)}
@@ -333,7 +333,7 @@ export default function SupportTickets() {
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -346,7 +346,7 @@ export default function SupportTickets() {
                     className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                       currentPage === pageNum
                         ? 'bg-primary-600 text-white shadow-sm'
-                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
+                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {pageNum}
@@ -356,7 +356,7 @@ export default function SupportTickets() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>
@@ -369,14 +369,14 @@ export default function SupportTickets() {
       {selectedTicket && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn" onClick={() => setSelectedTicket(null)}>
           <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex items-start justify-between">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-sm font-extrabold text-primary-600">#{selectedTicket.id}</span>
                   {getStatusBadge(selectedTicket.status)}
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">{selectedTicket.subject}</h3>
-                <p className="text-xs text-slate-500 font-medium mt-1">From: <span className="font-bold text-slate-700 dark:text-slate-200">{selectedTicket.school || selectedTicket.clientName || 'School Admin'}</span></p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">From: <span className="font-bold text-slate-700 dark:text-slate-200">{selectedTicket.school || selectedTicket.clientName || 'School Admin'}</span></p>
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -388,7 +388,7 @@ export default function SupportTickets() {
                 </button>
                 <button
                   onClick={() => setSelectedTicket(null)}
-                  className="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors"
+                  className="p-2 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                 >
                   <LuX size={20} />
                 </button>
@@ -397,7 +397,7 @@ export default function SupportTickets() {
 
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between gap-4 text-xs">
               <div className="flex items-center gap-2">
-                <span className="text-slate-500 font-bold">Status:</span>
+                <span className="text-slate-500 dark:text-slate-400 font-bold">Status:</span>
                 <select
                   value={selectedTicket.status}
                   onChange={(e) => handleStatusChange(selectedTicket.id, e.target.value)}
@@ -408,7 +408,7 @@ export default function SupportTickets() {
                   <option value="resolved">Resolved</option>
                 </select>
               </div>
-              <div className="text-slate-400 font-medium">
+              <div className="text-slate-400 dark:text-slate-300 font-medium">
                 Created: {selectedTicket.createdAt ? new Date(selectedTicket.createdAt).toLocaleString() : 'Recently'}
               </div>
             </div>
@@ -416,7 +416,7 @@ export default function SupportTickets() {
             {/* Conversation Messages */}
             <div className="p-6 flex-1 overflow-y-auto space-y-4 bg-slate-50/30">
               <div className="p-4 rounded-2xl bg-slate-100/70 border border-slate-200 dark:border-slate-700">
-                <span className="text-xs font-bold text-slate-500 block mb-1">Original Issue Description:</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Original Issue Description:</span>
                 <p className="text-sm text-slate-800 dark:text-slate-100 font-medium">{selectedTicket.description}</p>
               </div>
 

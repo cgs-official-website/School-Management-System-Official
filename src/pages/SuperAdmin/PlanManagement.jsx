@@ -88,11 +88,11 @@ export default function PlanManagement() {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Subscription Plans</h1>
-          <p className="text-slate-500 mt-1">Manage pricing tiers, limits, and module access for tenant schools.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage pricing tiers, limits, and module access for tenant schools.</p>
         </div>
         <button 
           onClick={handleInitializeDefaults}
-          className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl font-bold transition-colors"
+          className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl font-bold transition-colors"
         >
           <Database size={18} /> Initialize Defaults
         </button>
@@ -106,7 +106,7 @@ export default function PlanManagement() {
         <div className="bg-white dark:bg-slate-900 p-12 rounded-3xl border border-slate-200 dark:border-slate-700 text-center">
           <Settings size={48} className="mx-auto text-slate-300 mb-4" />
           <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No Plans Configured</h3>
-          <p className="text-slate-500 mb-6">Click "Initialize Defaults" to set up the 4-tier pricing structure.</p>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">Click "Initialize Defaults" to set up the 4-tier pricing structure.</p>
           <button 
             onClick={handleInitializeDefaults}
             className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm"
@@ -124,7 +124,7 @@ export default function PlanManagement() {
                     <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">{plan.name}</h3>
                     <div className="mt-1 flex items-center gap-1.5">
                       <span className={`w-2 h-2 rounded-full ${plan.active !== false ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{plan.active !== false ? 'Active' : 'Inactive'}</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">{plan.active !== false ? 'Active' : 'Inactive'}</span>
                     </div>
                   </div>
                   {plan.id === 'premium' && (
@@ -138,7 +138,7 @@ export default function PlanManagement() {
                   ) : (
                     <div className="flex items-end gap-1">
                       <span className="text-3xl font-black text-slate-900 dark:text-white">INR {plan.pricePerUserPerYear}</span>
-                      <span className="text-slate-500 text-sm font-semibold mb-1">/user/year</span>
+                      <span className="text-slate-500 dark:text-slate-400 text-sm font-semibold mb-1">/user/year</span>
                     </div>
                   )}
                 </div>
@@ -154,7 +154,7 @@ export default function PlanManagement() {
               </div>
 
               <div className="p-6 flex-1 bg-white dark:bg-slate-900">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Modules Included</h4>
+                <h4 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-4">Modules Included</h4>
                 <ul className="space-y-3">
                   {Object.entries(ALL_MODULES).map(([key, label]) => {
                     const hasModule = plan.modules && plan.modules[key];
@@ -165,7 +165,7 @@ export default function PlanManagement() {
                         ) : (
                           <div className="text-slate-300 bg-slate-50 dark:bg-slate-800 p-0.5 rounded"><X size={14} strokeWidth={3} /></div>
                         )}
-                        <span className={`text-sm font-medium ${hasModule ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 line-through'}`}>{label}</span>
+                        <span className={`text-sm font-medium ${hasModule ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-300 line-through'}`}>{label}</span>
                       </li>
                     );
                   })}
@@ -191,7 +191,7 @@ export default function PlanManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Edit {currentPlan.name}</h2>
-              <button onClick={closeEditor} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
+              <button onClick={closeEditor} className="text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -209,7 +209,7 @@ export default function PlanManagement() {
                 </div>
                 
                 <div className="flex items-end">
-                  <label className="flex items-center gap-2 cursor-pointer p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 w-full">
+                  <label className="flex items-center gap-2 cursor-pointer p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 w-full">
                     <input 
                       type="checkbox"
                       checked={currentPlan.active !== false}
@@ -263,7 +263,7 @@ export default function PlanManagement() {
                   {Object.entries(ALL_MODULES).map(([key, label]) => {
                     const isChecked = currentPlan.modules[key] || false;
                     return (
-                      <label key={key} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isChecked ? 'bg-primary-50 border-primary-200' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:bg-slate-50'}`}>
+                      <label key={key} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${isChecked ? 'bg-primary-50 border-primary-200' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'}`}>
                         <div className={`w-6 h-6 rounded flex items-center justify-center border-2 transition-colors ${isChecked ? 'bg-primary-500 border-primary-500 text-white' : 'border-slate-300 dark:border-slate-600 text-transparent'}`}>
                           <Check size={14} strokeWidth={4} />
                         </div>
@@ -282,7 +282,7 @@ export default function PlanManagement() {
             </div>
 
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-              <button onClick={closeEditor} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+              <button onClick={closeEditor} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Cancel</button>
               <button 
                 onClick={handleSavePlan}
                 disabled={loading}

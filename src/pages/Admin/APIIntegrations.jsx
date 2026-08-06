@@ -81,7 +81,7 @@ export default function APIIntegrations() {
           <Key className="text-primary-600" />
           API Integrations
         </h1>
-        <p className="text-slate-500 mt-1">Configure third-party API keys required for specific modules.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Configure third-party API keys required for specific modules.</p>
       </div>
 
       {!hasTransport && !hasMedia && (
@@ -111,7 +111,7 @@ export default function APIIntegrations() {
                       placeholder="AIzaSy..."
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-mono"
                     />
-                    <p className="text-xs text-slate-500 mt-2">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
                       Required for live GPS tracking and route optimization. Must have Maps JavaScript API and Directions API enabled.
                     </p>
                   </div>
@@ -150,7 +150,7 @@ export default function APIIntegrations() {
                       />
                     </div>
                   </div>
-                  <p className="text-xs text-slate-500 mt-2">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
                     Required for uploading student profile photos, library book covers, and noticeboard attachments. Ensure the preset is set to "Unsigned" in your Cloudinary settings.
                   </p>
                 </div>

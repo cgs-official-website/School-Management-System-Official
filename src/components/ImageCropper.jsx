@@ -40,7 +40,7 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
         {/* Header */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
           <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Crop Profile Photo</h3>
-          <button onClick={onCancel} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+          <button onClick={onCancel} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
             <LuX size={20} />
           </button>
         </div>
@@ -63,7 +63,7 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
         {/* Controls */}
         <div className="p-6 bg-white dark:bg-slate-900 space-y-6">
           <div className="flex items-center gap-4">
-            <LuZoomOut className="text-slate-400" />
+            <LuZoomOut className="text-slate-400 dark:text-slate-300" />
             <input
               type="range"
               value={zoom}
@@ -72,15 +72,15 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
               step={0.1}
               aria-labelledby="Zoom"
               onChange={(e) => setZoom(e.target.value)}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+              className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary-600"
             />
-            <LuZoomIn className="text-slate-400" />
+            <LuZoomIn className="text-slate-400 dark:text-slate-300" />
           </div>
 
           <div className="flex gap-3 justify-end">
             <button
               onClick={onCancel}
-              className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 rounded-xl transition-colors"
+              className="px-5 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors"
             >
               Cancel
             </button>

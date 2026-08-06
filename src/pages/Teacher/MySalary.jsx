@@ -120,7 +120,7 @@ export default function MySalary() {
           </div>
           My Salary & Payslips
         </h1>
-        <p className="text-slate-500 mt-2">View your monthly salary details, deductions, and download payslips.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-2">View your monthly salary details, deductions, and download payslips.</p>
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden print:hidden">
@@ -145,7 +145,7 @@ export default function MySalary() {
                     <td className="p-4 text-slate-700 dark:text-slate-200 font-medium">₹{(payroll.baseSalary || 0).toLocaleString()}</td>
                     <td className="p-4 text-red-600 font-medium">
                       -₹{(payroll.deductions || 0).toLocaleString()}
-                      <div className="text-[10px] text-slate-400 mt-0.5">
+                      <div className="text-[10px] text-slate-400 dark:text-slate-300 mt-0.5">
                         PF: ₹{payroll.pfCalculated || 0} | ESI: ₹{payroll.esiCalculated || 0}
                       </div>
                     </td>
@@ -168,7 +168,7 @@ export default function MySalary() {
                           <FileText size={16} /> Payslip
                         </button>
                       ) : (
-                        <span className="text-xs text-slate-400 font-medium italic px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded-lg">Not Released</span>
+                        <span className="text-xs text-slate-400 dark:text-slate-300 font-medium italic px-2 py-1 bg-slate-50 dark:bg-slate-800 rounded-lg">Not Released</span>
                       )}
                     </td>
                   </tr>
@@ -176,7 +176,7 @@ export default function MySalary() {
               })}
               {payrolls.length === 0 && (
                 <tr>
-                  <td colSpan="6" className="p-12 text-center text-slate-500">
+                  <td colSpan="6" className="p-12 text-center text-slate-500 dark:text-slate-400">
                     <LuBanknote size={48} className="mx-auto mb-4 text-slate-300" />
                     <p className="text-lg font-medium text-slate-900 dark:text-white mb-1">No Payroll Records</p>
                     <p>Your salary records will appear here once processed by the admin.</p>
@@ -225,11 +225,11 @@ export default function MySalary() {
                     {schoolDetails?.logoUrl ? (
                       <img src={schoolDetails.logoUrl} alt="School Logo" className="h-16 w-16 object-contain" />
                     ) : (
-                      <div className="h-16 w-16 bg-slate-100 dark:bg-slate-700 rounded flex items-center justify-center font-bold text-slate-400">LOGO</div>
+                      <div className="h-16 w-16 bg-slate-100 dark:bg-slate-700 rounded flex items-center justify-center font-bold text-slate-400 dark:text-slate-300">LOGO</div>
                     )}
                     <div>
                       <h1 className="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{schoolDetails?.schoolName || 'School Name'}</h1>
-                      <p className="text-slate-500 text-sm mt-1">{schoolDetails?.address || 'School Address Not Configured'}</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{schoolDetails?.address || 'School Address Not Configured'}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -241,23 +241,23 @@ export default function MySalary() {
                 {/* Employee Details */}
                 <div className="grid grid-cols-2 gap-8 mb-8">
                   <div>
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Employee Details</h3>
+                    <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-3">Employee Details</h3>
                     <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
-                      <p className="text-slate-500 text-sm mb-1">Name: <span className="text-slate-900 dark:text-white font-bold ml-1">{showPayslipModal.name}</span></p>
-                      <p className="text-slate-500 text-sm">Role/Designation: <span className="text-slate-900 dark:text-white font-semibold ml-1">{showPayslipModal.role}</span></p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">Name: <span className="text-slate-900 dark:text-white font-bold ml-1">{showPayslipModal.name}</span></p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm">Role/Designation: <span className="text-slate-900 dark:text-white font-semibold ml-1">{showPayslipModal.role}</span></p>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Payment Details</h3>
+                    <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-3">Payment Details</h3>
                     <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
-                      <p className="text-slate-500 text-sm mb-1">Status: <span className="text-emerald-600 font-bold ml-1">{showPayslipModal.status}</span></p>
-                      <p className="text-slate-500 text-sm">Date: <span className="text-slate-900 dark:text-white font-semibold ml-1">{new Date().toLocaleDateString('en-GB')}</span></p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">Status: <span className="text-emerald-600 font-bold ml-1">{showPayslipModal.status}</span></p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm">Date: <span className="text-slate-900 dark:text-white font-semibold ml-1">{new Date().toLocaleDateString('en-GB')}</span></p>
                     </div>
                   </div>
                 </div>
 
                 {/* Salary Breakdown Table */}
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Salary Breakdown</h3>
+                <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-3">Salary Breakdown</h3>
                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden mb-8">
                   <table className="w-full text-left border-collapse">
                     <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
@@ -294,7 +294,7 @@ export default function MySalary() {
                             </div>
                           )}
                           {(showPayslipModal.deductions || 0) === 0 && (
-                            <div className="text-slate-400 text-sm italic">No deductions</div>
+                            <div className="text-slate-400 dark:text-slate-300 text-sm italic">No deductions</div>
                           )}
                         </td>
                       </tr>
@@ -319,9 +319,9 @@ export default function MySalary() {
                 {/* Net Pay & Signature */}
                 <div className="flex justify-between items-end mt-12 border-t-2 border-slate-900 pt-6">
                   <div>
-                    <h4 className="text-slate-500 font-semibold mb-1 uppercase tracking-widest text-sm">Net Pay</h4>
+                    <h4 className="text-slate-500 dark:text-slate-400 font-semibold mb-1 uppercase tracking-widest text-sm">Net Pay</h4>
                     <p className="text-4xl font-black text-slate-900 dark:text-white">₹{((showPayslipModal.baseSalary || 0) - (showPayslipModal.deductions || 0)).toLocaleString()}</p>
-                    <p className="text-slate-400 text-sm mt-2 italic">*This is a computer generated document.</p>
+                    <p className="text-slate-400 dark:text-slate-300 text-sm mt-2 italic">*This is a computer generated document.</p>
                   </div>
                   
                   <div className="text-center w-48">

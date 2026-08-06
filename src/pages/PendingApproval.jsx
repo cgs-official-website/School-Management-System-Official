@@ -71,7 +71,7 @@ export default function PendingApproval() {
           <div className="flex gap-4 justify-center">
             <button 
               onClick={() => window.location.reload()}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition-colors font-medium"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors font-medium"
           >
             <RefreshCcw size={18} />
             Refresh

@@ -261,7 +261,7 @@ export default function ParentDashboard() {
 
           <button 
             onClick={handleLogout}
-            className="w-full py-3 mt-4 text-slate-500 hover:text-slate-700 font-semibold transition-colors flex items-center justify-center gap-2 hover:bg-slate-50 rounded-xl"
+            className="w-full py-3 mt-4 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-semibold transition-colors flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl"
           >
             <LogOut size={18} /> Sign Out
           </button>
@@ -294,10 +294,10 @@ export default function ParentDashboard() {
             </div>
             <div className="min-w-0">
               <h2 className="text-xl font-black text-slate-900 dark:text-white leading-tight truncate">Zuna</h2>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">Parent Portal</p>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-0.5">Parent Portal</p>
             </div>
           </div>
-          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600 p-1">
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-1">
             <X size={24} />
           </button>
         </div>
@@ -329,7 +329,7 @@ export default function ParentDashboard() {
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm font-bold ${
-                      child.studentId === userProfile.linkedStudentId ? 'bg-primary-200 text-primary-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-500'
+                      child.studentId === userProfile.linkedStudentId ? 'bg-primary-200 text-primary-800' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
                     }`}>
                       {child.name?.substring(0, 2).toUpperCase() || 'ST'}
                     </div>
@@ -401,12 +401,12 @@ export default function ParentDashboard() {
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{userProfile?.name || userProfile?.email?.split('@')[0]}</p>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">{userProfile?.role || 'Parent'}</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-0.5">{userProfile?.role || 'Parent'}</p>
               </div>
             </div>
             <button 
               onClick={handleLogout}
-              className="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-xl transition-colors shrink-0"
+              className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
               title="Logout"
             >
               <LogOut size={20} />
@@ -439,11 +439,11 @@ export default function ParentDashboard() {
       {isLinkAnotherModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">Link Another Child</h3>
               <button 
                 onClick={() => setIsLinkAnotherModalOpen(false)} 
-                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors"
+                className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 <X size={20} />
               </button>
@@ -483,7 +483,7 @@ export default function ParentDashboard() {
                 <button 
                   type="button" 
                   onClick={() => setIsLinkAnotherModalOpen(false)}
-                  className="px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                  className="px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Cancel
                 </button>

@@ -185,7 +185,7 @@ export default function CanteenManagement() {
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white flex items-center gap-3">
             <Coffee className="text-primary-600" /> Canteen Orders & Requests
           </h1>
-          <p className="text-slate-500 mt-1">Manage and resolve emergency canteen requests raised by parents in real-time.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage and resolve emergency canteen requests raised by parents in real-time.</p>
         </div>
       </div>
 
@@ -196,7 +196,7 @@ export default function CanteenManagement() {
             <Clock size={24} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Today's Pending</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Today's Pending</p>
             <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.todayPending}</h3>
           </div>
         </div>
@@ -206,7 +206,7 @@ export default function CanteenManagement() {
             <Sparkles size={24} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Today's Approved</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Today's Approved</p>
             <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.todayApproved}</h3>
           </div>
         </div>
@@ -216,7 +216,7 @@ export default function CanteenManagement() {
             <Check size={24} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Today's Delivered</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Today's Delivered</p>
             <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.todayDelivered}</h3>
           </div>
         </div>
@@ -226,7 +226,7 @@ export default function CanteenManagement() {
             <Utensils size={24} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">All-Time Requests</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">All-Time Requests</p>
             <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stats.totalCount}</h3>
           </div>
         </div>
@@ -237,7 +237,7 @@ export default function CanteenManagement() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-center">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={18} />
             <input 
               type="text" 
               placeholder="Search by student or admission..." 
@@ -258,7 +258,7 @@ export default function CanteenManagement() {
                   className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                     dateFilter === d 
                       ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' 
-                      : 'text-slate-500 hover:text-slate-850'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-850'
                   }`}
                 >
                   {d}
@@ -268,7 +268,7 @@ export default function CanteenManagement() {
 
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <Sliders size={16} className="text-slate-400" />
+              <Sliders size={16} className="text-slate-400 dark:text-slate-300" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -316,16 +316,16 @@ export default function CanteenManagement() {
       {/* Requests List */}
       <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {filteredRequests.length === 0 ? (
-          <div className="p-16 text-center text-slate-500 flex flex-col items-center justify-center gap-3">
+          <div className="p-16 text-center text-slate-500 dark:text-slate-400 flex flex-col items-center justify-center gap-3">
             <Coffee size={48} className="text-slate-300 animate-bounce" />
             <p className="font-bold text-lg text-slate-700 dark:text-slate-200">No matching canteen requests found</p>
-            <p className="text-sm max-w-sm text-slate-400">Try adjusting your filters or wait for a parent to submit a request.</p>
+            <p className="text-sm max-w-sm text-slate-400 dark:text-slate-300">Try adjusting your filters or wait for a parent to submit a request.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/75 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-extrabold">
+                <tr className="bg-slate-50/75 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-extrabold">
                   <th className="p-5 pl-8">Student / Admission</th>
                   <th className="p-5">Class</th>
                   <th className="p-5">Meal & Date</th>
@@ -348,7 +348,7 @@ export default function CanteenManagement() {
                       <td className="p-5 pl-8">
                         <div className="flex flex-col">
                           <span className="font-bold text-slate-900 dark:text-white">{req.studentName}</span>
-                          <span className="text-xs font-semibold text-slate-400 mt-0.5">{req.admissionNumber}</span>
+                          <span className="text-xs font-semibold text-slate-400 dark:text-slate-300 mt-0.5">{req.admissionNumber}</span>
                         </div>
                       </td>
 
@@ -370,7 +370,7 @@ export default function CanteenManagement() {
                             )}
                             {req.mealType}
                           </span>
-                          <span className="text-xs font-semibold text-slate-400 mt-1 flex items-center gap-1">
+                          <span className="text-xs font-semibold text-slate-400 dark:text-slate-300 mt-1 flex items-center gap-1">
                             <CalendarIcon size={12} /> {req.date} {req.date === todayStr && <span className="text-primary-600 font-bold bg-primary-50 px-1.5 py-0.5 rounded-md text-[9px] uppercase tracking-wider">Today</span>}
                           </span>
                         </div>
@@ -382,7 +382,7 @@ export default function CanteenManagement() {
                           req.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
                           req.status === 'Approved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                           req.status === 'Delivered' ? 'bg-green-50 text-green-700 border-green-200' :
-                          'bg-slate-100 dark:bg-slate-700 text-slate-500 border-slate-300 dark:border-slate-600'
+                          'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-600'
                         }`}>
                           {req.status}
                         </span>
@@ -422,7 +422,7 @@ export default function CanteenManagement() {
                             </button>
                           )}
                           {req.status !== 'Pending' && req.status !== 'Approved' && (
-                            <span className="text-xs text-slate-400 font-semibold italic">Resolved</span>
+                            <span className="text-xs text-slate-400 dark:text-slate-300 font-semibold italic">Resolved</span>
                           )}
                         </div>
                       </td>

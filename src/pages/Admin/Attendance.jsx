@@ -363,7 +363,7 @@ export default function Attendance() {
     }, "");
 
     return (
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-48 bg-slate-50/50 rounded-2xl border border-slate-100 dark:border-slate-800 p-2">
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-48 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 p-2">
         {[0, 25, 50, 75, 100].map(val => {
           const y = height - padding - (val / 100) * (height - 2 * padding);
           return (
@@ -489,7 +489,7 @@ export default function Attendance() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Attendance Management</h1>
-          <p className="text-slate-500 mt-1">View analytics, run cutoff audits, and log student attendance records.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">View analytics, run cutoff audits, and log student attendance records.</p>
         </div>
 
         {/* Tab Selection */}
@@ -499,7 +499,7 @@ export default function Attendance() {
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
               activeTab === 'dashboard'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
-                : 'text-slate-500 hover:text-slate-800'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
             }`}
           >
             <DashboardIcon size={16} /> Dashboard
@@ -509,7 +509,7 @@ export default function Attendance() {
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
               activeTab === 'marking'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
-                : 'text-slate-500 hover:text-slate-800'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
             }`}
           >
             <ClipboardIcon size={16} /> Daily Marking
@@ -519,7 +519,7 @@ export default function Attendance() {
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
               activeTab === 'analytics'
                 ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
-                : 'text-slate-500 hover:text-slate-800'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
             }`}
           >
             <TrendIcon size={16} /> Analytics
@@ -536,7 +536,7 @@ export default function Attendance() {
               <CalendarIcon className="text-primary-600" size={24} />
               <div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white">Historical Archives</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Select a calendar date to view the daily attendance snapshot.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Select a calendar date to view the daily attendance snapshot.</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -549,7 +549,7 @@ export default function Attendance() {
               {selectedDate !== today && (
                 <button
                   onClick={() => setSelectedDate(today)}
-                  className="px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-sm transition-colors shadow-sm"
+                  className="px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-sm transition-colors shadow-sm"
                 >
                   Today
                 </button>
@@ -562,7 +562,7 @@ export default function Attendance() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
             </div>
           ) : !scopedStats ? (
-            <div className="p-16 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm text-slate-400">
+            <div className="p-16 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm text-slate-400 dark:text-slate-300">
               <ClipboardIcon className="mx-auto mb-3 opacity-30" size={48} />
               <p className="font-bold text-base text-slate-600 dark:text-slate-300">No Statistics Calculated</p>
               <p className="text-xs mt-1">There are no dashboard records compiled for {selectedDate}. Marks must be saved to compile stats.</p>
@@ -574,7 +574,7 @@ export default function Attendance() {
                 {/* Metric Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Attendance Rate</p>
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Attendance Rate</p>
                     <p className="text-4xl font-extrabold text-slate-900 dark:text-white mt-2">
                       {scopedStats.schoolWide?.percentage ?? 100}%
                     </p>
@@ -583,20 +583,20 @@ export default function Attendance() {
                     </div>
                   </div>
                   <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Classes Marked</p>
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Classes Marked</p>
                     <p className="text-4xl font-extrabold text-slate-900 dark:text-white mt-2">
-                      {scopedStats.classesMarked} <span className="text-lg font-medium text-slate-400">/ {scopedStats.classesTotal}</span>
+                      {scopedStats.classesMarked} <span className="text-lg font-medium text-slate-400 dark:text-slate-300">/ {scopedStats.classesTotal}</span>
                     </p>
-                    <p className="text-xs text-slate-400 mt-4">
+                    <p className="text-xs text-slate-400 dark:text-slate-300 mt-4">
                       {scopedStats.classesTotal - scopedStats.classesMarked} classes remaining today
                     </p>
                   </div>
                   <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pending Alerts</p>
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pending Alerts</p>
                     <p className={`text-4xl font-extrabold mt-2 ${pendingAlerts.length > 0 ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>
                       {pendingAlerts.length}
                     </p>
-                    <p className="text-xs text-slate-400 mt-4">
+                    <p className="text-xs text-slate-400 dark:text-slate-300 mt-4">
                       Unresolved cutoff warning notifications
                     </p>
                   </div>
@@ -604,7 +604,7 @@ export default function Attendance() {
 
                 {/* Grade and Section Breakdown Table */}
                 <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-                  <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50">
+                  <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
                     <h3 className="font-bold text-slate-900 dark:text-white text-lg">Grade & Section Breakdown</h3>
                   </div>
                   <div className="divide-y divide-slate-100">
@@ -631,7 +631,7 @@ export default function Attendance() {
                               </span>
                             </div>
                             <div className="flex items-center gap-8">
-                              <div className="flex items-center gap-4 text-xs font-semibold text-slate-500">
+                              <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
                                 <span>Present: <b className="text-green-600">{gradeData.present}</b></span>
                                 <span>Absent: <b className="text-red-600">{gradeData.absent}</b></span>
                                 <span>Late: <b className="text-amber-600">{gradeData.late}</b></span>
@@ -645,7 +645,7 @@ export default function Attendance() {
                               }`}>
                                 {gradeData.percentage}%
                               </span>
-                              {isExpanded ? <ChevronUp className="text-slate-400" size={18} /> : <ChevronDown className="text-slate-400" size={18} />}
+                              {isExpanded ? <ChevronUp className="text-slate-400 dark:text-slate-300" size={18} /> : <ChevronDown className="text-slate-400 dark:text-slate-300" size={18} />}
                             </div>
                           </div>
 
@@ -654,7 +654,7 @@ export default function Attendance() {
                             <div className="bg-slate-50/40 px-6 py-2 border-t border-slate-100 dark:border-slate-800">
                               <table className="w-full text-left border-collapse my-2">
                                 <thead>
-                                  <tr className="text-slate-400 font-bold text-[10px] uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                                  <tr className="text-slate-400 dark:text-slate-300 font-bold text-[10px] uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
                                     <th className="pb-2">Section / Class</th>
                                     <th className="pb-2">Total Students</th>
                                     <th className="pb-2 text-green-600">Present</th>
@@ -667,14 +667,14 @@ export default function Attendance() {
                                   {sections.map((sectionData, sIdx) => (
                                     <tr key={sIdx} className="border-b border-slate-100/50 last:border-0 hover:bg-slate-100/40 text-sm">
                                       <td className="py-2.5 font-bold text-slate-700 dark:text-slate-200">{sectionData.name} - {sectionData.section}</td>
-                                      <td className="py-2.5 font-medium text-slate-500">{sectionData.total}</td>
+                                      <td className="py-2.5 font-medium text-slate-500 dark:text-slate-400">{sectionData.total}</td>
                                       <td className="py-2.5 font-semibold text-green-600">{sectionData.present}</td>
                                       <td className="py-2.5 font-semibold text-red-600">{sectionData.absent}</td>
                                       <td className="py-2.5 font-semibold text-amber-600">{sectionData.late}</td>
                                       <td className="py-2.5 text-right">
                                         <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-lg border ${
                                           sectionData.total === 0
-                                            ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 border-slate-200 dark:border-slate-700'
+                                            ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700'
                                             : sectionData.percentage >= 75
                                             ? 'bg-green-50 text-green-600 border-green-200'
                                             : sectionData.percentage >= 50
@@ -709,7 +709,7 @@ export default function Attendance() {
                     </span>
                   </div>
                   {pendingAlerts.length === 0 ? (
-                    <div className="p-8 text-center text-slate-400">
+                    <div className="p-8 text-center text-slate-400 dark:text-slate-300">
                       <CheckCircle2 className="mx-auto mb-2 text-green-500" size={28} />
                       <p className="font-bold text-sm text-slate-700 dark:text-slate-200">All Attendance Logged</p>
                       <p className="text-xs mt-0.5">No missing attendance reports flagged for {selectedDate}.</p>
@@ -720,13 +720,13 @@ export default function Attendance() {
                         <div key={alert.id} className="flex items-start justify-between gap-4 pt-3 first:pt-0">
                           <div>
                             <p className="font-bold text-slate-800 dark:text-slate-100 text-sm">{alert.message}</p>
-                            <p className="text-[10px] text-slate-400 mt-0.5">
+                            <p className="text-[10px] text-slate-400 dark:text-slate-300 mt-0.5">
                               Alert Date: {alert.date}
                             </p>
                           </div>
                           <button
                             onClick={() => handleDismissAlert(alert.id)}
-                            className="text-xs font-bold text-slate-500 hover:text-red-600 hover:bg-red-50/80 px-2 py-1 rounded-lg transition-colors shrink-0"
+                            className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50/80 px-2 py-1 rounded-lg transition-colors shrink-0"
                           >
                             Dismiss
                           </button>
@@ -750,7 +750,7 @@ export default function Attendance() {
               <TrendIcon className="text-primary-600" size={24} />
               <div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white">Historical & Trend Analytics</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Explore monthly statistics, compare grade averages, and track repeated absentees.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Explore monthly statistics, compare grade averages, and track repeated absentees.</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -763,7 +763,7 @@ export default function Attendance() {
               {selectedDate !== today && (
                 <button
                   onClick={() => setSelectedDate(today)}
-                  className="px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-sm transition-colors shadow-sm"
+                  className="px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-sm transition-colors shadow-sm"
                 >
                   Today
                 </button>
@@ -776,7 +776,7 @@ export default function Attendance() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
             </div>
           ) : monthlyStatsList.length === 0 ? (
-            <div className="p-16 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm text-slate-400">
+            <div className="p-16 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm text-slate-400 dark:text-slate-300">
               <TrendIcon className="mx-auto mb-3 opacity-30" size={48} />
               <p className="font-bold text-base text-slate-600 dark:text-slate-300">No Monthly Data Available</p>
               <p className="text-xs mt-1">There are no records computed for the month of {selectedDate.slice(0, 7)}.</p>
@@ -787,7 +787,7 @@ export default function Attendance() {
               <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                 <div>
                   <h3 className="font-bold text-slate-900 dark:text-white text-lg">School-Wide Monthly Trend</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Daily attendance percentage rate plotted across the month.</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Daily attendance percentage rate plotted across the month.</p>
                 </div>
                 <div className="pt-2">
                   {renderTrendSVG()}
@@ -798,7 +798,7 @@ export default function Attendance() {
               <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                 <div>
                   <h3 className="font-bold text-slate-900 dark:text-white text-lg">Grade-by-Grade Comparison</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">Average monthly attendance rate comparison per grade level.</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Average monthly attendance rate comparison per grade level.</p>
                 </div>
                 <div className="space-y-4 overflow-y-auto max-h-[220px] pr-2">
                   {getGradeMonthAverages().map((grade) => (
@@ -822,10 +822,10 @@ export default function Attendance() {
 
           {/* Repeated Absentees Card */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 dark:bg-slate-800/50">
               <div>
                 <h3 className="font-bold text-slate-900 dark:text-white text-lg">Repeated Absentees Audit</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Students whose monthly absences meet or exceed the school threshold.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Students whose monthly absences meet or exceed the school threshold.</p>
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto shrink-0 justify-end">
                 <select
@@ -853,7 +853,7 @@ export default function Attendance() {
                 <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary-600 border-t-transparent"></div>
               </div>
             ) : absenteeFlags.length === 0 ? (
-              <div className="p-12 text-center text-slate-500 text-sm">
+              <div className="p-12 text-center text-slate-500 dark:text-slate-400 text-sm">
                 No repeated absentees flagged for {selectedDate.slice(0, 7)}.
               </div>
             ) : (
@@ -861,11 +861,11 @@ export default function Attendance() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-100 dark:border-slate-800">
-                      <th className="p-4 text-xs font-bold text-slate-400 pl-6">Roll No</th>
-                      <th className="p-4 text-xs font-bold text-slate-400">Student Name</th>
-                      <th className="p-4 text-xs font-bold text-slate-400">Class</th>
-                      <th className="p-4 text-xs font-bold text-slate-400">Month</th>
-                      <th className="p-4 text-xs font-bold text-slate-400 text-right pr-6">Monthly Absences</th>
+                      <th className="p-4 text-xs font-bold text-slate-400 dark:text-slate-300 pl-6">Roll No</th>
+                      <th className="p-4 text-xs font-bold text-slate-400 dark:text-slate-300">Student Name</th>
+                      <th className="p-4 text-xs font-bold text-slate-400 dark:text-slate-300">Class</th>
+                      <th className="p-4 text-xs font-bold text-slate-400 dark:text-slate-300">Month</th>
+                      <th className="p-4 text-xs font-bold text-slate-400 dark:text-slate-300 text-right pr-6">Monthly Absences</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -876,7 +876,7 @@ export default function Attendance() {
                           <td className="p-4 text-slate-600 dark:text-slate-300 font-medium pl-6">{flag.rollNumber || '-'}</td>
                           <td className="p-4 font-bold text-slate-900 dark:text-white">{flag.studentName}</td>
                           <td className="p-4 font-semibold text-slate-600 dark:text-slate-300">{flag.classId}</td>
-                          <td className="p-4 font-semibold text-slate-500">{flag.month}</td>
+                          <td className="p-4 font-semibold text-slate-500 dark:text-slate-400">{flag.month}</td>
                           <td className="p-4 text-right pr-6 font-black text-red-600 text-sm">{flag.absentCount}</td>
                         </tr>
                       ))}
@@ -919,7 +919,7 @@ export default function Attendance() {
             {viewMode === 'daily' && (
               <div className="flex flex-wrap items-center gap-3 shrink-0 w-full md:w-auto justify-end">
                 <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                  <CalendarIcon size={18} className="text-slate-400 ml-1" />
+                  <CalendarIcon size={18} className="text-slate-400 dark:text-slate-300 ml-1" />
                   <input 
                     type="date" 
                     value={selectedDate}
@@ -950,7 +950,7 @@ export default function Attendance() {
           )}
 
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 flex justify-between items-center">
+            <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 pl-2">
                 <Users size={18} />
                 <span>{students.length} Students</span>
@@ -982,16 +982,16 @@ export default function Attendance() {
                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
               </div>
             ) : students.length === 0 ? (
-              <div className="p-12 text-center text-slate-500">No students found in this class.</div>
+              <div className="p-12 text-center text-slate-500 dark:text-slate-400">No students found in this class.</div>
             ) : viewMode === 'daily' ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-100 dark:border-slate-800">
-                      <th className="p-4 text-sm font-semibold text-slate-400 pl-6">Roll No</th>
-                      <th className="p-4 text-sm font-semibold text-slate-400">Student Name</th>
-                      <th className="p-4 text-sm font-semibold text-slate-400">Status</th>
-                      <th className="p-4 text-sm font-semibold text-slate-400 text-right pr-6">Action</th>
+                      <th className="p-4 text-sm font-semibold text-slate-400 dark:text-slate-300 pl-6">Roll No</th>
+                      <th className="p-4 text-sm font-semibold text-slate-400 dark:text-slate-300">Student Name</th>
+                      <th className="p-4 text-sm font-semibold text-slate-400 dark:text-slate-300">Status</th>
+                      <th className="p-4 text-sm font-semibold text-slate-400 dark:text-slate-300 text-right pr-6">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1017,7 +1017,7 @@ export default function Attendance() {
                                 className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
                                   attendanceRecords[student.id] === status 
                                     ? getStatusColor(status) 
-                                    : 'bg-white dark:bg-slate-900 text-slate-500 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+                                    : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
                                 }`}
                               >
                                 {status}
@@ -1034,7 +1034,7 @@ export default function Attendance() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                    <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                       <th className="p-4 pl-6">Roll No</th>
                       <th className="p-4">Student Name</th>
                       <th className="p-4">Total Classes</th>

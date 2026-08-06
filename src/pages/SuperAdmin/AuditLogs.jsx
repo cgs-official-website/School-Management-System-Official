@@ -83,7 +83,7 @@ export default function AuditLogs() {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuClipboardList className="text-primary-600" /> Audit Logs
           </h1>
-          <p className="text-slate-500 mt-1">Track all critical actions, security events, and configuration changes.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Track all critical actions, security events, and configuration changes.</p>
         </div>
         <button 
           onClick={handleExportCSV}
@@ -94,9 +94,9 @@ export default function AuditLogs() {
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden mb-6">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 grid grid-cols-1 sm:grid-cols-4 gap-4 shrink-0">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 grid grid-cols-1 sm:grid-cols-4 gap-4 shrink-0">
           <div className="relative w-full sm:col-span-2">
-            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={20} />
             <input 
               type="text"
               placeholder="Search logs..."
@@ -105,10 +105,10 @@ export default function AuditLogs() {
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
             />
           </div>
-          <button className="w-full justify-center px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
+          <button className="w-full justify-center px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
             <LuFilter size={18} /> Event Type
           </button>
-          <button className="w-full justify-center px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2">
+          <button className="w-full justify-center px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
             <LuCalendar size={18} /> Date Range
           </button>
         </div>
@@ -127,7 +127,7 @@ export default function AuditLogs() {
             <tbody className="divide-y divide-slate-100">
               {paginatedLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="p-4 text-sm text-slate-500 whitespace-nowrap">
+                  <td className="p-4 text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">
                     {new Date(log.date).toLocaleString()}
                   </td>
                   <td className="p-4">
@@ -138,7 +138,7 @@ export default function AuditLogs() {
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
+                      <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400">
                         <LuUser size={12} />
                       </div>
                       <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{log.user}</span>
@@ -148,7 +148,7 @@ export default function AuditLogs() {
                     {log.details}
                   </td>
                   <td className="p-4">
-                    <code className="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 rounded font-mono text-xs">
+                    <code className="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 rounded font-mono text-xs">
                       {log.ip}
                     </code>
                   </td>
@@ -160,8 +160,8 @@ export default function AuditLogs() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-sm text-slate-500 font-medium">
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               Showing <span className="font-semibold text-slate-900 dark:text-white">{startIndex + 1}</span> to{' '}
               <span className="font-semibold text-slate-900 dark:text-white">
                 {Math.min(startIndex + itemsPerPage, filteredLogs.length)}
@@ -172,7 +172,7 @@ export default function AuditLogs() {
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -185,7 +185,7 @@ export default function AuditLogs() {
                     className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                       currentPage === pageNum
                         ? 'bg-primary-600 text-white shadow-sm'
-                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
+                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {pageNum}
@@ -195,7 +195,7 @@ export default function AuditLogs() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>

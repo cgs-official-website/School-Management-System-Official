@@ -104,7 +104,7 @@ export default function ParentAttendance() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Detailed Attendance</h1>
-          <p className="text-slate-500 mt-1">View your child's daily attendance records.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">View your child's daily attendance records.</p>
         </div>
         
         <div className="w-full sm:w-48">
@@ -124,7 +124,7 @@ export default function ParentAttendance() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm text-center">
           <div className="text-3xl font-black text-slate-900 dark:text-white mb-1">{percentage}%</div>
-          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Overall</div>
+          <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Overall</div>
         </div>
         <div className="bg-green-50 p-6 rounded-2xl border border-green-100 shadow-sm text-center">
           <div className="text-3xl font-black text-green-700 mb-1">{presentCount}</div>
@@ -142,7 +142,7 @@ export default function ParentAttendance() {
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {filteredRecords.length === 0 ? (
-          <div className="p-16 text-center text-slate-500">
+          <div className="p-16 text-center text-slate-500 dark:text-slate-400">
             <Calendar size={48} className="mx-auto mb-4 text-slate-300" />
             <p className="text-lg font-bold text-slate-900 dark:text-white mb-1">No Records Found</p>
             <p>No attendance records found for this period.</p>
@@ -152,7 +152,7 @@ export default function ParentAttendance() {
             {filteredRecords.map(record => (
               <div key={record.id} className="p-4 sm:p-6 hover:bg-slate-50/50 transition-colors flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-slate-500 border border-slate-200 dark:border-slate-700">
+                  <div className="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                     <Calendar size={20} />
                   </div>
                   <div>

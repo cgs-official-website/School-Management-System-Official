@@ -122,7 +122,7 @@ export default function HomeworkOverview() {
     <div className="p-4 sm:p-8 max-w-5xl mx-auto animate-fade-in-up">
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Homework & Assignments</h1>
-        <p className="text-slate-500 mt-1">Track upcoming tasks and recent evaluations.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Track upcoming tasks and recent evaluations.</p>
       </div>
 
       <div className="grid gap-4">
@@ -130,7 +130,7 @@ export default function HomeworkOverview() {
           <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <CheckCircle2 size={48} className="mx-auto text-emerald-300 mb-4" />
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">All caught up!</h3>
-            <p className="text-slate-500 mt-1">No pending homework assignments found for this class.</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">No pending homework assignments found for this class.</p>
           </div>
         ) : (
           homeworks.map(hw => {
@@ -153,12 +153,12 @@ export default function HomeworkOverview() {
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">{hw.title}</h3>
                     <p className="text-slate-600 dark:text-slate-300 mt-1 mb-3">{hw.description}</p>
                     {hw.remarks && (
-                      <div className="mb-3 px-3 py-2 bg-slate-50/50 border border-slate-100 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 italic max-w-xl">
+                      <div className="mb-3 px-3 py-2 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 italic max-w-xl">
                         <span className="font-bold text-primary-700 not-italic block mb-0.5">Teacher's Remarks:</span>
                         "{hw.remarks}"
                       </div>
                     )}
-                    <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-500">
+                    <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
                       <span className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-100 dark:border-slate-800">
                         <BookOpen size={12} /> {hw.subject || 'General'}
                       </span>

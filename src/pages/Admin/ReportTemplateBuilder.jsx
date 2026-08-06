@@ -88,12 +88,12 @@ export default function ReportTemplateBuilder({ onBack }) {
       {/* Top Bar */}
       <div className="flex items-center justify-between mb-6 shrink-0">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-2 hover:bg-white rounded-xl transition-colors shadow-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <button onClick={onBack} className="p-2 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-colors shadow-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
             <LuArrowLeft size={20} className="text-slate-600 dark:text-slate-300" />
           </button>
           <div>
             <h1 className="text-2xl font-black text-slate-900 dark:text-white">Template Builder</h1>
-            <p className="text-sm font-medium text-slate-500">Design your school's official report card</p>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Design your school's official report card</p>
           </div>
         </div>
         <button 
@@ -119,7 +119,7 @@ export default function ReportTemplateBuilder({ onBack }) {
             
             {/* Global Settings */}
             <div>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <LuPalette /> Global Theme
               </h3>
               <div className="flex items-center gap-3">
@@ -135,7 +135,7 @@ export default function ReportTemplateBuilder({ onBack }) {
 
             {/* Header Configuration */}
             <div>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <LuLayoutTemplate /> Header Settings
               </h3>
               <div className="space-y-3">
@@ -170,7 +170,7 @@ export default function ReportTemplateBuilder({ onBack }) {
 
             {/* Student Fields */}
             <div>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <LuType /> Student Information
               </h3>
               <div className="grid grid-cols-2 gap-3">
@@ -185,7 +185,7 @@ export default function ReportTemplateBuilder({ onBack }) {
 
             {/* Grading Display */}
             <div>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <LuCircleCheck /> Academic Display
               </h3>
               <div className="space-y-4">
@@ -212,7 +212,7 @@ export default function ReportTemplateBuilder({ onBack }) {
 
             {/* Footer */}
             <div>
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
                 <LuLayoutTemplate /> Footer & Signatures
               </h3>
               <div className="space-y-3">
@@ -239,7 +239,7 @@ export default function ReportTemplateBuilder({ onBack }) {
         <div className="w-2/3 bg-slate-200/50 rounded-3xl border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden">
           <div className="p-4 bg-slate-800 text-white flex items-center justify-between">
             <h2 className="font-bold flex items-center gap-2 text-sm"><LuEye /> Live PDF Preview</h2>
-            <span className="text-xs font-medium text-slate-400 bg-slate-700 px-2 py-1 rounded">A4 Portrait</span>
+            <span className="text-xs font-medium text-slate-400 dark:text-slate-300 bg-slate-700 px-2 py-1 rounded">A4 Portrait</span>
           </div>
           
           <div className="flex-1 overflow-y-auto p-8 flex justify-center custom-scrollbar">
@@ -250,7 +250,7 @@ export default function ReportTemplateBuilder({ onBack }) {
               <div className="p-8 pb-4 flex items-center border-b-[3px]" style={{ borderColor: template.themeColor }}>
                 {template.header.showLogo && (
                   <div className="w-24 h-24 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center border-2 shrink-0" style={{ borderColor: template.themeColor }}>
-                    <span className="text-xs text-slate-400 font-sans font-bold">LOGO</span>
+                    <span className="text-xs text-slate-400 dark:text-slate-300 font-sans font-bold">LOGO</span>
                   </div>
                 )}
                 <div className={`flex-1 ${template.header.showLogo ? 'text-center' : 'text-left'}`}>
@@ -368,7 +368,7 @@ export default function ReportTemplateBuilder({ onBack }) {
                 <div className="px-10 mt-8">
                   <div className="border-2 border-slate-300 dark:border-slate-600 p-4 rounded-xl min-h-[80px]">
                     <span className="font-bold text-sm text-slate-700 dark:text-slate-200 block mb-1">Class Teacher's Remarks:</span>
-                    <span className="text-sm font-medium italic text-slate-500">John has shown excellent progress in mathematics. Keep up the good work!</span>
+                    <span className="text-sm font-medium italic text-slate-500 dark:text-slate-400">John has shown excellent progress in mathematics. Keep up the good work!</span>
                   </div>
                 </div>
               )}
@@ -389,7 +389,7 @@ export default function ReportTemplateBuilder({ onBack }) {
                 {/* Grading Scale */}
                 {template.footer.gradingScaleText && (
                   <div className="border-t border-slate-300 dark:border-slate-600 pt-4 text-center">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest block mb-1">Grading Scale</span>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block mb-1">Grading Scale</span>
                     <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
                       {template.footer.gradingScaleText}
                     </p>

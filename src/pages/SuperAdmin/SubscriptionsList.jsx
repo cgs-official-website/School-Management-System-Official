@@ -57,7 +57,7 @@ export default function SubscriptionsList() {
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Subscriptions Overview</h1>
-        <p className="text-slate-500 mt-1">Monitor active tenant subscriptions and revenue.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Monitor active tenant subscriptions and revenue.</p>
       </div>
 
       {loading ? (
@@ -105,13 +105,13 @@ export default function SubscriptionsList() {
 
           {/* Table */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">Tenant Subscriptions</h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                  <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                     <th className="p-4 pl-6">School Name</th>
                     <th className="p-4">Current Plan</th>
                     <th className="p-4">Billing Cycle</th>
@@ -131,7 +131,7 @@ export default function SubscriptionsList() {
                               {plan.name}
                             </span>
                           ) : (
-                            <span className="text-slate-500 italic">No Plan (Free/Trial)</span>
+                            <span className="text-slate-500 dark:text-slate-400 italic">No Plan (Free/Trial)</span>
                           )}
                         </td>
                         <td className="p-4 text-slate-600 dark:text-slate-300">
@@ -143,7 +143,7 @@ export default function SubscriptionsList() {
                               <CheckCircle2 size={16} /> Active
                             </span>
                           ) : (
-                            <span className="text-slate-500">-</span>
+                            <span className="text-slate-500 dark:text-slate-400">-</span>
                           )}
                         </td>
                         <td className="p-4 pr-6 text-right">
@@ -159,7 +159,7 @@ export default function SubscriptionsList() {
                   })}
                   {approvedSchools.length === 0 && (
                     <tr>
-                      <td colSpan="5" className="p-8 text-center text-slate-500">
+                      <td colSpan="5" className="p-8 text-center text-slate-500 dark:text-slate-400">
                         No active subscriptions found.
                       </td>
                     </tr>
@@ -170,8 +170,8 @@ export default function SubscriptionsList() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span className="text-sm text-slate-500 font-medium">
+              <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">
                   Showing <span className="font-semibold text-slate-900 dark:text-white">{startIndex + 1}</span> to{' '}
                   <span className="font-semibold text-slate-900 dark:text-white">
                     {Math.min(startIndex + itemsPerPage, approvedSchools.length)}
@@ -182,7 +182,7 @@ export default function SubscriptionsList() {
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     Previous
                   </button>
@@ -195,7 +195,7 @@ export default function SubscriptionsList() {
                         className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                           currentPage === pageNum
                             ? 'bg-primary-600 text-white shadow-sm'
-                            : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
+                            : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                         }`}
                       >
                         {pageNum}
@@ -205,7 +205,7 @@ export default function SubscriptionsList() {
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     Next
                   </button>

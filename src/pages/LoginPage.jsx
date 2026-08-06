@@ -119,7 +119,7 @@ export default function LoginPage() {
           
           {/* Back to Home Button */}
           <div className="mb-4 sm:mb-8 flex">
-            <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-primary-600 transition-colors focus:outline-none focus:text-primary-600">
+            <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary-600 transition-colors focus:outline-none focus:text-primary-600">
               <LuArrowLeft size={16} /> Back to Home
             </Link>
           </div>
@@ -133,7 +133,7 @@ export default function LoginPage() {
 
           <div className="mb-8">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">Log in to your account</h2>
-            <p className="text-sm text-slate-500">Access your tasks, notes, and projects anytime, anywhere - and keep everything flowing in one place.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Access your tasks, notes, and projects anytime, anywhere - and keep everything flowing in one place.</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
@@ -169,7 +169,7 @@ export default function LoginPage() {
                 <button 
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none focus:text-primary-600"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus:outline-none focus:text-primary-600"
                   tabIndex="-1"
                   disabled={loading || success}
                 >
@@ -181,7 +181,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-between text-sm pt-2">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input type="checkbox" className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-primary-500 focus:ring-primary-500 focus:ring-offset-white transition-colors cursor-pointer" />
-                <span className="text-slate-500 group-hover:text-slate-700 transition-colors">Remember me</span>
+                <span className="text-slate-500 dark:text-slate-400 group-hover:text-slate-700 transition-colors">Remember me</span>
               </label>
               <Link to="/forgot-password" className="font-bold text-primary-600 hover:text-primary-700 transition-colors focus:outline-none focus:underline">
                 Forgot password?
@@ -215,7 +215,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm text-slate-500">
+          <p className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
             Don't have an account?{' '}
             <Link to="/register" className="font-bold text-primary-600 hover:text-primary-700 transition-colors focus:outline-none focus:underline">
               Sign up

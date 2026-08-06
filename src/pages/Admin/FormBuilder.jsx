@@ -468,7 +468,7 @@ export default function FormBuilder() {
             <Settings className="text-primary-600" />
             Module Customization
           </h1>
-          <p className="text-slate-500 mt-1">Manage custom modules and define dynamic form schemas.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage custom modules and define dynamic form schemas.</p>
         </div>
       </div>
 
@@ -476,13 +476,13 @@ export default function FormBuilder() {
         <div className="flex bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-1 mb-6">
           <button
             onClick={() => setActiveTab('schema')}
-            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === 'schema' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50'}`}
+            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === 'schema' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
           >
             Form Schema Builder
           </button>
           <button
             onClick={() => setActiveTab('manager')}
-            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === 'manager' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50'}`}
+            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === 'manager' ? 'bg-primary-50 text-primary-700' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
           >
             Sidebar & Modules Manager
           </button>
@@ -494,7 +494,7 @@ export default function FormBuilder() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <div>
                 <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Sidebar & Modules Manager</h2>
-                <p className="text-sm text-slate-500 mt-1">Create custom modules or drag ANY module to reorder your sidebar.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Create custom modules or drag ANY module to reorder your sidebar.</p>
               </div>
             </div>
             
@@ -521,9 +521,9 @@ export default function FormBuilder() {
               <div className="space-y-3">
                 <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-4">Sidebar Order</h3>
                 {loadingModules ? (
-                  <div className="text-slate-500 text-sm">Loading modules...</div>
+                  <div className="text-slate-500 dark:text-slate-400 text-sm">Loading modules...</div>
                 ) : unifiedModules.length === 0 ? (
-                  <div className="text-slate-500 text-sm text-center py-8">No modules found.</div>
+                  <div className="text-slate-500 dark:text-slate-400 text-sm text-center py-8">No modules found.</div>
                 ) : (
                   unifiedModules.map((mod, idx) => (
                     <div key={mod.id} className={`flex items-center justify-between p-4 bg-white dark:bg-slate-900 border ${mod.isCore ? 'border-slate-200 dark:border-slate-700' : 'border-primary-100'} rounded-xl hover:shadow-md transition-shadow group`}>
@@ -533,7 +533,7 @@ export default function FormBuilder() {
                         </div>
                         <div>
                           <p className="font-medium text-slate-800 dark:text-slate-100">{mod.name}</p>
-                          <p className="text-xs text-slate-500">{mod.isCore ? 'Built-in Module' : 'Custom Module'}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">{mod.isCore ? 'Built-in Module' : 'Custom Module'}</p>
                         </div>
                       </div>
                       
@@ -541,7 +541,7 @@ export default function FormBuilder() {
                         <button 
                           onClick={() => moveModule(idx, 'up')} 
                           disabled={idx === 0} 
-                          className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-30"
+                          className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-30"
                           title="Move Up"
                         >
                           <MoveUp size={16} />
@@ -549,7 +549,7 @@ export default function FormBuilder() {
                         <button 
                           onClick={() => moveModule(idx, 'down')} 
                           disabled={idx === unifiedModules.length - 1} 
-                          className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-30"
+                          className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-30"
                           title="Move Down"
                         >
                           <MoveDown size={16}/>
@@ -648,7 +648,7 @@ export default function FormBuilder() {
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
                 </div>
               ) : sections.length === 0 ? (
-                <div className="text-center p-16 text-slate-500 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-900">
+                <div className="text-center p-16 text-slate-500 dark:text-slate-400 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-900">
                   <Folder size={48} className="mx-auto mb-4 text-slate-300" />
                   <p className="text-lg font-bold text-slate-700 dark:text-slate-200 mb-2">No sections defined yet</p>
                   <p className="mb-6">Start building this module by adding a section.</p>
@@ -666,7 +666,7 @@ export default function FormBuilder() {
                       {/* Section Header */}
                       <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-3 flex-1">
-                          <div className="flex flex-col justify-center gap-1 shrink-0 text-slate-400">
+                          <div className="flex flex-col justify-center gap-1 shrink-0 text-slate-400 dark:text-slate-300">
                             <button onClick={() => moveSection(sIndex, 'up')} disabled={sIndex === 0} className="p-1 hover:text-primary-600 hover:bg-primary-50 rounded disabled:opacity-30">
                               <MoveUp size={16} />
                             </button>
@@ -686,7 +686,7 @@ export default function FormBuilder() {
                           <button onClick={() => addField(section.id)} className="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg font-bold hover:bg-primary-100 text-sm flex items-center gap-1">
                             <Plus size={14} /> Add Field
                           </button>
-                          <button onClick={() => removeSection(section.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg">
+                          <button onClick={() => removeSection(section.id)} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg">
                             <Trash2 size={18} />
                           </button>
                         </div>
@@ -695,13 +695,13 @@ export default function FormBuilder() {
                       {/* Section Fields */}
                       <div className="p-4 space-y-4">
                         {section.fields.length === 0 ? (
-                          <div className="text-center p-6 text-sm font-medium text-slate-400 border border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
+                          <div className="text-center p-6 text-sm font-medium text-slate-400 dark:text-slate-300 border border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
                             No fields in this section.
                           </div>
                         ) : (
                           section.fields.map((field, fIndex) => (
-                            <div key={field.id} className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 flex gap-4 hover:border-slate-300 transition-colors flex-wrap md:flex-nowrap">
-                              <div className="flex flex-col justify-center gap-1 shrink-0 text-slate-400">
+                            <div key={field.id} className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-800/50 flex gap-4 hover:border-slate-300 transition-colors flex-wrap md:flex-nowrap">
+                              <div className="flex flex-col justify-center gap-1 shrink-0 text-slate-400 dark:text-slate-300">
                                 <button onClick={() => moveField(section.id, fIndex, 'up')} disabled={fIndex === 0} className="p-1 hover:text-primary-600 hover:bg-primary-50 rounded disabled:opacity-30">
                                   <MoveUp size={16} />
                                 </button>
@@ -712,7 +712,7 @@ export default function FormBuilder() {
 
                               <div className="flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 items-start w-full">
                                 <div className="md:col-span-3">
-                                  <label className="block text-xs font-semibold text-slate-500 mb-1">Field Label</label>
+                                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Field Label</label>
                                   <input 
                                     type="text" 
                                     value={field.label}
@@ -723,7 +723,7 @@ export default function FormBuilder() {
                                 </div>
                                 
                                 <div className="md:col-span-3">
-                                  <label className="block text-xs font-semibold text-slate-500 mb-1">Field Type</label>
+                                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Field Type</label>
                                   <select 
                                     value={field.type}
                                     onChange={(e) => updateField(section.id, field.id, 'type', e.target.value)}
@@ -738,7 +738,7 @@ export default function FormBuilder() {
                                 <div className="md:col-span-5">
                                   {field.type === 'select' && (
                                     <div>
-                                      <label className="block text-xs font-semibold text-slate-500 mb-1">Options (comma separated)</label>
+                                      <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Options (comma separated)</label>
                                       <input 
                                         type="text" 
                                         value={field.options || ''}
@@ -750,7 +750,7 @@ export default function FormBuilder() {
                                   )}
                                   {field.type === 'relation' && (
                                     <div>
-                                      <label className="block text-xs font-semibold text-slate-500 mb-1">Lookup Target Module</label>
+                                      <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Lookup Target Module</label>
                                       <select 
                                         value={field.relationModule || ''}
                                         onChange={(e) => updateField(section.id, field.id, 'relationModule', e.target.value)}
@@ -773,7 +773,7 @@ export default function FormBuilder() {
                                       onChange={(e) => updateField(section.id, field.id, 'required', e.target.checked)}
                                       className="w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500"
                                     />
-                                    <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-700">Req.</span>
+                                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 group-hover:text-slate-700">Req.</span>
                                   </label>
                                 </div>
                               </div>
@@ -781,7 +781,7 @@ export default function FormBuilder() {
                               <div className="shrink-0 pt-6">
                                 <button 
                                   onClick={() => removeField(section.id, field.id)}
-                                  className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                   title="Remove Field"
                                 >
                                   <Trash2 size={18} />

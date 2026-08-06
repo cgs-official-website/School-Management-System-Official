@@ -76,7 +76,7 @@ export default function TenantDetails() {
       case 'approved': return 'bg-green-100 text-green-800 border-green-200';
       case 'pending': return 'bg-amber-100 text-amber-800 border-amber-200';
       case 'suspended': return 'bg-red-100 text-red-800 border-red-200';
-      case 'rejected': return 'bg-slate-200 text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-600';
+      case 'rejected': return 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border-slate-300 dark:border-slate-600';
       default: return 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border-slate-200 dark:border-slate-700';
     }
   };
@@ -88,7 +88,7 @@ export default function TenantDetails() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => navigate('/superadmin')}
-            className="p-2 -ml-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors"
+            className="p-2 -ml-2 text-slate-400 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
           >
             <ArrowLeft size={24} />
           </button>
@@ -99,7 +99,7 @@ export default function TenantDetails() {
                 {school.status}
               </span>
             </div>
-            <p className="text-slate-500 mt-1 font-mono text-sm">Tenant ID: {school.id}</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1 font-mono text-sm">Tenant ID: {school.id}</p>
           </div>
         </div>
 
@@ -116,7 +116,7 @@ export default function TenantDetails() {
               <button 
                 onClick={() => handleStatusChangeClick('rejected')}
                 disabled={updating}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-200 font-medium border border-slate-300 dark:border-slate-600 disabled:opacity-50"
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 font-medium border border-slate-300 dark:border-slate-600 disabled:opacity-50"
               >
                 Reject
               </button>
@@ -152,30 +152,30 @@ export default function TenantDetails() {
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">Contact & Location</h2>
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="flex items-start gap-3">
-                <Mail className="text-slate-400 mt-0.5" size={20} />
+                <Mail className="text-slate-400 dark:text-slate-300 mt-0.5" size={20} />
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Contact Email</p>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Contact Email</p>
                   <p className="text-slate-900 dark:text-white mt-1">{school.contactEmail || 'Not provided'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Phone className="text-slate-400 mt-0.5" size={20} />
+                <Phone className="text-slate-400 dark:text-slate-300 mt-0.5" size={20} />
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Phone Number</p>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Phone Number</p>
                   <p className="text-slate-900 dark:text-white mt-1">{school.contactPhone || 'Not provided'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <MapPin className="text-slate-400 mt-0.5" size={20} />
+                <MapPin className="text-slate-400 dark:text-slate-300 mt-0.5" size={20} />
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Location</p>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Location</p>
                   <p className="text-slate-900 dark:text-white mt-1">{school.location || 'Not provided'}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Calendar className="text-slate-400 mt-0.5" size={20} />
+                <Calendar className="text-slate-400 dark:text-slate-300 mt-0.5" size={20} />
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Registered On</p>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Registered On</p>
                   <p className="text-slate-900 dark:text-white mt-1">{new Date(school.createdAt).toLocaleDateString('en-GB')}</p>
                 </div>
               </div>
@@ -190,7 +190,7 @@ export default function TenantDetails() {
               </div>
               <div>
                 <p className="text-lg font-bold text-slate-900 dark:text-white">Admin Account</p>
-                <p className="text-slate-500 font-mono text-sm mt-0.5">UID: {school.adminId}</p>
+                <p className="text-slate-500 dark:text-slate-400 font-mono text-sm mt-0.5">UID: {school.adminId}</p>
               </div>
             </div>
           </div>

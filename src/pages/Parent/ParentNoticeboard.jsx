@@ -102,20 +102,20 @@ export default function ParentNoticeboard() {
             <Megaphone className="text-primary-600" />
             Noticeboard
           </h1>
-          <p className="text-slate-500 mt-1">View official announcements from the school and your child's class teacher.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">View official announcements from the school and your child's class teacher.</p>
         </div>
       </div>
 
       <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700">
         <button
           onClick={() => setActiveTab('global')}
-          className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'global' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 hover:text-slate-700'}`}
+          className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'global' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
         >
           Global Notices
         </button>
         <button
           onClick={() => setActiveTab('class')}
-          className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'class' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 hover:text-slate-700'}`}
+          className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'class' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
         >
           Class Noticeboard
         </button>
@@ -128,7 +128,7 @@ export default function ParentNoticeboard() {
       ) : (
         <div className="space-y-4">
           {displayedNotices.length === 0 ? (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500 dark:text-slate-400">
               <Bell size={48} className="mx-auto mb-4 text-slate-300" />
               <p className="text-lg font-medium text-slate-900 dark:text-white">No active notices</p>
               <p>You're all caught up!</p>
@@ -152,7 +152,7 @@ export default function ParentNoticeboard() {
                             <AlertTriangle size={14} /> High Priority
                           </span>
                         )}
-                        <span className="text-sm font-medium text-slate-400">
+                        <span className="text-sm font-medium text-slate-400 dark:text-slate-300">
                           {new Date(notice.createdAt).toLocaleString(undefined, {
                             month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                           })}
@@ -165,9 +165,9 @@ export default function ParentNoticeboard() {
                       {notice.message}
                     </div>
                     
-                    <div className="text-sm font-medium text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+                    <div className="text-sm font-medium text-slate-400 dark:text-slate-300 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
                       <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center border border-slate-200 dark:border-slate-700">
-                        <Users size={12} className="text-slate-500" />
+                        <Users size={12} className="text-slate-500 dark:text-slate-400" />
                       </div>
                       Posted by: {notice.authorName}
                     </div>

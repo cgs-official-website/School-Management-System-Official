@@ -175,7 +175,7 @@ export default function TeacherRegistration() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary-500 border-t-transparent mb-4"></div>
-              <p className="text-slate-500 font-medium">Loading form...</p>
+              <p className="text-slate-500 dark:text-slate-400 font-medium">Loading form...</p>
             </div>
           ) : (
             <div className="flex flex-col">
@@ -192,7 +192,7 @@ export default function TeacherRegistration() {
                     )}
                     <div>
                       <h2 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">{school.schoolName || school.name}</h2>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Staff</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Staff</p>
                     </div>
                   </div>
                 )}
@@ -205,7 +205,7 @@ export default function TeacherRegistration() {
 
               <div className="mb-8">
                 <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">Create an account</h2>
-                <p className="text-sm text-slate-500">Access your tasks, notes, and projects anytime, anywhere - and keep everything flowing in one place.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Access your tasks, notes, and projects anytime, anywhere - and keep everything flowing in one place.</p>
               </div>
 
               {error && (
@@ -224,7 +224,7 @@ export default function TeacherRegistration() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400 dark:placeholder-slate-500"
                       placeholder="John Doe"
                     />
                   </div>
@@ -238,7 +238,7 @@ export default function TeacherRegistration() {
                       disabled={!!urlEmail}
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400 dark:placeholder-slate-500"
                       placeholder="you@example.com"
                     />
                   </div>
@@ -252,7 +252,7 @@ export default function TeacherRegistration() {
                       disabled={!!urlEmpId}
                       value={formData.employeeId}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400 dark:placeholder-slate-500"
                       placeholder="EMP-1024"
                     />
                   </div>
@@ -265,7 +265,7 @@ export default function TeacherRegistration() {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400 dark:placeholder-slate-500"
                       placeholder="••••••••"
                     />
                   </div>
@@ -283,7 +283,7 @@ export default function TeacherRegistration() {
                           required={field.required}
                           value={customFieldsData[field.name] || ''}
                           onChange={handleCustomFieldChange}
-                          className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
+                          className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400 dark:placeholder-slate-500"
                           placeholder={field.label}
                         />
                       </div>

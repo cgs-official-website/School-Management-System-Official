@@ -93,7 +93,7 @@ export default function BillingDashboard() {
     <div className="p-8 max-w-6xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Billing & Subscriptions</h1>
-        <p className="text-slate-500 mt-1">Manage your plan, limits, and billing history.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your plan, limits, and billing history.</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
@@ -110,14 +110,14 @@ export default function BillingDashboard() {
                   Enterprise Plan
                 </h2>
                 {(currentPlan || school?.plan) && (
-                  <p className="text-slate-500 mt-2">
+                  <p className="text-slate-500 dark:text-slate-400 mt-2">
                     Billing cycle: <span className="font-semibold text-slate-700 dark:text-slate-200 capitalize">{school?.billingCycle || 'monthly'}</span> &middot; Next charge: <span className="font-semibold text-slate-700 dark:text-slate-200">Next cycle</span>
                   </p>
                 )}
               </div>
               <div className="text-right">
                 <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2">
-                  ₹{school?.calculatedTotalAmount || 0}<span className="text-lg text-slate-500 font-medium">/{school?.billingCycle === 'yearly' ? 'yr' : 'mo'}</span>
+                  ₹{school?.calculatedTotalAmount || 0}<span className="text-lg text-slate-500 dark:text-slate-400 font-medium">/{school?.billingCycle === 'yearly' ? 'yr' : 'mo'}</span>
                 </div>
                 <button 
                   onClick={() => navigate('/admin/upgrade')}
@@ -136,7 +136,7 @@ export default function BillingDashboard() {
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span className="font-medium text-slate-700 dark:text-slate-200">Students</span>
-                      <span className="text-slate-500"><span className="font-bold text-slate-900 dark:text-white">{mockUsage.students}</span> / {currentPlan.userLimit > 0 ? currentPlan.userLimit : 'Unlimited'}</span>
+                      <span className="text-slate-500 dark:text-slate-400"><span className="font-bold text-slate-900 dark:text-white">{mockUsage.students}</span> / {currentPlan.userLimit > 0 ? currentPlan.userLimit : 'Unlimited'}</span>
                     </div>
                     <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div 
@@ -148,7 +148,7 @@ export default function BillingDashboard() {
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span className="font-medium text-slate-700 dark:text-slate-200">Staff Accounts</span>
-                      <span className="text-slate-500"><span className="font-bold text-slate-900 dark:text-white">{mockUsage.staff}</span> / {currentPlan.userLimit > 0 ? Math.floor(currentPlan.userLimit * 0.1) : 'Unlimited'}</span>
+                      <span className="text-slate-500 dark:text-slate-400"><span className="font-bold text-slate-900 dark:text-white">{mockUsage.staff}</span> / {currentPlan.userLimit > 0 ? Math.floor(currentPlan.userLimit * 0.1) : 'Unlimited'}</span>
                     </div>
                     <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div 
@@ -173,7 +173,7 @@ export default function BillingDashboard() {
             </div>
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                   <th className="p-4 pl-6">Invoice</th>
                   <th className="p-4">Date</th>
                   <th className="p-4">Amount</th>
@@ -184,7 +184,7 @@ export default function BillingDashboard() {
               <tbody className="divide-y divide-slate-100 text-sm">
                 {invoices.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="p-8 text-center text-slate-400 font-medium">
+                    <td colSpan="5" className="p-8 text-center text-slate-400 dark:text-slate-300 font-medium">
                       No invoices available.
                     </td>
                   </tr>
@@ -192,7 +192,7 @@ export default function BillingDashboard() {
                   invoices.map(inv => (
                     <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="p-4 pl-6 font-medium text-slate-900 dark:text-white flex items-center gap-2">
-                        <FileText size={16} className="text-slate-400" /> {inv.id}
+                        <FileText size={16} className="text-slate-400 dark:text-slate-300" /> {inv.id}
                       </td>
                       <td className="p-4 text-slate-600 dark:text-slate-300">{new Date(inv.date).toLocaleDateString('en-GB')}</td>
                       <td className="p-4 font-semibold text-slate-900 dark:text-white">₹{inv.amount}</td>
@@ -202,7 +202,7 @@ export default function BillingDashboard() {
                         </span>
                       </td>
                       <td className="p-4 pr-6 text-right">
-                        <button className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                        <button className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                           <Download size={18} />
                         </button>
                       </td>
@@ -223,15 +223,15 @@ export default function BillingDashboard() {
             </div>
             
             <div className="flex items-center gap-4 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800">
-              <div className="w-12 h-8 bg-slate-200 rounded flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 text-xs tracking-wider">
+              <div className="w-12 h-8 bg-slate-200 dark:bg-slate-700 rounded flex items-center justify-center font-bold text-slate-600 dark:text-slate-300 text-xs tracking-wider">
                 VISA
               </div>
               <div>
                 <p className="font-semibold text-slate-900 dark:text-white">•••• •••• •••• 4242</p>
-                <p className="text-xs text-slate-500">Expires 12/28</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Expires 12/28</p>
               </div>
             </div>
-            <p className="text-xs text-slate-500 mt-4 leading-relaxed">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-4 leading-relaxed">
               This card will be automatically charged ₹{school?.calculatedTotalAmount || 0} on the 1st of every {school?.billingCycle === 'yearly' ? 'year' : 'month'}.
             </p>
           </div>
@@ -244,7 +244,7 @@ export default function BillingDashboard() {
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 pl-8">
               If you have questions about your billing or need a custom enterprise plan, please contact our support team.
             </p>
-            <button className="w-full py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium hover:bg-slate-50 transition-colors">
+            <button className="w-full py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
               Contact Support
             </button>
           </div>

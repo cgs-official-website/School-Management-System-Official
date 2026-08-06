@@ -234,7 +234,7 @@ export default function HomeworkManagement() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Homework Management</h1>
-          <p className="text-slate-500 mt-1">Assign tasks and evaluate student progress.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Assign tasks and evaluate student progress.</p>
         </div>
         <div className="flex gap-3">
           {hasCreatePermission && (
@@ -264,7 +264,7 @@ export default function HomeworkManagement() {
           <div className="col-span-full p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <FileText size={48} className="mx-auto text-slate-300 mb-4" />
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">No homework assigned yet</h3>
-            <p className="text-slate-500 mt-1">Click the button above to assign your first homework.</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Click the button above to assign your first homework.</p>
           </div>
         ) : (
           homeworks.map(hw => {
@@ -283,7 +283,7 @@ export default function HomeworkManagement() {
                     <span className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-bold">
                       {cls ? cls.name : 'Unknown Class'} • {hw.subject}
                     </span>
-                    <span className="text-xs font-semibold text-slate-400">
+                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-300">
                       Due: {new Date(hw.dueDate).toLocaleDateString('en-GB')}
                     </span>
                   </div>
@@ -309,7 +309,7 @@ export default function HomeworkManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">New Homework Assignment</h2>
-              <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setShowCreateModal(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300">
                 <X size={24} />
               </button>
             </div>
@@ -366,16 +366,16 @@ export default function HomeworkManagement() {
                       <button 
                         type="button" 
                         onClick={() => setNewHomework({ ...newHomework, selectedSubjects: [] })}
-                        className="text-slate-500 font-medium hover:underline"
+                        className="text-slate-500 dark:text-slate-400 font-medium hover:underline"
                       >
                         Clear All
                       </button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 custom-scrollbar">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-800/50 custom-scrollbar">
                     {subjects.length === 0 ? (
-                      <span className="text-xs text-slate-400 font-semibold col-span-full">No subjects available</span>
+                      <span className="text-xs text-slate-400 dark:text-slate-300 font-semibold col-span-full">No subjects available</span>
                     ) : (
                       subjects.map(s => {
                         const isChecked = newHomework.selectedSubjects.includes(s.name);
@@ -439,7 +439,7 @@ export default function HomeworkManagement() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 font-bold"
+                  className="px-5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold"
                 >
                   Cancel
                 </button>
@@ -462,18 +462,18 @@ export default function HomeworkManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl flex flex-col max-h-[90vh] overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Evaluate via Excel</h2>
-              <button onClick={() => setShowExcelModal(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setShowExcelModal(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300">
                 <X size={24} />
               </button>
             </div>
             <form onSubmit={handleExcelUpload} className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
               <div className="p-6 space-y-6 flex-1">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Upload an Excel (.xlsx) file containing student grades for automatic evaluation. <br/>
                 <strong>Required Columns:</strong> Admission Number, Homework Title, Status, Grade
               </p>
               
-              <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 transition-colors relative">
+              <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors relative">
                 <input 
                   type="file" 
                   required
@@ -492,7 +492,7 @@ export default function HomeworkManagement() {
                 <button 
                   type="button" 
                   onClick={() => setShowExcelModal(false)}
-                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 rounded-xl"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl"
                 >
                   Cancel
                 </button>
@@ -516,7 +516,7 @@ export default function HomeworkManagement() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedHomework.title}</h2>
-                <p className="text-sm font-semibold text-slate-500">Student Progress Tracking</p>
+                <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Student Progress Tracking</p>
               </div>
               <div className="flex items-center gap-3">
                 <button
@@ -534,14 +534,14 @@ export default function HomeworkManagement() {
                   <FileDown size={18} />
                   Export
                 </button>
-                <button onClick={() => setShowTrackingModal(false)} className="text-slate-400 hover:text-slate-600">
+                <button onClick={() => setShowTrackingModal(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300">
                   <X size={24} />
                 </button>
               </div>
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
               {classStudents.length === 0 ? (
-                <p className="text-center text-slate-500 italic">No students found in this class.</p>
+                <p className="text-center text-slate-500 dark:text-slate-400 italic">No students found in this class.</p>
               ) : (
                 <div className="space-y-3">
                   {classStudents.map(student => {
@@ -558,7 +558,7 @@ export default function HomeworkManagement() {
                       <div key={student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-primary-300 transition-colors gap-4">
                         <div>
                           <p className="font-bold text-slate-900 dark:text-white">{student.firstName} {student.lastName}</p>
-                          <p className="text-xs font-semibold text-slate-500">ADM: {student.admissionNumber} | Last Updated: {lastUpdated}</p>
+                          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">ADM: {student.admissionNumber} | Last Updated: {lastUpdated}</p>
                         </div>
                         <div className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap ${statusColor}`}>
                           {status}
@@ -580,11 +580,11 @@ export default function HomeworkManagement() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Submissions Roster</h3>
-                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
               </div>
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl transition-colors"
               >
                 <X size={20} />
               </button>
@@ -594,7 +594,7 @@ export default function HomeworkManagement() {
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               {/* File Name Input */}
               <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -603,7 +603,7 @@ export default function HomeworkManagement() {
                     onChange={(e) => setExportFileName(e.target.value)}
                     className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
-                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 dark:text-slate-300 font-bold font-mono select-none">.xlsx</span>
                 </div>
               </div>
 
@@ -619,7 +619,7 @@ export default function HomeworkManagement() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
                 >
                   Deselect All
                 </button>
@@ -649,7 +649,7 @@ export default function HomeworkManagement() {
               <button
                 type="button"
                 onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

@@ -204,7 +204,7 @@ export default function TimetableManagement() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 shrink-0">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Timetable Management</h1>
-          <p className="text-slate-500 mt-1">Structure the weekly schedule for each class.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Structure the weekly schedule for each class.</p>
         </div>
         
         <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm w-full md:w-auto">
@@ -233,10 +233,10 @@ export default function TimetableManagement() {
 
       {!selectedClassId ? (
         <div className="flex-1 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col min-h-0 overflow-hidden animate-fade-in-up">
-          <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0 bg-slate-50/50">
+          <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0 bg-slate-50/50 dark:bg-slate-800/50">
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Master Timetable</h2>
-              <p className="text-sm text-slate-500 font-medium">Overview of all classes for {masterDay}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Overview of all classes for {masterDay}</p>
             </div>
             <div className="flex gap-2 overflow-x-auto max-w-full pb-2 sm:pb-0 custom-scrollbar">
               {daysOfWeek.map(day => (
@@ -246,7 +246,7 @@ export default function TimetableManagement() {
                   className={`px-4 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
                     masterDay === day 
                       ? 'bg-primary-600 text-white shadow-md shadow-primary-600/20' 
-                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 hover:border-slate-300'
+                      : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300'
                   }`}
                 >
                   {day}
@@ -257,7 +257,7 @@ export default function TimetableManagement() {
           
           <div className="flex-1 overflow-auto p-4 sm:p-6 custom-scrollbar space-y-6">
             {classes.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-slate-400">
+              <div className="flex flex-col items-center justify-center py-12 text-slate-400 dark:text-slate-300">
                 <Calendar size={48} className="mb-4 text-slate-200" />
                 <p className="font-bold">No classes available.</p>
               </div>
@@ -281,11 +281,11 @@ export default function TimetableManagement() {
                     <div className="p-4 bg-white dark:bg-slate-900 flex gap-4 overflow-x-auto custom-scrollbar">
                       {classSchedule.length === 0 ? (
                         <div className="w-full text-center py-6">
-                          <p className="text-sm font-semibold text-slate-400">No periods scheduled for {masterDay}.</p>
+                          <p className="text-sm font-semibold text-slate-400 dark:text-slate-300">No periods scheduled for {masterDay}.</p>
                         </div>
                       ) : (
                         classSchedule.map(slot => (
-                          <div key={slot.id} className="shrink-0 w-52 border border-slate-100 dark:border-slate-800 rounded-xl p-3.5 bg-slate-50/50 hover:bg-white hover:border-primary-200 hover:shadow-md transition-all group">
+                          <div key={slot.id} className="shrink-0 w-52 border border-slate-100 dark:border-slate-800 rounded-xl p-3.5 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-primary-200 hover:shadow-md transition-all group">
                             <div className="text-xs font-bold text-primary-600 mb-2 flex items-center gap-1.5">
                               <Clock size={12} />
                               {slot.startTime} - {slot.endTime}
@@ -294,7 +294,7 @@ export default function TimetableManagement() {
                               {slot.subject}
                             </div>
                             <div className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5 truncate bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md" title={slot.teacher}>
-                              <User size={10} className="text-slate-400" />
+                              <User size={10} className="text-slate-400 dark:text-slate-300" />
                               {slot.teacher}
                             </div>
                           </div>
@@ -342,19 +342,19 @@ export default function TimetableManagement() {
           <div className="flex-1 overflow-y-auto p-4 md:p-0">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-0 md:divide-x divide-slate-200 min-h-full">
               {daysOfWeek.map(day => (
-                <div key={day} className="bg-slate-50/50 p-2 space-y-3 md:min-h-[500px]">
+                <div key={day} className="bg-slate-50/50 dark:bg-slate-800/50 p-2 space-y-3 md:min-h-[500px]">
                   {/* Mobile Day Header (only visible on small screens) */}
                   <h3 className="font-bold text-slate-700 dark:text-slate-200 md:hidden mb-2 px-2">{day}</h3>
                   
                   {schedule[day]?.length === 0 ? (
-                    <div className="text-center p-4 text-sm text-slate-400 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl mx-2">
+                    <div className="text-center p-4 text-sm text-slate-400 dark:text-slate-300 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl mx-2">
                       Free Day
                     </div>
                   ) : (
                     schedule[day].map(slot => (
                       <div key={slot.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 p-3 shadow-sm hover:shadow-md transition-shadow group relative">
                         
-                        <div className="text-xs font-bold text-slate-500 mb-1 flex items-center gap-1.5">
+                        <div className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1.5">
                           <Clock size={12} className="text-primary-500" />
                           {slot.startTime} - {slot.endTime}
                         </div>
@@ -365,7 +365,7 @@ export default function TimetableManagement() {
                         </div>
                         
                         <div className="text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-lg inline-flex items-center gap-1.5 border border-slate-100 dark:border-slate-800">
-                          <User size={12} className="text-slate-400" />
+                          <User size={12} className="text-slate-400 dark:text-slate-300" />
                           {slot.teacher}
                         </div>
 
@@ -374,7 +374,7 @@ export default function TimetableManagement() {
                           {hasEditPermission && (
                             <button 
                               onClick={() => handleEditSlot(day, slot)}
-                              className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
+                              className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
                               title="Edit Period"
                             >
                               <Edit2 size={14} />
@@ -383,7 +383,7 @@ export default function TimetableManagement() {
                           {hasDeletePermission && (
                             <button 
                               onClick={() => handleDeleteClick(day, slot.id)}
-                              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                              className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg"
                               title="Delete Period"
                             >
                               <Trash2 size={14} />
@@ -418,7 +418,7 @@ export default function TimetableManagement() {
                 {editingSlotId ? <Edit2 className="text-primary-600" /> : <Plus className="text-primary-600" />} 
                 {editingSlotId ? `Edit Period in ${activeDay}` : `Add Period to ${activeDay}`}
               </h2>
-              <button onClick={() => setShowAddModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowAddModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -519,7 +519,7 @@ export default function TimetableManagement() {
                 <button 
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>

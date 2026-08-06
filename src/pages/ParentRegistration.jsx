@@ -121,7 +121,7 @@ export default function ParentRegistration() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary-500 border-t-transparent mb-4"></div>
-              <p className="text-slate-500 font-medium">Loading form...</p>
+              <p className="text-slate-500 dark:text-slate-400 font-medium">Loading form...</p>
             </div>
           ) : (
             <div className="flex flex-col">
@@ -138,7 +138,7 @@ export default function ParentRegistration() {
                     )}
                     <div>
                       <h2 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">{school.schoolName || school.name}</h2>
-                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Parent</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Parent</p>
                     </div>
                   </div>
                 )}
@@ -151,7 +151,7 @@ export default function ParentRegistration() {
 
               <div className="mb-8">
                 <h2 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">Create an account</h2>
-                <p className="text-sm text-slate-500">Access your tasks, notes, and projects anytime, anywhere - and keep everything flowing in one place.</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Access your tasks, notes, and projects anytime, anywhere - and keep everything flowing in one place.</p>
               </div>
 
               {error && (
@@ -170,7 +170,7 @@ export default function ParentRegistration() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400 dark:placeholder-slate-500"
                       placeholder="John Doe"
                     />
                   </div>
@@ -183,7 +183,7 @@ export default function ParentRegistration() {
                       required
                       value={formData.admissionNumber}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
+                      className="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400 dark:placeholder-slate-500"
                       placeholder="ADM12345"
                     />
                   </div>
@@ -197,10 +197,10 @@ export default function ParentRegistration() {
                         required
                         value={formData.password}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 pr-12 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400"
+                        className="w-full px-4 py-3 pr-12 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all outline-none text-slate-900 dark:text-white disabled:opacity-50 placeholder-slate-400 dark:placeholder-slate-500"
                         placeholder="••••••••"
                       />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none">
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 focus:outline-none">
                         {showPassword ? <LuEyeOff size={18} /> : <LuEye size={18} />}
                       </button>
                     </div>

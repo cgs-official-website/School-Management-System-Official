@@ -119,7 +119,7 @@ export default function Performance() {
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
           <LuTrendingUp className="text-primary-600" /> Academic Performance
         </h1>
-        <p className="text-slate-500 mt-1">Review your child's academic progress and teacher feedback.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Review your child's academic progress and teacher feedback.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -138,16 +138,16 @@ export default function Performance() {
             <LuAward size={32} />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-500">Overall Grade</p>
+            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">Overall Grade</p>
             <div className="flex items-baseline gap-2 mt-1">
               <span className="text-3xl font-black text-slate-900 dark:text-white">{avgGrade}</span>
-              <span className="text-sm font-semibold text-slate-500">{avgPerc > 0 ? `${avgPerc.toFixed(1)}%` : ''}</span>
+              <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{avgPerc > 0 ? `${avgPerc.toFixed(1)}%` : ''}</span>
             </div>
           </div>
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-center">
-          <p className="text-sm font-bold text-slate-500 mb-1">Attendance</p>
+          <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mb-1">Attendance</p>
           <span className={`text-3xl font-black ${attendancePerc < 75 ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>{attendancePerc}%</span>
         </div>
       </div>
@@ -164,17 +164,17 @@ export default function Performance() {
                 <div key={assessment.id} className="flex justify-between items-center p-4 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50/30 transition-all">
                   <div>
                     <h3 className="font-bold text-slate-900 dark:text-white">{assessment.title}</h3>
-                    <p className="text-sm font-medium text-slate-500">{new Date(assessment.date).toLocaleDateString('en-GB')}</p>
+                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{new Date(assessment.date).toLocaleDateString('en-GB')}</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-black text-lg text-slate-900 dark:text-white">{assessment.score} <span className="text-slate-400 text-sm font-bold">/ {assessment.totalMarks}</span></p>
+                    <p className="font-black text-lg text-slate-900 dark:text-white">{assessment.score} <span className="text-slate-400 dark:text-slate-300 text-sm font-bold">/ {assessment.totalMarks}</span></p>
                     <p className="text-xs font-bold text-primary-600">{assessment.perc}%</p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-slate-500 font-medium">
+            <div className="text-center py-12 text-slate-500 dark:text-slate-400 font-medium">
               No assessments recorded yet.
             </div>
           )}

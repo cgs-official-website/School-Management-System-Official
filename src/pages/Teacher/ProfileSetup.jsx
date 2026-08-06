@@ -211,7 +211,7 @@ export default function ProfileSetup() {
     <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto animate-fade-in-up">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Profile Setup</h1>
-        <p className="text-slate-500 mt-1">Complete your profile to update all professional, banking, and personal details.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Complete your profile to update all professional, banking, and personal details.</p>
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">

@@ -656,13 +656,13 @@ export default function InventoryManagement() {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuPackage className="text-primary-600" /> Inventory & Assets
           </h1>
-          <p className="text-slate-500 mt-1">Track school assets, stock, and inventory.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Track school assets, stock, and inventory.</p>
         </div>
         
         <div className="flex flex-wrap gap-2">
           <button 
             onClick={() => navigate('/admin/inventory/audit-logs')}
-            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
+            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
           >
             <LuClipboardList size={18} /> Audit Logs
           </button>
@@ -670,7 +670,7 @@ export default function InventoryManagement() {
           {canCreate('inventory') && (
             <button 
               onClick={() => setShowImportModal(true)}
-              className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
+              className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
             >
               <Upload size={18} /> Bulk Import
             </button>
@@ -685,7 +685,7 @@ export default function InventoryManagement() {
               setExportFileName('inventory_products_' + new Date().toISOString().slice(0,10));
               setShowExportModal(true);
             }}
-            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
+            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
           >
             <Download size={18} /> Bulk Export
           </button>
@@ -717,7 +717,7 @@ export default function InventoryManagement() {
         <button 
           onClick={() => setActiveTab('items')}
           className={`pb-3 text-sm font-bold border-b-2 transition-all ${
-            activeTab === 'items' ? 'border-primary-600 text-primary-600' : 'border-transparent text-slate-500 hover:text-slate-700'
+            activeTab === 'items' ? 'border-primary-600 text-primary-600' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
         >
           Inventory Items ({items.length})
@@ -725,7 +725,7 @@ export default function InventoryManagement() {
         <button 
           onClick={() => setActiveTab('categories')}
           className={`pb-3 text-sm font-bold border-b-2 transition-all ${
-            activeTab === 'categories' ? 'border-primary-600 text-primary-600' : 'border-transparent text-slate-500 hover:text-slate-700'
+            activeTab === 'categories' ? 'border-primary-600 text-primary-600' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
         >
           Categories ({categories.length})
@@ -741,7 +741,7 @@ export default function InventoryManagement() {
                 <LuPackage size={20} />
               </div>
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Items</p>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Items</p>
                 <p className="text-xl font-bold text-slate-900 dark:text-white">{items.length}</p>
               </div>
             </div>
@@ -751,7 +751,7 @@ export default function InventoryManagement() {
                 <LuServer size={20} />
               </div>
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Low Stock Alerts</p>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Low Stock Alerts</p>
                 <p className="text-xl font-bold text-slate-900 dark:text-white">{items.filter(i => i.status === 'Low Stock').length}</p>
               </div>
             </div>
@@ -761,7 +761,7 @@ export default function InventoryManagement() {
                 <LuPackage size={20} />
               </div>
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Out of Stock</p>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Out of Stock</p>
                 <p className="text-xl font-bold text-slate-900 dark:text-white">{items.filter(i => i.status === 'Out of Stock').length}</p>
               </div>
             </div>
@@ -770,9 +770,9 @@ export default function InventoryManagement() {
           {/* Table Container */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm mb-4">
             {/* Filters Row */}
-            <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row gap-3 shrink-0">
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row gap-3 shrink-0">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={18} />
                 <input 
                   type="text"
                   placeholder="Search by name, product ID or category..."
@@ -805,7 +805,7 @@ export default function InventoryManagement() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
-                  <tr className="text-slate-500 text-xs font-semibold uppercase">
+                  <tr className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">
                     <th className="p-4 pl-6 w-12">
                       <input 
                         type="checkbox" 
@@ -833,7 +833,7 @@ export default function InventoryManagement() {
                           className="rounded border-slate-300 dark:border-slate-600 text-primary-600 focus:ring-primary-500 h-4.5 w-4.5"
                         />
                       </td>
-                      <td className="p-4 font-semibold text-slate-500">{item.productId || '—'}</td>
+                      <td className="p-4 font-semibold text-slate-500 dark:text-slate-400">{item.productId || '—'}</td>
                       <td className="p-4 font-bold text-slate-900 dark:text-white">{item.name}</td>
                       <td className="p-4 text-slate-600 dark:text-slate-300 font-medium">{item.category}</td>
                       <td className="p-4 font-bold text-slate-900 dark:text-white">{item.quantity} {item.unit}</td>
@@ -850,18 +850,18 @@ export default function InventoryManagement() {
                           {canEdit('inventory') && (
                             <button 
                               onClick={() => { setStockAdjustment({ itemId: item.id, itemName: item.name, type: 'inbound', quantity: 1, remarks: '', prevStock: item.quantity }); setShowStockModal(true); }}
-                              className="px-2 py-1 text-xs font-bold border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 text-slate-700 dark:text-slate-200"
+                              className="px-2 py-1 text-xs font-bold border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200"
                             >
                               Adjust Stock
                             </button>
                           )}
                           {canEdit('inventory') && (
-                            <button onClick={() => { setItemFormData(item); setShowItemModal(true); }} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                            <button onClick={() => { setItemFormData(item); setShowItemModal(true); }} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                               <Edit size={16} />
                             </button>
                           )}
                           {canDelete('inventory') && (
-                            <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'item', id: item.id, name: item.name })} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'item', id: item.id, name: item.name })} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                               <Trash2 size={16} />
                             </button>
                           )}
@@ -871,7 +871,7 @@ export default function InventoryManagement() {
                   ))}
                   {filteredItems.length === 0 && (
                     <tr>
-                      <td colSpan="7" className="p-12 text-center text-slate-500 font-medium">
+                      <td colSpan="7" className="p-12 text-center text-slate-500 dark:text-slate-400 font-medium">
                         No inventory products found matching filters.
                       </td>
                     </tr>
@@ -882,8 +882,8 @@ export default function InventoryManagement() {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-b-3xl">
-                <span className="text-sm text-slate-500 font-medium">
+              <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-b-3xl">
+                <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">
                   Showing <span className="font-semibold text-slate-900 dark:text-white">{indexOfFirstItem + 1}</span> to{' '}
                   <span className="font-semibold text-slate-900 dark:text-white">
                     {Math.min(indexOfLastItem, filteredItems.length)}
@@ -894,7 +894,7 @@ export default function InventoryManagement() {
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     Previous
                   </button>
@@ -907,7 +907,7 @@ export default function InventoryManagement() {
                         className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                           currentPage === pageNum
                             ? 'bg-primary-600 text-white shadow-sm'
-                            : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
+                            : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                         }`}
                       >
                         {pageNum}
@@ -917,7 +917,7 @@ export default function InventoryManagement() {
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     Next
                   </button>
@@ -932,7 +932,7 @@ export default function InventoryManagement() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse min-w-[600px]">
               <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
-                <tr className="text-slate-500 text-xs font-semibold uppercase">
+                <tr className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">
                   <th className="p-4 pl-6">Category Name</th>
                   <th className="p-4">Description</th>
                   <th className="p-4 pr-6 text-right">Actions</th>
@@ -946,12 +946,12 @@ export default function InventoryManagement() {
                     <td className="p-4 pr-6 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {canEdit('inventory') && (
-                          <button onClick={() => { setCategoryFormData(cat); setShowCategoryModal(true); }} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                          <button onClick={() => { setCategoryFormData(cat); setShowCategoryModal(true); }} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                             <Edit size={16} />
                           </button>
                         )}
                         {canDelete('inventory') && (
-                          <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'category', id: cat.id, name: cat.name })} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                          <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'category', id: cat.id, name: cat.name })} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                             <Trash2 size={16} />
                           </button>
                         )}
@@ -961,7 +961,7 @@ export default function InventoryManagement() {
                 ))}
                 {categories.length === 0 && (
                   <tr>
-                    <td colSpan="3" className="p-12 text-center text-slate-500 font-medium">
+                    <td colSpan="3" className="p-12 text-center text-slate-500 dark:text-slate-400 font-medium">
                       No categories found. Create a category to start organizing inventory.
                     </td>
                   </tr>
@@ -978,7 +978,7 @@ export default function InventoryManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">{itemFormData.id ? 'Edit' : 'Add'} Inventory Product</h2>
-              <button onClick={() => setShowItemModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
+              <button onClick={() => setShowItemModal(false)} className="text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1055,7 +1055,7 @@ export default function InventoryManagement() {
               </div>
 
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowItemModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+                <button type="button" onClick={() => setShowItemModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">Save Product</button>
               </div>
             </form>
@@ -1069,7 +1069,7 @@ export default function InventoryManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">{categoryFormData.id ? 'Edit' : 'Add'} Category</h2>
-              <button onClick={() => setShowCategoryModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
+              <button onClick={() => setShowCategoryModal(false)} className="text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1094,7 +1094,7 @@ export default function InventoryManagement() {
               </div>
 
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowCategoryModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+                <button type="button" onClick={() => setShowCategoryModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">Save Category</button>
               </div>
             </form>
@@ -1108,7 +1108,7 @@ export default function InventoryManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Adjust Stock: {stockAdjustment.itemName}</h2>
-              <button onClick={() => setShowStockModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
+              <button onClick={() => setShowStockModal(false)} className="text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1117,11 +1117,11 @@ export default function InventoryManagement() {
               <div className="p-6 space-y-5">
                 <div className="flex gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                   <div className="flex-1 text-center border-r border-slate-200 dark:border-slate-700">
-                    <span className="block text-xs font-semibold text-slate-500 uppercase">Previous Stock</span>
+                    <span className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Previous Stock</span>
                     <span className="text-xl font-bold text-slate-800 dark:text-slate-100">{stockAdjustment.prevStock}</span>
                   </div>
                   <div className="flex-1 text-center">
-                    <span className="block text-xs font-semibold text-slate-500 uppercase">New Stock</span>
+                    <span className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">New Stock</span>
                     <span className="text-xl font-bold text-primary-600">
                       {stockAdjustment.type === 'inbound' 
                         ? stockAdjustment.prevStock + (parseInt(stockAdjustment.quantity) || 0)
@@ -1134,7 +1134,7 @@ export default function InventoryManagement() {
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Adjustment Type</label>
                   <div className="flex gap-4">
-                    <label className="flex-1 flex items-center justify-center gap-2 p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-black">
+                    <label className="flex-1 flex items-center justify-center gap-2 p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-black">
                       <input 
                         type="radio" 
                         name="stock-type" 
@@ -1145,7 +1145,7 @@ export default function InventoryManagement() {
                       />
                       Inbound Stock
                     </label>
-                    <label className="flex-1 flex items-center justify-center gap-2 p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-50 font-bold text-black">
+                    <label className="flex-1 flex items-center justify-center gap-2 p-3 border border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-black">
                       <input 
                         type="radio" 
                         name="stock-type" 
@@ -1179,7 +1179,7 @@ export default function InventoryManagement() {
               </div>
 
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowStockModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+                <button type="button" onClick={() => setShowStockModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">Save Adjustment</button>
               </div>
             </form>
@@ -1193,7 +1193,7 @@ export default function InventoryManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Bulk Import Products</h2>
-              <button onClick={() => setShowImportModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
+              <button onClick={() => setShowImportModal(false)} className="text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1224,7 +1224,7 @@ export default function InventoryManagement() {
                 <span className="block text-sm font-bold text-slate-800 dark:text-slate-100">Import Configuration</span>
                 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">If Product Already Exists</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">If Product Already Exists</label>
                   <select 
                     value={importConfig.duplicateAction} 
                     onChange={e => setImportConfig({...importConfig, duplicateAction: e.target.value})}
@@ -1236,10 +1236,10 @@ export default function InventoryManagement() {
                   </select>
                 </div>
 
-                <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50">
+                <div className="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-800/50">
                   <div>
                     <span className="block text-sm font-bold text-slate-700 dark:text-slate-200">Auto-create Categories</span>
-                    <span className="block text-xs text-slate-400">If category doesn't exist, create it dynamically instead of rejecting row</span>
+                    <span className="block text-xs text-slate-400 dark:text-slate-300">If category doesn't exist, create it dynamically instead of rejecting row</span>
                   </div>
                   <input 
                     type="checkbox" 
@@ -1268,7 +1268,7 @@ export default function InventoryManagement() {
                   <div className="grid grid-cols-4 gap-2 text-center text-xs">
                     <div className="p-2 bg-slate-100 dark:bg-slate-700 rounded-xl">
                       <span className="block font-bold text-slate-700 dark:text-slate-200">{importSummary.totalRows}</span>
-                      <span className="text-[10px] text-slate-500 uppercase">Total Rows</span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase">Total Rows</span>
                     </div>
                     <div className="p-2 bg-emerald-50 text-emerald-800 rounded-xl">
                       <span className="block font-bold">{importSummary.successCount}</span>
@@ -1307,7 +1307,7 @@ export default function InventoryManagement() {
             </div>
 
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-              <button type="button" onClick={() => setShowImportModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Close</button>
+              <button type="button" onClick={() => setShowImportModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Close</button>
               <button 
                 type="button" 
                 onClick={handleProcessImport}
@@ -1327,7 +1327,7 @@ export default function InventoryManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Export Inventory Data</h2>
-              <button onClick={() => setShowExportModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
+              <button onClick={() => setShowExportModal(false)} className="text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1335,7 +1335,7 @@ export default function InventoryManagement() {
             <div className="p-6 space-y-4">
               {/* File Name Input */}
               <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -1349,7 +1349,7 @@ export default function InventoryManagement() {
 
               <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-sm space-y-1">
                 <span className="block font-bold text-slate-700 dark:text-slate-200">Export Summary Scope</span>
-                <span className="block text-xs text-slate-500">
+                <span className="block text-xs text-slate-500 dark:text-slate-400">
                   {selectedItemIds.length > 0 
                     ? `Exporting ${selectedItemIds.length} Selected items` 
                     : `Exporting ${filteredItems.length} Filtered items (matching active filters)`
@@ -1362,14 +1362,14 @@ export default function InventoryManagement() {
                 <div className="grid grid-cols-2 gap-4">
                   <button 
                     onClick={() => handleBulkExport('xlsx')}
-                    className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 flex flex-col items-center justify-center gap-2 font-bold"
+                    className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 flex flex-col items-center justify-center gap-2 font-bold"
                   >
                     <Download size={24} className="text-emerald-600" />
                     Excel (.xlsx)
                   </button>
                   <button 
                     onClick={() => handleBulkExport('csv')}
-                    className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 flex flex-col items-center justify-center gap-2 font-bold"
+                    className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 flex flex-col items-center justify-center gap-2 font-bold"
                   >
                     <Download size={24} className="text-blue-600" />
                     CSV (.csv)
@@ -1379,7 +1379,7 @@ export default function InventoryManagement() {
             </div>
 
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-              <button type="button" onClick={() => setShowExportModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+              <button type="button" onClick={() => setShowExportModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Cancel</button>
             </div>
           </div>
         </div>

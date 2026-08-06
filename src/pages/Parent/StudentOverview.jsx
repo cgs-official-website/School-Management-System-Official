@@ -150,7 +150,7 @@ export default function StudentOverview() {
             </h1>
             <p className="text-slate-300 text-lg flex flex-wrap items-center justify-center md:justify-start gap-3">
               <span className="flex items-center gap-1"><GraduationCap size={18} className="text-primary-400"/> {classDetails ? `${classDetails.name} - ${classDetails.section}` : 'Class'}</span>
-              <span className="text-slate-500">•</span>
+              <span className="text-slate-500 dark:text-slate-400">•</span>
               <span className="font-mono text-sm bg-slate-800/50 px-2 py-1 rounded text-slate-300">ID: {student.admissionNumber}</span>
             </p>
           </div>
@@ -276,7 +276,7 @@ export default function StudentOverview() {
             </div>
             
             {attendanceStats.total === 0 ? (
-              <div className="mt-6 bg-slate-50 dark:bg-slate-800 text-slate-500 p-3 rounded-xl border border-slate-200/60 text-center text-xs font-semibold uppercase tracking-wider">
+              <div className="mt-6 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 p-3 rounded-xl border border-slate-200/60 text-center text-xs font-semibold uppercase tracking-wider">
                 No Attendance Recorded Yet
               </div>
             ) : attendancePercentage < 80 ? (
@@ -305,7 +305,7 @@ export default function StudentOverview() {
                     <CheckCircle2 size={32} />
                   </div>
                   <h3 className="text-slate-900 dark:text-white font-bold mb-1">No Grades Yet</h3>
-                  <p className="text-slate-500 text-sm">Assessments and grades will appear here once published by the teacher.</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm">Assessments and grades will appear here once published by the teacher.</p>
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100">
@@ -317,12 +317,12 @@ export default function StudentOverview() {
                       <div key={assessment.id} className="p-4 sm:p-6 hover:bg-slate-50/50 transition-colors flex items-center justify-between gap-4">
                         <div>
                           <h4 className="font-bold text-slate-900 dark:text-white">{assessment.title}</h4>
-                          <p className="text-sm text-slate-500 mt-0.5">{assessment.date}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{assessment.date}</p>
                         </div>
                         <div className="flex items-center gap-4 text-right">
                           <div className="hidden sm:block">
-                            <div className="text-sm font-medium text-slate-900 dark:text-white">{marks} <span className="text-slate-400">/ {assessment.totalMarks}</span></div>
-                            <div className="text-xs text-slate-500">Marks</div>
+                            <div className="text-sm font-medium text-slate-900 dark:text-white">{marks} <span className="text-slate-400 dark:text-slate-300">/ {assessment.totalMarks}</span></div>
+                            <div className="text-xs text-slate-500 dark:text-slate-400">Marks</div>
                           </div>
                           <div className={`px-4 py-2 rounded-xl border font-black text-lg w-20 text-center ${
                             percentage >= 80 ? 'bg-green-50 text-green-700 border-green-200' : 

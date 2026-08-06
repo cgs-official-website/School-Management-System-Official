@@ -162,7 +162,7 @@ export default function SubjectManagement() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 shrink-0">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Subject Management</h1>
-          <p className="text-slate-500 mt-1">Create subjects and assign them to teaching staff.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Create subjects and assign them to teaching staff.</p>
         </div>
         {hasCreatePermission && (
           <button 
@@ -179,7 +179,7 @@ export default function SubjectManagement() {
           <div className="col-span-full p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
             <LuBookOpen size={48} className="mx-auto text-slate-300 mb-4" />
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">No Subjects Created</h3>
-            <p className="text-slate-500 mt-1">Click the button above to add your first subject.</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Click the button above to add your first subject.</p>
           </div>
         ) : (
           subjects.map(subject => (
@@ -190,22 +190,22 @@ export default function SubjectManagement() {
                 </div>
                 <div className="flex gap-2">
                   {hasEditPermission && (
-                    <button onClick={() => handleOpenModal(subject)} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                    <button onClick={() => handleOpenModal(subject)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                       <LuPencil size={18} />
                     </button>
                   )}
                   {hasDeletePermission && (
-                    <button onClick={() => handleDelete(subject.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                    <button onClick={() => handleDelete(subject.id)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                       <LuTrash2 size={18} />
                     </button>
                   )}
                 </div>
               </div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">{subject.name}</h3>
-              {subject.code && <p className="text-sm font-semibold text-slate-500 mb-4">{subject.code}</p>}
+              {subject.code && <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4">{subject.code}</p>}
               
               <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <p className="text-xs font-bold text-slate-400 uppercase mb-2">Assigned Teachers</p>
+                <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase mb-2">Assigned Teachers</p>
                 <div className="flex flex-wrap gap-2">
                   {subject.assignedTeacherIds?.length > 0 ? (
                     subject.assignedTeacherIds.map(tid => {
@@ -219,7 +219,7 @@ export default function SubjectManagement() {
                       );
                     })
                   ) : (
-                    <span className="text-sm text-slate-400 italic">No teachers assigned</span>
+                    <span className="text-sm text-slate-400 dark:text-slate-300 italic">No teachers assigned</span>
                   )}
                 </div>
               </div>
@@ -235,7 +235,7 @@ export default function SubjectManagement() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                 {editingId ? 'Edit Subject' : 'Add Subject'}
               </h2>
-              <button onClick={() => setShowModal(false)} className="p-2 text-slate-400 hover:bg-slate-100 rounded-full">
+              <button onClick={() => setShowModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full">
                 <LuX size={20} />
               </button>
             </div>
@@ -264,15 +264,15 @@ export default function SubjectManagement() {
 
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Assign to Teaching Staff</label>
-                <div className="space-y-2 border border-slate-200 dark:border-slate-700 rounded-xl p-4 max-h-60 overflow-y-auto custom-scrollbar bg-slate-50/50">
+                <div className="space-y-2 border border-slate-200 dark:border-slate-700 rounded-xl p-4 max-h-60 overflow-y-auto custom-scrollbar bg-slate-50/50 dark:bg-slate-800/50">
                   {teachers.length === 0 ? (
-                    <p className="text-sm text-slate-500 italic">No teaching staff found.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 italic">No teaching staff found.</p>
                   ) : (
                     teachers.map(teacher => {
                       const name = teacher.name || `${teacher.firstName || ''} ${teacher.lastName || ''}`.trim();
                       const isAssigned = (formData.assignedTeacherIds || []).includes(teacher.id);
                       return (
-                        <label key={teacher.id} className="flex items-center gap-3 p-2 hover:bg-white rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200">
+                        <label key={teacher.id} className="flex items-center gap-3 p-2 hover:bg-white dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-slate-200">
                           <input 
                             type="checkbox"
                             checked={isAssigned}
@@ -291,7 +291,7 @@ export default function SubjectManagement() {
             <div className="p-6 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0 bg-slate-50 dark:bg-slate-800">
               <button 
                 type="button" onClick={() => setShowModal(false)}
-                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
               >
                 Cancel
               </button>

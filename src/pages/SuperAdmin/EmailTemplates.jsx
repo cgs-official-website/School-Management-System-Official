@@ -109,7 +109,7 @@ export default function EmailTemplates() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white">Email Templates</h1>
-          <p className="text-slate-500 font-medium">Customize automated emails sent from the system.</p>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">Customize automated emails sent from the system.</p>
         </div>
         <button 
           onClick={handleSave}
@@ -131,10 +131,10 @@ export default function EmailTemplates() {
               className={`w-full text-left px-4 py-3 rounded-xl font-bold transition-colors flex items-center gap-3 ${
                 activeTab === template.id 
                   ? 'bg-primary-50 text-primary-700 border border-primary-200' 
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 border border-transparent'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-transparent'
               }`}
             >
-              <LuMail size={18} className={activeTab === template.id ? 'text-primary-500' : 'text-slate-400'} />
+              <LuMail size={18} className={activeTab === template.id ? 'text-primary-500' : 'text-slate-400 dark:text-slate-300'} />
               {template.name}
             </button>
           ))}
@@ -144,7 +144,7 @@ export default function EmailTemplates() {
         <div className="flex-1 p-6 flex flex-col min-h-0 overflow-y-auto">
           <div className="mb-6">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">{activeTemplate.name}</h2>
-            <p className="text-sm text-slate-500">{activeTemplate.description}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{activeTemplate.description}</p>
           </div>
 
           <div className="space-y-6 flex-1 flex flex-col min-h-0">
@@ -162,7 +162,7 @@ export default function EmailTemplates() {
             <div className="flex-1 flex flex-col min-h-[300px]">
               <div className="flex justify-between items-center mb-2">
                 <label className="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
-                  <LuCode className="text-slate-400" /> HTML Content
+                  <LuCode className="text-slate-400 dark:text-slate-300" /> HTML Content
                 </label>
                 <div className="flex gap-2">
                   {activeTemplate.variables.map(v => (

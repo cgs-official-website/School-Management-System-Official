@@ -440,7 +440,7 @@ export default function TransportManagement() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Transport Management</h1>
-          <p className="text-slate-500 mt-1">Manage bus routes, drivers, school vehicles, and student assignments.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage bus routes, drivers, school vehicles, and student assignments.</p>
         </div>
         
         {/* Actions based on active tab */}
@@ -491,7 +491,7 @@ export default function TransportManagement() {
           className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
             activeTab === 'routes'
               ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
           }`}
         >
           <Navigation size={18} />
@@ -503,7 +503,7 @@ export default function TransportManagement() {
           className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
             activeTab === 'vehicles'
               ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
           }`}
         >
           <Bus size={18} />
@@ -515,7 +515,7 @@ export default function TransportManagement() {
           className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
             activeTab === 'assignments'
               ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
           }`}
         >
           <Users size={18} />
@@ -527,7 +527,7 @@ export default function TransportManagement() {
       {activeTab === 'routes' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {routes.length === 0 ? (
-            <div className="col-span-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500">
+            <div className="col-span-full bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500 dark:text-slate-400">
               <Bus size={64} className="mx-auto mb-4 text-slate-300" />
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No Routes Found</h3>
               <p>Create your first transport route to begin assigning students.</p>
@@ -540,13 +540,13 @@ export default function TransportManagement() {
 
               return (
                 <div key={route.id} className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-shadow">
-                  <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50">
+                  <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="font-bold text-lg text-slate-900 dark:text-white leading-tight pr-4 truncate">{route.name}</h3>
                       <div className="flex items-center gap-1 shrink-0">
                         <button 
                           onClick={() => { setSelectedRouteToView(route); setShowViewModal(true); }}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                           title="View Details"
                         >
                           <Eye size={18} />
@@ -554,7 +554,7 @@ export default function TransportManagement() {
                         {hasEditPermission && (
                           <button 
                             onClick={() => { setNewRoute(route); setShowCreateModal(true); }}
-                            className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                             title="Edit Route"
                           >
                             <Edit size={18} />
@@ -563,7 +563,7 @@ export default function TransportManagement() {
                         {hasDeletePermission && (
                           <button 
                             onClick={() => setConfirmDeleteState({ isOpen: true, id: route.id, name: route.name })}
-                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Delete Route"
                           >
                             <Trash2 size={18} />
@@ -579,7 +579,7 @@ export default function TransportManagement() {
                   <div className="p-6 flex-1 space-y-4">
                     <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
                       <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center shrink-0">
-                        <Users size={16} className="text-slate-500" />
+                        <Users size={16} className="text-slate-500 dark:text-slate-400" />
                       </div>
                       <div className="overflow-hidden">
                         <p className="font-semibold text-slate-900 dark:text-white truncate">{route.driverName || 'No Driver Assigned'}</p>
@@ -589,7 +589,7 @@ export default function TransportManagement() {
 
                     <div>
                       <div className="flex justify-between items-end mb-2">
-                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Capacity</span>
+                        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Capacity</span>
                         <span className={`font-bold text-sm ${isFull ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>
                           {currentCount} / {route.capacity}
                         </span>
@@ -627,19 +627,19 @@ export default function TransportManagement() {
           {/* Vehicle Dashboard Metrics */}
           <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total</span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Total</span>
               <span className="text-2xl font-black text-slate-800 dark:text-slate-100 mt-2">{totalVehiclesCount}</span>
             </div>
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Active</span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Active</span>
               <span className="text-2xl font-black text-green-600 mt-2">{activeVehiclesCount}</span>
             </div>
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned</span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Assigned</span>
               <span className="text-2xl font-black text-primary-600 mt-2">{assignedVehiclesCount}</span>
             </div>
             <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Unassigned</span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Unassigned</span>
               <span className="text-2xl font-black text-amber-600 mt-2">{unassignedVehiclesCount}</span>
             </div>
             <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 shadow-sm flex flex-col justify-between">
@@ -655,7 +655,7 @@ export default function TransportManagement() {
           {/* Filters Bar */}
           <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <div className="relative w-full md:max-w-sm">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300">
                 <Search size={18} />
               </span>
               <input 
@@ -667,7 +667,7 @@ export default function TransportManagement() {
               />
             </div>
             <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">
                 <Filter size={14}/> Filters:
               </div>
               <select
@@ -697,7 +697,7 @@ export default function TransportManagement() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider">
                     <th className="py-4 px-6">Vehicle Details</th>
                     <th className="py-4 px-6">Registration No</th>
                     <th className="py-4 px-6">Capacity</th>
@@ -710,7 +710,7 @@ export default function TransportManagement() {
                 <tbody className="divide-y divide-slate-100 text-sm text-slate-600 dark:text-slate-300 font-medium">
                   {filteredVehicles.length === 0 ? (
                     <tr>
-                      <td colSpan="7" className="py-12 text-center text-slate-400">
+                      <td colSpan="7" className="py-12 text-center text-slate-400 dark:text-slate-300">
                         <Bus size={40} className="mx-auto mb-2 text-slate-300" />
                         <p className="font-semibold text-slate-700 dark:text-slate-200">No vehicles found matching filters</p>
                       </td>
@@ -723,7 +723,7 @@ export default function TransportManagement() {
                           <td className="py-4 px-6">
                             <div>
                               <p className="font-bold text-slate-900 dark:text-white">{vehicle.vehicleName}</p>
-                              <p className="text-xs text-slate-400 mt-0.5">{vehicle.vehicleModel}</p>
+                              <p className="text-xs text-slate-400 dark:text-slate-300 mt-0.5">{vehicle.vehicleModel}</p>
                             </div>
                           </td>
                           <td className="py-4 px-6 font-mono font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">
@@ -756,7 +756,7 @@ export default function TransportManagement() {
                                   </span>
                                 ))
                               ) : (
-                                <span className="text-xs text-slate-400 italic font-medium">None assigned</span>
+                                <span className="text-xs text-slate-400 dark:text-slate-300 italic font-medium">None assigned</span>
                               )}
                             </div>
                           </td>
@@ -771,7 +771,7 @@ export default function TransportManagement() {
                             <div className="flex justify-end gap-2">
                               <button 
                                 onClick={() => { setSelectedVehicleToView(vehicle); setShowViewVehicleModal(true); }}
-                                className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                                 title="View Details"
                               >
                                 <Eye size={18} />
@@ -779,7 +779,7 @@ export default function TransportManagement() {
                               {hasEditPermission && (
                                 <button 
                                   onClick={() => { setNewVehicle(vehicle); setShowVehicleModal(true); }}
-                                  className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                                   title="Edit Vehicle"
                                 >
                                   <Edit size={18} />
@@ -788,7 +788,7 @@ export default function TransportManagement() {
                               {hasDeletePermission && (
                                 <button 
                                   onClick={() => setVehicleConfirmDeleteState({ isOpen: true, id: vehicle.id, name: vehicle.vehicleName })}
-                                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                   title="Delete Vehicle"
                                 >
                                   <Trash2 size={18} />
@@ -812,7 +812,7 @@ export default function TransportManagement() {
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <div className="relative w-full md:max-w-sm">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300">
                 <Search size={18} />
               </span>
               <input 
@@ -829,7 +829,7 @@ export default function TransportManagement() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider">
                     <th className="py-4 px-6">Student</th>
                     <th className="py-4 px-6">Admission No</th>
                     <th className="py-4 px-6">Assigned Route</th>
@@ -840,7 +840,7 @@ export default function TransportManagement() {
                 <tbody className="divide-y divide-slate-100 text-sm text-slate-600 dark:text-slate-300 font-medium">
                   {filteredStudents.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="py-12 text-center text-slate-400">
+                      <td colSpan="5" className="py-12 text-center text-slate-400 dark:text-slate-300">
                         <Users size={40} className="mx-auto mb-2 text-slate-300" />
                         <p className="font-semibold text-slate-700 dark:text-slate-200">No student assignments found</p>
                       </td>
@@ -862,17 +862,17 @@ export default function TransportManagement() {
                                 {route.name}
                               </span>
                             ) : (
-                              <span className="text-slate-400 italic">Not assigned</span>
+                              <span className="text-slate-400 dark:text-slate-300 italic">Not assigned</span>
                             )}
                           </td>
                           <td className="py-4 px-6">
                             {route ? (
                               <div>
                                 <p className="font-semibold text-slate-800 dark:text-slate-100">{route.driverName || 'N/A'}</p>
-                                <p className="text-xs text-slate-400 mt-0.5">{route.driverPhone || 'N/A'}</p>
+                                <p className="text-xs text-slate-400 dark:text-slate-300 mt-0.5">{route.driverPhone || 'N/A'}</p>
                               </div>
                             ) : (
-                              <span className="text-slate-400">-</span>
+                              <span className="text-slate-400 dark:text-slate-300">-</span>
                             )}
                           </td>
                           <td className="py-4 px-6 text-right">
@@ -932,7 +932,7 @@ export default function TransportManagement() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bus className="text-primary-600" /> {newVehicle.id ? 'Edit Vehicle Details' : 'Register School Vehicle'}
               </h2>
-              <button onClick={() => setShowVehicleModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowVehicleModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1004,7 +1004,7 @@ export default function TransportManagement() {
                         </option>
                       ))}
                     </select>
-                    <p className="text-slate-400 text-xs mt-1.5">Hold <kbd className="font-mono bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded border border-slate-200 dark:border-slate-700">Ctrl</kbd> (or <kbd className="font-mono bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded border border-slate-200 dark:border-slate-700">Cmd</kbd> on Mac) to select multiple routes.</p>
+                    <p className="text-slate-400 dark:text-slate-300 text-xs mt-1.5">Hold <kbd className="font-mono bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded border border-slate-200 dark:border-slate-700">Ctrl</kbd> (or <kbd className="font-mono bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded border border-slate-200 dark:border-slate-700">Cmd</kbd> on Mac) to select multiple routes.</p>
                   </div>
                   
                   <div>
@@ -1025,7 +1025,7 @@ export default function TransportManagement() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Fitness Certificate (FC) Expiry *</label>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Fitness Certificate (FC) Expiry *</label>
                       <input 
                         type="date" required
                         value={newVehicle.fcExpiryDate}
@@ -1034,7 +1034,7 @@ export default function TransportManagement() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Insurance Expiry *</label>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Insurance Expiry *</label>
                       <input 
                         type="date" required
                         value={newVehicle.insuranceExpiryDate}
@@ -1046,7 +1046,7 @@ export default function TransportManagement() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Permit Expiry *</label>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Permit Expiry *</label>
                       <input 
                         type="date" required
                         value={newVehicle.permitExpiryDate}
@@ -1055,7 +1055,7 @@ export default function TransportManagement() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Road Tax Expiry *</label>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Road Tax Expiry *</label>
                       <input 
                         type="date" required
                         value={newVehicle.roadTaxExpiryDate}
@@ -1067,7 +1067,7 @@ export default function TransportManagement() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Pollution Certificate (PUC) Expiry *</label>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Pollution Certificate (PUC) Expiry *</label>
                       <input 
                         type="date" required
                         value={newVehicle.pollutionCertificateExpiryDate}
@@ -1083,7 +1083,7 @@ export default function TransportManagement() {
                 <button 
                   type="button"
                   onClick={() => setShowVehicleModal(false)}
-                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
@@ -1108,7 +1108,7 @@ export default function TransportManagement() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bus className="text-indigo-600" /> Vehicle Information
               </h2>
-              <button onClick={() => setShowViewVehicleModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowViewVehicleModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1117,7 +1117,7 @@ export default function TransportManagement() {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 dark:text-white">{selectedVehicleToView.vehicleName}</h3>
-                  <p className="text-slate-500 font-semibold">{selectedVehicleToView.vehicleModel}</p>
+                  <p className="text-slate-500 dark:text-slate-400 font-semibold">{selectedVehicleToView.vehicleModel}</p>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
                   selectedVehicleToView.status === 'Active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
@@ -1128,17 +1128,17 @@ export default function TransportManagement() {
 
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Registration Number</label>
+                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Registration Number</label>
                   <p className="text-slate-900 dark:text-white font-mono font-bold text-base uppercase">{selectedVehicleToView.registrationNumber}</p>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Seating Capacity</label>
+                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Seating Capacity</label>
                   <p className="text-slate-900 dark:text-white font-semibold text-base">{selectedVehicleToView.seatingCapacity} seats</p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assigned Routes</label>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-2">Assigned Routes</label>
                 <div className="flex flex-wrap gap-2">
                   {selectedVehicleToView.assignedRouteIds && selectedVehicleToView.assignedRouteIds.length > 0 ? (
                     selectedVehicleToView.assignedRouteIds.map(rid => (
@@ -1147,7 +1147,7 @@ export default function TransportManagement() {
                       </span>
                     ))
                   ) : (
-                    <span className="text-slate-400 italic text-sm">No transport routes assigned to this vehicle.</span>
+                    <span className="text-slate-400 dark:text-slate-300 italic text-sm">No transport routes assigned to this vehicle.</span>
                   )}
                 </div>
               </div>
@@ -1165,9 +1165,9 @@ export default function TransportManagement() {
                   ].map((doc, idx) => {
                     const status = getExpiryStatus(doc.date);
                     return (
-                      <div key={idx} className="flex justify-between items-center p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50">
+                      <div key={idx} className="flex justify-between items-center p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
                         <div>
-                          <p className="text-xs font-bold text-slate-500">{doc.label}</p>
+                          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">{doc.label}</p>
                           <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 mt-0.5">{doc.date ? new Date(doc.date).toLocaleDateString('en-GB') : 'N/A'}</p>
                         </div>
                         <div>
@@ -1187,7 +1187,7 @@ export default function TransportManagement() {
             </div>
             
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0">
-              <button onClick={() => setShowViewVehicleModal(false)} className="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-colors">
+              <button onClick={() => setShowViewVehicleModal(false)} className="px-6 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-colors">
                 Close
               </button>
             </div>
@@ -1203,7 +1203,7 @@ export default function TransportManagement() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Navigation className="text-primary-600" /> {newRoute.id ? 'Edit Route' : 'New Route'}
               </h2>
-              <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1278,7 +1278,7 @@ export default function TransportManagement() {
                 <button 
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
@@ -1303,7 +1303,7 @@ export default function TransportManagement() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Users className="text-primary-600" /> Assign Student
               </h2>
-              <button onClick={() => setShowAssignModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowAssignModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1340,7 +1340,7 @@ export default function TransportManagement() {
                 <button 
                   type="button"
                   onClick={() => setShowAssignModal(false)}
-                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
@@ -1365,23 +1365,23 @@ export default function TransportManagement() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bus className="text-indigo-600" /> Route Details
               </h2>
-              <button onClick={() => setShowViewModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowViewModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
 
             <div className="p-6 flex-1 overflow-y-auto custom-scrollbar space-y-6">
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Route Name</label>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Route Name</label>
                 <p className="text-slate-900 dark:text-white font-semibold">{selectedRouteToView.name}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Vehicle No.</label>
+                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Vehicle No.</label>
                   <p className="text-slate-900 dark:text-white font-mono font-semibold">{selectedRouteToView.vehicleNumber}</p>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Capacity</label>
+                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Capacity</label>
                   <p className="text-slate-900 dark:text-white font-semibold">
                     {selectedRouteToView.assignedStudents?.length || 0} / {selectedRouteToView.capacity}
                   </p>
@@ -1389,11 +1389,11 @@ export default function TransportManagement() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Driver Name</label>
+                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Driver Name</label>
                   <p className="text-slate-900 dark:text-white font-semibold">{selectedRouteToView.driverName || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Driver Phone</label>
+                  <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Driver Phone</label>
                   <p className="text-slate-900 dark:text-white font-semibold">{selectedRouteToView.driverPhone || 'N/A'}</p>
                 </div>
               </div>
@@ -1409,7 +1409,7 @@ export default function TransportManagement() {
               )}
 
               <div>
-                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Assigned Students</label>
+                <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-2">Assigned Students</label>
                 {selectedRouteToView.assignedStudents?.length > 0 ? (
                   <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
                     <ul className="divide-y divide-slate-100 max-h-48 overflow-y-auto custom-scrollbar">
@@ -1426,14 +1426,14 @@ export default function TransportManagement() {
                         }
 
                         return (
-                          <li key={idx} className="p-3 text-sm text-slate-700 dark:text-slate-200 flex justify-between items-center hover:bg-slate-100 transition-colors">
+                          <li key={idx} className="p-3 text-sm text-slate-700 dark:text-slate-200 flex justify-between items-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                             <span className="font-medium">{displayName}</span>
                             <div className="flex items-center gap-3">
-                              <span className="text-xs text-slate-400 font-mono">{studentData?.admissionNumber || 'N/A'}</span>
+                              <span className="text-xs text-slate-400 dark:text-slate-300 font-mono">{studentData?.admissionNumber || 'N/A'}</span>
                               <button 
                                 type="button"
                                 onClick={() => handleUnassignStudent(selectedRouteToView.id, sId)}
-                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                 title="Unassign Student"
                               >
                                 <Trash2 size={14} />
@@ -1445,13 +1445,13 @@ export default function TransportManagement() {
                     </ul>
                   </div>
                 ) : (
-                  <p className="text-sm text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">No students assigned to this route yet.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 italic p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">No students assigned to this route yet.</p>
                 )}
               </div>
             </div>
             
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end shrink-0">
-              <button onClick={() => setShowViewModal(false)} className="px-6 py-2 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors">
+              <button onClick={() => setShowViewModal(false)} className="px-6 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors">
                 Close
               </button>
             </div>

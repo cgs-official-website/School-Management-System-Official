@@ -408,7 +408,7 @@ export default function TeacherChat() {
     <div className="p-0 sm:p-4 md:p-8 max-w-7xl mx-auto h-[100dvh] md:h-[calc(100vh-2rem)] flex flex-col bg-slate-50 dark:bg-slate-800 md:bg-transparent">
       <div className="mb-4 md:mb-6 shrink-0 p-4 md:p-0 bg-white dark:bg-slate-900 md:bg-transparent border-b border-slate-200 dark:border-slate-700 md:border-transparent">
         <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Parent Messaging</h1>
-        <p className="text-sm md:text-base text-slate-500 mt-1">Communicate directly with parents of your students.</p>
+        <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-1">Communicate directly with parents of your students.</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-0 md:gap-6 flex-1 min-h-0 bg-white dark:bg-slate-900 md:bg-transparent">
@@ -417,7 +417,7 @@ export default function TeacherChat() {
         <div className={`w-full lg:w-80 flex-col bg-white dark:bg-slate-900 md:border md:border-slate-200 md:rounded-3xl overflow-hidden md:shadow-sm shrink-0 ${
           activeStudent || activeChannel ? 'hidden lg:flex' : 'flex'
         }`}>
-          <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col gap-4">
+          <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col gap-4">
             <div className="flex justify-between items-center">
               <h2 className="font-bold text-slate-700 dark:text-slate-200">Messaging</h2>
               {activeTab === 'dms' && (
@@ -442,13 +442,13 @@ export default function TeacherChat() {
             <div className="flex bg-slate-100 dark:bg-slate-700 rounded-xl p-1">
               <button 
                 onClick={() => { setActiveTab('dms'); setActiveChannel(null); }}
-                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'dms' ? 'bg-white dark:bg-slate-900 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'dms' ? 'bg-white dark:bg-slate-900 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
               >
                 DMs
               </button>
               <button 
                 onClick={() => { setActiveTab('channels'); setActiveStudent(null); }}
-                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'channels' ? 'bg-white dark:bg-slate-900 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 hover:text-slate-700'}`}
+                className={`flex-1 text-sm font-bold py-1.5 rounded-lg transition-colors ${activeTab === 'channels' ? 'bg-white dark:bg-slate-900 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
               >
                 Channels
               </button>
@@ -458,7 +458,7 @@ export default function TeacherChat() {
           <div className="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
             {activeTab === 'dms' ? (
               students.length === 0 ? (
-                <div className="p-6 text-center text-slate-500 text-sm">No students in your class.</div>
+                <div className="p-6 text-center text-slate-500 dark:text-slate-400 text-sm">No students in your class.</div>
               ) : (
                 students.map(student => (
                   <button
@@ -467,7 +467,7 @@ export default function TeacherChat() {
                     className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
                       activeStudent?.id === student.id 
                         ? 'bg-primary-50 border-l-4 border-l-primary-600 border-y-transparent border-r-transparent shadow-sm' 
-                        : 'hover:bg-slate-50 border-l-4 border-transparent'
+                        : 'hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-transparent'
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
@@ -484,16 +484,16 @@ export default function TeacherChat() {
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-slate-500 truncate">Parent Chat</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 truncate">Parent Chat</div>
                     </div>
                   </button>
                 ))
               )
             ) : (
               loadingChannels ? (
-                <div className="p-6 text-center text-slate-500 text-sm">Loading channels...</div>
+                <div className="p-6 text-center text-slate-500 dark:text-slate-400 text-sm">Loading channels...</div>
               ) : channels.length === 0 ? (
-                <div className="p-6 text-center text-slate-500 text-sm">No channels found.</div>
+                <div className="p-6 text-center text-slate-500 dark:text-slate-400 text-sm">No channels found.</div>
               ) : (
                 channels.map(channel => (
                   <button
@@ -502,7 +502,7 @@ export default function TeacherChat() {
                     className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
                       activeChannel?.id === channel.id 
                         ? 'bg-primary-50 border-l-4 border-l-primary-600 border-y-transparent border-r-transparent shadow-sm' 
-                        : 'hover:bg-slate-50 border-l-4 border-transparent'
+                        : 'hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-transparent'
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
@@ -514,7 +514,7 @@ export default function TeacherChat() {
                       <div className="font-bold text-slate-900 dark:text-white truncate flex items-center justify-between">
                         <span>{channel.name}</span>
                       </div>
-                      <div className="text-xs text-slate-500 truncate">{channel.description || 'Channel'}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{channel.description || 'Channel'}</div>
                     </div>
                   </button>
                 ))
@@ -534,7 +534,7 @@ export default function TeacherChat() {
                 <div className="flex items-center gap-4">
                   <button 
                     onClick={() => setActiveStudent(null)}
-                    className="lg:hidden p-2 text-slate-500 hover:bg-slate-200 rounded-full"
+                    className="lg:hidden p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full"
                   >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                   </button>
@@ -545,7 +545,7 @@ export default function TeacherChat() {
                     <h2 className="font-bold text-slate-900 dark:text-white text-lg">
                       {parentName ? `Parent: ${parentName}` : `${activeStudent.firstName} ${activeStudent.lastName}`}
                     </h2>
-                    <p className="text-xs text-slate-500 flex items-center gap-1">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
                       {linkedParentId ? (
                         <><span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span> Student: {activeStudent.firstName} {activeStudent.lastName}</>
                       ) : (
@@ -564,7 +564,7 @@ export default function TeacherChat() {
                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
                       chatRoomData?.status === 'completed'
                         ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50'
+                        : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                     }`}
                   >
                     {chatRoomData?.status === 'completed' ? (
@@ -579,7 +579,7 @@ export default function TeacherChat() {
               {/* Messages Area */}
               <div className="flex-1 p-4 md:p-6 overflow-y-auto overflow-x-hidden custom-scrollbar bg-[#f0f2f5] shadow-inner flex flex-col gap-4 relative">
                 {messages.length === 0 ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-slate-400 text-center">
+                  <div className="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-300 text-center">
                     <MessageSquare size={48} className="mb-4 text-slate-200" />
                     <p>No messages yet.</p>
                     <p className="text-sm">Send a message to start the conversation.</p>
@@ -611,7 +611,7 @@ export default function TeacherChat() {
                         <React.Fragment key={msg.id}>
                           {showDateSeparator && (
                             <div className="flex justify-center my-4 z-10">
-                              <span className="bg-white/80 backdrop-blur-md shadow-sm text-slate-500 text-[11px] font-bold px-4 py-1.5 rounded-full border border-slate-200/50">
+                              <span className="bg-white/80 backdrop-blur-md shadow-sm text-slate-500 dark:text-slate-400 text-[11px] font-bold px-4 py-1.5 rounded-full border border-slate-200/50">
                                 {formatDateSeparator(msg.createdAt)}
                               </span>
                             </div>
@@ -621,8 +621,8 @@ export default function TeacherChat() {
                             {/* Message Options (Me) */}
                             {isMe && !msg.isDeletedForEveryone && (
                               <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10 shrink-0">
-                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200 dark:border-slate-700" title="Copy"><Copy size={14}/></button>}
-                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200 dark:border-slate-700" title="Forward"><Forward size={14}/></button>}
+                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 shadow-sm border border-slate-200 dark:border-slate-700" title="Copy"><Copy size={14}/></button>}
+                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 shadow-sm border border-slate-200 dark:border-slate-700" title="Forward"><Forward size={14}/></button>}
                                 <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: true})} className="p-1.5 bg-white dark:bg-slate-900 text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200 dark:border-slate-700" title="Delete"><Trash2 size={14}/></button>
                               </div>
                             )}
@@ -630,11 +630,11 @@ export default function TeacherChat() {
                             <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
                               isMe 
                                 ? (msg.isDeletedForEveryone ? 'bg-primary-500 text-white/80 rounded-tr-sm' : 'bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-tr-sm shadow-md shadow-primary-500/20')
-                                : (msg.isDeletedForEveryone ? 'bg-slate-50 dark:bg-slate-800 text-slate-500 rounded-tl-sm shadow-sm' : 'bg-white dark:bg-slate-900 border-0 text-slate-800 dark:text-slate-100 rounded-tl-sm shadow-md shadow-slate-200/50')
+                                : (msg.isDeletedForEveryone ? 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-tl-sm shadow-sm' : 'bg-white dark:bg-slate-900 border-0 text-slate-800 dark:text-slate-100 rounded-tl-sm shadow-md shadow-slate-200/50')
                             } relative`}>
                               
                               {renderMessageContent(msg, isMe)}
-                              <span className={`text-[10px] mt-1 flex items-center gap-1 ${isMe ? 'text-primary-200 justify-end' : 'text-slate-400 justify-start'}`}>
+                              <span className={`text-[10px] mt-1 flex items-center gap-1 ${isMe ? 'text-primary-200 justify-end' : 'text-slate-400 dark:text-slate-300 justify-start'}`}>
                                 {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 {isMe && (
                                   <span title={readStatus[msg.id] ? "Seen" : "Sent"} className="font-bold ml-1 tracking-tighter">
@@ -647,8 +647,8 @@ export default function TeacherChat() {
                             {/* Message Options (Non-Me) */}
                             {!isMe && !msg.isDeletedForEveryone && (
                               <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10 shrink-0">
-                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200 dark:border-slate-700" title="Copy"><Copy size={14}/></button>}
-                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200 dark:border-slate-700" title="Forward"><Forward size={14}/></button>}
+                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 shadow-sm border border-slate-200 dark:border-slate-700" title="Copy"><Copy size={14}/></button>}
+                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 shadow-sm border border-slate-200 dark:border-slate-700" title="Forward"><Forward size={14}/></button>}
                                 <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: false})} className="p-1.5 bg-white dark:bg-slate-900 text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200 dark:border-slate-700" title="Delete"><Trash2 size={14}/></button>
                               </div>
                             )}
@@ -671,7 +671,7 @@ export default function TeacherChat() {
           )}
 
           {activeTab === 'dms' && !activeStudent && (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50/50">
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-300 p-8 text-center bg-slate-50/50 dark:bg-slate-800/50">
               <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-4">
                 <MessageSquare size={32} className="text-slate-300" />
               </div>
@@ -687,7 +687,7 @@ export default function TeacherChat() {
                   <div className="flex items-center gap-4">
                     <button 
                       onClick={() => setActiveChannel(null)}
-                      className="lg:hidden p-2 text-slate-500 hover:bg-slate-200 rounded-full"
+                      className="lg:hidden p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full"
                     >
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                     </button>
@@ -698,7 +698,7 @@ export default function TeacherChat() {
                       <h2 className="font-bold text-slate-900 dark:text-white text-lg">
                         {activeChannel.name}
                       </h2>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         {activeChannel.description || 'Group Channel'}
                       </p>
                     </div>
@@ -708,7 +708,7 @@ export default function TeacherChat() {
                 {/* Channel Messages */}
                 <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar bg-slate-50/30">
                   {messages.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-slate-400 text-center">
+                    <div className="h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-300 text-center">
                       <MessageSquare size={48} className="mb-4 text-slate-200" />
                       <p>No messages in this channel yet.</p>
                       <p className="text-sm mt-1">Send the first message!</p>
@@ -718,7 +718,7 @@ export default function TeacherChat() {
                       const isTeacher = msg.senderRole === 'teacher';
                       return (
                         <div key={msg.id} className={`flex flex-col ${isTeacher ? 'items-end' : 'items-start'}`}>
-                          <div className={`text-xs font-semibold mb-1 ${isTeacher ? 'text-primary-600' : 'text-slate-500'}`}>
+                          <div className={`text-xs font-semibold mb-1 ${isTeacher ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400'}`}>
                             {msg.senderName}
                           </div>
                           <div className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 shadow-sm ${
@@ -741,21 +741,21 @@ export default function TeacherChat() {
                                 )}
                                 {msg.mediaType === 'document' && (
                                   <button onClick={() => handleDownload(msg.mediaUrl)} className={`flex items-center gap-3 p-3 rounded-xl transition-colors w-full text-left ${
-                                    isTeacher ? 'bg-primary-500 hover:bg-primary-400 text-white' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700'
+                                    isTeacher ? 'bg-primary-500 hover:bg-primary-400 text-white' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700'
                                   }`}>
                                     <div className={`p-2 rounded-lg shrink-0 ${isTeacher ? 'bg-primary-400 text-white' : 'bg-indigo-100 text-indigo-600'}`}>
                                       <FileIcon size={20} />
                                     </div>
                                     <div className="overflow-hidden">
                                       <div className="font-semibold text-sm truncate">Document File</div>
-                                      <div className={`text-xs ${isTeacher ? 'text-primary-100' : 'text-slate-500'}`}>Click to download</div>
+                                      <div className={`text-xs ${isTeacher ? 'text-primary-100' : 'text-slate-500 dark:text-slate-400'}`}>Click to download</div>
                                     </div>
                                   </button>
                                 )}
                               </div>
                             )}
                             <div className={`text-[10px] mt-2 flex items-center gap-1 ${
-                              isTeacher ? 'text-primary-100' : 'text-slate-400'
+                              isTeacher ? 'text-primary-100' : 'text-slate-400 dark:text-slate-300'
                             }`}>
                               <Clock size={10} />
                               {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -776,7 +776,7 @@ export default function TeacherChat() {
           )}
 
           {activeTab === 'channels' && !activeChannel && (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 p-8 text-center bg-slate-50/50">
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-300 p-8 text-center bg-slate-50/50 dark:bg-slate-800/50">
               <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center mb-4">
                 <MessageSquare size={32} className="text-slate-300" />
               </div>
@@ -798,7 +798,7 @@ export default function TeacherChat() {
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-[90]">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 w-full max-w-sm shadow-xl">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Delete Message</h3>
-            <p className="text-sm text-slate-500 mb-6">Are you sure you want to delete this message?</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Are you sure you want to delete this message?</p>
             <div className="flex flex-col gap-2">
               {deleteModal.isMe && (
                 <button 
@@ -810,13 +810,13 @@ export default function TeacherChat() {
               )}
               <button 
                 onClick={() => handleDeleteAction('for_me')}
-                className="w-full py-3 px-4 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-xl font-bold transition-colors"
+                className="w-full py-3 px-4 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl font-bold transition-colors"
               >
                 Delete for Me
               </button>
               <button 
                 onClick={() => setDeleteModal({ isOpen: false, msgId: null, isMe: false })}
-                className="w-full py-3 px-4 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 rounded-xl font-bold transition-colors mt-2"
+                className="w-full py-3 px-4 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-bold transition-colors mt-2"
               >
                 Cancel
               </button>
@@ -859,14 +859,14 @@ export default function TeacherChat() {
                 />
               ) : (
                 <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700 text-center flex flex-col items-center gap-6">
-                  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 text-slate-500 rounded-3xl flex items-center justify-center shadow-inner">
+                  <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-3xl flex items-center justify-center shadow-inner">
                     <FileIcon size={40} />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate max-w-xs mx-auto">
                       {decodeURIComponent(previewFile.url.split('/').pop().split('?')[0]) || 'Attachment Document'}
                     </h3>
-                    <p className="text-sm text-slate-400 mt-2">Preview is not supported for this file extension.</p>
+                    <p className="text-sm text-slate-400 dark:text-slate-300 mt-2">Preview is not supported for this file extension.</p>
                   </div>
                   <button
                     onClick={() => handleDownload(previewFile.url)}
@@ -887,7 +887,7 @@ export default function TeacherChat() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl p-6 relative">
             <button 
               onClick={() => setShowCreateChannelModal(false)}
-              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+              className="absolute top-4 right-4 p-2 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors"
             >
               <XIcon size={20} />
             </button>

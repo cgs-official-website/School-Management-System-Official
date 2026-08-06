@@ -80,13 +80,13 @@ export default function UpgradePlan() {
           <div className="bg-slate-100 dark:bg-slate-700 p-1 rounded-xl inline-flex relative">
             <button 
               onClick={() => setBillingCycle('monthly')}
-              className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${billingCycle === 'monthly' ? 'text-slate-900 dark:text-white shadow-sm bg-white dark:bg-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${billingCycle === 'monthly' ? 'text-slate-900 dark:text-white shadow-sm bg-white dark:bg-slate-900' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
             >
               Monthly billing
             </button>
             <button 
               onClick={() => setBillingCycle('yearly')}
-              className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${billingCycle === 'yearly' ? 'text-slate-900 dark:text-white shadow-sm bg-white dark:bg-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`relative px-6 py-2.5 rounded-lg text-sm font-semibold transition-all ${billingCycle === 'yearly' ? 'text-slate-900 dark:text-white shadow-sm bg-white dark:bg-slate-900' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
             >
               Yearly billing
               <span className="absolute -top-3 -right-3 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full border border-green-200">Save 20%</span>
@@ -102,7 +102,7 @@ export default function UpgradePlan() {
             <div className="absolute inset-0 border-4 border-primary-500 rounded-full border-t-transparent animate-spin"></div>
           </div>
           <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Processing Payment...</h3>
-          <p className="text-slate-500">Please do not close this window.</p>
+          <p className="text-slate-500 dark:text-slate-400">Please do not close this window.</p>
         </div>
       ) : (
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -132,9 +132,9 @@ export default function UpgradePlan() {
                   <h3 className={`text-xl font-bold mb-2 ${isPopular ? 'text-white' : 'text-slate-900 dark:text-white'}`}>{plan.name}</h3>
                   <div className="flex items-baseline gap-1 mb-2">
                     <span className="text-4xl font-extrabold">₹{price}</span>
-                    <span className={`text-sm font-medium ${isPopular ? 'text-primary-200' : 'text-slate-500'}`}>/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+                    <span className={`text-sm font-medium ${isPopular ? 'text-primary-200' : 'text-slate-500 dark:text-slate-400'}`}>/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
                   </div>
-                  <p className={`text-sm ${isPopular ? 'text-primary-100' : 'text-slate-500'}`}>
+                  <p className={`text-sm ${isPopular ? 'text-primary-100' : 'text-slate-500 dark:text-slate-400'}`}>
                     {plan.userLimit > 0 ? `Up to ${plan.userLimit}` : 'Unlimited'} Users
                   </p>
                 </div>
@@ -162,7 +162,7 @@ export default function UpgradePlan() {
                     disabled={isCurrent}
                     className={`w-full py-3.5 rounded-xl font-bold transition-all flex justify-center items-center gap-2 ${
                       isCurrent
-                        ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 cursor-not-allowed border border-slate-200 dark:border-slate-700'
+                        ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300 cursor-not-allowed border border-slate-200 dark:border-slate-700'
                         : isPopular
                           ? 'bg-amber-400 hover:bg-amber-500 text-amber-950 shadow-lg shadow-amber-400/30'
                           : 'bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200'
@@ -180,7 +180,7 @@ export default function UpgradePlan() {
 
       {/* Trust Badges */}
       {!upgrading && (
-        <div className="mt-20 flex justify-center gap-12 border-t border-slate-200 dark:border-slate-700 pt-12 text-slate-400">
+        <div className="mt-20 flex justify-center gap-12 border-t border-slate-200 dark:border-slate-700 pt-12 text-slate-400 dark:text-slate-300">
           <div className="flex items-center gap-2">
             <Shield size={24} />
             <span className="text-sm font-medium">Bank-level Security</span>

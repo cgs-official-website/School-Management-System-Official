@@ -106,7 +106,7 @@ export default function FilePreviewModal({ fileUrl, isOpen, onClose }) {
               </button>
               <button
                 onClick={onClose}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+                className="p-2 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
               >
                 <LuX size={20} />
               </button>
@@ -141,11 +141,11 @@ export default function FilePreviewModal({ fileUrl, isOpen, onClose }) {
 
             {fileType === 'other' && (
               <div className="flex flex-col items-center justify-center text-center p-8 bg-white dark:bg-slate-900 rounded-xl shadow-sm max-w-md w-full">
-                <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 text-slate-400 rounded-full flex items-center justify-center mb-4">
+                <div className="w-20 h-20 bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300 rounded-full flex items-center justify-center mb-4">
                   <LuFileText size={40} />
                 </div>
                 <h4 className="font-bold text-slate-800 dark:text-slate-100 text-lg mb-2">No Preview Available</h4>
-                <p className="text-slate-500 mb-6">
+                <p className="text-slate-500 dark:text-slate-400 mb-6">
                   This file type cannot be previewed directly in the browser. Please download the file to view it on your device.
                 </p>
                 <button

@@ -240,7 +240,7 @@ export default function TeacherTimetable() {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuCalendarDays className="text-primary-600" /> My Timetable
           </h1>
-          <p className="text-slate-500 mt-1">View your weekly class schedule and teaching periods.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">View your weekly class schedule and teaching periods.</p>
         </div>
         <div className="flex gap-3">
           {isClassTeacher && (
@@ -278,7 +278,7 @@ export default function TeacherTimetable() {
         <div className="flex-1 overflow-auto p-2 sm:p-6 custom-scrollbar">
           <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 min-w-[1000px] xl:min-w-0 items-start">
             {days.map(day => (
-              <div key={day} className="flex flex-col bg-slate-50/50 rounded-2xl border border-slate-100 dark:border-slate-800 p-4">
+              <div key={day} className="flex flex-col bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 p-4">
                 <div className="text-center pb-4 mb-4 border-b border-slate-200 dark:border-slate-700">
                   <h3 className="text-lg font-black text-slate-900 dark:text-white">{day}</h3>
                 </div>
@@ -293,16 +293,16 @@ export default function TeacherTimetable() {
                       <h4 className="text-base font-bold text-slate-900 dark:text-white mb-1">{period.subject}</h4>
                       <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-3">{period.class}</p>
                       {viewType === 'class' && period.teacher && (
-                        <p className="text-xs font-semibold text-slate-500 mb-3">Teacher: {period.teacher}</p>
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-3">Teacher: {period.teacher}</p>
                       )}
                       
-                      <div className="flex items-center justify-between text-xs font-semibold text-slate-500 pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800">
                         <span className="flex items-center gap-1"><LuMapPin size={12} /> {period.room}</span>
                         <span className="flex items-center gap-1 text-primary-500 group-hover:text-primary-600 cursor-pointer"><LuBookOpen size={12} /> Prep</span>
                       </div>
                     </div>
                   )) : (
-                    <div className="h-full flex flex-col items-center justify-center text-slate-400 py-10 opacity-60">
+                    <div className="h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-300 py-10 opacity-60">
                       <LuCalendarDays size={32} className="mb-2" />
                       <p className="text-sm font-bold">No Classes</p>
                     </div>
@@ -321,11 +321,11 @@ export default function TeacherTimetable() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Timetable</h3>
-                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
               </div>
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl transition-colors"
               >
                 <LuX size={20} />
               </button>
@@ -335,7 +335,7 @@ export default function TeacherTimetable() {
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               {/* File Name Input */}
               <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -344,7 +344,7 @@ export default function TeacherTimetable() {
                     onChange={(e) => setExportFileName(e.target.value)}
                     className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
-                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 dark:text-slate-300 font-bold font-mono select-none">.xlsx</span>
                 </div>
               </div>
 
@@ -360,7 +360,7 @@ export default function TeacherTimetable() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
                 >
                   Deselect All
                 </button>
@@ -390,7 +390,7 @@ export default function TeacherTimetable() {
               <button
                 type="button"
                 onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

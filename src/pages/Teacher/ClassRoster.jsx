@@ -197,10 +197,10 @@ export default function ClassRoster() {
     return (
       <div className="p-8 text-center mt-20">
         <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Users size={32} className="text-slate-400" />
+          <Users size={32} className="text-slate-400 dark:text-slate-300" />
         </div>
         <p className="text-xl font-bold text-slate-900 dark:text-white mb-2">Not a Class Teacher</p>
-        <p className="text-slate-500">You must be assigned as a primary Class Teacher to view the class roster.</p>
+        <p className="text-slate-500 dark:text-slate-400">You must be assigned as a primary Class Teacher to view the class roster.</p>
       </div>
     );
   }
@@ -229,7 +229,7 @@ export default function ClassRoster() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start mb-2">
-            <span className="text-slate-500 font-medium text-sm">Class Strength</span>
+            <span className="text-slate-500 dark:text-slate-400 font-medium text-sm">Class Strength</span>
             <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
               <Users size={18} />
             </div>
@@ -239,7 +239,7 @@ export default function ClassRoster() {
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start mb-2">
-            <span className="text-slate-500 font-medium text-sm">Boys</span>
+            <span className="text-slate-500 dark:text-slate-400 font-medium text-sm">Boys</span>
             <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
               <LuUser size={18} />
             </div>
@@ -249,7 +249,7 @@ export default function ClassRoster() {
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start mb-2">
-            <span className="text-slate-500 font-medium text-sm">Girls</span>
+            <span className="text-slate-500 dark:text-slate-400 font-medium text-sm">Girls</span>
             <div className="p-2 bg-pink-50 text-pink-600 rounded-lg">
               <LuUserRound size={18} />
             </div>
@@ -262,7 +262,7 @@ export default function ClassRoster() {
           className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-primary-200 transition-all hover:bg-slate-50/50"
         >
           <div className="flex justify-between items-start mb-2">
-            <span className="text-slate-500 font-medium text-sm">Today's Attendance</span>
+            <span className="text-slate-500 dark:text-slate-400 font-medium text-sm">Today's Attendance</span>
             <div className="flex gap-2">
               <div className="p-2 bg-green-50 text-green-600 rounded-lg" title="Present">
                 <LuUserCheck size={18} />
@@ -274,7 +274,7 @@ export default function ClassRoster() {
           </div>
           <div className="flex items-end gap-2">
             <div className="text-3xl font-black text-green-600">{presentCount}</div>
-            <div className="text-lg font-medium text-slate-400 mb-1">/</div>
+            <div className="text-lg font-medium text-slate-400 dark:text-slate-300 mb-1">/</div>
             <div className="text-3xl font-black text-red-500">{absentCount}</div>
           </div>
         </div>
@@ -282,9 +282,9 @@ export default function ClassRoster() {
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {/* Toolbar */}
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={18} />
             <input 
               type="text" 
               placeholder="Search students by name or admission number..." 
@@ -315,7 +315,7 @@ export default function ClassRoster() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Student Name</th>
                 <th className="p-4">Admission No.</th>
                 <th className="p-4">Gender</th>
@@ -327,9 +327,9 @@ export default function ClassRoster() {
             <tbody className="divide-y divide-slate-100 text-sm">
               {filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="p-16 text-center text-slate-500">
+                  <td colSpan="6" className="p-16 text-center text-slate-500 dark:text-slate-400">
                     <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <GraduationCap size={32} className="text-slate-400" />
+                      <GraduationCap size={32} className="text-slate-400 dark:text-slate-300" />
                     </div>
                     <p className="text-lg font-bold text-slate-900 dark:text-white mb-1">No students found</p>
                     <p>There are no students matching your search, or none assigned to this class yet.</p>
@@ -347,7 +347,7 @@ export default function ClassRoster() {
                           <div className="font-bold text-slate-900 dark:text-white">
                             {student.firstName} {student.lastName}
                           </div>
-                          <div className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                          <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
                             <CheckCircle2 size={10} className="text-green-500"/> Active
                           </div>
                         </div>
@@ -361,20 +361,20 @@ export default function ClassRoster() {
                     </td>
                     <td className="p-4 text-slate-600 dark:text-slate-300">
                       <div className="flex items-center gap-2">
-                        <LuBus size={14} className="text-slate-400" />
-                        {student.busRoute || student.transportDetails || <span className="text-slate-400 italic">—</span>}
+                        <LuBus size={14} className="text-slate-400 dark:text-slate-300" />
+                        {student.busRoute || student.transportDetails || <span className="text-slate-400 dark:text-slate-300 italic">—</span>}
                       </div>
                     </td>
                     <td className="p-4 text-slate-600 dark:text-slate-300">
                       {(() => {
                          const routeName = student.busRoute || student.transportDetails;
-                         if (!routeName) return <span className="text-slate-400 italic">—</span>;
+                         if (!routeName) return <span className="text-slate-400 dark:text-slate-300 italic">—</span>;
                          const matchedRoute = transportRoutes.find(r => r.name === routeName || r.id === routeName);
                          return matchedRoute?.vehicleNumber ? (
                            <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-xs border border-slate-200 dark:border-slate-700">
                              {matchedRoute.vehicleNumber}
                            </span>
-                         ) : <span className="text-slate-400 italic">Unknown</span>;
+                         ) : <span className="text-slate-400 dark:text-slate-300 italic">Unknown</span>;
                       })()}
                     </td>
                     <td className="p-4 pr-6 text-right">
@@ -409,11 +409,11 @@ export default function ClassRoster() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Student Roster</h3>
-                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
               </div>
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl transition-colors"
               >
                 <LuX size={20} />
               </button>
@@ -423,7 +423,7 @@ export default function ClassRoster() {
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               {/* File Name Input */}
               <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -432,7 +432,7 @@ export default function ClassRoster() {
                     onChange={(e) => setExportFileName(e.target.value)}
                     className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
-                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 dark:text-slate-300 font-bold font-mono select-none">.xlsx</span>
                 </div>
               </div>
 
@@ -448,7 +448,7 @@ export default function ClassRoster() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
                 >
                   Deselect All
                 </button>
@@ -478,7 +478,7 @@ export default function ClassRoster() {
               <button
                 type="button"
                 onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

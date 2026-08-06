@@ -54,7 +54,7 @@ export default function ParentGrades() {
 
   if (!studentId) {
     return (
-      <div className="p-8 text-center text-slate-500">
+      <div className="p-8 text-center text-slate-500 dark:text-slate-400">
         You must link a student to your account to view report cards.
       </div>
     );
@@ -75,7 +75,7 @@ export default function ParentGrades() {
         <div className="flex justify-between items-center mb-6 print:hidden">
           <button 
             onClick={() => setSelectedReport(null)}
-            className="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             <ArrowLeft size={16} /> Back to List
           </button>
@@ -93,7 +93,7 @@ export default function ParentGrades() {
           <div className="pb-4 flex items-center border-b-[3px]" style={{ borderColor: template.themeColor }}>
             {template.header.showLogo && (
               <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center border-2 shrink-0 mr-6" style={{ borderColor: template.themeColor }}>
-                <span className="text-[10px] text-slate-400 font-sans font-extrabold">LOGO</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-300 font-sans font-extrabold">LOGO</span>
               </div>
             )}
             <div className={`flex-1 ${template.header.showLogo ? 'text-center' : 'text-left'}`}>
@@ -116,26 +116,26 @@ export default function ParentGrades() {
             <h2 className="text-xl font-bold uppercase underline decoration-2 underline-offset-4" style={{ decorationColor: template.themeColor }}>
               {template.header.title}
             </h2>
-            <p className="text-sm font-semibold text-slate-500 mt-1">{template.header.subtitle}</p>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mt-1">{template.header.subtitle}</p>
           </div>
 
           {/* Student Info */}
           <div className="pb-6">
             <div className="grid grid-cols-2 gap-x-8 gap-y-2.5 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-sans">
               <div className="flex justify-between border-b border-slate-150 pb-1">
-                <span className="font-bold text-slate-500 text-xs uppercase">Student Name:</span>
+                <span className="font-bold text-slate-500 dark:text-slate-400 text-xs uppercase">Student Name:</span>
                 <span className="font-bold text-slate-900 dark:text-white text-xs">{selectedReport.studentName}</span>
               </div>
               <div className="flex justify-between border-b border-slate-150 pb-1">
-                <span className="font-bold text-slate-500 text-xs uppercase">Class & Section:</span>
+                <span className="font-bold text-slate-500 dark:text-slate-400 text-xs uppercase">Class & Section:</span>
                 <span className="font-bold text-slate-900 dark:text-white text-xs">{selectedReport.className}</span>
               </div>
               <div className="flex justify-between border-b border-slate-150 pb-1">
-                <span className="font-bold text-slate-500 text-xs uppercase">Examination:</span>
+                <span className="font-bold text-slate-500 dark:text-slate-400 text-xs uppercase">Examination:</span>
                 <span className="font-bold text-slate-900 dark:text-white text-xs">{selectedReport.examName}</span>
               </div>
               <div className="flex justify-between border-b border-slate-150 pb-1">
-                <span className="font-bold text-slate-500 text-xs uppercase">Academic Year:</span>
+                <span className="font-bold text-slate-500 dark:text-slate-400 text-xs uppercase">Academic Year:</span>
                 <span className="font-bold text-slate-900 dark:text-white text-xs">2026-2027</span>
               </div>
             </div>
@@ -162,7 +162,7 @@ export default function ParentGrades() {
                     <tr key={id} className="hover:bg-slate-50/50">
                       <td className="p-3 border border-slate-300 dark:border-slate-600 font-semibold text-slate-900 dark:text-white">{item.title || 'Assessment'}</td>
                       <td className="p-3 border border-slate-300 dark:border-slate-600 text-center font-bold text-slate-800 dark:text-slate-100">{item.obtained}</td>
-                      <td className="p-3 border border-slate-300 dark:border-slate-600 text-center text-slate-500">{item.max}</td>
+                      <td className="p-3 border border-slate-300 dark:border-slate-600 text-center text-slate-500 dark:text-slate-400">{item.max}</td>
                       <td className="p-3 border border-slate-300 dark:border-slate-600 text-center font-bold text-slate-800 dark:text-slate-100">{percentage}</td>
                     </tr>
                   );
@@ -173,11 +173,11 @@ export default function ParentGrades() {
             {/* Performance summary card */}
             <div className="mt-8 flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-sans">
               <div>
-                <span className="text-xs font-bold text-slate-500 uppercase">Obtained Marks:</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Obtained Marks:</span>
                 <p className="text-lg font-black text-slate-900 dark:text-white">{selectedReport.totalObtained} / {selectedReport.totalMax}</p>
               </div>
               <div className="text-right">
-                <span className="text-xs font-bold text-slate-500 uppercase">Overall Percentage:</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Overall Percentage:</span>
                 <p className="text-2xl font-black" style={{ color: template.themeColor }}>{selectedReport.percentage}%</p>
               </div>
             </div>
@@ -187,11 +187,11 @@ export default function ParentGrades() {
           <div className="pt-12 grid grid-cols-2 gap-12 text-center font-sans text-xs mt-auto">
             <div>
               <div className="border-b border-slate-300 dark:border-slate-600 mx-auto w-48 h-8"></div>
-              <p className="text-slate-500 font-bold uppercase tracking-wider mt-2">Class Teacher Signature</p>
+              <p className="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-2">Class Teacher Signature</p>
             </div>
             <div>
               <div className="border-b border-slate-300 dark:border-slate-600 mx-auto w-48 h-8"></div>
-              <p className="text-slate-500 font-bold uppercase tracking-wider mt-2">Principal Signature</p>
+              <p className="text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-2">Principal Signature</p>
             </div>
           </div>
         </div>
@@ -207,7 +207,7 @@ export default function ParentGrades() {
         </div>
         <div>
           <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Academic Report Cards</h1>
-          <p className="text-slate-500 text-sm mt-0.5 font-medium">View and download your child's published academic progress records</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5 font-medium">View and download your child's published academic progress records</p>
         </div>
       </div>
 
@@ -215,7 +215,7 @@ export default function ParentGrades() {
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-12 text-center shadow-sm">
           <FileIcon className="mx-auto text-slate-300 mb-4" size={56} />
           <h3 className="text-slate-900 dark:text-white font-bold text-lg mb-1">No Report Cards Published</h3>
-          <p className="text-slate-500 text-sm max-w-sm mx-auto">
+          <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto">
             Official term-end report cards will appear here once finalized and published by the school administration.
           </p>
         </div>
@@ -231,17 +231,17 @@ export default function ParentGrades() {
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-primary-50 text-primary-700 border border-primary-100">
                     {report.className}
                   </span>
-                  <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-slate-400 dark:text-slate-300 flex items-center gap-1">
                     <Calendar size={12} />
                     {report.publishedAt ? new Date(report.publishedAt).toLocaleDateString('en-GB') : 'N/A'}
                   </span>
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-4">{report.examName}</h3>
-                <p className="text-xs text-slate-500 mt-1 font-semibold">Published by: {report.publishedBy}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-semibold">Published by: {report.publishedBy}</p>
 
                 <div className="mt-6 flex items-baseline gap-1">
                   <span className="text-3xl font-black text-slate-900 dark:text-white">{report.percentage}%</span>
-                  <span className="text-xs font-bold text-slate-400 uppercase">Overall Result</span>
+                  <span className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase">Overall Result</span>
                 </div>
               </div>
 

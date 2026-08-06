@@ -58,10 +58,10 @@ export default function SuperAdminDashboard() {
             </div>
             <div className="min-w-0">
               <h2 className="text-xl font-black text-slate-900 dark:text-white leading-tight truncate">School</h2>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">SuperAdmin</p>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-0.5">SuperAdmin</p>
             </div>
           </div>
-          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600 p-1">
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-1">
             <LuX size={24} />
           </button>
         </div>
@@ -101,12 +101,12 @@ export default function SuperAdminDashboard() {
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{userProfile?.email?.split('@')[0] || 'SuperAdmin'}</p>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">Platform Owner</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-0.5">Platform Owner</p>
               </div>
             </div>
             <button 
               onClick={handleLogout}
-              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+              className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
               title="Logout"
             >
               <LuLogOut size={20} />

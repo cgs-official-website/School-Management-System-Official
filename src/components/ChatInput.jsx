@@ -113,13 +113,13 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
             </div>
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate max-w-[200px] md:max-w-xs">{mediaFile.name}</p>
-              <p className="text-xs text-slate-500">{(mediaFile.size / 1024).toFixed(1)} KB</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{(mediaFile.size / 1024).toFixed(1)} KB</p>
             </div>
           </div>
           <button 
             type="button" 
             onClick={() => setMediaFile(null)}
-            className="p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 rounded-full transition-colors"
+            className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 hover:text-slate-600 dark:hover:text-slate-300 rounded-full transition-colors"
           >
             <X size={16} />
           </button>
@@ -134,7 +134,7 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
             <button 
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-3 text-slate-500 hover:text-primary-600 hover:bg-white rounded-full transition-all shrink-0 shadow-sm border border-transparent hover:border-slate-200"
+              className="p-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 rounded-full transition-all shrink-0 shadow-sm border border-transparent hover:border-slate-200"
               title="Attach File"
             >
               <Paperclip size={22} />
@@ -153,7 +153,7 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Type a message..."
-                className="w-full max-h-32 px-4 py-3 bg-transparent border-none focus:outline-none focus:ring-0 resize-none font-medium custom-scrollbar text-sm text-slate-700 dark:text-slate-200 placeholder-slate-400"
+                className="w-full max-h-32 px-4 py-3 bg-transparent border-none focus:outline-none focus:ring-0 resize-none font-medium custom-scrollbar text-sm text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -179,7 +179,7 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
               <button 
                 type="button"
                 onClick={startRecording}
-                className="p-3 text-slate-500 hover:text-primary-600 hover:bg-white rounded-full transition-all shrink-0 shadow-sm border border-slate-200 dark:border-slate-700 hover:border-primary-200"
+                className="p-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 rounded-full transition-all shrink-0 shadow-sm border border-slate-200 dark:border-slate-700 hover:border-primary-200"
                 title="Hold to Record"
               >
                 <Mic size={20} />

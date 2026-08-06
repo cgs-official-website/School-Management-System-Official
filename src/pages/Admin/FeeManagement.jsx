@@ -229,7 +229,7 @@ export default function FeeManagement() {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Fee Management</h1>
-          <p className="text-slate-500 mt-1">Track revenue, manage student payments, and monitor fee dues alerts.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Track revenue, manage student payments, and monitor fee dues alerts.</p>
         </div>
         {hasCreatePermission && (
           <button 
@@ -280,7 +280,7 @@ export default function FeeManagement() {
             {statusFilter !== 'all' && (
               <button
                 onClick={() => setStatusFilter('all')}
-                className="px-3 py-2.5 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 transition-colors"
+                className="px-3 py-2.5 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold border border-slate-200 dark:border-slate-700 transition-colors"
               >
                 Reset Filter
               </button>
@@ -320,7 +320,7 @@ export default function FeeManagement() {
             {statusFilter !== 'all' && (
               <button
                 onClick={() => setStatusFilter('all')}
-                className="px-3 py-2 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700"
+                className="px-3 py-2 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700"
               >
                 Reset
               </button>
@@ -336,7 +336,7 @@ export default function FeeManagement() {
             <Receipt size={28} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Expected</p>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Expected</p>
             <p className="text-2xl font-black text-slate-900 dark:text-white">₹{stats.expected.toLocaleString()}</p>
           </div>
         </div>
@@ -346,7 +346,7 @@ export default function FeeManagement() {
             <TrendingUp size={28} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Collected Revenue</p>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Collected Revenue</p>
             <p className="text-2xl font-black text-slate-900 dark:text-white">₹{stats.collected.toLocaleString()}</p>
           </div>
         </div>
@@ -358,7 +358,7 @@ export default function FeeManagement() {
             <AlertTriangle size={28} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               {feeAlerts.overdueCount > 0 ? 'Outstanding (Overdue Alert)' : 'Outstanding'}
             </p>
             <p className={`text-2xl font-black ${feeAlerts.overdueCount > 0 ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>
@@ -375,10 +375,10 @@ export default function FeeManagement() {
 
       {/* Invoices Table */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
           {/* Search */}
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={18} />
             <input 
               type="text" 
               placeholder="Search by student, admission no, or fee name..." 
@@ -391,7 +391,7 @@ export default function FeeManagement() {
           <div className="flex flex-wrap items-center gap-3">
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-400 uppercase">Status:</span>
+              <span className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase">Status:</span>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -409,7 +409,7 @@ export default function FeeManagement() {
             {/* Period Filter */}
             {periods.length > 0 && (
               <div className="flex items-center gap-2">
-                <Filter size={16} className="text-slate-400 shrink-0" />
+                <Filter size={16} className="text-slate-400 dark:text-slate-300 shrink-0" />
                 <select
                   value={filterPeriodId}
                   onChange={(e) => setFilterPeriodId(e.target.value)}
@@ -429,7 +429,7 @@ export default function FeeManagement() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Student</th>
                 <th className="p-4">Fee Details</th>
                 <th className="p-4">Collection Period</th>
@@ -441,7 +441,7 @@ export default function FeeManagement() {
             <tbody className="divide-y divide-slate-100 text-sm">
               {filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="p-16 text-center text-slate-500">
+                  <td colSpan="6" className="p-16 text-center text-slate-500 dark:text-slate-400">
                     <CreditCard size={48} className="mx-auto mb-4 text-slate-300" />
                     <p className="font-bold text-slate-900 dark:text-white mb-1">No invoices found</p>
                     <p>
@@ -476,18 +476,18 @@ export default function FeeManagement() {
                               <div className="font-bold text-slate-900 dark:text-white">
                                 {student.firstName} {student.lastName}
                               </div>
-                              <div className="text-xs text-slate-500 font-mono mt-0.5">
+                              <div className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">
                                 {student.admissionNumber}
                               </div>
                             </div>
                           </div>
                         ) : (
-                          <span className="text-slate-400 italic">Unknown Student</span>
+                          <span className="text-slate-400 dark:text-slate-300 italic">Unknown Student</span>
                         )}
                       </td>
                       <td className="p-4">
                         <div className="font-bold text-slate-900 dark:text-white">{inv.feeName}</div>
-                        <div className={`text-xs mt-0.5 ${isOverdue ? 'text-red-600 font-bold' : 'text-slate-500'}`}>
+                        <div className={`text-xs mt-0.5 ${isOverdue ? 'text-red-600 font-bold' : 'text-slate-500 dark:text-slate-400'}`}>
                           Due: {inv.dueDate || 'N/A'}
                         </div>
                       </td>
@@ -497,7 +497,7 @@ export default function FeeManagement() {
                             {inv.collectionPeriodName}
                           </span>
                         ) : (
-                          <span className="text-xs text-slate-400 italic">General</span>
+                          <span className="text-xs text-slate-400 dark:text-slate-300 italic">General</span>
                         )}
                       </td>
                       <td className="p-4 font-mono font-bold text-slate-700 dark:text-slate-200">
@@ -547,7 +547,7 @@ export default function FeeManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Assign New Fee</h2>
-              <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -577,7 +577,7 @@ export default function FeeManagement() {
                       ))}
                     </select>
                   ) : (
-                    <div className="px-4 py-2.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 text-sm text-slate-400 bg-slate-50 dark:bg-slate-800">
+                    <div className="px-4 py-2.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 text-sm text-slate-400 dark:text-slate-300 bg-slate-50 dark:bg-slate-800">
                       No periods configured. Fee will be saved as "General".
                     </div>
                   )}
@@ -587,7 +587,7 @@ export default function FeeManagement() {
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">
                     Fee Description
-                    <span className="ml-1 text-xs font-normal text-slate-400">(auto-filled from period, editable)</span>
+                    <span className="ml-1 text-xs font-normal text-slate-400 dark:text-slate-300">(auto-filled from period, editable)</span>
                   </label>
                   <input 
                     type="text" required
@@ -633,7 +633,7 @@ export default function FeeManagement() {
                       <option key={c.id} value={c.id}>{c.name} - Section {c.section}</option>
                     ))}
                   </select>
-                  <p className="text-xs text-slate-500 mt-2">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
                     Invoices will be automatically generated for all students currently enrolled in this class.
                   </p>
                 </div>
@@ -651,7 +651,7 @@ export default function FeeManagement() {
                 <button 
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                  className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>

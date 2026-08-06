@@ -304,7 +304,7 @@ export default function PublicAdmissionForm() {
           <div className="my-8 p-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 text-left space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3 gap-2">
               <div>
-                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Application Reference No.</p>
+                <p className="text-xs text-slate-400 dark:text-slate-300 font-bold uppercase tracking-wider">Application Reference No.</p>
                 <p className="text-2xl font-mono font-black text-primary-600">{submittedData.applicationNumber}</p>
               </div>
               <span className="self-start sm:self-center px-3 py-1 bg-amber-100 text-amber-800 rounded-lg text-xs font-bold border border-amber-200">
@@ -314,32 +314,32 @@ export default function PublicAdmissionForm() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-xs text-slate-400 font-semibold">Applicant Name</p>
+                <p className="text-xs text-slate-400 dark:text-slate-300 font-semibold">Applicant Name</p>
                 <p className="font-bold text-slate-800 dark:text-slate-100">{submittedData.studentName}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-semibold">Applying For Class</p>
+                <p className="text-xs text-slate-400 dark:text-slate-300 font-semibold">Applying For Class</p>
                 <p className="font-bold text-slate-800 dark:text-slate-100">{submittedData.targetClassName || 'General Admission'}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-semibold">Parent / Guardian</p>
+                <p className="text-xs text-slate-400 dark:text-slate-300 font-semibold">Parent / Guardian</p>
                 <p className="font-bold text-slate-800 dark:text-slate-100">{submittedData.parentName} ({submittedData.parentRelationship})</p>
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-semibold">Primary Contact</p>
+                <p className="text-xs text-slate-400 dark:text-slate-300 font-semibold">Primary Contact</p>
                 <p className="font-bold text-slate-800 dark:text-slate-100">{submittedData.parentPhone}</p>
               </div>
             </div>
           </div>
 
-          <p className="text-xs text-slate-500 mb-8 max-w-lg mx-auto">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-8 max-w-lg mx-auto">
             Please save your Application Reference Number. Once the school administration reviews and approves your submission, you will receive an admission notification and registration credentials.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
             <button
               onClick={() => window.print()}
-              className="px-6 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold rounded-2xl transition-colors flex items-center gap-2 text-sm"
+              className="px-6 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-2xl transition-colors flex items-center gap-2 text-sm"
             >
               <Printer size={18} /> Print Application
             </button>
@@ -392,7 +392,7 @@ export default function PublicAdmissionForm() {
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
               {school?.schoolName || 'School Student Admission'}
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
               {school?.tagline || school?.address || 'Please complete the application form below. All accurate details will be verified by the school administration.'}
             </p>
           </div>
@@ -409,7 +409,7 @@ export default function PublicAdmissionForm() {
               </div>
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">Student Personal Details</h3>
-                <p className="text-xs text-slate-500">Provide personal identity details of the applicant student</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Provide personal identity details of the applicant student</p>
               </div>
             </div>
 
@@ -421,14 +421,14 @@ export default function PublicAdmissionForm() {
                 ) : (
                   <div className="text-center p-2">
                     <User size={36} className="text-slate-300" />
-                    <span className="text-[10px] text-slate-400 block mt-1">Passport Size</span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-300 block mt-1">Passport Size</span>
                   </div>
                 )}
               </div>
               <div className="text-center sm:text-left">
                 <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">Upload Student Photo (Optional)</p>
-                <p className="text-xs text-slate-500 mb-3">Accepted formats: JPG, PNG, WEBP (Max 5MB)</p>
-                <label className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl cursor-pointer shadow-sm transition-all">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">Accepted formats: JPG, PNG, WEBP (Max 5MB)</p>
+                <label className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl cursor-pointer shadow-sm transition-all">
                   <UploadCloud size={16} /> Choose Photo
                     <input type="file" accept="image/*" onChange={handlePhotoSelect} className="hidden" />
                   </label>
@@ -600,7 +600,7 @@ export default function PublicAdmissionForm() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white">2. Academic & Target Class</h2>
-                <p className="text-xs text-slate-500">Select grade and past schooling details</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Select grade and past schooling details</p>
               </div>
             </div>
 
@@ -695,7 +695,7 @@ export default function PublicAdmissionForm() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white">3. Parent & Guardian Information</h2>
-                <p className="text-xs text-slate-500">Contact details for correspondence and emergency</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Contact details for correspondence and emergency</p>
               </div>
             </div>
 
@@ -812,7 +812,7 @@ export default function PublicAdmissionForm() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white">4. Residential Address</h2>
-                <p className="text-xs text-slate-500">Current home address for correspondence</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Current home address for correspondence</p>
               </div>
             </div>
 
@@ -887,7 +887,7 @@ export default function PublicAdmissionForm() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-slate-900 dark:text-white">5. Declaration & Security Verification</h2>
-                <p className="text-xs text-slate-500">Confirm accuracy of information</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Confirm accuracy of information</p>
               </div>
             </div>
 
@@ -915,7 +915,7 @@ export default function PublicAdmissionForm() {
 
             {/* Submit CTA */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <p className="text-xs text-slate-400 text-center sm:text-left">
+              <p className="text-xs text-slate-400 dark:text-slate-300 text-center sm:text-left">
                 By submitting, your application will be queued for administrative review.
               </p>
               <button
@@ -940,7 +940,7 @@ export default function PublicAdmissionForm() {
         </form>
 
         {/* Footer info */}
-        <div className="mt-8 text-center text-xs text-slate-400">
+        <div className="mt-8 text-center text-xs text-slate-400 dark:text-slate-300">
           Powered by School Management System official portal.
         </div>
       </div>

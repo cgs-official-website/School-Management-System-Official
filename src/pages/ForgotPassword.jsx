@@ -98,7 +98,7 @@ export default function ForgotPassword() {
             <img src="/logo.png" alt="School Logo" className="w-auto h-12 object-contain group-hover:scale-105 transition-transform drop-shadow-sm filter invert" />
           </Link>
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Reset Password</h2>
-          <p className="mt-2 text-sm text-slate-500 text-center">Enter your email address and we'll send you a link to reset your password.</p>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 text-center">Enter your email address and we'll send you a link to reset your password.</p>
         </div>
 
         <div className="bg-white/80 backdrop-blur-xl border border-slate-200 dark:border-slate-700 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-3xl p-8 sm:p-10">
@@ -118,7 +118,7 @@ export default function ForgotPassword() {
                 />
                 <label 
                   htmlFor="email" 
-                  className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600 cursor-text"
+                  className="absolute left-5 -top-2.5 bg-white dark:bg-slate-900 px-1 text-sm font-bold text-slate-500 dark:text-slate-400 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:top-4 peer-focus:-top-2.5 peer-focus:text-sm peer-focus:text-primary-600 cursor-text"
                 >
                   Email Address
                 </label>
@@ -156,12 +156,12 @@ export default function ForgotPassword() {
                 <CheckCircle size={32} />
               </div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Check your email</h3>
-              <p className="text-slate-500 mb-8 leading-relaxed">
+              <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
                 If an account exists for <span className="text-slate-900 dark:text-white font-medium">{email}</span>, a reset link has been sent.
               </p>
               <button 
                 onClick={() => navigate('/login')}
-                className="w-full py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold rounded-xl hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full py-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 Return to Login
               </button>
@@ -171,7 +171,7 @@ export default function ForgotPassword() {
 
         {!success && (
           <div className="mt-8 text-center">
-            <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors focus:outline-none focus:underline">
+            <Link to="/login" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors focus:outline-none focus:underline">
               <ArrowLeft size={16} /> Back to Login
             </Link>
           </div>

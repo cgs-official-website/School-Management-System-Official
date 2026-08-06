@@ -28,7 +28,7 @@ export default function BrandingSettings() {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuPalette className="text-primary-600" /> White-Labeling & Branding
           </h1>
-          <p className="text-slate-500 mt-1">Configure default colors, logos, and platform names for all tenants.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Configure default colors, logos, and platform names for all tenants.</p>
         </div>
         <button 
           onClick={handleSave}
@@ -50,7 +50,7 @@ export default function BrandingSettings() {
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Platform Name</label>
-                  <p className="text-xs text-slate-500 mb-2">This is the default text shown if a school hasn't uploaded their own logo.</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">This is the default text shown if a school hasn't uploaded their own logo.</p>
                   <input 
                     type="text" 
                     value={settings.platformName}
@@ -61,7 +61,7 @@ export default function BrandingSettings() {
                 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Global Primary Color</label>
-                  <p className="text-xs text-slate-500 mb-2">Used for buttons, links, and highlights across the entire platform.</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Used for buttons, links, and highlights across the entire platform.</p>
                   <div className="flex items-center gap-4">
                     <input 
                       type="color" 
@@ -120,7 +120,7 @@ export default function BrandingSettings() {
                     <span className="text-white font-bold text-sm">Upload New Image</span>
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">Recommended size: 1920x1080px. Kept under 1MB for fast loading.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Recommended size: 1920x1080px. Kept under 1MB for fast loading.</p>
               </div>
             </section>
 

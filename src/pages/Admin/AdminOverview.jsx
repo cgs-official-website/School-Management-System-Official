@@ -274,13 +274,13 @@ export default function AdminOverview() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Dashboard Overview</h1>
-            <p className="text-sm text-slate-500 mt-1">Welcome back, here's what's happening at your school today.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Welcome back, here's what's happening at your school today.</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             
             <button 
               onClick={() => setIsConfigModalOpen(true)}
-              className="flex items-center gap-2 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-5 py-2.5 rounded-xl shadow-sm font-semibold transition-all active:scale-[0.98]"
+              className="flex items-center gap-2 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 px-5 py-2.5 rounded-xl shadow-sm font-semibold transition-all active:scale-[0.98]"
             >
               <Settings size={18} />
               Customize
@@ -298,14 +298,14 @@ export default function AdminOverview() {
               {isInviteDropdownOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-100 dark:border-slate-800 p-2 z-50">
                   <div className="flex flex-col space-y-1">
-                    <button onClick={() => handleCopyLink('teacher')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 hover:text-cyan-600 rounded-lg transition-colors group">
+                    <button onClick={() => handleCopyLink('teacher')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-cyan-600 rounded-lg transition-colors group">
                       <div className="flex items-center gap-3">
                         <Users size={18} className="text-cyan-600 group-hover:scale-110 transition-transform" />
                         Teacher Link
                       </div>
                       {copiedRole === 'teacher' ? <Check size={16} className="text-primary-500" /> : <Copy size={16} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />}
                     </button>
-                    <button onClick={() => handleCopyLink('parent')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 hover:text-amber-600 rounded-lg transition-colors group">
+                    <button onClick={() => handleCopyLink('parent')} className="flex items-center justify-between w-full px-3 py-2.5 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-amber-600 rounded-lg transition-colors group">
                       <div className="flex items-center gap-3">
                         <User size={18} className="text-amber-600 group-hover:scale-110 transition-transform" />
                         Parent Link
@@ -318,7 +318,7 @@ export default function AdminOverview() {
             </div>
 
             <div className="hidden sm:flex items-center gap-2 rounded-lg bg-white dark:bg-slate-900 px-4 py-2.5 shadow-sm border border-slate-200 dark:border-slate-700">
-              <Calendar className="h-5 w-5 text-slate-400" />
+              <Calendar className="h-5 w-5 text-slate-400 dark:text-slate-300" />
               <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
                 {new Date().toLocaleDateString('en-GB')}
               </span>
@@ -336,11 +336,11 @@ export default function AdminOverview() {
                   {stat.icon}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-500">{stat.title}</p>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{stat.title}</p>
                   <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
                 </div>
               </div>
-              <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500">
+              <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                 <TrendingUp className="h-3.5 w-3.5 text-emerald-500" />
                 <span>{stat.trend}</span>
               </div>
@@ -366,13 +366,13 @@ export default function AdminOverview() {
                 <div key={alert.id} className="flex items-start justify-between gap-4 pt-3 first:pt-0">
                   <div>
                     <p className="font-bold text-slate-800 dark:text-slate-100 text-sm">{alert.message}</p>
-                    <p className="text-[11px] text-slate-500 mt-1">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                       Cutoff Date: <span className="font-semibold text-slate-700 dark:text-slate-200">{alert.date}</span>
                     </p>
                   </div>
                   <button
                     onClick={() => handleDismissAlert(alert.id)}
-                    className="text-xs font-bold text-slate-500 hover:text-red-600 hover:bg-red-50/80 px-2 py-1 rounded-lg transition-colors shrink-0"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50/80 px-2 py-1 rounded-lg transition-colors shrink-0"
                   >
                     Dismiss
                   </button>
@@ -392,14 +392,14 @@ export default function AdminOverview() {
               {recentNotices.length > 0 ? (
                 <div className="space-y-4">
                   {recentNotices.map((notice) => (
-                    <div key={notice.id} className="group relative flex gap-4 rounded-xl border border-slate-100 dark:border-slate-800 p-4 transition-all hover:bg-slate-50">
+                    <div key={notice.id} className="group relative flex gap-4 rounded-xl border border-slate-100 dark:border-slate-800 p-4 transition-all hover:bg-slate-50 dark:hover:bg-slate-800">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">
                         <Bell className="h-5 w-5" />
                       </div>
                       <div>
                         <h3 className="font-medium text-slate-900 dark:text-white">{notice.title}</h3>
-                        <p className="mt-1 line-clamp-2 text-sm text-slate-500">{notice.content}</p>
-                        <p className="mt-2 text-xs font-medium text-slate-400">
+                        <p className="mt-1 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">{notice.content}</p>
+                        <p className="mt-2 text-xs font-medium text-slate-400 dark:text-slate-300">
                           {new Date(notice.date).toLocaleDateString('en-GB')} • {notice.targetAudience ? notice.targetAudience.charAt(0).toUpperCase() + notice.targetAudience.slice(1) : 'All'}
                         </p>
                       </div>
@@ -409,10 +409,10 @@ export default function AdminOverview() {
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <div className="mb-3 rounded-full bg-slate-50 dark:bg-slate-800 p-3">
-                    <Bell className="h-6 w-6 text-slate-400" />
+                    <Bell className="h-6 w-6 text-slate-400 dark:text-slate-300" />
                   </div>
                   <h3 className="text-sm font-medium text-slate-900 dark:text-white">No notices yet</h3>
-                  <p className="mt-1 text-sm text-slate-500">Create a notice to keep everyone informed.</p>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Create a notice to keep everyone informed.</p>
                 </div>
               )}
             </div>
@@ -481,7 +481,7 @@ export default function AdminOverview() {
               )}
 
               {!hasModule('fees') && !hasModule('calendar') && !hasModule('hr-payroll') && (
-                <div className="text-center text-sm text-slate-400 py-6">
+                <div className="text-center text-sm text-slate-400 dark:text-slate-300 py-6">
                   No system status widgets available for your active modules.
                 </div>
               )}
@@ -573,7 +573,7 @@ export default function AdminOverview() {
             <div className="p-6 flex flex-col justify-center flex-1">
               <div className="text-center mb-6">
                 <div className="text-4xl font-black text-slate-800 dark:text-slate-100">85%</div>
-                <div className="text-sm font-bold text-slate-400 uppercase tracking-wider mt-1">School Average</div>
+                <div className="text-sm font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mt-1">School Average</div>
               </div>
               <div className="space-y-4 w-full max-w-sm mx-auto">
                 <div>
@@ -619,7 +619,7 @@ export default function AdminOverview() {
                 <Settings className="text-primary-600" />
                 Customize Dashboard
               </h2>
-              <button onClick={() => setIsConfigModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setIsConfigModalOpen(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300">
                 <X size={24} />
               </button>
             </div>
@@ -630,8 +630,8 @@ export default function AdminOverview() {
                 <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">Metrics</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {['students', 'staff', 'classes', 'notices'].map(metric => (
-                    <label key={metric} className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-slate-50 transition-colors">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.metrics[metric] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 dark:bg-slate-700 text-slate-400'}`}>
+                    <label key={metric} className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.metrics[metric] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300'}`}>
                         {metric === 'students' && <GraduationCap size={20} />}
                         {metric === 'staff' && <Users size={20} />}
                         {metric === 'classes' && <BookOpen size={20} />}
@@ -659,9 +659,9 @@ export default function AdminOverview() {
                     { id: 'quickActions', name: 'Quick Actions', icon: <LinkIcon size={20} /> },
                     { id: 'attendanceSummary', name: 'Attendance Summary', icon: <BarChart2 size={20} /> }
                   ].map(widget => (
-                    <label key={widget.id} className="flex items-center justify-between cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-slate-50 transition-colors">
+                    <label key={widget.id} className="flex items-center justify-between cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.widgets[widget.id] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 dark:bg-slate-700 text-slate-400'}`}>
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.widgets[widget.id] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300'}`}>
                           {widget.icon}
                         </div>
                         <div className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{widget.name}</div>
@@ -681,7 +681,7 @@ export default function AdminOverview() {
             <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3 shrink-0">
               <button 
                 onClick={() => setIsConfigModalOpen(false)}
-                className="px-6 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
+                className="px-6 py-2.5 rounded-xl font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
               >
                 Cancel
               </button>

@@ -189,7 +189,7 @@ export default function ResourceSharing() {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuFolderDown className="text-primary-600" /> Digital Resources
           </h1>
-          <p className="text-slate-500 mt-1">Upload study materials, notes, and links to share with your students.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Upload study materials, notes, and links to share with your students.</p>
         </div>
         <button 
           onClick={handleOpenCreate}
@@ -200,21 +200,21 @@ export default function ResourceSharing() {
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 px-6 pt-4 shrink-0 overflow-x-auto custom-scrollbar">
+        <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-6 pt-4 shrink-0 overflow-x-auto custom-scrollbar">
           {['all', 'document', 'video', 'link', 'image'].map(tab => (
             <button 
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 capitalize whitespace-nowrap ${activeTab === tab ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'}`}
+              className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 capitalize whitespace-nowrap ${activeTab === tab ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50'}`}
             >
               {tab === 'all' ? 'All Files' : `${tab}s`}
             </button>
           ))}
         </div>
 
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex gap-4 shrink-0">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
-            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={20} />
             <input 
               type="text"
               placeholder="Search resources..."
@@ -241,7 +241,7 @@ export default function ResourceSharing() {
                         <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-tight line-clamp-2" title={resource.title}>
                           {resource.title}
                         </h3>
-                        <p className="text-xs text-slate-500 font-medium mt-0.5">{resource.size || 'External URL'}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">{resource.size || 'External URL'}</p>
                       </div>
                     </div>
                   </div>
@@ -256,14 +256,14 @@ export default function ResourceSharing() {
                   </div>
                   
                   <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center mt-auto">
-                    <span className="text-xs font-semibold text-slate-400">
+                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-300">
                       {resource.date ? new Date(resource.date).toLocaleDateString('en-GB') : 'No Date'}
                     </span>
                     <div className="flex gap-2">
                       {(hasDeletePermission || resource.teacherId === currentUser.uid) && (
                         <button 
                           onClick={() => handleDeleteClick(resource.id, resource.title)}
-                          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" 
+                          className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" 
                           title="Delete"
                         >
                           <LuTrash2 size={16} />
@@ -279,7 +279,7 @@ export default function ResourceSharing() {
                         }}
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                        className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                         title={resource.type === 'link' || resource.type === 'video' ? 'Open Link' : 'Download File'}
                       >
                         {resource.type === 'link' || resource.type === 'video' ? (
@@ -294,7 +294,7 @@ export default function ResourceSharing() {
               ))}
 
               {filteredResources.length === 0 && (
-                <div className="col-span-full text-center py-12 text-slate-500">
+                <div className="col-span-full text-center py-12 text-slate-500 dark:text-slate-400">
                   <LuFolderDown size={48} className="mx-auto mb-4 text-slate-300" />
                   <p className="text-lg font-medium text-slate-700 dark:text-slate-200">No resources found.</p>
                 </div>
@@ -317,7 +317,7 @@ export default function ResourceSharing() {
               <button 
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl transition-colors"
               >
                 <LuX size={20} />
               </button>
@@ -402,9 +402,9 @@ export default function ResourceSharing() {
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-2">Upload File</label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 dark:border-slate-700 border-dashed rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer relative group">
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 dark:border-slate-700 border-dashed rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer relative group">
                   <div className="space-y-1 text-center">
-                    <LuFolderDown className="mx-auto h-12 w-12 text-slate-400 group-hover:text-primary-500 transition-colors" />
+                    <LuFolderDown className="mx-auto h-12 w-12 text-slate-400 dark:text-slate-300 group-hover:text-primary-500 transition-colors" />
                     <div className="flex text-sm text-slate-600 dark:text-slate-300 justify-center">
                       <label className="relative cursor-pointer bg-white dark:bg-slate-900 rounded-md font-bold text-primary-600 hover:text-primary-700 focus-within:outline-none">
                         <span>{selectedFile ? 'Change file' : 'Select a file'}</span>
@@ -428,11 +428,11 @@ export default function ResourceSharing() {
                         />
                       </label>
                     </div>
-                    <p className="text-xs text-slate-500">Any file up to 3MB</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Any file up to 3MB</p>
                     {selectedFile && (
                       <div className="mt-2 p-2 bg-slate-100/80 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-between gap-3">
                         <span className="truncate max-w-[200px]">{selectedFile.name}</span>
-                        <span className="text-slate-500 shrink-0">({selectedFile.size > 1024 * 1024 ? (selectedFile.size / (1024 * 1024)).toFixed(1) + ' MB' : (selectedFile.size / 1024).toFixed(0) + ' KB'})</span>
+                        <span className="text-slate-500 dark:text-slate-400 shrink-0">({selectedFile.size > 1024 * 1024 ? (selectedFile.size / (1024 * 1024)).toFixed(1) + ' MB' : (selectedFile.size / 1024).toFixed(0) + ' KB'})</span>
                       </div>
                     )}
                   </div>
@@ -445,7 +445,7 @@ export default function ResourceSharing() {
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

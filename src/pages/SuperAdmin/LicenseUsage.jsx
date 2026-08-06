@@ -167,7 +167,7 @@ export default function LicenseUsage() {
       <div className="w-full">
         <div className="flex justify-between text-xs mb-1 font-semibold">
           <span className="text-slate-700 dark:text-slate-200 font-bold">{current} used</span>
-          <span className="text-slate-500">{limit} limit</span>
+          <span className="text-slate-500 dark:text-slate-400">{limit} limit</span>
         </div>
         <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
           <div className={`h-full ${colorClass} transition-all`} style={{ width: `${percentage}%` }}></div>
@@ -183,7 +183,7 @@ export default function LicenseUsage() {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuKey className="text-primary-600" /> License & Usage Management
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-slate-500 dark:text-slate-400 mt-1">
             Monitor live active student & teacher counts against database rules limits, and expand capacity per school.
           </p>
         </div>
@@ -196,7 +196,7 @@ export default function LicenseUsage() {
             <LuKey size={24} />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-500">Total Active License Capacity</p>
+            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">Total Active License Capacity</p>
             <p className="text-2xl font-black text-slate-900 dark:text-white">{totalActiveLicenses.toLocaleString()} Seats</p>
           </div>
         </div>
@@ -205,7 +205,7 @@ export default function LicenseUsage() {
             <LuTriangleAlert size={24} />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-500">Schools Near Limit (&gt;85%)</p>
+            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">Schools Near Limit (&gt;85%)</p>
             <p className="text-2xl font-black text-amber-600">{schoolsNearLimit}</p>
           </div>
         </div>
@@ -214,7 +214,7 @@ export default function LicenseUsage() {
             <LuTrendingUp size={24} />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-500">Schools Exceeded Limit</p>
+            <p className="text-sm font-bold text-slate-500 dark:text-slate-400">Schools Exceeded Limit</p>
             <p className="text-2xl font-black text-red-600">{schoolsExceededLimit}</p>
           </div>
         </div>
@@ -222,9 +222,9 @@ export default function LicenseUsage() {
 
       {/* Data Table */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden mb-6">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex gap-4 shrink-0">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex gap-4 shrink-0">
           <div className="relative flex-1 max-w-md">
-            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={20} />
             <input 
               type="text"
               placeholder="Search schools by name or email..."
@@ -237,7 +237,7 @@ export default function LicenseUsage() {
 
         <div className="flex-1 overflow-auto">
           {loading ? (
-            <div className="p-12 text-center text-slate-500">
+            <div className="p-12 text-center text-slate-500 dark:text-slate-400">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent mx-auto mb-4"></div>
               <p className="font-semibold">Loading live school licenses...</p>
             </div>
@@ -256,7 +256,7 @@ export default function LicenseUsage() {
               <tbody className="divide-y divide-slate-100">
                 {paginatedSchools.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="p-12 text-center text-slate-500">
+                    <td colSpan="6" className="p-12 text-center text-slate-500 dark:text-slate-400">
                       <LuBuilding2 size={40} className="mx-auto mb-3 text-slate-300" />
                       <p className="font-bold text-slate-800 dark:text-slate-100">No schools found</p>
                       <p className="text-sm">Try adjusting your search query.</p>
@@ -269,7 +269,7 @@ export default function LicenseUsage() {
                         <div>
                           <span>{school.name}</span>
                           {school.adminEmail && (
-                            <span className="block text-xs font-normal text-slate-400 mt-0.5">{school.adminEmail}</span>
+                            <span className="block text-xs font-normal text-slate-400 dark:text-slate-300 mt-0.5">{school.adminEmail}</span>
                           )}
                         </div>
                       </td>
@@ -306,8 +306,8 @@ export default function LicenseUsage() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-sm text-slate-500 font-medium">
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               Showing <span className="font-semibold text-slate-900 dark:text-white">{startIndex + 1}</span> to{' '}
               <span className="font-semibold text-slate-900 dark:text-white">
                 {Math.min(startIndex + itemsPerPage, filteredSchools.length)}
@@ -318,7 +318,7 @@ export default function LicenseUsage() {
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -331,7 +331,7 @@ export default function LicenseUsage() {
                     className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                       currentPage === pageNum
                         ? 'bg-primary-600 text-white shadow-sm'
-                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
+                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {pageNum}
@@ -341,7 +341,7 @@ export default function LicenseUsage() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>
@@ -361,7 +361,7 @@ export default function LicenseUsage() {
               </h2>
               <button 
                 onClick={() => setExpandModalOpen(false)} 
-                className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors"
+                className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors"
               >
                 <LuX size={20} />
               </button>
@@ -372,11 +372,11 @@ export default function LicenseUsage() {
                 <h3 className="font-bold text-slate-900 dark:text-white text-lg">{selectedSchool.name}</h3>
                 <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs">
                   <div>
-                    <span className="text-slate-500 font-medium">Current Students:</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">Current Students:</span>
                     <p className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">{selectedSchool.students.current} enrolled</p>
                   </div>
                   <div>
-                    <span className="text-slate-500 font-medium">Current Teachers:</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">Current Teachers:</span>
                     <p className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">{selectedSchool.teachers.current} registered</p>
                   </div>
                 </div>
@@ -397,7 +397,7 @@ export default function LicenseUsage() {
                   />
                 </div>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  <span className="text-xs text-slate-500 font-medium">Quick add:</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Quick add:</span>
                   {[+100, +250, +500, +1000].map(inc => (
                     <button
                       key={inc}
@@ -426,13 +426,13 @@ export default function LicenseUsage() {
                   />
                 </div>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  <span className="text-xs text-slate-500 font-medium">Quick add:</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Quick add:</span>
                   {[+10, +25, +50, +100].map(inc => (
                     <button
                       key={inc}
                       type="button"
                       onClick={() => setNewTeacherLimit(prev => Number(prev) + inc)}
-                      className="text-xs px-2.5 py-1 rounded-lg font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 border border-slate-200 dark:border-slate-700 transition-colors"
+                      className="text-xs px-2.5 py-1 rounded-lg font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-700 transition-colors"
                     >
                       +{inc} Teachers
                     </button>
@@ -445,7 +445,7 @@ export default function LicenseUsage() {
               <button 
                 type="button" 
                 onClick={() => setExpandModalOpen(false)} 
-                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
               >
                 Cancel
               </button>

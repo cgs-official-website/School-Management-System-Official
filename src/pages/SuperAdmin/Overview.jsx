@@ -88,7 +88,7 @@ export default function Overview() {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Global Overview</h1>
-          <p className="text-slate-500 mt-1">Platform analytics and tenant metrics.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Platform analytics and tenant metrics.</p>
         </div>
         
         {schools.length === 0 && (
@@ -110,7 +110,7 @@ export default function Overview() {
             </div>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 mb-1">Total Active Schools</p>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Total Active Schools</p>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white">{activeSchools.length}</h3>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function Overview() {
             </div>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 mb-1">Monthly Recurring Revenue</p>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Monthly Recurring Revenue</p>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white">₹{mrr}</h3>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function Overview() {
             )}
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 mb-1">Pending Approvals</p>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Pending Approvals</p>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white">{pendingSchools.length}</h3>
             {pendingSchools.length > 0 && (
               <Link to="/superadmin/tenants" className="text-xs text-primary-600 font-bold hover:underline mt-2 inline-block">Review Now &rarr;</Link>
@@ -155,7 +155,7 @@ export default function Overview() {
             </div>
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 mb-1">Suspended Tenants</p>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">Suspended Tenants</p>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white">{suspendedSchools.length}</h3>
           </div>
         </div>
@@ -169,17 +169,17 @@ export default function Overview() {
         </div>
         <div className="divide-y divide-slate-100">
           {recentSchools.length === 0 ? (
-            <div className="p-8 text-center text-slate-500">No schools registered yet.</div>
+            <div className="p-8 text-center text-slate-500 dark:text-slate-400">No schools registered yet.</div>
           ) : (
             recentSchools.map(school => (
               <div key={school.id} className="p-6 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-slate-500">
+                  <div className="h-10 w-10 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-slate-500 dark:text-slate-400">
                     {school.schoolName?.charAt(0) || 'S'}
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900 dark:text-white">{school.schoolName}</h4>
-                    <p className="text-sm text-slate-500">{new Date(school.createdAt).toLocaleDateString('en-GB')}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{new Date(school.createdAt).toLocaleDateString('en-GB')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">

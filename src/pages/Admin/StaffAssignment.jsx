@@ -863,7 +863,7 @@ export default function StaffAssignment() {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Staff Directory & Attachments</h1>
-          <p className="text-slate-500 mt-1">Manage your teachers, upload documents, and assign classes.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your teachers, upload documents, and assign classes.</p>
         </div>
         <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
           <button 
@@ -910,26 +910,26 @@ export default function StaffAssignment() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
           <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Users size={20} /></div>
-            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Staff</p><p className="text-xl font-bold text-slate-900 dark:text-white">{totalStaff}</p></div>
+            <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Staff</p><p className="text-xl font-bold text-slate-900 dark:text-white">{totalStaff}</p></div>
           </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><CheckCircle2 size={20} /></div>
-            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active</p><p className="text-xl font-bold text-slate-900 dark:text-white">{activeStaff}</p></div>
+            <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active</p><p className="text-xl font-bold text-slate-900 dark:text-white">{activeStaff}</p></div>
           </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><UserPlus size={20} /></div>
-            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Teachers</p><p className="text-xl font-bold text-slate-900 dark:text-white">{teachingStaff}</p></div>
+            <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Teachers</p><p className="text-xl font-bold text-slate-900 dark:text-white">{teachingStaff}</p></div>
           </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-pink-50 text-pink-600 rounded-xl"><UserPlus size={20} /></div>
-            <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Non-Teaching</p><p className="text-xl font-bold text-slate-900 dark:text-white">{nonTeachingStaff}</p></div>
+            <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Non-Teaching</p><p className="text-xl font-bold text-slate-900 dark:text-white">{nonTeachingStaff}</p></div>
           </div>
         </div>
 
         {/* Toolbar */}
         <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-white dark:bg-slate-900">
           <div className="relative flex-1 min-w-[250px] max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={18} />
             <input 
               type="text" 
               placeholder="Search staff by name or email..." 
@@ -978,7 +978,7 @@ export default function StaffAssignment() {
                 className={`px-3 py-2.5 rounded-xl border shadow-sm transition-all flex items-center gap-2 text-sm font-medium relative
                   ${staffTypeFilter !== 'all'
                     ? 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'
-                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 title="Filter Staff by Type"
               >
@@ -995,7 +995,7 @@ export default function StaffAssignment() {
                     <button
                       onClick={() => { setStaffTypeFilter('all'); setIsFilterDropdownOpen(false); }}
                       className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between ${
-                        staffTypeFilter === 'all' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50'
+                        staffTypeFilter === 'all' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       <span>All Staff</span>
@@ -1004,7 +1004,7 @@ export default function StaffAssignment() {
                     <button
                       onClick={() => { setStaffTypeFilter('teaching'); setIsFilterDropdownOpen(false); }}
                       className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between ${
-                        staffTypeFilter === 'teaching' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50'
+                        staffTypeFilter === 'teaching' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       <span>Teaching Staff</span>
@@ -1013,7 +1013,7 @@ export default function StaffAssignment() {
                     <button
                       onClick={() => { setStaffTypeFilter('non-teaching'); setIsFilterDropdownOpen(false); }}
                       className={`w-full px-3 py-2 text-left text-sm font-medium rounded-lg transition-colors flex items-center justify-between ${
-                        staffTypeFilter === 'non-teaching' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50'
+                        staffTypeFilter === 'non-teaching' ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       <span>Non-Teaching Staff</span>
@@ -1024,7 +1024,7 @@ export default function StaffAssignment() {
               )}
             </div>
 
-            <div className="h-6 w-px bg-slate-200 hidden sm:block mx-1"></div>
+            <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block mx-1"></div>
             <select 
               value={rowsPerPage}
               onChange={(e) => setRowsPerPage(Number(e.target.value))}
@@ -1041,7 +1041,7 @@ export default function StaffAssignment() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                 <th className="p-4 pl-6">Staff Name</th>
                 <th className="p-4">Contact</th>
                 <th className="p-4">Class Assignments</th>
@@ -1051,7 +1051,7 @@ export default function StaffAssignment() {
             <tbody className="divide-y divide-slate-100 text-sm">
               {paginatedStaff.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="p-12 text-center text-slate-500">
+                  <td colSpan="4" className="p-12 text-center text-slate-500 dark:text-slate-400">
                     <ShieldCheck size={48} className="mx-auto mb-4 text-slate-300" />
                     <p className="text-lg font-medium text-slate-900 dark:text-white mb-1">No staff members found</p>
                     <p>Generate a teacher invite link to start onboarding your faculty.</p>
@@ -1076,7 +1076,7 @@ export default function StaffAssignment() {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                          <Mail size={14} className="text-slate-400" />
+                          <Mail size={14} className="text-slate-400 dark:text-slate-300" />
                           {member.email}
                         </div>
                       </td>
@@ -1093,7 +1093,7 @@ export default function StaffAssignment() {
                             </span>
                           ))}
                           {!isAssigned && (!member.subjectClassIds || member.subjectClassIds.length === 0) && (
-                            <span className="inline-flex items-center px-2 py-0.5 rounded border border-slate-200/60 bg-slate-50/50 text-slate-500 text-[11px] font-semibold uppercase tracking-wide">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded border border-slate-200/60 bg-slate-50/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-[11px] font-semibold uppercase tracking-wide">
                               Unassigned
                             </span>
                           )}
@@ -1108,7 +1108,7 @@ export default function StaffAssignment() {
                                 navigator.clipboard.writeText(inviteUrl);
                                 toast.success("Registration link copied!");
                               }}
-                              className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 dark:text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                               title="Copy Invite Link"
                             >
                               <LinkIcon size={18} />
@@ -1124,7 +1124,7 @@ export default function StaffAssignment() {
                               setEditStaffDocFiles({});
                               setViewStaffModalOpen(true);
                             }}
-                            className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye size={18} />
@@ -1132,7 +1132,7 @@ export default function StaffAssignment() {
                             {hasDeletePermission && (
                               <button 
                                 onClick={() => setConfirmDeleteState({ isOpen: true, id: member.id, name: member.name || `${member.firstName} ${member.lastName}` })}
-                                className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                 title="Delete Staff Member"
                               >
                                 <Trash size={18} />
@@ -1141,7 +1141,7 @@ export default function StaffAssignment() {
                             {hasEditPermission && (
                               <button 
                                 onClick={() => openAssignModal(member)}
-                                className="px-2.5 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 dark:border-slate-700 rounded-md transition-colors"
+                                className="px-2.5 py-1 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-md transition-colors"
                               >
                                 {isAssigned ? 'Edit' : 'Assign'}
                               </button>
@@ -1159,14 +1159,14 @@ export default function StaffAssignment() {
         {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-b-3xl">
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-slate-500 dark:text-slate-400">
               Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, filteredStaff.length)} of {filteredStaff.length} entries
             </span>
             <div className="flex gap-2">
               <button 
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Previous
               </button>
@@ -1176,7 +1176,7 @@ export default function StaffAssignment() {
               <button 
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Next
               </button>
@@ -1191,7 +1191,7 @@ export default function StaffAssignment() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Assign Class</h2>
-              <button onClick={() => setAssignModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setAssignModalOpen(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1220,7 +1220,7 @@ export default function StaffAssignment() {
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Subject Teacher Assignments</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800">
                     {classes.map(c => (
-                      <label key={`subj-${c.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-100 rounded-lg cursor-pointer">
+                      <label key={`subj-${c.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg cursor-pointer">
                         <input 
                           type="checkbox" 
                           checked={selectedSubjectClassIds.includes(c.id)}
@@ -1236,7 +1236,7 @@ export default function StaffAssignment() {
                         <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{c.name} - Section {c.section}</span>
                       </label>
                     ))}
-                    {classes.length === 0 && <span className="text-sm text-slate-500 italic p-2">No classes available.</span>}
+                    {classes.length === 0 && <span className="text-sm text-slate-500 dark:text-slate-400 italic p-2">No classes available.</span>}
                   </div>
                 </div>
 
@@ -1250,7 +1250,7 @@ export default function StaffAssignment() {
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Subject Specializations</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto p-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800">
                     {subjects.map(s => (
-                      <label key={`spec-${s.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-100 rounded-lg cursor-pointer">
+                      <label key={`spec-${s.id}`} className="flex items-center gap-2 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg cursor-pointer">
                         <input 
                           type="checkbox" 
                           checked={selectedSubjectIds.includes(s.id)}
@@ -1266,7 +1266,7 @@ export default function StaffAssignment() {
                         <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{s.name} {s.code ? `(${s.code})` : ''}</span>
                       </label>
                     ))}
-                    {subjects.length === 0 && <span className="text-sm text-slate-500 italic p-2">No subjects available.</span>}
+                    {subjects.length === 0 && <span className="text-sm text-slate-500 dark:text-slate-400 italic p-2">No subjects available.</span>}
                   </div>
                 </div>
               </div>
@@ -1275,7 +1275,7 @@ export default function StaffAssignment() {
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 onClick={() => setAssignModalOpen(false)}
-                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -1300,7 +1300,7 @@ export default function StaffAssignment() {
                 <FileText className="text-primary-600" />
                 {selectedStaffForUpload ? 'Upload Document' : 'Bulk Import Staff'}
               </h2>
-              <button onClick={() => setUploadModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setUploadModalOpen(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1309,7 +1309,7 @@ export default function StaffAssignment() {
               {selectedStaffForUpload ? (
                 <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
                   Upload a document (e.g. Resume, ID) for <span className="font-bold text-slate-900 dark:text-white">{selectedStaffForUpload.name || selectedStaffForUpload.firstName}</span>. 
-                  <br/><span className="text-xs text-slate-400 mt-1 block">File will be securely stored in: {schoolName}/Teachers/...</span>
+                  <br/><span className="text-xs text-slate-400 dark:text-slate-300 mt-1 block">File will be securely stored in: {schoolName}/Teachers/...</span>
                 </p>
               ) : (
                 <div className="mb-4">
@@ -1326,7 +1326,7 @@ export default function StaffAssignment() {
                     <p className="font-bold text-slate-700 dark:text-slate-200 mt-2 mb-1">Optional (all other columns supported):</p>
                     <div className="flex flex-wrap gap-1.5">
                       {['Staff ID', 'Mobile Number', 'Gender', 'Date of Birth', 'Blood Group', 'Role', 'Staff Type', 'Aadhar Number', 'PAN Number', 'PF Number', 'Bank Account Number'].map(col => (
-                        <span key={col} className="bg-slate-200 text-slate-700 dark:text-slate-200 font-medium px-2 py-0.5 rounded-md">{col}</span>
+                        <span key={col} className="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium px-2 py-0.5 rounded-md">{col}</span>
                       ))}
                     </div>
                   </div>
@@ -1354,7 +1354,7 @@ export default function StaffAssignment() {
                   onChange={(e) => setUploadFile(e.target.files[0])}
                   className="absolute inset-0 opacity-0 cursor-pointer z-10" 
                 />
-                <UploadCloud size={32} className={`mx-auto mb-3 ${uploadFile ? 'text-green-500' : 'text-slate-400 group-hover:text-primary-500'}`} />
+                <UploadCloud size={32} className={`mx-auto mb-3 ${uploadFile ? 'text-green-500' : 'text-slate-400 dark:text-slate-300 group-hover:text-primary-500'}`} />
                 {uploadFile ? (
                   <div>
                     <p className="font-semibold text-green-700 text-sm truncate">{uploadFile.name}</p>
@@ -1363,7 +1363,7 @@ export default function StaffAssignment() {
                 ) : (
                   <div>
                     <p className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Click or drag file to upload</p>
-                    <p className="text-xs text-slate-500 mt-1">{selectedStaffForUpload ? 'PDF, JPG, PNG up to 10MB' : 'Excel or CSV file'}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{selectedStaffForUpload ? 'PDF, JPG, PNG up to 10MB' : 'Excel or CSV file'}</p>
                   </div>
                 )}
               </div>
@@ -1372,7 +1372,7 @@ export default function StaffAssignment() {
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 onClick={() => setUploadModalOpen(false)}
-                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -1397,7 +1397,7 @@ export default function StaffAssignment() {
                 <UserPlus className="text-indigo-600" />
                 Add Staff Member
               </h2>
-              <button onClick={() => setAddStaffModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setAddStaffModalOpen(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -1429,7 +1429,7 @@ export default function StaffAssignment() {
                       className={`relative py-4 px-6 text-xs font-bold whitespace-nowrap transition-all duration-200 flex-shrink-0 focus:outline-none focus:text-indigo-600 focus:bg-indigo-50/20 ${
                         isActive
                           ? 'text-indigo-600 font-extrabold'
-                          : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800'
                       }`}
                     >
                       {tab}
@@ -1998,7 +1998,7 @@ export default function StaffAssignment() {
               {addStaffActiveTab === 'Uploads' && (
                 <div className="space-y-4 animate-fade-in">
                   {/* Photo upload */}
-                  <div className="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-slate-50/50">
+                  <div className="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-800/50">
                     <label className="block text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">Photograph (JPG/PNG)</label>
                     <input
                       type="file"
@@ -2025,7 +2025,7 @@ export default function StaffAssignment() {
                     { key: 'govtIdDocument', label: 'Government-issued ID Document (PDF/Images)' },
                     { key: 'salarySlips', label: 'Salary Slips (PDF/Images, Optional)' }
                   ].map(({ key, label }) => (
-                    <div key={key} className="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-slate-50/50">
+                    <div key={key} className="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-800/50">
                       <label className="block text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">{label}</label>
                       <input
                         type="file"
@@ -2081,7 +2081,7 @@ export default function StaffAssignment() {
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
               <button
                 onClick={() => setAddStaffModalOpen(false)}
-                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -2121,13 +2121,13 @@ export default function StaffAssignment() {
                 } else {
                   setViewStaffModalOpen(false);
                 }
-              }} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              }} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
 
             {/* Tabbed details navigation */}
-            <div className="flex border-b border-slate-150 overflow-x-auto bg-slate-50/50 shrink-0 custom-scrollbar">
+            <div className="flex border-b border-slate-150 overflow-x-auto bg-slate-50/50 dark:bg-slate-800/50 shrink-0 custom-scrollbar">
               {['Personal Info', 'Education & Work', 'Identity & Banking', 'Documents'].map(tab => (
                 <button
                   key={tab}
@@ -2136,7 +2136,7 @@ export default function StaffAssignment() {
                   className={`px-5 py-3.5 text-sm font-semibold border-b-2 whitespace-nowrap transition-all ${
                     addStaffActiveTab === tab
                       ? 'border-indigo-600 text-indigo-700 bg-white dark:bg-slate-900'
-                      : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                      : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   {tab}
@@ -2342,7 +2342,7 @@ export default function StaffAssignment() {
                         const existingFiles = editStaffData[key] || selectedStaffToView[key] || [];
                         const newFiles = editStaffDocFiles[key] || [];
                         return (
-                          <div key={key} className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50">
+                          <div key={key} className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-800/50">
                             <label className="block text-xs font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">{label}</label>
 
                             {/* Existing uploaded files */}
@@ -2460,66 +2460,66 @@ export default function StaffAssignment() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Staff ID</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Staff ID</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.staffId || '—'}</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Email Address</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Email Address</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.email || '—'}</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mobile Number</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Mobile Number</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.mobileNumber || '—'}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date of Birth</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Date of Birth</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.dob || '—'}</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gender</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Gender</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.gender || '—'}</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nationality</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Nationality</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.nationality || '—'}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Marital Status</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Marital Status</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.maritalStatus || '—'}</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Blood Group</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Blood Group</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.bloodGroup || '—'}</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Emergency Contact</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Emergency Contact</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.emergencyContact || '—'}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Father / Guardian Name</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Father / Guardian Name</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.fatherGuardianName || '—'}</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Languages Known</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Languages Known</label>
                       <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.languagesKnown || '—'}</p>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Joined Date</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Joined Date</label>
                       <p className="text-slate-900 dark:text-white font-semibold">
                         {selectedStaffToView.createdAt ? new Date(selectedStaffToView.createdAt).toLocaleDateString('en-GB') : 'N/A'}
                       </p>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Staff Type</label>
+                      <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Staff Type</label>
                       <p className="text-slate-900 dark:text-white font-semibold capitalize">
                         {selectedStaffToView.staff_type || 'teaching'}
                       </p>
@@ -2527,7 +2527,7 @@ export default function StaffAssignment() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Residential Address</label>
+                    <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Residential Address</label>
                     <p className="text-slate-900 dark:text-white font-semibold whitespace-pre-line">{selectedStaffToView.residentialAddress || '—'}</p>
                   </div>
 
@@ -2547,19 +2547,19 @@ export default function StaffAssignment() {
                     <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Academic Qualifications</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Highest Qualification</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Highest Qualification</label>
                         <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.highestQualification || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Degree & Specialization</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Degree & Specialization</label>
                         <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.degreeSpecialization || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">University / College</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">University / College</label>
                         <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.universityName || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Year of Passing</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Year of Passing</label>
                         <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.yearOfPassing || '—'}</p>
                       </div>
                     </div>
@@ -2569,23 +2569,23 @@ export default function StaffAssignment() {
                     <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Professional Experience</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Previous Experience (Years)</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Previous Experience (Years)</label>
                         <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.previousExperience || '0'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Previous Organization</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Previous Organization</label>
                         <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.previousOrganization || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Subject Specialization</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Subject Specialization</label>
                         <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.subjectSpecialization || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Grades/Classes Handled</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Grades/Classes Handled</label>
                         <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.gradesClassesHandled || '—'}</p>
                       </div>
                       <div className="col-span-1 sm:col-span-2">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Professional Certifications</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Professional Certifications</label>
                         <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.professionalCertifications || '—'}</p>
                       </div>
                     </div>
@@ -2602,35 +2602,35 @@ export default function StaffAssignment() {
                         <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Government Identity & Payroll</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Government ID Type</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Government ID Type</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.govtIdType || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Government ID Number</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Government ID Number</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.govtIdNumber || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Aadhaar Number</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Aadhaar Number</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.aadharNumber || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">PAN Number</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">PAN Number</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.panNumber || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">PF Number</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">PF Number</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.pfNumber || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ESIC Number</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">ESIC Number</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.esicNumber || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">UAN Number</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">UAN Number</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.uanNumber || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tax Identification Details</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Tax Identification Details</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.taxIdDetails || '—'}</p>
                           </div>
                         </div>
@@ -2640,19 +2640,19 @@ export default function StaffAssignment() {
                         <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Banking Details</h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Bank Name</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Bank Name</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.bankName || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Bank Account Number</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Bank Account Number</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.bankAccountNumber || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Branch Name</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Branch Name</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.branchName || '—'}</p>
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">IFSC Code</label>
+                            <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">IFSC Code</label>
                             <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.ifscCode || '—'}</p>
                           </div>
                         </div>
@@ -2680,8 +2680,8 @@ export default function StaffAssignment() {
                   ].map(({ key, label }) => {
                     const files = selectedStaffToView[key] || [];
                     return (
-                      <div key={key} className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50">
-                        <label className="block text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2">{label}</label>
+                      <div key={key} className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 bg-slate-50/50 dark:bg-slate-800/50">
+                        <label className="block text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">{label}</label>
                         {files.length > 0 ? (
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {files.map((file, idx) => (
@@ -2689,7 +2689,7 @@ export default function StaffAssignment() {
                                 key={idx}
                                 type="button"
                                 onClick={() => setPreviewUrl(file.url)}
-                                className="flex items-center gap-2 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 transition-colors text-xs font-semibold text-indigo-600 text-left"
+                                className="flex items-center gap-2 p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-xs font-semibold text-indigo-600 text-left"
                               >
                                 <Eye size={14} />
                                 <span className="truncate">{file.name}</span>
@@ -2697,7 +2697,7 @@ export default function StaffAssignment() {
                             ))}
                           </div>
                         ) : (
-                          <span className="text-xs text-slate-400 italic">No documents uploaded</span>
+                          <span className="text-xs text-slate-400 dark:text-slate-300 italic">No documents uploaded</span>
                         )}
                       </div>
                     );
@@ -2713,7 +2713,7 @@ export default function StaffAssignment() {
                 <>
                   <button
                     onClick={() => { setIsStaffEditMode(false); setEditStaffData(null); setEditStaffErrors({}); setEditStaffDocFiles({}); }}
-                    className="px-6 py-2.5 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                    className="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
@@ -2745,7 +2745,7 @@ export default function StaffAssignment() {
                   </button>
                   <button
                     onClick={() => { setViewStaffModalOpen(false); setIsStaffEditMode(false); setEditStaffData(null); setEditStaffDocFiles({}); }}
-                    className="px-6 py-2.5 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                    className="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
                   >
                     Close
                   </button>
@@ -2772,14 +2772,14 @@ export default function StaffAssignment() {
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50 animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up border border-slate-100 dark:border-slate-800">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Export Staff Directory</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Customize file settings and select columns to export.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Customize file settings and select columns to export.</p>
               </div>
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"
+                className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
@@ -2788,7 +2788,7 @@ export default function StaffAssignment() {
             <div className="p-6 space-y-6">
               {/* File Name Input */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Export File Name</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Export File Name</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -2797,13 +2797,13 @@ export default function StaffAssignment() {
                     placeholder="Enter file name"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all pr-12 font-medium"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md">.xlsx</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300 text-xs font-bold bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md">.xlsx</span>
                 </div>
               </div>
 
               {/* Columns Selection */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Select Columns to Include</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Select Columns to Include</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { key: 'name', label: 'Name' },
@@ -2819,7 +2819,7 @@ export default function StaffAssignment() {
                       className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all ${
                         selectedFields[key] 
                           ? 'border-primary-200 bg-primary-50/30 text-primary-900 font-semibold' 
-                          : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-600 dark:text-slate-300'
+                          : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
                       }`}
                     >
                       <input
@@ -2838,7 +2838,7 @@ export default function StaffAssignment() {
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors text-sm"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors text-sm"
               >
                 Cancel
               </button>

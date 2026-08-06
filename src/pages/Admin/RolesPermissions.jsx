@@ -275,7 +275,7 @@ export default function RolesPermissions() {
             <LuShield className="text-primary-600" />
             Roles & Permissions
           </h1>
-          <p className="text-slate-500 mt-1">Configure fine-grained access control for your staff members.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Configure fine-grained access control for your staff members.</p>
         </div>
         <button 
           onClick={handleSave}
@@ -294,7 +294,7 @@ export default function RolesPermissions() {
             <span className="font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider text-xs">Select Role</span>
             <button 
               onClick={() => setIsAddingRole(true)}
-              className="p-1 hover:bg-slate-200 rounded text-slate-500 hover:text-primary-600 transition-colors"
+              className="p-1 hover:bg-slate-200 dark:hover:bg-slate-600 rounded text-slate-500 dark:text-slate-400 hover:text-primary-600 transition-colors"
               title="Add New Role"
             >
               <LuPlus size={16} />
@@ -312,7 +312,7 @@ export default function RolesPermissions() {
                   className="w-full bg-white dark:bg-slate-900 px-2 py-1.5 rounded-lg text-sm border border-primary-200 focus:outline-none focus:border-primary-500"
                 />
                 <button type="submit" className="p-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700"><LuCheck size={14}/></button>
-                <button type="button" onClick={() => setIsAddingRole(false)} className="p-1.5 text-slate-400 hover:text-slate-600"><LuX size={14}/></button>
+                <button type="button" onClick={() => setIsAddingRole(false)} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300"><LuX size={14}/></button>
               </form>
             )}
             
@@ -323,14 +323,14 @@ export default function RolesPermissions() {
                 className={`w-full text-left px-4 py-3 rounded-xl mb-1 font-semibold text-sm transition-all flex items-center justify-between cursor-pointer group ${
                   activeRole === role 
                     ? 'bg-primary-50 text-primary-700 shadow-sm border border-primary-100' 
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 hover:text-slate-900 border border-transparent'
+                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white border border-transparent'
                 }`}
               >
                 <span className="truncate pr-2">{role}</span>
                 <button 
                   onClick={(e) => handleDeleteRole(e, role)}
                   className={`p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ${
-                    activeRole === role ? 'text-primary-600 hover:bg-primary-100' : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
+                    activeRole === role ? 'text-primary-600 hover:bg-primary-100' : 'text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50'
                   }`}
                   title="Delete Role"
                 >
@@ -346,7 +346,7 @@ export default function RolesPermissions() {
           <div className="p-6 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center shrink-0">
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">{activeRole} Permissions</h2>
-              <p className="text-xs text-slate-500 mt-1">Select the modules and actions this role can access.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Select the modules and actions this role can access.</p>
             </div>
             <div className="flex items-center gap-3">
               <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">Target Login Panel:</label>
@@ -364,7 +364,7 @@ export default function RolesPermissions() {
           <div className="flex-1 overflow-y-auto custom-scrollbar p-0">
             <table className="w-full text-left border-collapse">
               <thead className="sticky top-0 bg-white dark:bg-slate-900 shadow-sm z-10">
-                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                   <th className="p-4 pl-6">Module Name</th>
                   <th className="p-4 text-center">Read / View</th>
                   <th className="p-4 text-center">Create / Add</th>
@@ -387,7 +387,7 @@ export default function RolesPermissions() {
                   if (filtered.length === 0) {
                     return (
                       <tr>
-                        <td colSpan="6" className="p-8 text-center text-slate-500">No modules available to configure.</td>
+                        <td colSpan="6" className="p-8 text-center text-slate-500 dark:text-slate-400">No modules available to configure.</td>
                       </tr>
                     );
                   }
@@ -446,7 +446,7 @@ export default function RolesPermissions() {
                             onClick={() => handleToggleAll(module.id, !isAll)}
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                               isAll 
-                                ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200' 
+                                ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600' 
                                 : 'bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200'
                             }`}
                           >

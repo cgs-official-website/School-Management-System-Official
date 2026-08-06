@@ -193,16 +193,16 @@ export default function TeacherDashboard() {
             </div>
             <div className="min-w-0">
               <h2 className="text-xl font-black text-slate-900 dark:text-white leading-tight truncate">Zuna</h2>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">Teacher Portal</p>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-0.5">Teacher Portal</p>
             </div>
           </div>
-          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600 p-1">
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-1">
             <X size={24} />
           </button>
         </div>
 
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
-          <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 mt-4">Menu</p>
+          <p className="px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 mt-4">Menu</p>
           {filteredNavItems.map((item) => (
             <NavLink
               key={item.name}
@@ -242,12 +242,12 @@ export default function TeacherDashboard() {
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{userProfile?.name || userProfile?.email?.split('@')[0]}</p>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">{userProfile?.role}</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-0.5">{userProfile?.role}</p>
               </div>
             </div>
             <button 
               onClick={handleLogout}
-              className="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-xl transition-colors shrink-0"
+              className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
               title="Logout"
             >
               <LogOut size={20} />

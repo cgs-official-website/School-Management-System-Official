@@ -380,13 +380,13 @@ export default function HRPayrollManagement() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 shrink-0 print:hidden">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">HR & Payroll</h1>
-          <p className="text-slate-500 mt-1">Manage staff salaries, deductions, and payslips.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage staff salaries, deductions, and payslips.</p>
         </div>
         <div className="flex items-center gap-3">
           {hasEditPermission && (
             <button 
               onClick={() => setShowSettingsModal(true)}
-              className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm"
+              className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-medium shadow-sm"
             >
               <Settings size={20} /> Settings
             </button>
@@ -400,7 +400,7 @@ export default function HRPayrollManagement() {
               setExportFileName('HR_Payroll_Report'); 
               setShowExportModal(true); 
             }}
-            className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all font-medium shadow-sm cursor-pointer"
+            className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-medium shadow-sm cursor-pointer"
           >
             <Download size={20} /> Export Report
           </button>
@@ -421,7 +421,7 @@ export default function HRPayrollManagement() {
             <LuCircleDollarSign size={24} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Payroll</p>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Payroll</p>
             <p className="text-2xl font-bold text-slate-900 dark:text-white">
               ₹{payrolls.reduce((acc, curr) => acc + (curr.baseSalary - curr.deductions), 0).toLocaleString()}
             </p>
@@ -432,7 +432,7 @@ export default function HRPayrollManagement() {
             <LuBriefcase size={24} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Staff Count</p>
+            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Staff Count</p>
             <p className="text-2xl font-bold text-slate-900 dark:text-white">{payrolls.length}</p>
           </div>
         </div>
@@ -441,7 +441,7 @@ export default function HRPayrollManagement() {
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden print:hidden">
         <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between gap-4 shrink-0">
           <div className="relative max-w-md w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={20} />
             <input 
               type="text"
               placeholder="Search by name or role..."
@@ -490,19 +490,19 @@ export default function HRPayrollManagement() {
                         {payroll.status === 'Payslip Released' && (
                           <button 
                             onClick={() => setShowPayslipModal(payroll)}
-                            className="p-1.5 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                             title="Download Payslip"
                           >
                             <FileText size={16} />
                           </button>
                         )}
                         {hasEditPermission && (
-                          <button onClick={() => { setFormData(payroll); setShowModal(true); }} className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors" title="Edit">
+                          <button onClick={() => { setFormData(payroll); setShowModal(true); }} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors" title="Edit">
                             <Edit size={16} />
                           </button>
                         )}
                         {hasDeletePermission && (
-                          <button onClick={() => handleDeleteClick(payroll.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                          <button onClick={() => handleDeleteClick(payroll.id)} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
                             <Trash2 size={16} />
                           </button>
                         )}
@@ -513,7 +513,7 @@ export default function HRPayrollManagement() {
               })}
               {filteredPayrolls.length === 0 && (
                 <tr>
-                  <td colSpan="8" className="p-12 text-center text-slate-500">
+                  <td colSpan="8" className="p-12 text-center text-slate-500 dark:text-slate-400">
                     No payroll records found.
                   </td>
                 </tr>
@@ -525,14 +525,14 @@ export default function HRPayrollManagement() {
         {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 flex flex-col sm:flex-row gap-4 items-center justify-between shrink-0">
-            <span className="text-sm font-semibold text-slate-500">
+            <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
               Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, filteredPayrolls.length)} of {filteredPayrolls.length} records
             </span>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -546,7 +546,7 @@ export default function HRPayrollManagement() {
                       className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                         isCurrent
                           ? 'bg-primary-600 text-white shadow-md shadow-primary-600/10'
-                          : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
+                          : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                       }`}
                     >
                       {page}
@@ -557,7 +557,7 @@ export default function HRPayrollManagement() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>
@@ -572,7 +572,7 @@ export default function HRPayrollManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">{formData.id ? 'Edit' : 'Add'} Payroll Record</h2>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
+              <button onClick={() => setShowModal(false)} className="text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -624,7 +624,7 @@ export default function HRPayrollManagement() {
                       value={formData.deductions} onChange={e => setFormData({...formData, deductions: parseFloat(e.target.value) || 0})}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500"
                     />
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Includes 12% PF (₹{formData.pfCalculated || 0}) and 0.75% ESI (₹{formData.esiCalculated || 0}). Edit if needed.
                     </p>
                   </div>
@@ -651,7 +651,7 @@ export default function HRPayrollManagement() {
                 </div>
 
                 <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 mt-6 shadow-sm">
-                  <h4 className="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">Payroll Summary</h4>
+                  <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Payroll Summary</h4>
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-slate-600 dark:text-slate-300 font-medium text-sm">Base Salary</span>
                     <span className="text-slate-900 dark:text-white font-bold">₹{(formData.baseSalary || 0).toLocaleString()}</span>
@@ -668,7 +668,7 @@ export default function HRPayrollManagement() {
               </div>
 
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">Cancel</button>
+                <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">Save Record</button>
               </div>
             </form>
@@ -682,18 +682,18 @@ export default function HRPayrollManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">HR Settings</h2>
-              <button onClick={() => setShowSettingsModal(false)} className="text-slate-400 hover:bg-slate-200 rounded-full p-2 transition-colors">
+              <button onClick={() => setShowSettingsModal(false)} className="text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full p-2 transition-colors">
                 <X size={20} />
               </button>
             </div>
             <div className="p-6">
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Authorized Signature</label>
-              <p className="text-xs text-slate-500 mb-4">This signature will appear on all generated payslips.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">This signature will appear on all generated payslips.</p>
               
               {schoolDetails?.hrConfig?.authorizedSignature && (
                 <div className="mb-4 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
                   <div>
-                    <p className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Current Signature</p>
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">Current Signature</p>
                     <img src={schoolDetails.hrConfig.authorizedSignature} alt="Authorized Signature" className="max-h-16 object-contain mix-blend-multiply" />
                   </div>
                   <button 
@@ -711,7 +711,7 @@ export default function HRPayrollManagement() {
                   type="file" 
                   accept="image/*"
                   onChange={e => setSignatureFile(e.target.files[0])}
-                  className="flex-1 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-1.5"
+                  className="flex-1 text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer border border-slate-200 dark:border-slate-700 rounded-xl p-1.5"
                 />
                 <button 
                   onClick={handleUploadSignature}
@@ -763,11 +763,11 @@ export default function HRPayrollManagement() {
                     {schoolDetails?.logoUrl ? (
                       <img src={schoolDetails.logoUrl} alt="School Logo" className="h-16 w-16 object-contain" />
                     ) : (
-                      <div className="h-16 w-16 bg-slate-100 dark:bg-slate-700 rounded flex items-center justify-center font-bold text-slate-400">LOGO</div>
+                      <div className="h-16 w-16 bg-slate-100 dark:bg-slate-700 rounded flex items-center justify-center font-bold text-slate-400 dark:text-slate-300">LOGO</div>
                     )}
                     <div>
                       <h1 className="text-2xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">{schoolDetails?.schoolName || 'School Name'}</h1>
-                      <p className="text-slate-500 text-sm mt-1">{schoolDetails?.address || 'School Address Not Configured'}</p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{schoolDetails?.address || 'School Address Not Configured'}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -779,23 +779,23 @@ export default function HRPayrollManagement() {
                 {/* Employee Details */}
                 <div className="grid grid-cols-2 gap-8 mb-8">
                   <div>
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Employee Details</h3>
+                    <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-3">Employee Details</h3>
                     <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
-                      <p className="text-slate-500 text-sm mb-1">Name: <span className="text-slate-900 dark:text-white font-bold ml-1">{showPayslipModal.name}</span></p>
-                      <p className="text-slate-500 text-sm">Role/Designation: <span className="text-slate-900 dark:text-white font-semibold ml-1">{showPayslipModal.role}</span></p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">Name: <span className="text-slate-900 dark:text-white font-bold ml-1">{showPayslipModal.name}</span></p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm">Role/Designation: <span className="text-slate-900 dark:text-white font-semibold ml-1">{showPayslipModal.role}</span></p>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Payment Details</h3>
+                    <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-3">Payment Details</h3>
                     <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
-                      <p className="text-slate-500 text-sm mb-1">Status: <span className="text-emerald-600 font-bold ml-1">{showPayslipModal.status}</span></p>
-                      <p className="text-slate-500 text-sm">Date: <span className="text-slate-900 dark:text-white font-semibold ml-1">{new Date().toLocaleDateString('en-GB')}</span></p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">Status: <span className="text-emerald-600 font-bold ml-1">{showPayslipModal.status}</span></p>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm">Date: <span className="text-slate-900 dark:text-white font-semibold ml-1">{new Date().toLocaleDateString('en-GB')}</span></p>
                     </div>
                   </div>
                 </div>
 
                 {/* Salary Breakdown Table */}
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Salary Breakdown</h3>
+                <h3 className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-3">Salary Breakdown</h3>
                 <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden mb-8">
                   <table className="w-full text-left border-collapse">
                     <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
@@ -833,7 +833,7 @@ export default function HRPayrollManagement() {
                             </div>
                           )}
                           {showPayslipModal.deductions === 0 && (
-                            <div className="text-slate-400 text-sm italic">No deductions</div>
+                            <div className="text-slate-400 dark:text-slate-300 text-sm italic">No deductions</div>
                           )}
                         </td>
                       </tr>
@@ -858,9 +858,9 @@ export default function HRPayrollManagement() {
                 {/* Net Pay & Signature */}
                 <div className="flex justify-between items-end mt-12 border-t-2 border-slate-900 pt-6">
                   <div>
-                    <h4 className="text-slate-500 font-semibold mb-1 uppercase tracking-widest text-sm">Net Pay</h4>
+                    <h4 className="text-slate-500 dark:text-slate-400 font-semibold mb-1 uppercase tracking-widest text-sm">Net Pay</h4>
                     <p className="text-4xl font-black text-slate-900 dark:text-white">₹{(showPayslipModal.baseSalary - showPayslipModal.deductions).toLocaleString()}</p>
-                    <p className="text-slate-400 text-sm mt-2 italic">*This is a computer generated document.</p>
+                    <p className="text-slate-400 dark:text-slate-300 text-sm mt-2 italic">*This is a computer generated document.</p>
                   </div>
                   
                   <div className="text-center w-48">
@@ -889,11 +889,11 @@ export default function HRPayrollManagement() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Payroll Report</h3>
-                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
               </div>
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl transition-colors"
               >
                 <X size={20} />
               </button>
@@ -903,7 +903,7 @@ export default function HRPayrollManagement() {
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               {/* File Name Input */}
               <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -912,7 +912,7 @@ export default function HRPayrollManagement() {
                     onChange={(e) => setExportFileName(e.target.value)}
                     className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold text-black bg-white dark:bg-slate-900"
                   />
-                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 dark:text-slate-300 font-bold font-mono select-none">.xlsx</span>
                 </div>
               </div>
 
@@ -928,7 +928,7 @@ export default function HRPayrollManagement() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
                 >
                   Deselect All
                 </button>
@@ -939,7 +939,7 @@ export default function HRPayrollManagement() {
                 {availableFieldsList.map(field => (
                   <label 
                     key={field.key}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 cursor-pointer transition-colors text-black font-semibold text-sm"
+                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors text-black font-semibold text-sm"
                   >
                     <input 
                       type="checkbox"

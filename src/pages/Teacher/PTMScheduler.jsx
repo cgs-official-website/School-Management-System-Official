@@ -126,7 +126,7 @@ export default function PTMScheduler() {
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuCalendarClock className="text-primary-600" /> PTM Scheduler
           </h1>
-          <p className="text-slate-500 mt-1">Manage Parent-Teacher Meetings and set your availability.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage Parent-Teacher Meetings and set your availability.</p>
         </div>
         <div className="flex gap-3">
           <button onClick={() => setShowCreateModal(true)} className="px-6 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2">
@@ -136,16 +136,16 @@ export default function PTMScheduler() {
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
-        <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 px-6 pt-4 shrink-0">
+        <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-6 pt-4 shrink-0">
           <button 
             onClick={() => setActiveTab('upcoming')}
-            className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'upcoming' ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'}`}
+            className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'upcoming' ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50'}`}
           >
             <LuCalendarCheck size={18} /> Upcoming Meetings
           </button>
           <button 
             onClick={() => setActiveTab('past')}
-            className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'past' ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'}`}
+            className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'past' ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50'}`}
           >
             <LuCalendarClock size={18} /> Past Meetings
           </button>
@@ -157,12 +157,12 @@ export default function PTMScheduler() {
               <div key={meeting.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow-md transition-all flex flex-col group">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 shrink-0 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-300 shrink-0 group-hover:bg-primary-50 group-hover:text-primary-500 transition-colors">
                       <LuUsers size={24} />
                     </div>
                     <div>
                       <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">{meeting.parentName}</h3>
-                      <p className="text-xs font-semibold text-slate-500 mt-0.5">Ref: {meeting.studentName}</p>
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Ref: {meeting.studentName}</p>
                     </div>
                   </div>
                   {getStatusBadge(meeting.status)}
@@ -171,11 +171,11 @@ export default function PTMScheduler() {
                 <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 mb-4 flex-1">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date & Time</p>
+                      <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Date & Time</p>
                       <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{new Date(meeting.date).toLocaleDateString('en-GB')} at {meeting.time}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Meeting Type</p>
+                      <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Meeting Type</p>
                       <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1">
                         {meeting.type === 'online' ? <LuVideo size={14} className="text-blue-500" /> : <LuMapPin size={14} className="text-amber-500" />}
                         <span className="capitalize">{meeting.type}</span>
@@ -189,7 +189,7 @@ export default function PTMScheduler() {
                   
                   {meeting.status === 'pending' ? (
                     <div className="flex gap-2">
-                      <button onClick={() => updateMeetingStatus(meeting.id, 'cancelled')} className="px-4 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors">Decline</button>
+                      <button onClick={() => updateMeetingStatus(meeting.id, 'cancelled')} className="px-4 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Decline</button>
                       <button onClick={() => updateMeetingStatus(meeting.id, 'confirmed')} className="px-4 py-1.5 bg-primary-600 text-white text-xs font-bold rounded-lg hover:bg-primary-700 transition-colors">Approve</button>
                     </div>
                   ) : meeting.status === 'confirmed' && activeTab === 'upcoming' ? (
@@ -201,7 +201,7 @@ export default function PTMScheduler() {
               </div>
             ))}
             {displayedMeetings.length === 0 && (
-              <div className="col-span-full py-12 text-center text-slate-500 font-medium">
+              <div className="col-span-full py-12 text-center text-slate-500 dark:text-slate-400 font-medium">
                 No meetings found in this category.
               </div>
             )}
@@ -215,7 +215,7 @@ export default function PTMScheduler() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Book Meeting</h2>
-              <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowCreateModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <LuX size={20} />
               </button>
             </div>
@@ -272,7 +272,7 @@ export default function PTMScheduler() {
               </div>
 
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
-                <button type="button" onClick={() => setShowCreateModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">
+                <button type="button" onClick={() => setShowCreateModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
                   Cancel
                 </button>
                 <button type="submit" disabled={creating} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">

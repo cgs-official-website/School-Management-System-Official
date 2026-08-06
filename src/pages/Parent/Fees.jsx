@@ -108,7 +108,7 @@ export default function ParentFees() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Fees & Payments</h1>
-          <p className="text-slate-500 text-sm">Monitor fee invoices, receipts, and outstanding dues for your linked student.</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">Monitor fee invoices, receipts, and outstanding dues for your linked student.</p>
         </div>
       </div>
 
@@ -121,7 +121,7 @@ export default function ParentFees() {
             <Receipt size={24} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Invoiced</p>
+            <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Total Invoiced</p>
             <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">₹{stats.totalInvoiced.toLocaleString()}</p>
           </div>
         </div>
@@ -133,7 +133,7 @@ export default function ParentFees() {
             <TrendingUp size={24} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Paid Amount</p>
+            <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Paid Amount</p>
             <p className="text-2xl font-black text-slate-950 mt-1">₹{stats.paid.toLocaleString()}</p>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function ParentFees() {
             <AlertTriangle size={24} />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">
               {stats.overdueCount > 0 ? 'Overdue Balance' : 'Outstanding Balance'}
             </p>
             <p className={`text-2xl font-black mt-1 ${stats.overdueCount > 0 ? 'text-red-600' : 'text-amber-600'}`}>
@@ -209,12 +209,12 @@ export default function ParentFees() {
 
       {/* Invoices List */}
       <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl shadow-sm overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex justify-between items-center">
+        <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
           <h2 className="text-lg font-bold text-slate-950">Invoice Log</h2>
         </div>
 
         {invoices.length === 0 ? (
-          <div className="p-12 text-center text-slate-400">
+          <div className="p-12 text-center text-slate-400 dark:text-slate-300">
             <Receipt className="mx-auto mb-3 opacity-40" size={48} />
             <p className="font-medium text-sm">No fee invoices generated yet.</p>
           </div>
@@ -222,7 +222,7 @@ export default function ParentFees() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50/30">
+                <tr className="border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider bg-slate-50/30">
                   <th className="py-4 px-6">Fee Details</th>
                   <th className="py-4 px-6">Due Date</th>
                   <th className="py-4 px-6">Amount</th>
@@ -242,7 +242,7 @@ export default function ParentFees() {
                     >
                       <td className="py-4 px-6">
                         <p className="font-semibold text-slate-900 dark:text-white">{inv.name}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">
+                        <p className="text-xs text-slate-400 dark:text-slate-300 mt-0.5">
                           {inv.createdAt ? `Invoiced on ${new Date(inv.createdAt).toLocaleDateString('en-GB')}` : 'Standard Fee'}
                         </p>
                       </td>
@@ -285,7 +285,7 @@ export default function ParentFees() {
                             {isOverdue ? 'Pay Immediately' : 'Pay Dues'}
                           </button>
                         ) : (
-                          <span className="text-slate-400 text-xs font-medium italic">Fully Settled</span>
+                          <span className="text-slate-400 dark:text-slate-300 text-xs font-medium italic">Fully Settled</span>
                         )}
                       </td>
                     </tr>
@@ -302,15 +302,15 @@ export default function ParentFees() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 backdrop-blur-sm p-4">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full border border-slate-100 dark:border-slate-800 shadow-2xl relative animate-in fade-in zoom-in duration-200">
             <h3 className="text-lg font-bold text-slate-950 mb-2">Simulate Fee Payment</h3>
-            <p className="text-slate-500 text-sm mb-4">
+            <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
               You are simulating a secure online payment of <span className="font-bold text-slate-900 dark:text-white">₹{selectedInvoice.amount}</span> for <strong>{selectedInvoice.name}</strong>.
             </p>
             <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-4 mb-6 border border-slate-100 dark:border-slate-800 space-y-2">
-              <div className="flex justify-between text-xs font-medium text-slate-400">
+              <div className="flex justify-between text-xs font-medium text-slate-400 dark:text-slate-300">
                 <span>INVOICE</span>
                 <span className="text-slate-800 dark:text-slate-100 font-mono">#{selectedInvoice.id.slice(0, 8).toUpperCase()}</span>
               </div>
-              <div className="flex justify-between text-xs font-medium text-slate-400">
+              <div className="flex justify-between text-xs font-medium text-slate-400 dark:text-slate-300">
                 <span>DUE DATE</span>
                 <span className="text-slate-800 dark:text-slate-100">{new Date(selectedInvoice.dueDate).toLocaleDateString('en-GB')}</span>
               </div>
@@ -323,7 +323,7 @@ export default function ParentFees() {
               <button
                 disabled={paying}
                 onClick={() => setSelectedInvoice(null)}
-                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-sm transition-colors"
+                className="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-sm transition-colors"
               >
                 Cancel
               </button>

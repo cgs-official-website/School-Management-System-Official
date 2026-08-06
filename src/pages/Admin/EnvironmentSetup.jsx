@@ -414,7 +414,7 @@ export default function EnvironmentSetup() {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Environment Setup</h1>
-          <p className="text-slate-500 mt-1">Configure your school's branding, contact info, and academic settings.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Configure your school's branding, contact info, and academic settings.</p>
         </div>
         <button 
           onClick={handleSave}
@@ -451,7 +451,7 @@ export default function EnvironmentSetup() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><MapPin size={16} className="text-slate-400"/> Location / Address</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><MapPin size={16} className="text-slate-400 dark:text-slate-300"/> Location / Address</label>
               <input 
                 type="text" 
                 value={formData.location}
@@ -460,7 +460,7 @@ export default function EnvironmentSetup() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><Phone size={16} className="text-slate-400"/> Contact Phone</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><Phone size={16} className="text-slate-400 dark:text-slate-300"/> Contact Phone</label>
               <input 
                 type="tel" 
                 value={formData.contactPhone}
@@ -469,7 +469,7 @@ export default function EnvironmentSetup() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><Globe size={16} className="text-slate-400"/> Official Website</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><Globe size={16} className="text-slate-400 dark:text-slate-300"/> Official Website</label>
               <input 
                 type="url" 
                 value={formData.website}
@@ -489,8 +489,8 @@ export default function EnvironmentSetup() {
           </div>
           <div className="p-8 grid md:grid-cols-2 gap-8 items-start">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><ImageIcon size={16} className="text-slate-400"/> Upload Logo</label>
-              <p className="text-xs text-slate-500 mb-3">Upload your school's logo image (PNG/JPG/SVG, max 2MB).</p>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1 flex items-center gap-2"><ImageIcon size={16} className="text-slate-400 dark:text-slate-300"/> Upload Logo</label>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">Upload your school's logo image (PNG/JPG/SVG, max 2MB).</p>
               <input 
                 type="file" 
                 accept="image/*"
@@ -518,12 +518,12 @@ export default function EnvironmentSetup() {
             </div>
             
             <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center min-h-[200px] text-center">
-              <p className="text-sm font-semibold text-slate-500 mb-4 uppercase tracking-wider">Preview</p>
+              <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Preview</p>
               {formData.branding.logoUrl ? (
                 <img src={formData.branding.logoUrl} alt="School Logo" className="h-16 object-contain mb-4" onError={(e) => { e.target.src = ''; e.target.className='hidden'; }} />
               ) : (
-                <div className="h-16 w-16 bg-slate-200 rounded-full flex items-center justify-center mb-4">
-                  <ImageIcon className="text-slate-400" size={32} />
+                <div className="h-16 w-16 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
+                  <ImageIcon className="text-slate-400 dark:text-slate-300" size={32} />
                 </div>
               )}
               <div 
@@ -610,7 +610,7 @@ export default function EnvironmentSetup() {
                       setShowCustomTermInput(false);
                       setCustomTermName('');
                     }}
-                    className="px-3 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 cursor-pointer"
+                    className="px-3 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -681,7 +681,7 @@ export default function EnvironmentSetup() {
               <IndianRupee className="text-primary-600" size={24} />
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">Fee Collection Periods</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Define your school's fee collection schedule (e.g. Term 1, Quarter 1, Annual).</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Define your school's fee collection schedule (e.g. Term 1, Quarter 1, Annual).</p>
               </div>
             </div>
             <button
@@ -694,9 +694,9 @@ export default function EnvironmentSetup() {
           </div>
 
           {periods.length === 0 ? (
-            <div className="p-12 text-center text-slate-400">
+            <div className="p-12 text-center text-slate-400 dark:text-slate-300">
               <IndianRupee className="mx-auto mb-3 opacity-30" size={40} />
-              <p className="font-semibold text-sm text-slate-500">No fee collection periods configured yet.</p>
+              <p className="font-semibold text-sm text-slate-500 dark:text-slate-400">No fee collection periods configured yet.</p>
               <p className="text-xs mt-1">Add periods like Term 1, Quarter 1, Annual to assign fees against them.</p>
             </div>
           ) : (
@@ -709,8 +709,8 @@ export default function EnvironmentSetup() {
                     </div>
                     <div>
                       <p className="font-bold text-slate-900 dark:text-white">{p.name}</p>
-                      {p.description && <p className="text-xs text-slate-500 mt-0.5">{p.description}</p>}
-                      <span className="text-[10px] font-mono text-slate-400">{p.code}</span>
+                      {p.description && <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{p.description}</p>}
+                      <span className="text-[10px] font-mono text-slate-400 dark:text-slate-300">{p.code}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -720,15 +720,15 @@ export default function EnvironmentSetup() {
                       className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
                         p.status === 'active'
                           ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                          : 'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:bg-slate-200'
+                          : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
                       }`}
                     >
                       {p.status === 'active' ? 'Active' : 'Inactive'}
                     </button>
-                    <button type="button" onClick={() => openEditPeriod(p)} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                    <button type="button" onClick={() => openEditPeriod(p)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                       <Pencil size={15} />
                     </button>
-                    <button type="button" onClick={() => handleDeletePeriod(p)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <button type="button" onClick={() => handleDeletePeriod(p)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                       <Trash size={15} />
                     </button>
                   </div>
@@ -744,7 +744,7 @@ export default function EnvironmentSetup() {
             <Clock className="text-primary-600" size={24} />
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Attendance Configuration</h2>
-              <p className="text-xs text-slate-500 mt-0.5">Configure school timings, thresholds, and thresholds for automated flags.</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Configure school timings, thresholds, and thresholds for automated flags.</p>
             </div>
           </div>
           <form onSubmit={handleSaveAttendanceConfig} className="p-8 space-y-6">
@@ -805,7 +805,7 @@ export default function EnvironmentSetup() {
               <UserCheck className="text-primary-600" size={24} />
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">Leave Approval Rules</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Build a custom multi-level leave approval ladder by duration bands.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Build a custom multi-level leave approval ladder by duration bands.</p>
               </div>
             </div>
             <button
@@ -833,9 +833,9 @@ export default function EnvironmentSetup() {
           )}
 
           {leaveRules.length === 0 ? (
-            <div className="p-12 text-center text-slate-400">
+            <div className="p-12 text-center text-slate-400 dark:text-slate-300">
               <UserCheck className="mx-auto mb-3 opacity-30" size={40} />
-              <p className="font-semibold text-sm text-slate-500">No leave approval rules configured.</p>
+              <p className="font-semibold text-sm text-slate-500 dark:text-slate-400">No leave approval rules configured.</p>
               <p className="text-xs mt-1">Leaves will trigger manual routing to general admins until rules are added.</p>
             </div>
           ) : (
@@ -850,16 +850,16 @@ export default function EnvironmentSetup() {
                       <p className="font-bold text-slate-900 dark:text-white">
                         {rule.minDays} {rule.maxDays === null ? 'and above' : `to ${rule.maxDays}`} Days
                       </p>
-                      <p className="text-xs text-slate-500 mt-0.5">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                         Route to Role: <span className="font-semibold text-indigo-600">{rule.roleId}</span>
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button type="button" onClick={() => openEditLeaveRule(rule)} className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                    <button type="button" onClick={() => openEditLeaveRule(rule)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                       <Pencil size={15} />
                     </button>
-                    <button type="button" onClick={() => handleDeleteLeaveRule(rule)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <button type="button" onClick={() => handleDeleteLeaveRule(rule)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                       <Trash size={15} />
                     </button>
                   </div>
@@ -877,7 +877,7 @@ export default function EnvironmentSetup() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingPeriod ? 'Edit Period' : 'Add Fee Collection Period'}</h3>
-              <button type="button" onClick={() => setShowPeriodModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full"><X size={18} /></button>
+              <button type="button" onClick={() => setShowPeriodModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full"><X size={18} /></button>
             </div>
             <form onSubmit={handleSavePeriod} className="p-6 space-y-4">
               <div>
@@ -922,7 +922,7 @@ export default function EnvironmentSetup() {
                 />
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setShowPeriodModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
+                <button type="button" onClick={() => setShowPeriodModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" disabled={savingPeriod} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60">
                   {savingPeriod ? 'Saving...' : editingPeriod ? 'Update Period' : 'Add Period'}
                 </button>
@@ -938,7 +938,7 @@ export default function EnvironmentSetup() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">{editingLeaveRule ? 'Edit Approval Rule' : 'Add Leave Approval Band'}</h3>
-              <button type="button" onClick={() => setShowLeaveRuleModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full"><X size={18} /></button>
+              <button type="button" onClick={() => setShowLeaveRuleModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full"><X size={18} /></button>
             </div>
             <form onSubmit={handleSaveLeaveRule} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -988,7 +988,7 @@ export default function EnvironmentSetup() {
                 />
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <button type="button" onClick={() => setShowLeaveRuleModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
+                <button type="button" onClick={() => setShowLeaveRuleModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">Cancel</button>
                 <button type="submit" disabled={savingLeaveRule} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-60">
                   {savingLeaveRule ? 'Saving...' : editingLeaveRule ? 'Update Rule' : 'Add Rule'}
                 </button>

@@ -1204,7 +1204,7 @@ export default function StudentManagement() {
               Seats: {totalStudents} / {effectiveSeatLimit}
             </span>
           </div>
-          <p className="text-slate-500 mt-1">Review public admission applications, admit verified students, and manage enrollment directory.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Review public admission applications, admit verified students, and manage enrollment directory.</p>
         </div>
         <div className="flex flex-wrap gap-2.5">
           <button 
@@ -1257,7 +1257,7 @@ export default function StudentManagement() {
                         setShareLinkModalOpen(true);
                         setNewAdmissionDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 transition-colors"
                     >
                       <Share2 size={16} className="text-emerald-600" /> Share Admission Link
                     </button>
@@ -1267,7 +1267,7 @@ export default function StudentManagement() {
                         setShowForm(true);
                         setNewAdmissionDropdownOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 flex items-center gap-2 transition-colors"
+                      className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 transition-colors"
                     >
                       <UserPlus size={16} className="text-primary-600" /> Add Student
                     </button>
@@ -1287,13 +1287,13 @@ export default function StudentManagement() {
             className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
               activeDirectoryTab === 'enrolled'
                 ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
             }`}
           >
             <GraduationCap size={18} />
             <span>Enrolled Students</span>
             <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-              activeDirectoryTab === 'enrolled' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700 dark:text-slate-200'
+              activeDirectoryTab === 'enrolled' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200'
             }`}>
               {totalStudents}
             </span>
@@ -1304,7 +1304,7 @@ export default function StudentManagement() {
             className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all relative ${
               activeDirectoryTab === 'applications'
                 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
-                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
             }`}
           >
             <UserCheck size={18} />
@@ -1312,7 +1312,7 @@ export default function StudentManagement() {
             <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
               activeDirectoryTab === 'applications'
                 ? 'bg-white/20 text-white'
-                : pendingAppsCount > 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-700 dark:text-slate-200'
+                : pendingAppsCount > 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200'
             }`}>
               {admissionApplications.length}
             </span>
@@ -1336,7 +1336,7 @@ export default function StudentManagement() {
           </div>
 
           <form onSubmit={handleCreate} className="space-y-6">
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Personal Information</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-3">
@@ -1413,7 +1413,7 @@ export default function StudentManagement() {
               </div>
             </div>
 
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Contact Information</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="md:col-span-3">
@@ -1451,7 +1451,7 @@ export default function StudentManagement() {
               </div>
             </div>
 
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Academic Information</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 <div>
@@ -1480,7 +1480,7 @@ export default function StudentManagement() {
               </div>
             </div>
 
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Transportation Details</h3>
               <div className="grid md:grid-cols-3 gap-6">
                 <div>
@@ -1490,7 +1490,7 @@ export default function StudentManagement() {
               </div>
             </div>
 
-            <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
               <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3 mb-4">Fee Configuration</h3>
               <div className="grid md:grid-cols-4 gap-6">
                 <div>
@@ -1528,7 +1528,7 @@ export default function StudentManagement() {
             <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 type="button" onClick={() => setShowForm(false)}
-                className="px-6 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 rounded-xl transition-colors"
+                className="px-6 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -1553,8 +1553,8 @@ export default function StudentManagement() {
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><GraduationCap size={20} /></div>
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Seats Enrolled</p>
-                  <p className="text-xl font-bold text-slate-900 dark:text-white">{totalStudents} <span className="text-xs font-normal text-slate-400">/ {effectiveSeatLimit}</span></p>
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Seats Enrolled</p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white">{totalStudents} <span className="text-xs font-normal text-slate-400 dark:text-slate-300">/ {effectiveSeatLimit}</span></p>
                 </div>
               </div>
               <div className="mt-2.5">
@@ -1568,21 +1568,21 @@ export default function StudentManagement() {
             </div>
             <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><CheckCircle2 size={20} /></div>
-              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active</p><p className="text-xl font-bold text-slate-900 dark:text-white">{activeStudents}</p></div>
+              <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active</p><p className="text-xl font-bold text-slate-900 dark:text-white">{activeStudents}</p></div>
             </div>
             <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><UserPlus size={20} /></div>
-              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Boys</p><p className="text-xl font-bold text-slate-900 dark:text-white">{maleStudents}</p></div>
+              <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Boys</p><p className="text-xl font-bold text-slate-900 dark:text-white">{maleStudents}</p></div>
             </div>
             <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-pink-50 text-pink-600 rounded-xl"><UserPlus size={20} /></div>
-              <div><p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Girls</p><p className="text-xl font-bold text-slate-900 dark:text-white">{femaleStudents}</p></div>
+              <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Girls</p><p className="text-xl font-bold text-slate-900 dark:text-white">{femaleStudents}</p></div>
             </div>
           </div>
 
           <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-white dark:bg-slate-900">
             <div className="relative flex-1 min-w-[250px] max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={18} />
               <input 
                 type="text" 
                 placeholder="Search by student name or admission number..." 
@@ -1593,7 +1593,7 @@ export default function StudentManagement() {
               {searchQuery && (
                 <button 
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                   title="Clear search"
                 >
                   <X size={16} />
@@ -1601,7 +1601,7 @@ export default function StudentManagement() {
               )}
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <Filter size={18} className="text-slate-400 hidden sm:block" />
+              <Filter size={18} className="text-slate-400 dark:text-slate-300 hidden sm:block" />
               <select 
                 value={genderFilter}
                 onChange={(e) => setGenderFilter(e.target.value)}
@@ -1637,7 +1637,7 @@ export default function StudentManagement() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider">
                   <th className="py-4 px-6">Student</th>
                   <th className="py-4 px-6">Admission No</th>
                   <th className="py-4 px-6">Class</th>
@@ -1648,13 +1648,13 @@ export default function StudentManagement() {
               <tbody className="divide-y divide-slate-100 text-sm text-slate-600 dark:text-slate-300 font-medium">
                 {paginatedStudents.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="py-12 text-center text-slate-400">
+                    <td colSpan="6" className="py-12 text-center text-slate-400 dark:text-slate-300">
                       <div className="flex flex-col items-center justify-center">
                         <GraduationCap size={44} className="text-slate-300 mb-2" />
                         <p className="font-semibold text-slate-700 dark:text-slate-200 text-base">
                           {searchQuery ? `No students matching "${searchQuery}"` : 'No enrolled students found'}
                         </p>
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p className="text-xs text-slate-400 dark:text-slate-300 mt-1">
                           {searchQuery 
                             ? 'Check the spelling of the student name or admission number, or reset your search.' 
                             : 'Try adjusting your filters, or admit a new student.'}
@@ -1701,7 +1701,7 @@ export default function StudentManagement() {
                             <ExternalLink size={12} /> View Doc
                           </a>
                         ) : (
-                          <span className="text-slate-400 text-xs italic">No attachment</span>
+                          <span className="text-slate-400 dark:text-slate-300 text-xs italic">No attachment</span>
                         )}
                       </td>
                       <td className="p-4 pr-6 text-right">
@@ -1716,7 +1716,7 @@ export default function StudentManagement() {
                               setShowDiscardConfirm(false);
                               setViewStudentModalOpen(true);
                             }}
-                            className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye size={18} />
@@ -1724,7 +1724,7 @@ export default function StudentManagement() {
                           {hasDeletePermission && (
                             <button 
                               onClick={() => setConfirmDeleteState({ isOpen: true, id: student.id, name: `${student.firstName} ${student.lastName}` })}
-                              className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                               title="Delete Student"
                             >
                               <Trash size={18} />
@@ -1732,7 +1732,7 @@ export default function StudentManagement() {
                           )}
                            <button 
                              onClick={() => openAssignModal(student)}
-                             className="px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
+                             className="px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
                            >
                              {student.classId ? 'Change Class' : 'Assign'}
                            </button>
@@ -1747,14 +1747,14 @@ export default function StudentManagement() {
 
           {totalPages > 1 && (
             <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-b-3xl">
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-slate-500 dark:text-slate-400">
                 Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, filteredStudents.length)} of {filteredStudents.length} entries
               </span>
               <div className="flex gap-2">
                 <button 
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Previous
                 </button>
@@ -1764,7 +1764,7 @@ export default function StudentManagement() {
                 <button 
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Next
                 </button>
@@ -1780,7 +1780,7 @@ export default function StudentManagement() {
             <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><UserCheck size={20} /></div>
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Received</p>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Received</p>
                 <p className="text-xl font-bold text-slate-900 dark:text-white">{admissionApplications.length}</p>
               </div>
             </div>
@@ -1801,7 +1801,7 @@ export default function StudentManagement() {
             <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
               <div className="p-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl"><X size={20} /></div>
               <div>
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Rejected</p>
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rejected</p>
                 <p className="text-xl font-bold text-slate-900 dark:text-white">{rejectedAppsCount}</p>
               </div>
             </div>
@@ -1810,7 +1810,7 @@ export default function StudentManagement() {
           {/* Search & Filter Header */}
           <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-white dark:bg-slate-900">
             <div className="relative flex-1 min-w-[250px] max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={18} />
               <input 
                 type="text" 
                 placeholder="Search by student name, application no, parent phone..." 
@@ -1821,7 +1821,7 @@ export default function StudentManagement() {
               {appSearchQuery && (
                 <button 
                   onClick={() => setAppSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                   title="Clear search"
                 >
                   <X size={16} />
@@ -1829,7 +1829,7 @@ export default function StudentManagement() {
               )}
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <Filter size={18} className="text-slate-400 hidden sm:block" />
+              <Filter size={18} className="text-slate-400 dark:text-slate-300 hidden sm:block" />
               <select 
                 value={appStatusFilter}
                 onChange={(e) => setAppStatusFilter(e.target.value)}
@@ -1856,7 +1856,7 @@ export default function StudentManagement() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider">
                   <th className="py-4 px-6">App ID</th>
                   <th className="py-4 px-6">Applicant Student</th>
                   <th className="py-4 px-6">Target Class</th>
@@ -1869,13 +1869,13 @@ export default function StudentManagement() {
               <tbody className="divide-y divide-slate-100 text-sm text-slate-600 dark:text-slate-300 font-medium">
                 {paginatedApplications.length === 0 ? (
                   <tr>
-                    <td colSpan="7" className="py-16 text-center text-slate-400">
+                    <td colSpan="7" className="py-16 text-center text-slate-400 dark:text-slate-300">
                       <div className="flex flex-col items-center justify-center max-w-md mx-auto">
                         <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
                           <Share2 size={28} />
                         </div>
                         <p className="font-bold text-slate-800 dark:text-slate-100 text-base">No Admission Applications Found</p>
-                        <p className="text-xs text-slate-400 mt-1 mb-4 text-center">
+                        <p className="text-xs text-slate-400 dark:text-slate-300 mt-1 mb-4 text-center">
                           Share your school's public admission form link with parents or prospective students to receive online applications.
                         </p>
                         <button
@@ -1913,11 +1913,11 @@ export default function StudentManagement() {
                               {app.studentName || `${app.firstName || ''} ${app.lastName || ''}`.trim() || 'Prospective Student'}
                             </p>
                             <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-xs text-slate-400">{app.gender || 'N/A'}</span>
+                              <span className="text-xs text-slate-400 dark:text-slate-300">{app.gender || 'N/A'}</span>
                               {app.age && (
                                 <>
                                   <span className="text-slate-300">•</span>
-                                  <span className="text-xs text-slate-400">{app.age} yrs</span>
+                                  <span className="text-xs text-slate-400 dark:text-slate-300">{app.age} yrs</span>
                                 </>
                               )}
                             </div>
@@ -1932,10 +1932,10 @@ export default function StudentManagement() {
                       <td className="py-4 px-6">
                         <div>
                           <p className="text-slate-900 dark:text-white font-medium">{app.parentName || 'N/A'}</p>
-                          <p className="text-xs text-slate-400">{app.parentPhone || app.parentEmail || 'No contact'}</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-300">{app.parentPhone || app.parentEmail || 'No contact'}</p>
                         </div>
                       </td>
-                      <td className="py-4 px-6 text-xs text-slate-500">
+                      <td className="py-4 px-6 text-xs text-slate-500 dark:text-slate-400">
                         {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString('en-GB') : 'Recent'}
                       </td>
                       <td className="py-4 px-6">
@@ -1945,7 +1945,7 @@ export default function StudentManagement() {
                           </span>
                         ) : app.status === 'Rejected' ? (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
-                            <X size={14} className="text-slate-500" /> Rejected
+                            <X size={14} className="text-slate-500 dark:text-slate-400" /> Rejected
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
@@ -1959,7 +1959,7 @@ export default function StudentManagement() {
                             onClick={() => handleOpenReviewModal(app)}
                             className={`px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all ${
                               app.status === 'Approved'
-                                ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200'
+                                ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600'
                                 : 'bg-emerald-600 hover:bg-emerald-700 text-white'
                             }`}
                             title="Review Application Details & Admit"
@@ -1974,7 +1974,7 @@ export default function StudentManagement() {
                                   handleDeleteApplication(app.id);
                                 }
                               }}
-                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                               title="Delete Application"
                             >
                               <Trash size={16} />
@@ -1991,14 +1991,14 @@ export default function StudentManagement() {
 
           {appTotalPages > 1 && (
             <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-b-3xl">
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-slate-500 dark:text-slate-400">
                 Showing {(appCurrentPage - 1) * appRowsPerPage + 1} to {Math.min(appCurrentPage * appRowsPerPage, filteredApplications.length)} of {filteredApplications.length} applications
               </span>
               <div className="flex gap-2">
                 <button 
                   onClick={() => setAppCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={appCurrentPage === 1}
-                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Previous
                 </button>
@@ -2008,7 +2008,7 @@ export default function StudentManagement() {
                 <button 
                   onClick={() => setAppCurrentPage(prev => Math.min(prev + 1, appTotalPages))}
                   disabled={appCurrentPage === appTotalPages}
-                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 transition-colors"
+                  className="px-3 py-1.5 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 disabled:opacity-50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Next
                 </button>
@@ -2026,7 +2026,7 @@ export default function StudentManagement() {
                 <FileText className="text-primary-600" />
                 {selectedStudentForUpload ? 'Upload Document' : 'Bulk Import Students'}
               </h2>
-              <button onClick={() => setUploadModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setUploadModalOpen(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -2035,7 +2035,7 @@ export default function StudentManagement() {
               {selectedStudentForUpload ? (
                 <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
                   Upload a document (e.g. Birth Certificate) for <span className="font-bold text-slate-900 dark:text-white">{selectedStudentForUpload.firstName} {selectedStudentForUpload.lastName}</span>. 
-                  <br/><span className="text-xs text-slate-400 mt-1 block">File will be securely stored in: {schoolName}/Students/...</span>
+                  <br/><span className="text-xs text-slate-400 dark:text-slate-300 mt-1 block">File will be securely stored in: {schoolName}/Students/...</span>
                 </p>
               ) : (
                 <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
@@ -2060,7 +2060,7 @@ export default function StudentManagement() {
                   }}
                   className="absolute inset-0 opacity-0 cursor-pointer z-10" 
                 />
-                <UploadCloud size={32} className={`mx-auto mb-3 ${uploadFile ? 'text-green-500' : 'text-slate-400 group-hover:text-primary-500'}`} />
+                <UploadCloud size={32} className={`mx-auto mb-3 ${uploadFile ? 'text-green-500' : 'text-slate-400 dark:text-slate-300 group-hover:text-primary-500'}`} />
                 {uploadFile ? (
                   <div>
                     <p className="font-semibold text-green-700 text-sm truncate">{uploadFile.name}</p>
@@ -2069,7 +2069,7 @@ export default function StudentManagement() {
                 ) : (
                   <div>
                     <p className="font-semibold text-slate-700 dark:text-slate-200 text-sm">Click or drag file to upload</p>
-                    <p className="text-xs text-slate-500 mt-1">{selectedStudentForUpload ? 'PDF, JPG, PNG up to 10MB' : 'Excel or CSV file'}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{selectedStudentForUpload ? 'PDF, JPG, PNG up to 10MB' : 'Excel or CSV file'}</p>
                   </div>
                 )}
               </div>
@@ -2078,7 +2078,7 @@ export default function StudentManagement() {
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
               <button 
                 onClick={() => setUploadModalOpen(false)}
-                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -2107,7 +2107,7 @@ export default function StudentManagement() {
                 <GraduationCap className="text-indigo-600" />
                 {isEditMode ? 'Edit Student Details' : 'Student Details'}
               </h2>
-              <button onClick={handleModalCloseOrCancel} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={handleModalCloseOrCancel} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -2125,7 +2125,7 @@ export default function StudentManagement() {
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white truncate">
                     {selectedStudentToView.firstName} {selectedStudentToView.middleName ? `${selectedStudentToView.middleName} ` : ''}{selectedStudentToView.lastName}
                   </h3>
-                  <p className="text-sm font-medium text-slate-500">
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
                     Admission No:{' '}
                     <span className="text-slate-800 dark:text-slate-100 font-mono font-bold">
                       {selectedStudentToView.admissionNumber}
@@ -2142,57 +2142,57 @@ export default function StudentManagement() {
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Personal Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">First Name</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">First Name</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.firstName || '—'}</p>
                       </div>
                       {selectedStudentToView.middleName && (
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Middle Name</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Middle Name</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.middleName}</p>
                         </div>
                       )}
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Last Name</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Last Name</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.lastName || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date of Birth</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Date of Birth</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.dob ? new Date(selectedStudentToView.dob).toLocaleDateString('en-GB') : '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Age</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Age</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.age || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Gender</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Gender</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.gender || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Blood Group</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Blood Group</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.bloodGroup || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nationality</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Nationality</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.nationality || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Religion</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Religion</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.religion || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mother Tongue</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Mother Tongue</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.motherTongue || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Aadhaar Number</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Aadhaar Number</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.aadharNumber || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Student Phone</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Student Phone</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.studentPhone || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Student Email</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Student Email</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.studentEmail || '—'}</p>
                       </div>
                     </div>
@@ -2203,19 +2203,19 @@ export default function StudentManagement() {
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Academic Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Class & Section</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Class & Section</label>
                         <p className="text-slate-950 font-semibold">{getClassName(selectedStudentToView.classId)}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Roll Number</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Roll Number</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.rollNumber || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Admission Date</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Admission Date</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.admissionDate ? new Date(selectedStudentToView.admissionDate).toLocaleDateString('en-GB') : '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Status</label>
                         <div>
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
                             selectedStudentToView.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -2234,53 +2234,53 @@ export default function StudentManagement() {
                       {/* Father info */}
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-3 border-b border-slate-200/50">
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Father's Name</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Father's Name</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.parentName || '—'}</p>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Father's Phone</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Father's Phone</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.parentPhone || '—'}</p>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Father's Email</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Father's Email</label>
                           <p className="text-slate-950 font-semibold truncate">{selectedStudentToView.parentEmail || '—'}</p>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Occupation</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Occupation</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.parentOccupation || '—'}</p>
                         </div>
                       </div>
                       {/* Mother info */}
                       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 pb-3 border-b border-slate-200/50">
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mother's Name</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Mother's Name</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.motherName || '—'}</p>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mother's Phone</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Mother's Phone</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.motherPhone || '—'}</p>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Mother's Email</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Mother's Email</label>
                           <p className="text-slate-950 font-semibold truncate">{selectedStudentToView.motherEmail || '—'}</p>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Occupation</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Occupation</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.motherOccupation || '—'}</p>
                         </div>
                       </div>
                       {/* Guardian info */}
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Guardian Name</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Guardian Name</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.guardianName || '—'}</p>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Guardian Phone</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Guardian Phone</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.guardianPhone || '—'}</p>
                         </div>
                         <div>
-                          <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Relationship</label>
+                          <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Relationship</label>
                           <p className="text-slate-950 font-semibold">{selectedStudentToView.guardianRelationship || '—'}</p>
                         </div>
                       </div>
@@ -2292,31 +2292,31 @@ export default function StudentManagement() {
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Address Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="col-span-1 sm:col-span-3">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Address Line 1</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Address Line 1</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.addressLine1 || selectedStudentToView.homeAddress || '—'}</p>
                       </div>
                       <div className="col-span-1 sm:col-span-3">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Address Line 2</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Address Line 2</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.addressLine2 || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">City</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">City</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.city || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">District</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">District</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.district || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">State</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">State</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.state || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Country</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Country</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.country || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Pincode</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Pincode</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.pincode || '—'}</p>
                       </div>
                     </div>
@@ -2327,23 +2327,23 @@ export default function StudentManagement() {
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Other Details</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Previous School</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Previous School</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.previousSchool || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Identification Marks</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Identification Marks</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.identificationMarks || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Transport Details</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Transport Details</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.transportDetails || selectedStudentToView.busRoute || '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hostel Details</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Hostel Details</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.hostelDetails || '—'}</p>
                       </div>
                       <div className="col-span-1 sm:col-span-2">
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Medical Information</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Medical Information</label>
                         <p className="text-slate-950 font-semibold whitespace-pre-line">{selectedStudentToView.medicalInfo || '—'}</p>
                       </div>
                     </div>
@@ -2354,23 +2354,23 @@ export default function StudentManagement() {
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200/80">Fee Configuration</h4>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tuition Fee</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Tuition Fee</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.tuitionFee ? `₹${selectedStudentToView.tuitionFee}` : '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Hostel Fee</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Hostel Fee</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.hostelFee ? `₹${selectedStudentToView.hostelFee}` : '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Book Fee</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Book Fee</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.bookFee ? `₹${selectedStudentToView.bookFee}` : '—'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Other Fee</label>
+                        <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Other Fee</label>
                         <p className="text-slate-950 font-semibold">{selectedStudentToView.otherFee ? `₹${selectedStudentToView.otherFee}` : '—'}</p>
                       </div>
                       <div className="col-span-2 sm:col-span-4 pt-2 border-t border-slate-200/60 flex justify-between items-center">
-                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Fee</span>
+                        <span className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Total Fee</span>
                         <span className="text-primary-700 font-black text-lg">{selectedStudentToView.totalFee ? `₹${selectedStudentToView.totalFee}` : '—'}</span>
                       </div>
                     </div>
@@ -2392,7 +2392,7 @@ export default function StudentManagement() {
                     {studentStats ? (
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Running Rate</p>
+                          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Running Rate</p>
                           <span className={`inline-block mt-2 text-xl font-black px-2.5 py-0.5 rounded-full border ${
                             studentStats.attendancePercentage >= 75 ? 'bg-green-50 text-green-700 border-green-200' :
                             studentStats.attendancePercentage >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' :
@@ -2402,11 +2402,11 @@ export default function StudentManagement() {
                           </span>
                         </div>
                         <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Days</p>
+                          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Total Days</p>
                           <p className="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-2">{studentStats.totalDays}</p>
                         </div>
                         <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Present / Late</p>
+                          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Present / Late</p>
                           <p className="text-xl font-extrabold text-slate-800 dark:text-slate-100 mt-2">
                             <span className="text-green-600">{studentStats.presentDays}</span>
                             <span className="text-slate-300 font-light mx-1">/</span>
@@ -2414,29 +2414,29 @@ export default function StudentManagement() {
                           </p>
                         </div>
                         <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Absences</p>
+                          <p className="text-[10px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Absences</p>
                           <p className="text-xl font-extrabold text-red-600 mt-2">{studentStats.absentDays}</p>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-xs text-slate-400 italic">No running statistics compiled yet for this student.</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-300 italic">No running statistics compiled yet for this student.</p>
                     )}
 
                     <div>
-                      <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">This Month's Daily Log</h5>
+                      <h5 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">This Month's Daily Log</h5>
                       {loadingHistory ? (
                         <div className="flex justify-center py-4">
                           <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-600 border-t-transparent"></div>
                         </div>
                       ) : studentHistory.length === 0 ? (
-                        <p className="text-xs text-slate-400 italic">No daily logs found for the current month.</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-300 italic">No daily logs found for the current month.</p>
                       ) : (
                         <div className="max-h-[200px] overflow-y-auto border border-slate-200/60 rounded-xl divide-y divide-slate-100 bg-white dark:bg-slate-900">
                           {studentHistory.map((item, idx) => (
                             <div key={idx} className="flex justify-between items-center px-4 py-2.5 text-xs">
                               <div>
                                 <span className="font-bold text-slate-800 dark:text-slate-100">{new Date(item.date).toLocaleDateString('en-GB')}</span>
-                                <span className="text-slate-400 ml-2 font-medium">({item.session})</span>
+                                <span className="text-slate-400 dark:text-slate-300 ml-2 font-medium">({item.session})</span>
                               </div>
                               <span className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border text-[10px] ${
                                 item.status === 'Present' ? 'bg-green-50 text-green-700 border-green-100' :
@@ -2453,7 +2453,7 @@ export default function StudentManagement() {
                   </div>
 
                   {/* System & Metadata Information */}
-                  <div className="bg-slate-100/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-500 space-y-1">
+                  <div className="bg-slate-100/50 dark:bg-slate-700/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-500 dark:text-slate-400 space-y-1">
                     <p>Student ID: <span className="font-mono font-semibold text-slate-700 dark:text-slate-200">{selectedStudentToView.id}</span></p>
                     <p>Created Date: <span className="font-semibold text-slate-700 dark:text-slate-200">{selectedStudentToView.createdAt ? new Date(selectedStudentToView.createdAt).toLocaleString() : 'N/A'}</span></p>
                     {selectedStudentToView.createdBy && <p>Created By: <span className="font-semibold text-slate-700 dark:text-slate-200">{selectedStudentToView.createdBy}</span></p>}
@@ -2465,7 +2465,7 @@ export default function StudentManagement() {
                 /* EDIT MODE */
                 <div className="space-y-6 animate-fade-in">
                   {/* Personal Information Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Personal Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="sm:col-span-3">
@@ -2632,7 +2632,7 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Academic Information Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Academic Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
@@ -2682,7 +2682,7 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Parent / Guardian Information Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Parent / Guardian Information</h4>
                     <div className="space-y-4">
                       {/* Father details */}
@@ -2804,7 +2804,7 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Address Information Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Address Information</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div className="col-span-1 sm:col-span-3">
@@ -2874,7 +2874,7 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Other Details Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <h4 className="text-sm font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Other Details</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -2926,7 +2926,7 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Fee Configuration Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <h4 className="text-sm font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Fee Configuration</h4>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       <div>
@@ -2973,7 +2973,7 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Custom Fields Edit */}
-                  <div className="bg-slate-50/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <div className="bg-slate-50/50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <h4 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider mb-4 pb-2 border-b border-slate-200 dark:border-slate-700">Additional Details</h4>
                     <CustomFieldsRenderer
                       moduleKey="students"
@@ -2983,7 +2983,7 @@ export default function StudentManagement() {
                   </div>
 
                   {/* Read-Only System Metadata Section in Edit Mode */}
-                  <div className="bg-slate-100/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-400 space-y-1 select-none">
+                  <div className="bg-slate-100/50 dark:bg-slate-700/50 p-4 rounded-2xl border border-slate-200/40 text-xs text-slate-400 dark:text-slate-300 space-y-1 select-none">
                     <p>Student ID: <span className="font-mono font-semibold">{selectedStudentToView.id}</span> (Read-only)</p>
                     <p>Created Date: <span>{selectedStudentToView.createdAt ? new Date(selectedStudentToView.createdAt).toLocaleString() : 'N/A'}</span> (Read-only)</p>
                     {selectedStudentToView.createdBy && <p>Created By: <span>{selectedStudentToView.createdBy}</span> (Read-only)</p>}
@@ -2999,7 +2999,7 @@ export default function StudentManagement() {
                 <>
                   <button 
                     onClick={handleModalCloseOrCancel}
-                    className="px-6 py-2.5 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                    className="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
@@ -3033,7 +3033,7 @@ export default function StudentManagement() {
                   )}
                   <button 
                     onClick={handleModalCloseOrCancel}
-                    className="px-6 py-2 bg-slate-200 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
+                    className="px-6 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-300 rounded-xl transition-colors"
                   >
                     Close
                   </button>
@@ -3067,7 +3067,7 @@ export default function StudentManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">Assign Class</h2>
-              <button onClick={() => setAssignModalOpen(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setAssignModalOpen(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -3095,7 +3095,7 @@ export default function StudentManagement() {
             <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 shrink-0 flex justify-end gap-3">
               <button 
                 onClick={() => setAssignModalOpen(false)}
-                className="px-6 py-2.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 rounded-xl transition-colors"
+                className="px-6 py-2.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
               >
                 Cancel
               </button>
@@ -3151,14 +3151,14 @@ export default function StudentManagement() {
       {showExportModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50 animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up border border-slate-100 dark:border-slate-800">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Export Student Directory</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Customize file settings and select columns to export.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Customize file settings and select columns to export.</p>
               </div>
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"
+                className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
@@ -3167,7 +3167,7 @@ export default function StudentManagement() {
             <div className="p-6 space-y-6">
               {/* File Name Input */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Export File Name</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Export File Name</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -3176,13 +3176,13 @@ export default function StudentManagement() {
                     placeholder="Enter file name"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm transition-all pr-12 font-medium"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md">.xlsx</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300 text-xs font-bold bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md">.xlsx</span>
                 </div>
               </div>
 
               {/* Columns Selection */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Select Columns to Include</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Select Columns to Include</label>
                 <div className="grid grid-cols-2 gap-3">
                   {[
                     { key: 'name', label: 'Student Name' },
@@ -3200,7 +3200,7 @@ export default function StudentManagement() {
                       className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer select-none transition-all ${
                         selectedFields[key] 
                           ? 'border-primary-200 bg-primary-50/30 text-primary-900 font-semibold' 
-                          : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 text-slate-600 dark:text-slate-300'
+                          : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
                       }`}
                     >
                       <input
@@ -3219,7 +3219,7 @@ export default function StudentManagement() {
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors text-sm"
+                className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors text-sm"
               >
                 Cancel
               </button>
@@ -3249,7 +3249,7 @@ export default function StudentManagement() {
                   <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     Review Admission Application
                   </h2>
-                  <p className="text-xs text-slate-500 font-mono mt-0.5">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">
                     App #{selectedAppForReview.applicationNumber || selectedAppForReview.id} • Submitted on {selectedAppForReview.submittedAt ? new Date(selectedAppForReview.submittedAt).toLocaleDateString('en-GB') : 'N/A'}
                   </p>
                 </div>
@@ -3273,7 +3273,7 @@ export default function StudentManagement() {
                     setReviewAppModalOpen(false);
                     setSelectedAppForReview(null);
                   }}
-                  className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors"
+                  className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors"
                 >
                   <X size={20} />
                 </button>
@@ -3348,27 +3348,27 @@ export default function StudentManagement() {
                   )}
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 flex-1">
                     <div>
-                      <p className="text-xs font-semibold text-slate-400">Full Name</p>
+                      <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Full Name</p>
                       <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedAppForReview.studentName || `${selectedAppForReview.firstName || ''} ${selectedAppForReview.lastName || ''}`.trim() || 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-400">Date of Birth</p>
+                      <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Date of Birth</p>
                       <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.dob || 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-400">Age & Gender</p>
+                      <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Age & Gender</p>
                       <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.age ? `${selectedAppForReview.age} yrs` : '-'}, {selectedAppForReview.gender || 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-400">Blood Group</p>
+                      <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Blood Group</p>
                       <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.bloodGroup || 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-400">Religion & Mother Tongue</p>
+                      <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Religion & Mother Tongue</p>
                       <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.religion || 'N/A'} {selectedAppForReview.motherTongue ? `(${selectedAppForReview.motherTongue})` : ''}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-400">Aadhaar / Gov ID</p>
+                      <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Aadhaar / Gov ID</p>
                       <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 font-mono">{selectedAppForReview.aadharNumber || 'N/A'}</p>
                     </div>
                   </div>
@@ -3382,35 +3382,35 @@ export default function StudentManagement() {
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   <div>
-                    <p className="text-xs font-semibold text-slate-400">Parent Name</p>
+                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Parent Name</p>
                     <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedAppForReview.parentName || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-400">Relationship</p>
+                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Relationship</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.parentRelationship || 'Father'}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-400">Phone Number</p>
+                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Phone Number</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 font-mono">{selectedAppForReview.parentPhone || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-400">Email Address</p>
+                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Email Address</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.parentEmail || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-400">Occupation</p>
+                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Occupation</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.parentOccupation || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-400">Annual Income</p>
+                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Annual Income</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.annualIncome ? `₹${selectedAppForReview.annualIncome}` : 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-slate-400">Emergency Contact</p>
+                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Emergency Contact</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 font-mono">{selectedAppForReview.emergencyContact || selectedAppForReview.parentPhone || 'N/A'}</p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-xs font-semibold text-slate-400">Sibling in Same School</p>
+                    <p className="text-xs font-semibold text-slate-400 dark:text-slate-300">Sibling in Same School</p>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{selectedAppForReview.siblingName || 'None'}</p>
                   </div>
                 </div>
@@ -3425,7 +3425,7 @@ export default function StudentManagement() {
                   <p className="text-sm text-slate-800 dark:text-slate-100 font-medium whitespace-pre-line leading-relaxed">
                     {selectedAppForReview.homeAddress || 'No address provided'}
                     {(selectedAppForReview.city || selectedAppForReview.state || selectedAppForReview.pincode) && (
-                      <span className="block text-xs text-slate-500 mt-1">
+                      <span className="block text-xs text-slate-500 dark:text-slate-400 mt-1">
                         {[selectedAppForReview.city, selectedAppForReview.state, selectedAppForReview.pincode].filter(Boolean).join(', ')}
                       </span>
                     )}
@@ -3437,9 +3437,9 @@ export default function StudentManagement() {
                     <BookOpen size={18} className="text-amber-600" /> Academic & Transport
                   </h3>
                   <div className="space-y-2 text-sm">
-                    <p><span className="text-slate-400 text-xs block">Previous School:</span> <strong className="text-slate-800 dark:text-slate-100">{selectedAppForReview.previousSchool || 'N/A'}</strong></p>
-                    <p><span className="text-slate-400 text-xs block">Previous Records / Marks:</span> <strong className="text-slate-800 dark:text-slate-100">{selectedAppForReview.previousMarks || 'N/A'}</strong></p>
-                    <p><span className="text-slate-400 text-xs block">Bus Route:</span> <strong className="text-slate-800 dark:text-slate-100">{selectedAppForReview.busRoute || 'Not requested'}</strong></p>
+                    <p><span className="text-slate-400 dark:text-slate-300 text-xs block">Previous School:</span> <strong className="text-slate-800 dark:text-slate-100">{selectedAppForReview.previousSchool || 'N/A'}</strong></p>
+                    <p><span className="text-slate-400 dark:text-slate-300 text-xs block">Previous Records / Marks:</span> <strong className="text-slate-800 dark:text-slate-100">{selectedAppForReview.previousMarks || 'N/A'}</strong></p>
+                    <p><span className="text-slate-400 dark:text-slate-300 text-xs block">Bus Route:</span> <strong className="text-slate-800 dark:text-slate-100">{selectedAppForReview.busRoute || 'Not requested'}</strong></p>
                   </div>
                 </div>
               </div>
@@ -3465,7 +3465,7 @@ export default function StudentManagement() {
                     setReviewAppModalOpen(false);
                     setSelectedAppForReview(null);
                   }}
-                  className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-sm transition-colors"
+                  className="px-5 py-2.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-sm transition-colors"
                 >
                   Close
                 </button>
@@ -3506,7 +3506,7 @@ export default function StudentManagement() {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 dark:text-white">Share Public Admission Form</h2>
-                  <p className="text-xs text-slate-500">Provide this link to prospective students and parents</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Provide this link to prospective students and parents</p>
                 </div>
               </div>
               <button 
@@ -3514,7 +3514,7 @@ export default function StudentManagement() {
                   setShareLinkModalOpen(false);
                   setCopiedAdmissionLink(false);
                 }}
-                className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors"
+                className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
@@ -3564,7 +3564,7 @@ export default function StudentManagement() {
                 >
                   <ExternalLink size={20} className="text-primary-600 group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Preview Form</span>
-                  <span className="text-[10px] text-slate-400">Open in new tab</span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-300">Open in new tab</span>
                 </a>
 
                 <a
@@ -3573,7 +3573,7 @@ export default function StudentManagement() {
                 >
                   <Mail size={20} className="text-indigo-600 group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Send via Email</span>
-                  <span className="text-[10px] text-slate-400">Compose invitation</span>
+                  <span className="text-[10px] text-slate-400 dark:text-slate-300">Compose invitation</span>
                 </a>
               </div>
             </div>

@@ -350,7 +350,7 @@ export default function Attendance() {
   };
 
   if (!classId) {
-    return <div className="p-8 text-center text-slate-500">You must be assigned to a class to take attendance.</div>;
+    return <div className="p-8 text-center text-slate-500 dark:text-slate-400">You must be assigned to a class to take attendance.</div>;
   }
 
   return (
@@ -379,10 +379,10 @@ export default function Attendance() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 shrink-0">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Mark Attendance</h2>
-          <p className="text-slate-500 mt-1">Select date/session to register or view class attendance statistics.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Select date/session to register or view class attendance statistics.</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50/50 p-2 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50/50 dark:bg-slate-800/50 p-2 rounded-2xl border border-slate-100 dark:border-slate-800">
           <select 
             value={viewMode}
             onChange={(e) => setViewMode(e.target.value)}
@@ -396,7 +396,7 @@ export default function Attendance() {
           {viewMode === 'daily' && (
             <div className="flex items-center gap-2 shrink-0">
               <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                <div className="pl-2 text-slate-400">
+                <div className="pl-2 text-slate-400 dark:text-slate-300">
                   <CalendarIcon size={20} />
                 </div>
                 <input 
@@ -438,7 +438,7 @@ export default function Attendance() {
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {/* Table Header */}
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 flex justify-between items-center">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 pl-2">
             <Users size={18} />
             <span>{students.length} Students</span>
@@ -492,7 +492,7 @@ export default function Attendance() {
              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
           </div>
         ) : students.length === 0 ? (
-          <div className="p-16 text-center text-slate-500">
+          <div className="p-16 text-center text-slate-500 dark:text-slate-400">
             <p className="text-lg font-bold text-slate-900 dark:text-white mb-1">No students found</p>
             <p>There are no students enrolled in this class yet.</p>
           </div>
@@ -513,7 +513,7 @@ export default function Attendance() {
                       <div className="font-bold text-slate-900 dark:text-white">
                         {student.firstName} {student.lastName}
                       </div>
-                      <div className="text-xs text-slate-500 font-mono">
+                      <div className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                         {student.admissionNumber}
                       </div>
                     </div>
@@ -524,7 +524,7 @@ export default function Attendance() {
                     <button 
                       onClick={() => handleStatusChange(student.id, 'Present')}
                       className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        currentStatus === 'Present' ? 'bg-white dark:bg-slate-900 text-green-700 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'
+                        currentStatus === 'Present' ? 'bg-white dark:bg-slate-900 text-green-700 shadow-sm border border-slate-200/50' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                       }`}
                     >
                       {currentStatus === 'Present' && <CheckCircle2 size={16} className="text-green-500"/>}
@@ -534,7 +534,7 @@ export default function Attendance() {
                     <button 
                       onClick={() => handleStatusChange(student.id, 'Absent')}
                       className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        currentStatus === 'Absent' ? 'bg-white dark:bg-slate-900 text-red-700 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'
+                        currentStatus === 'Absent' ? 'bg-white dark:bg-slate-900 text-red-700 shadow-sm border border-slate-200/50' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                       }`}
                     >
                       {currentStatus === 'Absent' && <XCircle size={16} className="text-red-500"/>}
@@ -544,7 +544,7 @@ export default function Attendance() {
                     <button 
                       onClick={() => handleStatusChange(student.id, 'Late')}
                       className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-sm font-bold flex items-center justify-center gap-1.5 transition-all ${
-                        currentStatus === 'Late' ? 'bg-white dark:bg-slate-900 text-amber-700 shadow-sm border border-slate-200/50' : 'text-slate-500 hover:text-slate-700'
+                        currentStatus === 'Late' ? 'bg-white dark:bg-slate-900 text-amber-700 shadow-sm border border-slate-200/50' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                       }`}
                     >
                       {currentStatus === 'Late' && <AlertCircle size={16} className="text-amber-500"/>}
@@ -559,7 +559,7 @@ export default function Attendance() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                   <th className="p-4 pl-6">Student Name</th>
                   <th className="p-4">Total Classes</th>
                   <th className="p-4 text-green-600">Present</th>
@@ -579,7 +579,7 @@ export default function Attendance() {
                     <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="p-4 pl-6">
                         <div className="font-bold text-slate-900 dark:text-white">{student.firstName} {student.lastName}</div>
-                        <div className="text-xs text-slate-500 font-mono mt-0.5">{student.admissionNumber}</div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">{student.admissionNumber}</div>
                       </td>
                       <td className="p-4 font-semibold text-slate-600 dark:text-slate-300">{stat.total}</td>
                       <td className="p-4 font-semibold text-green-600">{stat.present}</td>
@@ -611,11 +611,11 @@ export default function Attendance() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Attendance</h3>
-                <p className="text-slate-500 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
               </div>
               <button 
                 onClick={() => setShowExportModal(false)}
-                className="p-1.5 hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-xl transition-colors"
+                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl transition-colors"
               >
                 <LuX size={20} />
               </button>
@@ -625,7 +625,7 @@ export default function Attendance() {
             <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
               {/* File Name Input */}
               <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</label>
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">File Name</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -634,7 +634,7 @@ export default function Attendance() {
                     onChange={(e) => setExportFileName(e.target.value)}
                     className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold"
                   />
-                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 font-bold font-mono select-none">.xlsx</span>
+                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 dark:text-slate-300 font-bold font-mono select-none">.xlsx</span>
                 </div>
               </div>
 
@@ -650,7 +650,7 @@ export default function Attendance() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
                 >
                   Deselect All
                 </button>
@@ -680,7 +680,7 @@ export default function Attendance() {
               <button
                 type="button"
                 onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
+                className="px-4 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
               >
                 Cancel
               </button>

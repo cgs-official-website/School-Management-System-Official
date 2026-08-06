@@ -251,13 +251,13 @@ export default function ClassManagement() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Class & Section Management</h1>
-          <p className="text-slate-500 mt-1">Define the academic structure and categories of your institution.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Define the academic structure and categories of your institution.</p>
         </div>
         <div className="flex gap-3">
           {hasCreatePermission && (
             <button 
               onClick={() => setShowCategoryModal(true)}
-              className="px-4 py-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl font-medium hover:bg-slate-50 shadow-sm flex items-center gap-2 transition-colors"
+              className="px-4 py-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm flex items-center gap-2 transition-colors"
             >
               <LuTags size={18} /> Manage Categories
             </button>
@@ -332,7 +332,7 @@ export default function ClassManagement() {
 
       {classes.length > 0 && (
         <div className="mb-6 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm flex flex-col md:flex-row gap-4 items-center">
-          <div className="flex items-center gap-2 text-slate-500 font-medium">
+          <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 font-medium">
             <LuFilter size={18} />
             <span>Filters:</span>
           </div>
@@ -383,10 +383,10 @@ export default function ClassManagement() {
       {filteredClasses.length === 0 ? (
         <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
           <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-            <BookOpen size={32} className="text-slate-400" />
+            <BookOpen size={32} className="text-slate-400 dark:text-slate-300" />
           </div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white">{classes.length === 0 ? 'No classes found' : 'No classes match filters'}</h3>
-          <p className="text-slate-500 mt-1 mb-6">
+          <p className="text-slate-500 dark:text-slate-400 mt-1 mb-6">
             {classes.length === 0 ? 'Start by creating classes and sections before admitting students.' : 'Try adjusting or clearing your filters.'}
           </p>
           {classes.length === 0 && (
@@ -410,7 +410,7 @@ export default function ClassManagement() {
                 {hasEditPermission && (
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleEditClick(cls); }}
-                    className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                    className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                     title="Edit Class"
                   >
                     <Pencil size={18} />
@@ -419,7 +419,7 @@ export default function ClassManagement() {
                 {hasDeletePermission && (
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleDeleteClick(cls.id); }}
-                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                     title="Delete Class"
                   >
                     <Trash2 size={18} />
@@ -446,7 +446,7 @@ export default function ClassManagement() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-slate-500 text-sm mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <Users size={16} />
                 <span>{classStats[cls.id] || 0} Students currently assigned</span>
               </div>
@@ -462,9 +462,9 @@ export default function ClassManagement() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white">Manage Categories</h3>
-                <p className="text-sm text-slate-500">Add or remove custom class categories</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Add or remove custom class categories</p>
               </div>
-              <button onClick={() => setShowCategoryModal(false)} className="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-50 transition-colors">
+              <button onClick={() => setShowCategoryModal(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                 <LuX size={20} />
               </button>
             </div>
@@ -491,7 +491,7 @@ export default function ClassManagement() {
                 <div key={cat.id} className="flex items-center justify-between p-3 mx-2 my-1 bg-white dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-slate-200 transition-colors">
                   <span className="font-semibold text-slate-700 dark:text-slate-200">{cat.name}</span>
                   {cat.isDefault ? (
-                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 rounded-md">Default</span>
+                    <span className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-md">Default</span>
                   ) : (
                     <button 
                       onClick={() => handleDeleteCategory(cat.id)}
@@ -507,7 +507,7 @@ export default function ClassManagement() {
             <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-right">
               <button 
                 onClick={() => setShowCategoryModal(false)}
-                className="px-6 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                className="px-6 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Close
               </button>

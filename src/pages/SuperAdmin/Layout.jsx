@@ -51,10 +51,10 @@ export default function SuperAdminLayout() {
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive 
                     ? 'bg-primary-500 text-slate-900 dark:text-white font-bold shadow-lg shadow-primary-500/30' 
-                    : 'text-slate-400 hover:bg-white/10 hover:text-white font-medium'
+                    : 'text-slate-400 dark:text-slate-300 hover:bg-white/10 hover:text-white font-medium'
                 }`}
               >
-                <item.icon size={20} className={isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400'} />
+                <item.icon size={20} className={isActive ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-300'} />
                 {item.label}
               </Link>
             )

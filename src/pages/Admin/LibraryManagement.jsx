@@ -282,13 +282,13 @@ export default function LibraryManagement() {
       <div className="flex justify-between items-end mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Library Management</h1>
-          <p className="text-slate-500 mt-1">Manage book inventory, issuing, and returns.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage book inventory, issuing, and returns.</p>
         </div>
         <div className="flex gap-3">
           {hasEditPermission && (
             <button
               onClick={() => setShowIssueModal(true)}
-              className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-medium hover:bg-slate-50 shadow-sm flex items-center gap-2 transition-colors"
+              className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm flex items-center gap-2 transition-colors"
             >
               <Library size={18} /> Issue Book
             </button>
@@ -310,20 +310,20 @@ export default function LibraryManagement() {
           <div className="flex gap-2 p-1 bg-slate-200/50 rounded-xl">
             <button
               onClick={() => setActiveTab('inventory')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'inventory' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'inventory' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
             >
               Book Inventory ({books.length})
             </button>
             <button
               onClick={() => setActiveTab('issued')}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'issued' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'issued' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
             >
               Issued Logs ({issuedBooks.filter(i => i.status === 'issued').length})
             </button>
           </div>
 
           <div className="relative w-full md:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={18} />
             <input
               type="text"
               placeholder="Search books or students..."
@@ -339,7 +339,7 @@ export default function LibraryManagement() {
           {activeTab === 'inventory' ? (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 text-sm">
+                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm">
                   <th className="p-4 font-semibold w-2/5">Book Details</th>
                   <th className="p-4 font-semibold">Category</th>
                   <th className="p-4 font-semibold">ISBN</th>
@@ -349,22 +349,22 @@ export default function LibraryManagement() {
               <tbody className="divide-y divide-slate-100">
                 {filteredBooks.length === 0 ? (
                   <tr>
-                    <td colSpan="4" className="p-12 text-center text-slate-500">No books found.</td>
+                    <td colSpan="4" className="p-12 text-center text-slate-500 dark:text-slate-400">No books found.</td>
                   </tr>
                 ) : (
                   filteredBooks.map(book => {
                     const isEmpty = book.availableQuantity === 0;
                     const percentage = (book.availableQuantity / book.totalQuantity) * 100;
                     return (
-                      <tr key={book.id} className="hover:bg-slate-50 transition-colors">
+                      <tr key={book.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 bg-slate-100 dark:bg-slate-700 text-slate-400 rounded-xl flex items-center justify-center shrink-0">
+                            <div className="h-10 w-10 bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300 rounded-xl flex items-center justify-center shrink-0">
                               <Book size={20} />
                             </div>
                             <div>
                               <div className="font-bold text-slate-900 dark:text-white">{book.title}</div>
-                              <div className="text-xs text-slate-500 mt-0.5">by {book.author}</div>
+                              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">by {book.author}</div>
                             </div>
                           </div>
                         </td>
@@ -373,7 +373,7 @@ export default function LibraryManagement() {
                             {book.category}
                           </span>
                         </td>
-                        <td className="p-4 font-mono text-sm text-slate-500">{book.isbn}</td>
+                        <td className="p-4 font-mono text-sm text-slate-500 dark:text-slate-400">{book.isbn}</td>
                         <td className="p-4">
                           <div className="flex flex-col items-end gap-1">
                             <div className="flex items-center gap-2">
@@ -398,7 +398,7 @@ export default function LibraryManagement() {
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 text-sm">
+                <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm">
                   <th className="p-4 font-semibold w-1/3">Book</th>
                   <th className="p-4 font-semibold w-1/3">Issued To</th>
                   <th className="p-4 font-semibold">Due Date</th>
@@ -408,19 +408,19 @@ export default function LibraryManagement() {
               <tbody className="divide-y divide-slate-100">
                 {filteredIssued.length === 0 ? (
                   <tr>
-                    <td colSpan="4" className="p-12 text-center text-slate-500">No issued logs found.</td>
+                    <td colSpan="4" className="p-12 text-center text-slate-500 dark:text-slate-400">No issued logs found.</td>
                   </tr>
                 ) : (
                   filteredIssued.map(issue => {
                     const overdue = issue.status === 'issued' && isOverdue(issue.dueDate);
                     return (
-                      <tr key={issue.id} className="hover:bg-slate-50 transition-colors">
+                      <tr key={issue.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                         <td className="p-4 font-bold text-slate-900 dark:text-white">
                           {getBookTitle(issue.bookId)}
                         </td>
                         <td className="p-4">
                           <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 font-medium">
-                            <Users size={14} className="text-slate-400" />
+                            <Users size={14} className="text-slate-400 dark:text-slate-300" />
                             {getStudentName(issue.studentId)}
                           </div>
                         </td>
@@ -439,7 +439,7 @@ export default function LibraryManagement() {
                             hasEditPermission && (
                               <button
                                 onClick={() => handleReturnBookClick(issue.id, issue.bookId)}
-                                className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-lg transition-colors inline-flex items-center gap-1.5"
+                                className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-lg transition-colors inline-flex items-center gap-1.5"
                               >
                                 <Undo2 size={14} /> Mark Returned
                               </button>
@@ -464,7 +464,7 @@ export default function LibraryManagement() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Book className="text-primary-600" /> Catalog New Book
               </h2>
-              <button onClick={() => setShowAddModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowAddModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -546,7 +546,7 @@ export default function LibraryManagement() {
               </div>
 
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowAddModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">
+                <button type="button" onClick={() => setShowAddModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
                   Cancel
                 </button>
                 <button type="submit" disabled={addingBook} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">
@@ -564,7 +564,7 @@ export default function LibraryManagement() {
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">Add New Library Category</h2>
-              <button onClick={() => setShowAddCategoryModal(false)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setShowAddCategoryModal(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300">
                 <X size={20} />
               </button>
             </div>
@@ -585,7 +585,7 @@ export default function LibraryManagement() {
                 <button
                   type="button"
                   onClick={() => setShowAddCategoryModal(false)}
-                  className="px-4 py-2 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 rounded-xl"
+                  className="px-4 py-2 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl"
                 >
                   Cancel
                 </button>
@@ -610,7 +610,7 @@ export default function LibraryManagement() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Library className="text-primary-600" /> Issue Book
               </h2>
-              <button onClick={() => setShowIssueModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowIssueModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -690,7 +690,7 @@ export default function LibraryManagement() {
               </div>
 
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-                <button type="button" onClick={() => setShowIssueModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">
+                <button type="button" onClick={() => setShowIssueModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
                   Cancel
                 </button>
                 <button type="submit" disabled={issuingBook} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">

@@ -253,10 +253,10 @@ export default function AdminDashboard() {
             </div>
             <div className="min-w-0">
               <h2 className="text-xl font-black text-slate-900 dark:text-white leading-tight truncate">Zuna</h2>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">Admin Portal</p>
+              <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-0.5">Admin Portal</p>
             </div>
           </div>
-          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-slate-600 p-1">
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-1">
             <X size={24} />
           </button>
         </div>
@@ -310,7 +310,7 @@ export default function AdminDashboard() {
                             </span>
                           )}
                           {hasSubItems && (
-                            <div className="text-slate-400">
+                            <div className="text-slate-400 dark:text-slate-300">
                               {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                             </div>
                           )}
@@ -330,7 +330,7 @@ export default function AdminDashboard() {
                             `flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors relative whitespace-nowrap ${
                               isActive
                                 ? 'text-primary-700 bg-primary-50/50 before:absolute before:-left-5 before:top-1/2 before:-translate-y-1/2 before:w-2 before:h-2 before:rounded-full before:bg-primary-500'
-                                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                             }`
                           }
                         >
@@ -352,12 +352,12 @@ export default function AdminDashboard() {
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{userProfile?.name || userProfile?.email?.split('@')[0]}</p>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mt-0.5">{userProfile?.role}</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-0.5">{userProfile?.role}</p>
               </div>
             </div>
             <button 
               onClick={handleLogout}
-              className="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-xl transition-colors shrink-0"
+              className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
               title="Logout"
             >
               <LogOut size={20} />

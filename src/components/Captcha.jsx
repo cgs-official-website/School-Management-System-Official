@@ -91,7 +91,7 @@ const Captcha = forwardRef(({ onChange }, ref) => {
         <button
           type="button"
           onClick={generateCaptcha}
-          className="p-3 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all border border-transparent hover:border-primary-100"
+          className="p-3 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all border border-transparent hover:border-primary-100"
           title="Refresh Captcha"
         >
           <LuRefreshCw size={20} />

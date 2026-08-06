@@ -154,7 +154,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
       <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
         <button 
           onClick={() => navigate(-1)}
-          className="p-2 -ml-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100 flex items-center gap-1 transition-colors"
+          className="p-2 -ml-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-1 transition-colors"
           title="Go Back"
         >
           <ArrowLeft size={20} />
@@ -163,7 +163,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
         {toggleSidebar && (
           <button 
             onClick={toggleSidebar}
-            className="lg:hidden p-2 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-slate-100"
+            className="lg:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
           >
             <Menu size={24} />
           </button>
@@ -173,11 +173,11 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
         <div className="relative hidden md:block w-36 lg:w-56 h-10 mr-4 z-20">
           <form onSubmit={handleSearch} className="absolute top-0 left-0 w-36 lg:w-56 focus-within:w-72 lg:focus-within:w-96 h-10 transition-all duration-300 ease-out" ref={dropdownRef}>
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-              <Search size={18} className="text-slate-400" />
+              <Search size={18} className="text-slate-400 dark:text-slate-300" />
             </div>
             <input
               type="text"
-              className="block w-full h-full pl-10 pr-3 border border-transparent rounded-2xl text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-primary-200 focus:shadow-md transition-all duration-300 ease-out"
+              className="block w-full h-full pl-10 pr-3 border border-transparent rounded-2xl text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-primary-200 focus:shadow-md transition-all duration-300 ease-out"
               placeholder="Search modules..."
             value={searchQuery}
             onChange={(e) => {
@@ -193,7 +193,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                 setSearchQuery('');
                 setShowDropdown(false);
               }}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
             >
               <X size={16} />
             </button>
@@ -213,10 +213,10 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                           setShowDropdown(false);
                           setSearchQuery('');
                         }}
-                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 text-left transition-colors"
+                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="text-slate-400">
+                          <div className="text-slate-400 dark:text-slate-300">
                             <item.icon size={18} />
                           </div>
                           <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{item.name}</span>
@@ -227,7 +227,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                   ))}
                 </ul>
               ) : (
-                <div className="px-4 py-6 text-center text-sm text-slate-500">
+                <div className="px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
                   No modules found matching "{searchQuery}"
                 </div>
               )}
@@ -241,13 +241,13 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
       <div className="flex items-center gap-2 sm:gap-4 shrink-0 min-w-0">
         
         {/* Mobile Search Icon (Instead of full bar) */}
-        <button className="md:hidden p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors shrink-0">
+        <button className="md:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors shrink-0">
           <Search size={20} />
         </button>
 
         <button 
           onClick={handleRefresh}
-          className={`p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-all shrink-0 ${isRefreshing ? 'animate-spin text-primary-500' : ''}`}
+          className={`p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-all shrink-0 ${isRefreshing ? 'animate-spin text-primary-500' : ''}`}
           title="Refresh"
         >
           <RefreshCw size={20} />
@@ -255,7 +255,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
 
         <button 
           onClick={() => setIsDarkMode(!isDarkMode)}
-          className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors shrink-0"
+          className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors shrink-0"
           title="Toggle Theme"
         >
           {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
@@ -264,7 +264,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
         <div className="relative shrink-0" ref={notifRef}>
           <button 
             onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors relative" 
+            className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors relative" 
             title="Notifications"
           >
             <Bell size={20} />
@@ -295,7 +295,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
           
           {showNotifications && (
             <div className="absolute top-full right-[-2rem] sm:right-0 mt-2 w-[300px] sm:w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 overflow-hidden z-50 flex flex-col animate-fade-in-up">
-              <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50">
+              <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
                 <h3 className="font-semibold text-slate-900 dark:text-white">Notifications</h3>
                 <div className="flex items-center gap-3">
                   {unreadCount > 0 && (
@@ -311,7 +311,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
               </div>
               <div className="max-h-[28rem] overflow-y-auto custom-scrollbar">
                 {allNotifications.length === 0 ? (
-                  <div className="p-8 text-center text-slate-500">
+                  <div className="p-8 text-center text-slate-500 dark:text-slate-400">
                     <Bell size={32} className="mx-auto mb-3 text-slate-300" />
                     <p className="text-sm font-medium">No new notifications</p>
                   </div>
@@ -335,7 +335,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                               navigate(`/${userProfile?.role?.toLowerCase() || 'admin'}/chat`);
                             }
                           }}
-                          className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer ${notice.priority === 'high' || notice.type !== 'notice' ? 'bg-red-50/10' : ''} ${isUnread ? 'bg-primary-50/30' : 'opacity-70'}`}
+                          className={`p-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer ${notice.priority === 'high' || notice.type !== 'notice' ? 'bg-red-50/10' : ''} ${isUnread ? 'bg-primary-50/30' : 'opacity-70'}`}
                         >
                           <div className="flex gap-3">
                             <div className={`shrink-0 mt-1 ${notice.priority === 'high' ? 'text-red-500' : 'text-primary-500'}`}>
@@ -344,7 +344,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                             <div>
                               <p className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">{notice.title}</p>
                               <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 mt-1 line-clamp-2 leading-relaxed">{notice.description || notice.message}</p>
-                              <p className="text-[10px] text-slate-500 mt-2 font-bold">
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 font-bold">
                                 {new Date(notice.createdAt).toLocaleDateString('en-GB')}
                               </p>
                             </div>
@@ -365,7 +365,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                   </div>
                 )}
               </div>
-              <div className="p-3 border-t border-slate-100 dark:border-slate-800 text-center bg-slate-50/50">
+              <div className="p-3 border-t border-slate-100 dark:border-slate-800 text-center bg-slate-50/50 dark:bg-slate-800/50">
                 <button 
                   onClick={() => {
                     setShowNotifications(false);
@@ -382,7 +382,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
           )}
         </div>
 
-        <div className="hidden sm:block h-6 w-px bg-slate-200 mx-1 shrink-0"></div>
+        <div className="hidden sm:block h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1 shrink-0"></div>
 
         {/* User Profile */}
         <div className="flex items-center gap-3 pl-1 min-w-0 shrink-0">
@@ -391,7 +391,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
               {userProfile?.name || userProfile?.email?.split('@')[0] || 'User'}
             </p>
             <div className="overflow-hidden whitespace-nowrap">
-              <p className="text-xs text-slate-500 font-medium uppercase tracking-wider inline-block animate-marquee hover-pause pr-8">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider inline-block animate-marquee hover-pause pr-8">
                 {schoolName || userProfile?.role || 'Portal'}
               </p>
             </div>

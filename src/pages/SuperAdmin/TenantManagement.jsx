@@ -214,14 +214,14 @@ export default function TenantManagement() {
       <div className="flex justify-between items-end mb-8 shrink-0">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Tenant Management</h1>
-          <p className="text-slate-500 mt-1">Manage licenses and access for all schools on the platform.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage licenses and access for all schools on the platform.</p>
         </div>
       </div>
 
       {/* Filters */}
       <div className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row gap-4 mb-6 shrink-0">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={20} />
           <input
             type="text"
             placeholder="Search by school name or admin email..."
@@ -238,7 +238,7 @@ export default function TenantManagement() {
               className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-colors ${
                 statusFilter === status 
                   ? 'bg-primary-600 text-white shadow-sm' 
-                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
               }`}
             >
               {status}
@@ -252,7 +252,7 @@ export default function TenantManagement() {
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 text-sm">
+              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm">
                 <th className="p-4 font-semibold w-1/3">School Details</th>
                 <th className="p-4 font-semibold">Contact Info</th>
                 <th className="p-4 font-semibold">Plan</th>
@@ -264,7 +264,7 @@ export default function TenantManagement() {
             <tbody className="divide-y divide-slate-100">
               {filteredSchools.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="p-12 text-center text-slate-500">
+                  <td colSpan="6" className="p-12 text-center text-slate-500 dark:text-slate-400">
                     <Building2 size={48} className="mx-auto mb-4 text-slate-300" />
                     <p className="text-lg font-medium text-slate-900 dark:text-white">No tenants found</p>
                     <p>Try adjusting your search or filters.</p>
@@ -280,19 +280,19 @@ export default function TenantManagement() {
                         </div>
                         <div>
                           <div className="font-bold text-slate-900 dark:text-white">{school.schoolName}</div>
-                          <div className="text-xs text-slate-500 font-mono mt-0.5">ID: {school.id}</div>
+                          <div className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">ID: {school.id}</div>
                         </div>
                       </div>
                     </td>
                     <td className="p-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
-                          <Mail size={14} className="text-slate-400" />
+                          <Mail size={14} className="text-slate-400 dark:text-slate-300" />
                           {school.adminEmail}
                         </div>
                         {school.phone && (
                           <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                            <Phone size={14} className="text-slate-400" />
+                            <Phone size={14} className="text-slate-400 dark:text-slate-300" />
                             {school.phone}
                           </div>
                         )}
@@ -310,7 +310,7 @@ export default function TenantManagement() {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                        <Calendar size={14} className="text-slate-400" />
+                        <Calendar size={14} className="text-slate-400 dark:text-slate-300" />
                         {new Date(school.createdAt).toLocaleDateString('en-GB')}
                       </div>
                     </td>
@@ -375,8 +375,8 @@ export default function TenantManagement() {
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-sm text-slate-500 font-medium">
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               Showing <span className="font-semibold text-slate-900 dark:text-white">{startIndex + 1}</span> to{' '}
               <span className="font-semibold text-slate-900 dark:text-white">
                 {Math.min(startIndex + itemsPerPage, filteredSchools.length)}
@@ -387,7 +387,7 @@ export default function TenantManagement() {
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -400,7 +400,7 @@ export default function TenantManagement() {
                     className={`h-9 w-9 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
                       currentPage === pageNum
                         ? 'bg-primary-600 text-white shadow-sm'
-                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200'
+                        : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {pageNum}
@@ -410,7 +410,7 @@ export default function TenantManagement() {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-3.5 py-2 rounded-xl text-sm font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>
@@ -428,7 +428,7 @@ export default function TenantManagement() {
                 <ShieldCheck className="text-primary-600" />
                 {modalAction === 'approve' ? 'Approve Tenant & Assign Modules' : 'Edit Tenant Modules'}
               </h2>
-              <button onClick={() => setShowModal(false)} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
+              <button onClick={() => setShowModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -437,7 +437,7 @@ export default function TenantManagement() {
               <div className="mb-6 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                 <div>
                   <h3 className="font-bold text-slate-900 dark:text-white">{selectedSchool.schoolName}</h3>
-                  <p className="text-sm text-slate-500 mt-0.5">Purchased Plan: <span className="font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">{selectedSchool.plan || 'Standard'}</span></p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Purchased Plan: <span className="font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">{selectedSchool.plan || 'Standard'}</span></p>
                 </div>
                 <div className="bg-white dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300">
                   DB Enforcement: <span className="text-green-600 font-bold">Active</span>
@@ -475,13 +475,13 @@ export default function TenantManagement() {
                       />
                     </div>
                     <div className="flex items-center gap-1.5 mt-2">
-                      <span className="text-[11px] text-slate-500 font-medium">Quick presets:</span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Quick presets:</span>
                       {[250, 500, 1000, 2500].map(val => (
                         <button
                           key={val}
                           type="button"
                           onClick={() => setSeatLimit(val)}
-                          className={`text-[11px] px-2 py-0.5 rounded font-bold transition-colors ${seatLimit === val ? 'bg-primary-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100'}`}
+                          className={`text-[11px] px-2 py-0.5 rounded font-bold transition-colors ${seatLimit === val ? 'bg-primary-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
                         >
                           {val}
                         </button>
@@ -504,13 +504,13 @@ export default function TenantManagement() {
                       />
                     </div>
                     <div className="flex items-center gap-1.5 mt-2">
-                      <span className="text-[11px] text-slate-500 font-medium">Quick presets:</span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Quick presets:</span>
                       {[25, 50, 100, 200].map(val => (
                         <button
                           key={val}
                           type="button"
                           onClick={() => setTeacherLimit(val)}
-                          className={`text-[11px] px-2 py-0.5 rounded font-bold transition-colors ${teacherLimit === val ? 'bg-primary-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100'}`}
+                          className={`text-[11px] px-2 py-0.5 rounded font-bold transition-colors ${teacherLimit === val ? 'bg-primary-600 text-white' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
                         >
                           {val}
                         </button>
@@ -532,11 +532,11 @@ export default function TenantManagement() {
                   <div className="p-4 space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">UDISE Code</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">UDISE Code</p>
                         <p className="font-medium text-slate-900 dark:text-white">{selectedSchool.verificationDetails.udise || 'N/A'}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">Board Affiliation</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Board Affiliation</p>
                         <p className="font-medium text-slate-900 dark:text-white">{selectedSchool.verificationDetails.boardAffiliation || 'N/A'}</p>
                       </div>
                     </div>
@@ -573,11 +573,11 @@ export default function TenantManagement() {
                   {selectedModules.length === AVAILABLE_MODULES.length ? 'Deselect All' : 'Select All'}
                 </button>
               </div>
-              <p className="text-sm text-slate-500 mb-4">Core modules (Dashboard, Students, Staff, Billing) are always included.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Core modules (Dashboard, Students, Staff, Billing) are always included.</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {AVAILABLE_MODULES.map(module => (
-                  <label key={module.id} className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 cursor-pointer transition-colors">
+                  <label key={module.id} className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
                     <input 
                       type="checkbox"
                       checked={selectedModules.includes(module.id)}
@@ -591,7 +591,7 @@ export default function TenantManagement() {
             </div>
 
             <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-              <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 rounded-xl transition-colors">
+              <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
                 Cancel
               </button>
               <button 
@@ -625,7 +625,7 @@ export default function TenantManagement() {
                 </a>
                 <button 
                   onClick={() => setPreviewDoc(null)} 
-                  className="p-2.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200 rounded-xl transition-colors"
+                  className="p-2.5 text-slate-400 dark:text-slate-300 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
                 >
                   <X size={24} />
                 </button>

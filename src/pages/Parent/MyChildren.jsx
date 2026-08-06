@@ -185,7 +185,7 @@ export default function MyChildren() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">My Children</h1>
-          <p className="text-slate-500 mt-1">Manage personal details of your children.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage personal details of your children.</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
@@ -201,7 +201,7 @@ export default function MyChildren() {
             <Baby size={32} />
           </div>
           <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No Children Added</h3>
-          <p className="text-slate-500 max-w-md mx-auto mb-6">You haven't added any children yet. Click the button above to add their details.</p>
+          <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">You haven't added any children yet. Click the button above to add their details.</p>
           <button 
             onClick={() => setIsModalOpen(true)}
             className="px-6 py-2.5 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
@@ -216,14 +216,14 @@ export default function MyChildren() {
               <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
                   onClick={() => handleEdit(index)}
-                  className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                  className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                   title="Edit"
                 >
                   <Pencil size={18} />
                 </button>
                 <button 
                   onClick={() => handleDelete(index)}
-                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   title="Delete"
                 >
                   <Trash2 size={18} />
@@ -266,22 +266,22 @@ export default function MyChildren() {
 
               <div className="space-y-3 text-sm mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium">Date of Birth</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Date of Birth</span>
                   <span className="font-semibold text-slate-900 dark:text-white">{new Date(child.dob).toLocaleDateString('en-GB')}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 font-medium">Gender</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Gender</span>
                   <span className="font-semibold text-slate-900 dark:text-white">{child.gender}</span>
                 </div>
                 {child.bloodGroup && (
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500 font-medium">Blood Group</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">Blood Group</span>
                     <span className="font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-md">{child.bloodGroup}</span>
                   </div>
                 )}
                 {child.schoolName && (
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-500 font-medium">School</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">School</span>
                     <span className="font-semibold text-slate-900 dark:text-white truncate max-w-[150px]">{child.schoolName}</span>
                   </div>
                 )}
@@ -295,13 +295,13 @@ export default function MyChildren() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-scale-up">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 {editingIndex !== null ? 'Edit Child Details' : 'Add Child Details'}
               </h3>
               <button 
                 onClick={closeModal} 
-                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors"
+                className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 <X size={20} />
               </button>
@@ -394,7 +394,7 @@ export default function MyChildren() {
                 <button 
                   type="button" 
                   onClick={closeModal}
-                  className="px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                  className="px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Cancel
                 </button>
@@ -414,11 +414,11 @@ export default function MyChildren() {
       {isLinkModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">Link Official Account</h3>
               <button 
                 onClick={() => setIsLinkModalOpen(false)} 
-                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition-colors"
+                className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
               >
                 <X size={20} />
               </button>
@@ -451,7 +451,7 @@ export default function MyChildren() {
                 <button 
                   type="button" 
                   onClick={() => setIsLinkModalOpen(false)}
-                  className="px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                  className="px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
                   Cancel
                 </button>

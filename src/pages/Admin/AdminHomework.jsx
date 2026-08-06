@@ -75,7 +75,7 @@ export default function AdminHomework() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Homework Overview</h1>
-          <p className="text-slate-500 mt-1">View class-wise homework and student submissions.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">View class-wise homework and student submissions.</p>
         </div>
         
         <div className="w-full sm:w-72">
@@ -98,7 +98,7 @@ export default function AdminHomework() {
           <div className="col-span-full p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <BookOpen size={48} className="mx-auto text-slate-300 mb-4" />
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">No homework found</h3>
-            <p className="text-slate-500 mt-1">
+            <p className="text-slate-500 dark:text-slate-400 mt-1">
               {selectedClassId ? "No homework has been assigned to this class yet." : "No homework has been assigned in the school."}
             </p>
           </div>
@@ -119,13 +119,13 @@ export default function AdminHomework() {
                     <span className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-bold">
                       {cls ? cls.name : 'Unknown Class'} • {hw.subject}
                     </span>
-                    <span className="text-xs font-semibold text-slate-400">
+                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-300">
                       Due: {new Date(hw.dueDate).toLocaleDateString('en-GB')}
                     </span>
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{hw.title}</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-300 mb-2 line-clamp-2">{hw.description}</p>
-                  <p className="text-xs font-medium text-slate-400 mb-4">Assigned by: {hw.teacherName || 'Unknown Teacher'}</p>
+                  <p className="text-xs font-medium text-slate-400 dark:text-slate-300 mb-4">Assigned by: {hw.teacherName || 'Unknown Teacher'}</p>
                   
                   <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                     <span className="text-sm font-medium text-emerald-600 flex items-center gap-1">
@@ -147,15 +147,15 @@ export default function AdminHomework() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
               <div>
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedHomework.title}</h2>
-                <p className="text-sm font-semibold text-slate-500">Student Progress Tracking</p>
+                <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Student Progress Tracking</p>
               </div>
-              <button onClick={() => setShowTrackingModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+              <button onClick={() => setShowTrackingModal(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">
                 <X size={24} />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
               {classStudents.length === 0 ? (
-                <p className="text-center text-slate-500 italic">No students found in this class.</p>
+                <p className="text-center text-slate-500 dark:text-slate-400 italic">No students found in this class.</p>
               ) : (
                 <div className="space-y-3">
                   {classStudents.map(student => {
@@ -172,7 +172,7 @@ export default function AdminHomework() {
                       <div key={student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-primary-300 transition-colors gap-4">
                         <div>
                           <p className="font-bold text-slate-900 dark:text-white">{student.firstName} {student.lastName}</p>
-                          <p className="text-xs font-semibold text-slate-500">ADM: {student.admissionNumber} | Last Updated: {lastUpdated}</p>
+                          <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">ADM: {student.admissionNumber} | Last Updated: {lastUpdated}</p>
                         </div>
                         <div className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap ${statusColor}`}>
                           {status}

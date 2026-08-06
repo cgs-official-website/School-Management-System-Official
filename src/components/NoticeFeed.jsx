@@ -37,12 +37,12 @@ export default function NoticeFeed({ audienceRole }) {
           <Bell className="text-primary-600" />
           Noticeboard
         </h1>
-        <p className="text-slate-500 mt-1">Official announcements from the school administration.</p>
+        <p className="text-slate-500 dark:text-slate-400 mt-1">Official announcements from the school administration.</p>
       </div>
 
       <div className="space-y-4">
         {notices.length === 0 ? (
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 p-12 text-center text-slate-500 dark:text-slate-400">
             <Bell size={48} className="mx-auto mb-4 text-slate-300" />
             <p className="text-lg font-medium text-slate-900 dark:text-white">No active notices</p>
             <p>You're all caught up!</p>
@@ -64,7 +64,7 @@ export default function NoticeFeed({ audienceRole }) {
                         <AlertTriangle size={14} /> High Priority
                       </span>
                     )}
-                    <span className="text-sm font-medium text-slate-400">
+                    <span className="text-sm font-medium text-slate-400 dark:text-slate-300">
                       {new Date(notice.createdAt).toLocaleString(undefined, {
                         month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
                       })}
@@ -77,7 +77,7 @@ export default function NoticeFeed({ audienceRole }) {
                   {notice.message}
                 </div>
                 
-                <div className="text-sm font-medium text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div className="text-sm font-medium text-slate-400 dark:text-slate-300 pt-2 border-t border-slate-100 dark:border-slate-800">
                   Posted by: {notice.authorName}
                 </div>
               </div>

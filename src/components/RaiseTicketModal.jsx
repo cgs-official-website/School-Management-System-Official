@@ -208,19 +208,19 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
       <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-xl overflow-hidden flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50">
+        <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
               <LuLifeBuoy size={20} />
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">Zuna Central Support</h3>
-              <p className="text-xs text-slate-500 font-medium">Direct live support desk for School Administrators</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Direct live support desk for School Administrators</p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition-colors"
+            className="p-2 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
           >
             <LuX size={18} />
           </button>
@@ -233,7 +233,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
             className={`py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'raise'
                 ? 'border-indigo-600 text-indigo-600 bg-white dark:bg-slate-900 rounded-t-xl'
-                : 'border-transparent text-slate-500 hover:text-slate-700'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
           >
             <LuPlus size={15} /> Raise New Ticket
@@ -243,7 +243,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
             className={`py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'history'
                 ? 'border-indigo-600 text-indigo-600 bg-white dark:bg-slate-900 rounded-t-xl'
-                : 'border-transparent text-slate-500 hover:text-slate-700'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
           >
             <LuMessageSquare size={15} /> My Tickets ({myTickets.length})
@@ -303,7 +303,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
                   type="text"
                   disabled
                   value="School Management"
-                  className="w-full px-4 py-3 text-sm bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-500 font-bold"
+                  className="w-full px-4 py-3 text-sm bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-500 dark:text-slate-400 font-bold"
                 />
               </div>
             </div>
@@ -326,7 +326,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 rounded-2xl transition-colors"
+                className="px-5 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-2xl transition-colors"
               >
                 Cancel
               </button>
@@ -354,22 +354,22 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-extrabold text-indigo-600">#{t.id}</span>
                     {getStatusBadge(t.status)}
-                    <span className="text-xs text-slate-400 font-medium ml-auto">
+                    <span className="text-xs text-slate-400 dark:text-slate-300 font-medium ml-auto">
                       {t.createdAt ? new Date(t.createdAt).toLocaleDateString('en-GB') : 'Recently'}
                     </span>
                   </div>
                   <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 transition-colors">{t.subject}</h4>
-                  <p className="text-xs text-slate-500 truncate mt-0.5">{t.description}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{t.description}</p>
                 </div>
                 <LuChevronRight className="text-slate-300 group-hover:text-indigo-600 transition-colors shrink-0" size={18} />
               </div>
             ))}
 
             {myTickets.length === 0 && (
-              <div className="text-center py-12 text-slate-400">
+              <div className="text-center py-12 text-slate-400 dark:text-slate-300">
                 <LuLifeBuoy size={40} className="mx-auto mb-2 text-slate-300" />
                 <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">No support tickets found.</p>
-                <p className="text-xs text-slate-400 mt-1">Switch to "Raise New Ticket" tab to submit a support request.</p>
+                <p className="text-xs text-slate-400 dark:text-slate-300 mt-1">Switch to "Raise New Ticket" tab to submit a support request.</p>
               </div>
             )}
           </div>
@@ -387,7 +387,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
                 <LuArrowLeft size={14} /> Back to My Tickets
               </button>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-extrabold text-slate-400">#{selectedTicket.id}</span>
+                <span className="text-xs font-extrabold text-slate-400 dark:text-slate-300">#{selectedTicket.id}</span>
                 {getStatusBadge(selectedTicket.status)}
               </div>
             </div>
@@ -395,7 +395,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
             {/* Message Thread List */}
             <div className="p-5 flex-1 overflow-y-auto space-y-3 bg-slate-50/40">
               <div className="p-3.5 bg-slate-100/80 rounded-2xl border border-slate-200 dark:border-slate-700">
-                <span className="text-xs font-bold text-slate-500 block mb-1">Ticket Subject: {selectedTicket.subject}</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-1">Ticket Subject: {selectedTicket.subject}</span>
                 <p className="text-xs text-slate-800 dark:text-slate-100 font-medium">{selectedTicket.description}</p>
               </div>
 

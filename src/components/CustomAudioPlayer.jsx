@@ -75,9 +75,9 @@ export default function CustomAudioPlayer({ src, isMe }) {
           max={duration || 100}
           value={currentTime}
           onChange={handleProgressChange}
-          className={`w-full h-1.5 rounded-full appearance-none cursor-pointer ${isMe ? 'bg-primary-400 [&::-webkit-slider-thumb]:bg-white' : 'bg-slate-300 [&::-webkit-slider-thumb]:bg-primary-600'} [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-sm transition-all`}
+          className={`w-full h-1.5 rounded-full appearance-none cursor-pointer ${isMe ? 'bg-primary-400 [&::-webkit-slider-thumb]:bg-white' : 'bg-slate-300 dark:bg-slate-600 [&::-webkit-slider-thumb]:bg-primary-600'} [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-sm transition-all`}
         />
-        <div className={`flex justify-between text-[11px] mt-1.5 font-medium ${isMe ? 'text-primary-100' : 'text-slate-500'}`}>
+        <div className={`flex justify-between text-[11px] mt-1.5 font-medium ${isMe ? 'text-primary-100' : 'text-slate-500 dark:text-slate-400'}`}>
           <span>{formatTime(currentTime)}</span>
           <span>{formatTime(duration)}</span>
         </div>

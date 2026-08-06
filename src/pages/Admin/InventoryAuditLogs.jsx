@@ -218,7 +218,7 @@ export default function InventoryAuditLogs() {
         <div className="flex items-center gap-3">
           <button 
             onClick={() => navigate('/admin/inventory')}
-            className="p-2 hover:bg-slate-100 rounded-xl transition-colors border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"
           >
             <ArrowLeft size={18} className="text-slate-800 dark:text-slate-100" />
           </button>
@@ -226,14 +226,14 @@ export default function InventoryAuditLogs() {
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
               <LuClipboardList className="text-primary-600" /> Inventory Audit Logs
             </h1>
-            <p className="text-slate-500 mt-1">Review, filter, and track all stock inbound/outbound records.</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">Review, filter, and track all stock inbound/outbound records.</p>
           </div>
         </div>
 
         <div className="flex gap-2">
           <button 
             onClick={clearAllFilters}
-            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all font-semibold"
+            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
           >
             <RefreshCw size={16} /> Reset
           </button>
@@ -243,9 +243,9 @@ export default function InventoryAuditLogs() {
               <Download size={18} /> Export Logs
             </button>
             <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl hidden group-hover:block hover:block z-50">
-              <button onClick={() => handleExport('xlsx')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-700 dark:text-slate-200 rounded-t-2xl">Excel (.xlsx)</button>
-              <button onClick={() => handleExport('csv')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-700 dark:text-slate-200">CSV (.csv)</button>
-              <button onClick={() => handleExport('pdf')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 text-sm font-semibold text-slate-700 dark:text-slate-200 rounded-b-2xl">PDF Document</button>
+              <button onClick={() => handleExport('xlsx')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold text-slate-700 dark:text-slate-200 rounded-t-2xl">Excel (.xlsx)</button>
+              <button onClick={() => handleExport('csv')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold text-slate-700 dark:text-slate-200">CSV (.csv)</button>
+              <button onClick={() => handleExport('pdf')} className="w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-semibold text-slate-700 dark:text-slate-200 rounded-b-2xl">PDF Document</button>
             </div>
           </div>
         </div>
@@ -255,9 +255,9 @@ export default function InventoryAuditLogs() {
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-5 shadow-sm mb-6 shrink-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {/* Search */}
         <div className="relative md:col-span-2">
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Search Logs</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Search Logs</label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={16} />
             <input 
               type="text"
               placeholder="Search product, product ID, user name..."
@@ -270,9 +270,9 @@ export default function InventoryAuditLogs() {
 
         {/* Date Start */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Start Date</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Start Date</label>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={16} />
             <input 
               type="date"
               value={startDate}
@@ -284,9 +284,9 @@ export default function InventoryAuditLogs() {
 
         {/* Date End */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">End Date</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">End Date</label>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={16} />
             <input 
               type="date"
               value={endDate}
@@ -298,7 +298,7 @@ export default function InventoryAuditLogs() {
 
         {/* Product Filter */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Product</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Product</label>
           <select 
             value={productFilter}
             onChange={(e) => setProductFilter(e.target.value)}
@@ -311,7 +311,7 @@ export default function InventoryAuditLogs() {
 
         {/* Category Filter */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Category</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Category</label>
           <select 
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
@@ -324,7 +324,7 @@ export default function InventoryAuditLogs() {
 
         {/* User Filter */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">User</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">User</label>
           <select 
             value={userFilter}
             onChange={(e) => setUserFilter(e.target.value)}
@@ -337,7 +337,7 @@ export default function InventoryAuditLogs() {
 
         {/* Action Type Filter */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Action Type</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Action Type</label>
           <select 
             value={actionFilter}
             onChange={(e) => setActionFilter(e.target.value)}
@@ -350,7 +350,7 @@ export default function InventoryAuditLogs() {
 
         {/* Transaction Type Filter */}
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Transaction Type</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Transaction Type</label>
           <select 
             value={transactionFilter}
             onChange={(e) => setTransactionFilter(e.target.value)}
@@ -368,7 +368,7 @@ export default function InventoryAuditLogs() {
         <div className="flex-1 overflow-auto custom-scrollbar">
           <table className="w-full text-left border-collapse min-w-[1000px]">
             <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
-              <tr className="text-slate-500 text-xs font-semibold uppercase">
+              <tr className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">
                 <th className="p-4 pl-6">Timestamp</th>
                 <th className="p-4">User</th>
                 <th className="p-4">Role</th>
@@ -382,7 +382,7 @@ export default function InventoryAuditLogs() {
             <tbody className="divide-y divide-slate-100 text-sm">
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="p-4 pl-6 font-semibold text-slate-500">
+                  <td className="p-4 pl-6 font-semibold text-slate-500 dark:text-slate-400">
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
                   <td className="p-4 font-bold text-slate-900 dark:text-white">{log.userName}</td>
@@ -406,7 +406,7 @@ export default function InventoryAuditLogs() {
                         <span className={`font-bold ${log.quantityChanged > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                           {log.quantityChanged > 0 ? `+${log.quantityChanged}` : log.quantityChanged}
                         </span>
-                        <span className="text-slate-400">
+                        <span className="text-slate-400 dark:text-slate-300">
                           {log.previousStock} → {log.newStock}
                         </span>
                       </div>
@@ -419,7 +419,7 @@ export default function InventoryAuditLogs() {
               ))}
               {filteredLogs.length === 0 && (
                 <tr>
-                  <td colSpan="8" className="p-12 text-center text-slate-500 font-medium">
+                  <td colSpan="8" className="p-12 text-center text-slate-500 dark:text-slate-400 font-medium">
                     No audit log entries found matching filters.
                   </td>
                 </tr>
