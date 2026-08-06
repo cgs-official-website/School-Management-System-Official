@@ -179,7 +179,7 @@ export default function Overview() {
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900">{school.schoolName}</h4>
-                    <p className="text-sm text-slate-500">{new Date(school.createdAt).toLocaleDateString()}</p>
+                    <p className="text-sm text-slate-500">{new Date(school.createdAt).toLocaleDateString('en-GB')}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">

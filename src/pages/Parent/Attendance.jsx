@@ -156,7 +156,7 @@ export default function ParentAttendance() {
                     <Calendar size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900">{new Date(record.date ? record.date.split('_')[0] : '').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
+                    <h3 className="font-bold text-slate-900">{new Date(record.date ? record.date.split('_')[0] : '').toLocaleDateString('en-GB')}</h3>
                   </div>
                 </div>
                 <div className={`px-4 py-1.5 rounded-lg border font-bold text-sm flex items-center gap-2 ${getStatusColor(record.status)}`}>

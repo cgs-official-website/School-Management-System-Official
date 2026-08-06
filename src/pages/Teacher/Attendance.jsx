@@ -250,7 +250,7 @@ export default function Attendance() {
             await addDoc(collection(db, `schools/${schoolId}/notifications`), {
               userId: parentDoc.id,
               title: `Attendance Alert: ${status}`,
-              message: `${studentName} was marked ${status} today (${new Date(selectedDate).toLocaleDateString()}).`,
+              message: `${studentName} was marked ${status} today (${new Date(selectedDate).toLocaleDateString('en-GB')}).`,
               createdAt: new Date().toISOString(),
               read: false,
               type: 'attendance'

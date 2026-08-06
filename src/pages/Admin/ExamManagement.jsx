@@ -308,7 +308,7 @@ export default function ExamManagement() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar size={16} />
-                        {new Date(exam.startDate).toLocaleDateString()} - {new Date(exam.endDate).toLocaleDateString()}
+                        {new Date(exam.startDate).toLocaleDateString('en-GB')} - {new Date(exam.endDate).toLocaleDateString('en-GB')}
                       </div>
                     </div>
                     {exam.customData && Object.keys(exam.customData).length > 0 && (

@@ -159,7 +159,7 @@ export default function LeaveManagement() {
                             <LuUser className="text-slate-400" size={16} />
                             <div>
                               <p className="font-bold text-slate-900 leading-none">{leave.applicantName}</p>
-                              <p className="text-[10px] text-slate-400 mt-1 font-semibold">Submitted: {new Date(leave.submittedAt).toLocaleDateString()}</p>
+                              <p className="text-[10px] text-slate-400 mt-1 font-semibold">Submitted: {new Date(leave.submittedAt).toLocaleDateString('en-GB')}</p>
                             </div>
                           </div>
                           {getRoleBadge(leave.applicantRole)}
@@ -168,7 +168,7 @@ export default function LeaveManagement() {
                         <div className="space-y-3">
                           <div className="flex items-center gap-2 text-xs font-extrabold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 w-fit">
                             <LuCalendar size={14} />
-                            {new Date(leave.startDate).toLocaleDateString()} — {new Date(leave.endDate).toLocaleDateString()}
+                            {new Date(leave.startDate).toLocaleDateString('en-GB')} — {new Date(leave.endDate).toLocaleDateString('en-GB')}
                           </div>
                           <p className="text-xs font-bold text-primary-600 uppercase tracking-wider">{leave.leaveType}</p>
                           <p className="text-sm font-semibold text-slate-700 leading-relaxed italic line-clamp-3">
@@ -207,7 +207,7 @@ export default function LeaveManagement() {
                             <LuUser className="text-slate-400" size={16} />
                             <div>
                               <p className="font-bold text-slate-900 leading-none">{leave.applicantName}</p>
-                              <p className="text-[10px] text-slate-400 mt-1 font-semibold">Submitted: {new Date(leave.submittedAt).toLocaleDateString()}</p>
+                              <p className="text-[10px] text-slate-400 mt-1 font-semibold">Submitted: {new Date(leave.submittedAt).toLocaleDateString('en-GB')}</p>
                             </div>
                           </div>
                           {getStatusBadge(leave.status)}
@@ -216,7 +216,7 @@ export default function LeaveManagement() {
                         <div className="space-y-3">
                           <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
                             <LuCalendar size={14} />
-                            {new Date(leave.startDate).toLocaleDateString()} — {new Date(leave.endDate).toLocaleDateString()}
+                            {new Date(leave.startDate).toLocaleDateString('en-GB')} — {new Date(leave.endDate).toLocaleDateString('en-GB')}
                           </div>
                           <div className="flex items-center gap-2">
                             {getRoleBadge(leave.applicantRole)}
@@ -277,7 +277,7 @@ export default function LeaveManagement() {
                 </div>
                 <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                   <span className="text-[10px] uppercase font-bold text-slate-500">Submission Date</span>
-                  <p className="text-sm font-bold text-slate-700 mt-0.5">{new Date(selectedLeave.submittedAt).toLocaleDateString()}</p>
+                  <p className="text-sm font-bold text-slate-700 mt-0.5">{new Date(selectedLeave.submittedAt).toLocaleDateString('en-GB')}</p>
                 </div>
               </div>
 
@@ -285,7 +285,7 @@ export default function LeaveManagement() {
                 <span className="text-[10px] uppercase font-bold text-slate-500">Duration Range</span>
                 <p className="text-sm font-bold text-slate-800 mt-0.5 flex items-center gap-1.5">
                   <LuCalendar size={16} className="text-primary-500" />
-                  {new Date(selectedLeave.startDate).toLocaleDateString()} — {new Date(selectedLeave.endDate).toLocaleDateString()}
+                  {new Date(selectedLeave.startDate).toLocaleDateString('en-GB')} — {new Date(selectedLeave.endDate).toLocaleDateString('en-GB')}
                 </p>
               </div>
 

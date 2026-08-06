@@ -1168,7 +1168,7 @@ export default function TransportManagement() {
                       <div key={idx} className="flex justify-between items-center p-3 rounded-xl border border-slate-100 bg-slate-50/50">
                         <div>
                           <p className="text-xs font-bold text-slate-500">{doc.label}</p>
-                          <p className="text-sm font-semibold text-slate-800 mt-0.5">{doc.date ? new Date(doc.date).toLocaleDateString() : 'N/A'}</p>
+                          <p className="text-sm font-semibold text-slate-800 mt-0.5">{doc.date ? new Date(doc.date).toLocaleDateString('en-GB') : 'N/A'}</p>
                         </div>
                         <div>
                           {status === 'expired' ? (

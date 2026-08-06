@@ -251,9 +251,9 @@ export default function ParentChat() {
     const diffTime = Math.abs(today - date);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays < 7) {
-      return date.toLocaleDateString(undefined, { weekday: 'long' });
+      return date.toLocaleDateString('en-GB');
     }
-    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('en-GB');
   };
 
   const renderMessageContent = (msg, isMe) => {

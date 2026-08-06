@@ -2515,7 +2515,7 @@ export default function StaffAssignment() {
                     <div>
                       <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Joined Date</label>
                       <p className="text-slate-900 font-semibold">
-                        {selectedStaffToView.createdAt ? new Date(selectedStaffToView.createdAt).toLocaleDateString() : 'N/A'}
+                        {selectedStaffToView.createdAt ? new Date(selectedStaffToView.createdAt).toLocaleDateString('en-GB') : 'N/A'}
                       </p>
                     </div>
                     <div>

@@ -355,7 +355,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
                     <span className="text-xs font-extrabold text-indigo-600">#{t.id}</span>
                     {getStatusBadge(t.status)}
                     <span className="text-xs text-slate-400 font-medium ml-auto">
-                      {t.createdAt ? new Date(t.createdAt).toLocaleDateString() : 'Recently'}
+                      {t.createdAt ? new Date(t.createdAt).toLocaleDateString('en-GB') : 'Recently'}
                     </span>
                   </div>
                   <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{t.subject}</h4>

@@ -284,7 +284,7 @@ export default function HomeworkManagement() {
                       {cls ? cls.name : 'Unknown Class'} • {hw.subject}
                     </span>
                     <span className="text-xs font-semibold text-slate-400">
-                      Due: {new Date(hw.dueDate).toLocaleDateString()}
+                      Due: {new Date(hw.dueDate).toLocaleDateString('en-GB')}
                     </span>
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-2">{hw.title}</h3>

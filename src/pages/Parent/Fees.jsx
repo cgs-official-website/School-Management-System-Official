@@ -243,12 +243,12 @@ export default function ParentFees() {
                       <td className="py-4 px-6">
                         <p className="font-semibold text-slate-900">{inv.name}</p>
                         <p className="text-xs text-slate-400 mt-0.5">
-                          {inv.createdAt ? `Invoiced on ${new Date(inv.createdAt).toLocaleDateString()}` : 'Standard Fee'}
+                          {inv.createdAt ? `Invoiced on ${new Date(inv.createdAt).toLocaleDateString('en-GB')}` : 'Standard Fee'}
                         </p>
                       </td>
                       <td className="py-4 px-6">
                         <span className={`font-medium ${isOverdue ? 'text-red-600 font-bold' : 'text-slate-600'}`}>
-                          {inv.dueDate ? new Date(inv.dueDate).toLocaleDateString() : 'N/A'}
+                          {inv.dueDate ? new Date(inv.dueDate).toLocaleDateString('en-GB') : 'N/A'}
                           {isOverdue && (
                             <span className="ml-2 inline-flex items-center gap-1 text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-black uppercase tracking-wide border border-red-200">
                               <AlertTriangle size={10} /> Overdue
@@ -312,7 +312,7 @@ export default function ParentFees() {
               </div>
               <div className="flex justify-between text-xs font-medium text-slate-400">
                 <span>DUE DATE</span>
-                <span className="text-slate-800">{new Date(selectedInvoice.dueDate).toLocaleDateString()}</span>
+                <span className="text-slate-800">{new Date(selectedInvoice.dueDate).toLocaleDateString('en-GB')}</span>
               </div>
               <div className="border-t border-slate-200 my-2 pt-2 flex justify-between text-sm font-bold text-slate-900">
                 <span>Total Amount Due</span>

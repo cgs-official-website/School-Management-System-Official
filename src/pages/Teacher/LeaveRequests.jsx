@@ -168,7 +168,7 @@ export default function LeaveRequests() {
                     <div className="space-y-2 mb-4">
                       <p className="text-xs font-bold text-slate-400 flex items-center gap-2">
                         <LuCalendar size={14} className="text-slate-400" />
-                        {new Date(leave.startDate).toLocaleDateString()} — {new Date(leave.endDate).toLocaleDateString()}
+                        {new Date(leave.startDate).toLocaleDateString('en-GB')} — {new Date(leave.endDate).toLocaleDateString('en-GB')}
                       </p>
                       <h4 className="text-sm font-semibold text-slate-800 leading-relaxed line-clamp-3">
                         "{leave.reason}"

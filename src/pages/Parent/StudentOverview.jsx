@@ -72,7 +72,7 @@ export default function StudentOverview() {
         unpaidCount,
         overdueCount,
         totalUnpaidAmount,
-        earliestDueDate: earliestDue ? earliestDue.toLocaleDateString() : null
+        earliestDueDate: earliestDue ? earliestDue.toLocaleDateString('en-GB') : null
       });
     }, (err) => {
       console.error("Error fetching fee invoices for alert:", err);

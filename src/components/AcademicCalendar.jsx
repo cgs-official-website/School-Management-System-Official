@@ -331,7 +331,7 @@ export default function AcademicCalendar({ isAdmin }) {
                     <div className="flex flex-wrap gap-2 mt-2 max-h-32 overflow-y-auto custom-scrollbar p-1">
                       {newEvent.customDates.map((date, idx) => (
                         <span key={idx} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-semibold rounded-lg shadow-sm">
-                          {new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                          {new Date(date).toLocaleDateString('en-GB')}
                           <button 
                             type="button"
                             onClick={() => setNewEvent({...newEvent, customDates: newEvent.customDates.filter(d => d !== date)})}

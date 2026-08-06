@@ -233,7 +233,7 @@ export default function ParentGrades() {
                   </span>
                   <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
                     <Calendar size={12} />
-                    {report.publishedAt ? new Date(report.publishedAt).toLocaleDateString() : 'N/A'}
+                    {report.publishedAt ? new Date(report.publishedAt).toLocaleDateString('en-GB') : 'N/A'}
                   </span>
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mt-4">{report.examName}</h3>

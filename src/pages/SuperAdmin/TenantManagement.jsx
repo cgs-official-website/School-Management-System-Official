@@ -311,7 +311,7 @@ export default function TenantManagement() {
                     <td className="p-4">
                       <div className="flex items-center gap-2 text-sm text-slate-600">
                         <Calendar size={14} className="text-slate-400" />
-                        {new Date(school.createdAt).toLocaleDateString()}
+                        {new Date(school.createdAt).toLocaleDateString('en-GB')}
                       </div>
                     </td>
                     <td className="p-4 text-center">

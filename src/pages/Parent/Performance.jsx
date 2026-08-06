@@ -164,7 +164,7 @@ export default function Performance() {
                 <div key={assessment.id} className="flex justify-between items-center p-4 rounded-2xl border border-slate-100 hover:border-primary-200 hover:bg-primary-50/30 transition-all">
                   <div>
                     <h3 className="font-bold text-slate-900">{assessment.title}</h3>
-                    <p className="text-sm font-medium text-slate-500">{new Date(assessment.date).toLocaleDateString()}</p>
+                    <p className="text-sm font-medium text-slate-500">{new Date(assessment.date).toLocaleDateString('en-GB')}</p>
                   </div>
                   <div className="text-right">
                     <p className="font-black text-lg text-slate-900">{assessment.score} <span className="text-slate-400 text-sm font-bold">/ {assessment.totalMarks}</span></p>

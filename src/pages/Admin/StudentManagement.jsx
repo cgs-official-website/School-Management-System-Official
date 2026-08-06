@@ -1936,7 +1936,7 @@ export default function StudentManagement() {
                         </div>
                       </td>
                       <td className="py-4 px-6 text-xs text-slate-500">
-                        {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Recent'}
+                        {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString('en-GB') : 'Recent'}
                       </td>
                       <td className="py-4 px-6">
                         {app.status === 'Approved' ? (
@@ -2157,7 +2157,7 @@ export default function StudentManagement() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date of Birth</label>
-                        <p className="text-slate-950 font-semibold">{selectedStudentToView.dob ? new Date(selectedStudentToView.dob).toLocaleDateString() : '—'}</p>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.dob ? new Date(selectedStudentToView.dob).toLocaleDateString('en-GB') : '—'}</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Age</label>
@@ -2212,7 +2212,7 @@ export default function StudentManagement() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Admission Date</label>
-                        <p className="text-slate-950 font-semibold">{selectedStudentToView.admissionDate ? new Date(selectedStudentToView.admissionDate).toLocaleDateString() : '—'}</p>
+                        <p className="text-slate-950 font-semibold">{selectedStudentToView.admissionDate ? new Date(selectedStudentToView.admissionDate).toLocaleDateString('en-GB') : '—'}</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
@@ -2435,7 +2435,7 @@ export default function StudentManagement() {
                           {studentHistory.map((item, idx) => (
                             <div key={idx} className="flex justify-between items-center px-4 py-2.5 text-xs">
                               <div>
-                                <span className="font-bold text-slate-800">{new Date(item.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+                                <span className="font-bold text-slate-800">{new Date(item.date).toLocaleDateString('en-GB')}</span>
                                 <span className="text-slate-400 ml-2 font-medium">({item.session})</span>
                               </div>
                               <span className={`px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border text-[10px] ${
@@ -3250,7 +3250,7 @@ export default function StudentManagement() {
                     Review Admission Application
                   </h2>
                   <p className="text-xs text-slate-500 font-mono mt-0.5">
-                    App #{selectedAppForReview.applicationNumber || selectedAppForReview.id} • Submitted on {selectedAppForReview.submittedAt ? new Date(selectedAppForReview.submittedAt).toLocaleDateString() : 'N/A'}
+                    App #{selectedAppForReview.applicationNumber || selectedAppForReview.id} • Submitted on {selectedAppForReview.submittedAt ? new Date(selectedAppForReview.submittedAt).toLocaleDateString('en-GB') : 'N/A'}
                   </p>
                 </div>
               </div>

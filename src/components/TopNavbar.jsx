@@ -319,7 +319,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                               <p className="text-sm font-bold text-slate-900 line-clamp-1">{notice.title}</p>
                               <p className="text-xs font-semibold text-slate-700 mt-1 line-clamp-2 leading-relaxed">{notice.description || notice.message}</p>
                               <p className="text-[10px] text-slate-500 mt-2 font-bold">
-                                {new Date(notice.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                {new Date(notice.createdAt).toLocaleDateString('en-GB')}
                               </p>
                             </div>
                             {isUnread && (notice.type === 'notice' || notice.type === 'personal') && (

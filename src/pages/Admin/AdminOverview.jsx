@@ -320,7 +320,7 @@ export default function AdminOverview() {
             <div className="hidden sm:flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 shadow-sm border border-slate-200">
               <Calendar className="h-5 w-5 text-slate-400" />
               <span className="text-sm font-medium text-slate-700">
-                {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                {new Date().toLocaleDateString('en-GB')}
               </span>
             </div>
           </div>
@@ -400,7 +400,7 @@ export default function AdminOverview() {
                         <h3 className="font-medium text-slate-900">{notice.title}</h3>
                         <p className="mt-1 line-clamp-2 text-sm text-slate-500">{notice.content}</p>
                         <p className="mt-2 text-xs font-medium text-slate-400">
-                          {new Date(notice.date).toLocaleDateString()} • {notice.targetAudience ? notice.targetAudience.charAt(0).toUpperCase() + notice.targetAudience.slice(1) : 'All'}
+                          {new Date(notice.date).toLocaleDateString('en-GB')} • {notice.targetAudience ? notice.targetAudience.charAt(0).toUpperCase() + notice.targetAudience.slice(1) : 'All'}
                         </p>
                       </div>
                     </div>

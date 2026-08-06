@@ -314,9 +314,9 @@ export default function TeacherChat() {
     const diffTime = Math.abs(today - date);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     if (diffDays < 7) {
-      return date.toLocaleDateString(undefined, { weekday: 'long' });
+      return date.toLocaleDateString('en-GB');
     }
-    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('en-GB');
   };
 
   const renderMessageContent = (msg, isMe) => {
@@ -530,14 +530,15 @@ export default function TeacherChat() {
           {activeTab === 'dms' && activeStudent && (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center gap-4 shrink-0">
-                <button 
-                  onClick={() => setActiveStudent(null)}
-                  className="lg:hidden p-2 text-slate-500 hover:bg-slate-200 rounded-full"
-                >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                </button>
-                <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg">
+              <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => setActiveStudent(null)}
+                    className="lg:hidden p-2 text-slate-500 hover:bg-slate-200 rounded-full"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                  </button>
+                  <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg">
                     {activeStudent.firstName.charAt(0)}{activeStudent.lastName.charAt(0)}
                   </div>
                   <div>

@@ -176,7 +176,7 @@ export default function TenantDetails() {
                 <Calendar className="text-slate-400 mt-0.5" size={20} />
                 <div>
                   <p className="text-sm font-medium text-slate-500">Registered On</p>
-                  <p className="text-slate-900 mt-1">{new Date(school.createdAt).toLocaleDateString()}</p>
+                  <p className="text-slate-900 mt-1">{new Date(school.createdAt).toLocaleDateString('en-GB')}</p>
                 </div>
               </div>
             </div>

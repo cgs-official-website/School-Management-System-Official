@@ -257,7 +257,7 @@ export default function ResourceSharing() {
                   
                   <div className="pt-4 border-t border-slate-100 flex justify-between items-center mt-auto">
                     <span className="text-xs font-semibold text-slate-400">
-                      {resource.date ? new Date(resource.date).toLocaleDateString() : 'No Date'}
+                      {resource.date ? new Date(resource.date).toLocaleDateString('en-GB') : 'No Date'}
                     </span>
                     <div className="flex gap-2">
                       {(hasDeletePermission || resource.teacherId === currentUser.uid) && (

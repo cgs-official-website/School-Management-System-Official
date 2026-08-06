@@ -166,7 +166,7 @@ export default function HomeworkOverview() {
                         <User size={12} /> {hw.teacherName || 'Teacher'}
                       </span>
                       <span className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
-                        Assigned: {hw.assignedDate ? new Date(hw.assignedDate).toLocaleDateString() : 'N/A'}
+                        Assigned: {hw.assignedDate ? new Date(hw.assignedDate).toLocaleDateString('en-GB') : 'N/A'}
                       </span>
                     </div>
                   </div>
@@ -175,7 +175,7 @@ export default function HomeworkOverview() {
                 <div className="flex flex-col sm:items-end gap-3 border-t sm:border-t-0 sm:border-l border-slate-100 pt-4 sm:pt-0 sm:pl-6 min-w-[180px]">
                   <div className={`flex items-center gap-1.5 text-sm font-bold ${isOverdue ? 'text-red-600' : 'text-slate-600'}`}>
                     <Clock size={16} />
-                    Due: {dueDate.toLocaleDateString()}
+                    Due: {dueDate.toLocaleDateString('en-GB')}
                   </div>
                   
                   <div className="w-full mt-1">

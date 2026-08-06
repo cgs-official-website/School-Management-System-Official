@@ -789,7 +789,7 @@ export default function HRPayrollManagement() {
                     <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Payment Details</h3>
                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
                       <p className="text-slate-500 text-sm mb-1">Status: <span className="text-emerald-600 font-bold ml-1">{showPayslipModal.status}</span></p>
-                      <p className="text-slate-500 text-sm">Date: <span className="text-slate-900 font-semibold ml-1">{new Date().toLocaleDateString()}</span></p>
+                      <p className="text-slate-500 text-sm">Date: <span className="text-slate-900 font-semibold ml-1">{new Date().toLocaleDateString('en-GB')}</span></p>
                     </div>
                   </div>
                 </div>

@@ -267,7 +267,7 @@ export default function MyChildren() {
               <div className="space-y-3 text-sm mt-4 pt-4 border-t border-slate-100">
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 font-medium">Date of Birth</span>
-                  <span className="font-semibold text-slate-900">{new Date(child.dob).toLocaleDateString()}</span>
+                  <span className="font-semibold text-slate-900">{new Date(child.dob).toLocaleDateString('en-GB')}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 font-medium">Gender</span>

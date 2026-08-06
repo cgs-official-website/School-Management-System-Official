@@ -76,7 +76,7 @@ export default function LessonPlans() {
       availableFieldsList.forEach(field => {
         if (selectedFields[field.key]) {
           if (field.key === 'date') {
-            row[field.label] = plan.date ? new Date(plan.date).toLocaleDateString() : '';
+            row[field.label] = plan.date ? new Date(plan.date).toLocaleDateString('en-GB') : '';
           } else {
             row[field.label] = plan[field.key] || '';
           }
@@ -325,7 +325,7 @@ export default function LessonPlans() {
                   <div className="pt-4 border-t border-slate-100 flex justify-between items-center text-sm font-medium text-slate-500">
                     <span className="flex items-center gap-1">
                       <LuCalendar size={14} /> 
-                      {plan.date ? new Date(plan.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) : 'No Date'}
+                      {plan.date ? new Date(plan.date).toLocaleDateString('en-GB') : 'No Date'}
                     </span>
                     {hasEditPermission && (
                       <button 

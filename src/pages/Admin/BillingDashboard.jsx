@@ -194,7 +194,7 @@ export default function BillingDashboard() {
                       <td className="p-4 pl-6 font-medium text-slate-900 flex items-center gap-2">
                         <FileText size={16} className="text-slate-400" /> {inv.id}
                       </td>
-                      <td className="p-4 text-slate-600">{new Date(inv.date).toLocaleDateString()}</td>
+                      <td className="p-4 text-slate-600">{new Date(inv.date).toLocaleDateString('en-GB')}</td>
                       <td className="p-4 font-semibold text-slate-900">₹{inv.amount}</td>
                       <td className="p-4">
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-green-50 text-green-700">

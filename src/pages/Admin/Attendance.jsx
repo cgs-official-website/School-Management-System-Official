@@ -311,7 +311,7 @@ export default function Attendance() {
         "Class ID": f.classId,
         "Month": f.month,
         "Absence Count": f.absentCount,
-        "Flagged At": f.flaggedAt ? new Date(f.flaggedAt).toLocaleDateString() : '-'
+        "Flagged At": f.flaggedAt ? new Date(f.flaggedAt).toLocaleDateString('en-GB') : '-'
       }));
       
       const worksheet = XLSX.utils.json_to_sheet(dataToExport);

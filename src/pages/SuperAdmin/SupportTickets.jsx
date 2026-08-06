@@ -280,7 +280,7 @@ export default function SupportTickets() {
           <div className="space-y-4">
             {paginatedTickets.map(ticket => {
               const msgCount = ticket.messages?.length || 1;
-              const dateStr = ticket.createdAt ? (new Date(ticket.createdAt).toLocaleDateString()) : 'Today';
+              const dateStr = ticket.createdAt ? (new Date(ticket.createdAt).toLocaleDateString('en-GB')) : 'Today';
               return (
                 <div 
                   key={ticket.id} 

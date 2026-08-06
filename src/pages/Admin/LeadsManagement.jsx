@@ -305,7 +305,7 @@ export default function LeadsManagement() {
           } else if (field.key === 'status') {
             row['Status'] = lead.status || 'Cold';
           } else if (field.key === 'submittedAt') {
-            row['Submitted Date'] = lead.submittedAt ? new Date(lead.submittedAt).toLocaleDateString() : '-';
+            row['Submitted Date'] = lead.submittedAt ? new Date(lead.submittedAt).toLocaleDateString('en-GB') : '-';
           } else {
             const val = lead.data?.[field.key];
             row[field.label] = Array.isArray(val) ? val.join(', ') : (val || '');

@@ -139,7 +139,7 @@ export default function TenantsList() {
                       {getStatusBadge(school.status)}
                     </td>
                     <td className="p-4 text-slate-500">
-                      {new Date(school.createdAt).toLocaleDateString()}
+                      {new Date(school.createdAt).toLocaleDateString('en-GB')}
                     </td>
                     <td className="p-4 pr-6 text-right">
                       <Link 

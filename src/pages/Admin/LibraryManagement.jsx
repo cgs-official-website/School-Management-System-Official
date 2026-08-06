@@ -427,7 +427,7 @@ export default function LibraryManagement() {
                         <td className="p-4">
                           <div className={`flex items-center gap-1.5 text-sm font-medium ${overdue ? 'text-red-600' : 'text-slate-600'}`}>
                             {overdue && <AlertCircle size={14} />}
-                            {new Date(issue.dueDate).toLocaleDateString()}
+                            {new Date(issue.dueDate).toLocaleDateString('en-GB')}
                           </div>
                         </td>
                         <td className="p-4 text-right">

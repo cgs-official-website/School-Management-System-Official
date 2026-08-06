@@ -172,7 +172,7 @@ export default function PTMScheduler() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date & Time</p>
-                      <p className="text-sm font-semibold text-slate-700">{new Date(meeting.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} at {meeting.time}</p>
+                      <p className="text-sm font-semibold text-slate-700">{new Date(meeting.date).toLocaleDateString('en-GB')} at {meeting.time}</p>
                     </div>
                     <div>
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Meeting Type</p>
