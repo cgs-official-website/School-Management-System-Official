@@ -59,16 +59,29 @@ export default function ClassManagement() {
       setClasses(sortClassesAscending(data));
       classesLoaded = true;
       checkLoading();
+    }, (error) => {
+      console.error("Classes error:", error);
+      classesLoaded = true;
+      checkLoading();
     });
 
     const unsubscribeStudents = subscribeToSubCollection(schoolId, 'students', (data) => {
       setStudents(data);
       studentsLoaded = true;
       checkLoading();
+    }, (error) => {
+      console.error("Students error:", error);
+      studentsLoaded = true;
+      checkLoading();
     });
 
     const unsubscribeCategories = subscribeToSubCollection(schoolId, 'classCategories', (data) => {
       setCustomCategories(data);
+      categoriesLoaded = true;
+      checkLoading();
+    }, (error) => {
+      console.warn("ClassCategories permission missing. Using defaults.", error);
+      setCustomCategories([]);
       categoriesLoaded = true;
       checkLoading();
     });
