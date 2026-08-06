@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { getDoc, doc, deleteDoc, updateDoc, onSnapshot, query, where, getDocs, collection } from 'firebase/firestore';
+import { getDoc, doc, deleteDoc, updateDoc, onSnapshot, query, where, getDocs, collection, writeBatch } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { uploadFileToCloudinaryOrFirebase, uploadCustomDataFiles } from '../../utils/cloudinary';
@@ -562,7 +562,7 @@ export default function StudentManagement() {
             const wb = XLSX.read(bstr, { type: 'binary' });
             const wsname = wb.SheetNames[0];
             const ws = wb.Sheets[wsname];
-              const rawData = XLSX.utils.sheet_to_json(ws);
+              const rawData = XLSX.utils.sheet_to_json(ws, { raw: false, defval: '' });
               
               // Normalize keys
               const data = rawData.map(row => {
@@ -579,6 +579,18 @@ export default function StudentManagement() {
               let limitCappedCount = 0;
               const importedAdmissions = new Set();
               const existingAdmissionsMap = new Map(students.map(s => [s.admissionNumber?.toLowerCase(), s]));
+
+              let currentBatch = writeBatch(db);
+              let operationsInBatch = 0;
+              const MAX_BATCH_SIZE = 400;
+
+              const commitAndResetBatch = async () => {
+                if (operationsInBatch > 0) {
+                  await currentBatch.commit();
+                  currentBatch = writeBatch(db);
+                  operationsInBatch = 0;
+                }
+              };
 
               for (let i = 0; i < data.length; i++) {
                 const row = data[i];
@@ -611,7 +623,8 @@ export default function StudentManagement() {
 
                   if (isReplacement) {
                     const existingStudent = existingAdmissionsMap.get(lowerAdmission);
-                    await deleteDoc(doc(db, 'schools', schoolId, 'students', existingStudent.id));
+                    currentBatch.delete(doc(db, 'schools', schoolId, 'students', existingStudent.id));
+                    operationsInBatch++;
                     replaceCount++;
                   }
 
@@ -622,44 +635,52 @@ export default function StudentManagement() {
                   const firstName = nameParts[0];
                   const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
                   
-                  await addSubDocument(schoolId, 'students', {
+                  const newStudentRef = doc(collection(db, 'schools', schoolId, 'students'));
+                  currentBatch.set(newStudentRef, {
                     firstName: firstName,
                     lastName: lastName,
                     admissionNumber: admissionNumber,
                     dob: (row['date of birth'] || row['dob'])?.toString() || '',
                     age: row['age']?.toString() || '',
                     gender: row['gender']?.toString() || 'Male',
-                  bloodGroup: row['blood group']?.toString() || '',
-                  nationality: row['nationality']?.toString() || '',
-                  religion: row['religion']?.toString() || '',
-                  motherTongue: row['mother tongue']?.toString() || '',
-                  aadharNumber: row['aadhar number']?.toString() || '',
-                  homeAddress: row['home address']?.toString() || '',
-                  parentName: row['parent/guardian name']?.toString() || row['parent name']?.toString() || '',
-                  parentPhone: row['parent/guardian phone number']?.toString() || row['parent phone']?.toString() || '',
-                  parentEmail: row['parent/guardian email address']?.toString() || row['parent email']?.toString() || '',
-                  parentOccupation: row['parent/guardian occupation']?.toString() || row['parent occupation']?.toString() || '',
-                  emergencyContact: row['emergency contact number']?.toString() || row['emergency contact']?.toString() || '',
-                  annualIncome: row['annual income (inr)']?.toString() || row['annual income']?.toString() || '',
-                  siblingName: row['sibling name (same school: y/n)']?.toString() || row['sibling name']?.toString() || '',
-                  previousSchool: row['previous school name']?.toString() || row['previous school']?.toString() || '',
-                  previousRecords: row['previous academic records/report card status']?.toString() || row['previous records']?.toString() || '',
-                  subjectsChosen: row['subjects chosen']?.toString() || '',
-                  busRoute: row['school bus route/stop']?.toString() || row['bus route']?.toString() || '',
-                  tuitionFee: row['tuition fee (inr)']?.toString() || row['tuition fee']?.toString() || '',
-                  hostelFee: row['hostel fee (inr)']?.toString() || row['hostel fee']?.toString() || '',
-                  bookFee: row['book fee (inr)']?.toString() || row['book fee']?.toString() || '',
-                  otherFee: row['other fee (inr)']?.toString() || row['other fee']?.toString() || '',
-                  totalFee: row['total fee (inr)']?.toString() || row['total fee']?.toString() || '',
-                  username: row['username']?.toString() || '',
-                  password: row['password']?.toString() || '',
-                  status: 'Active',
-                  classId: '',
-                  createdAt: new Date().toISOString()
-                });
-                successCount++;
+                    bloodGroup: row['blood group']?.toString() || '',
+                    nationality: row['nationality']?.toString() || '',
+                    religion: row['religion']?.toString() || '',
+                    motherTongue: row['mother tongue']?.toString() || '',
+                    aadharNumber: row['aadhar number']?.toString() || '',
+                    homeAddress: row['home address']?.toString() || '',
+                    parentName: row['parent/guardian name']?.toString() || row['parent name']?.toString() || '',
+                    parentPhone: row['parent/guardian phone number']?.toString() || row['parent phone']?.toString() || '',
+                    parentEmail: row['parent/guardian email address']?.toString() || row['parent email']?.toString() || '',
+                    parentOccupation: row['parent/guardian occupation']?.toString() || row['parent occupation']?.toString() || '',
+                    emergencyContact: row['emergency contact number']?.toString() || row['emergency contact']?.toString() || '',
+                    annualIncome: row['annual income (inr)']?.toString() || row['annual income']?.toString() || '',
+                    siblingName: row['sibling name (same school: y/n)']?.toString() || row['sibling name']?.toString() || '',
+                    previousSchool: row['previous school name']?.toString() || row['previous school']?.toString() || '',
+                    previousRecords: row['previous academic records/report card status']?.toString() || row['previous records']?.toString() || '',
+                    subjectsChosen: row['subjects chosen']?.toString() || '',
+                    busRoute: row['school bus route/stop']?.toString() || row['bus route']?.toString() || '',
+                    tuitionFee: row['tuition fee (inr)']?.toString() || row['tuition fee']?.toString() || '',
+                    hostelFee: row['hostel fee (inr)']?.toString() || row['hostel fee']?.toString() || '',
+                    bookFee: row['book fee (inr)']?.toString() || row['book fee']?.toString() || '',
+                    otherFee: row['other fee (inr)']?.toString() || row['other fee']?.toString() || '',
+                    totalFee: row['total fee (inr)']?.toString() || row['total fee']?.toString() || '',
+                    username: row['username']?.toString() || '',
+                    password: row['password']?.toString() || '',
+                    status: 'Active',
+                    classId: '',
+                    createdAt: new Date().toISOString()
+                  });
+                  operationsInBatch++;
+                  successCount++;
+
+                  if (operationsInBatch >= MAX_BATCH_SIZE) {
+                    await commitAndResetBatch();
+                  }
+                }
               }
-            }
+              await commitAndResetBatch();
+
             // Update school studentCount
             try {
               await updateDoc(doc(db, 'schools', schoolId), {
