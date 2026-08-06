@@ -7,6 +7,7 @@ import { db } from '../firebase/config';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import RaiseTicketModal from './RaiseTicketModal';
 import { useNotifications } from '../context/NotificationContext';
+import { FiSun, FiMoon } from 'react-icons/fi';
 
 export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navItems = [] }) {
   const { userProfile } = useAuth();
@@ -24,6 +25,23 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
+
+  // Theme State
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark' || 
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+
+  // Apply Theme on load and change
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   const handleMarkAsRead = (moduleKey) => {
     clearBadge(moduleKey);
@@ -233,6 +251,14 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
           title="Refresh"
         >
           <RefreshCw size={20} />
+        </button>
+
+        <button 
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors shrink-0"
+          title="Toggle Theme"
+        >
+          {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
         </button>
         
         <div className="relative shrink-0" ref={notifRef}>
