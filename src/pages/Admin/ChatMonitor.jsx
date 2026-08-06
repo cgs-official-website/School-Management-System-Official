@@ -206,7 +206,7 @@ export default function ChatMonitor() {
                   onClick={() => setActiveThread(thread)}
                   className={`w-full text-left p-3 rounded-2xl flex items-start gap-3 transition-colors ${
                     activeThread?.id === thread.id 
-                      ? 'bg-red-50 border border-red-200' 
+                      ? 'bg-red-50 dark:bg-slate-800 border border-red-200 dark:border-slate-700' 
                       : 'hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent'
                   }`}
                 >
@@ -236,7 +236,7 @@ export default function ChatMonitor() {
           {activeThread ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-red-50 flex items-center gap-4 shrink-0">
+              <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-red-50 dark:bg-slate-800 flex items-center gap-4 shrink-0">
                 <div className="w-10 h-10 rounded-full bg-red-100 text-red-700 flex items-center justify-center font-bold text-lg">
                   <ShieldAlert size={20} />
                 </div>

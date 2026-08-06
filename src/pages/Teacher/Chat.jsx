@@ -466,7 +466,7 @@ export default function TeacherChat() {
                     onClick={() => setActiveStudent(student)}
                     className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
                       activeStudent?.id === student.id 
-                        ? 'bg-primary-50 border-l-4 border-l-primary-600 border-y-transparent border-r-transparent shadow-sm' 
+                        ? 'bg-primary-50 dark:bg-slate-800 border-l-4 border-l-primary-600 border-y-transparent border-r-transparent shadow-sm' 
                         : 'hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-transparent'
                     }`}
                   >
@@ -501,7 +501,7 @@ export default function TeacherChat() {
                     onClick={() => setActiveChannel(channel)}
                     className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 transition-colors ${
                       activeChannel?.id === channel.id 
-                        ? 'bg-primary-50 border-l-4 border-l-primary-600 border-y-transparent border-r-transparent shadow-sm' 
+                        ? 'bg-primary-50 dark:bg-slate-800 border-l-4 border-l-primary-600 border-y-transparent border-r-transparent shadow-sm' 
                         : 'hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-transparent'
                     }`}
                   >
