@@ -465,26 +465,26 @@ export default function ParentChat() {
                               </span>
                             </div>
                           )}
-                          <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} group relative`}>
+                          <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} group`}>
                             
-                            {/* Message Options (Non-Me) */}
-                            {!isMe && !msg.isDeletedForEveryone && (
-                              <div className="absolute -right-24 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
-                                {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Copy"><Copy size={14}/></button>}
-                                {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Forward"><Forward size={14}/></button>}
-                                <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: false})} className="p-1.5 bg-white text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200" title="Delete"><Trash2 size={14}/></button>
-                              </div>
-                            )}
-
                             <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
                               isMe 
                                 ? (msg.isDeletedForEveryone ? 'bg-primary-500 text-white/80 rounded-tr-none' : 'bg-primary-600 text-white rounded-tr-none')
                                 : (msg.isDeletedForEveryone ? 'bg-slate-50 border border-slate-200 text-slate-500 rounded-tl-none shadow-sm' : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none shadow-sm')
                             } relative`}>
                               
+                              {/* Message Options (Non-Me) */}
+                              {!isMe && !msg.isDeletedForEveryone && (
+                                <div className="absolute -right-[4.5rem] top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                                  {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Copy"><Copy size={14}/></button>}
+                                  {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Forward"><Forward size={14}/></button>}
+                                  <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: false})} className="p-1.5 bg-white text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200" title="Delete"><Trash2 size={14}/></button>
+                                </div>
+                              )}
+
                               {/* Message Options (Me) */}
                               {isMe && !msg.isDeletedForEveryone && (
-                                <div className="absolute -left-24 top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
+                                <div className="absolute -left-[4.5rem] top-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-10">
                                   {msg.text && <button onClick={() => handleCopy(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Copy"><Copy size={14}/></button>}
                                   {msg.text && <button onClick={() => handleForward(msg.text)} className="p-1.5 bg-white text-slate-500 rounded-full hover:bg-slate-100 hover:text-slate-800 shadow-sm border border-slate-200" title="Forward"><Forward size={14}/></button>}
                                   <button onClick={() => setDeleteModal({isOpen: true, msgId: msg.id, isMe: true})} className="p-1.5 bg-white text-red-500 rounded-full hover:bg-red-50 hover:text-red-700 shadow-sm border border-slate-200" title="Delete"><Trash2 size={14}/></button>
