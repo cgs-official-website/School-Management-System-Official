@@ -82,24 +82,42 @@ export default function TeacherRegistration() {
     setIsRegistering(true);
     setError(null);
     try {
-      // Find the pending staff document by email
-      const q = query(
-        collection(db, `schools/${schoolId}/teachers`),
-        where("email", "==", formData.email.trim())
-      );
-      const querySnapshot = await getDocs(q);
-      
+      const docId = searchParams.get('id');
       let teacherDoc = null;
       let teacherData = null;
-      
-      for (const d of querySnapshot.docs) {
-        const data = d.data();
-        const docEmpId = (data.employeeId || data.staffId || '').toString().trim().toLowerCase();
-        const inputEmpId = formData.employeeId.trim().toLowerCase();
-        if (docEmpId === inputEmpId) {
+
+      if (docId) {
+        const d = await getDoc(doc(db, `schools/${schoolId}/teachers`, docId));
+        if (d.exists()) {
           teacherDoc = d;
-          teacherData = data;
-          break;
+          teacherData = d.data();
+          
+          // Verify employeeId if provided in url, or fallback to formData verification
+          const urlEmpId = searchParams.get('empId');
+          const docEmpId = (teacherData.employeeId || teacherData.staffId || '').toString().trim().toLowerCase();
+          const expectedEmpId = (urlEmpId || formData.employeeId || '').toString().trim().toLowerCase();
+          
+          if (docEmpId !== expectedEmpId) {
+             teacherDoc = null; // Fails validation
+          }
+        }
+      } else {
+        // Fallback for older links without ID
+        const q = query(
+          collection(db, `schools/${schoolId}/teachers`),
+          where("email", "==", formData.email.trim())
+        );
+        const querySnapshot = await getDocs(q);
+        
+        for (const d of querySnapshot.docs) {
+          const data = d.data();
+          const docEmpId = (data.employeeId || data.staffId || '').toString().trim().toLowerCase();
+          const inputEmpId = formData.employeeId.trim().toLowerCase();
+          if (docEmpId === inputEmpId) {
+            teacherDoc = d;
+            teacherData = data;
+            break;
+          }
         }
       }
       

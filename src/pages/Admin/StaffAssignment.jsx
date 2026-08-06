@@ -1104,7 +1104,7 @@ export default function StaffAssignment() {
                           {!member.userId && (
                             <button
                               onClick={() => {
-                                const inviteUrl = `${window.location.origin}/register/teacher/${schoolId}?email=${encodeURIComponent(member.email || '')}&empId=${encodeURIComponent(member.staffId || member.employeeId || '')}`;
+                                const inviteUrl = `${window.location.origin}/register/teacher/${schoolId}?id=${member.id}&email=${encodeURIComponent(member.email || '')}&empId=${encodeURIComponent(member.staffId || member.employeeId || '')}`;
                                 navigator.clipboard.writeText(inviteUrl);
                                 toast.success("Registration link copied!");
                               }}
