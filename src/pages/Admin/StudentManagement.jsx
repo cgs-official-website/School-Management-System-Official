@@ -1662,7 +1662,7 @@ export default function StudentManagement() {
                         {searchQuery && (
                           <button
                             onClick={() => setSearchQuery('')}
-                            className="mt-4 px-4 py-2 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-xl text-sm font-semibold transition-colors inline-flex items-center gap-2"
+                            className="mt-4 px-4 py-2 bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 rounded-xl text-sm font-semibold transition-colors inline-flex items-center gap-2"
                           >
                             <X size={16} /> Clear Search Filter
                           </button>
@@ -1716,7 +1716,7 @@ export default function StudentManagement() {
                               setShowDiscardConfirm(false);
                               setViewStudentModalOpen(true);
                             }}
-                            className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye size={18} />
@@ -1724,7 +1724,7 @@ export default function StudentManagement() {
                           {hasDeletePermission && (
                             <button 
                               onClick={() => setConfirmDeleteState({ isOpen: true, id: student.id, name: `${student.firstName} ${student.lastName}` })}
-                              className="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                               title="Delete Student"
                             >
                               <Trash size={18} />
@@ -1974,7 +1974,7 @@ export default function StudentManagement() {
                                   handleDeleteApplication(app.id);
                                 }
                               }}
-                              className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                               title="Delete Application"
                             >
                               <Trash size={16} />
@@ -2043,7 +2043,7 @@ export default function StudentManagement() {
                 </p>
               )}
 
-              <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 bg-slate-50 dark:bg-slate-800 relative overflow-hidden group hover:border-primary-400 hover:bg-primary-50 transition-all text-center">
+              <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 bg-slate-50 dark:bg-slate-800 relative overflow-hidden group hover:border-primary-400 dark:hover:border-slate-700 hover:bg-primary-50 dark:hover:bg-slate-800 transition-all text-center">
                 <input 
                   type="file" 
                   accept={selectedStudentForUpload ? "image/*, .pdf" : ".xlsx, .csv"}
@@ -3560,7 +3560,7 @@ export default function StudentManagement() {
                   href={`/admission/${schoolId}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:bg-primary-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
+                  className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-slate-700 hover:bg-primary-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
                 >
                   <ExternalLink size={20} className="text-primary-600 group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Preview Form</span>
@@ -3569,7 +3569,7 @@ export default function StudentManagement() {
 
                 <a
                   href={`mailto:?subject=Online Admission Application - ${encodeURIComponent(schoolName || 'School')}&body=Dear Parent / Student,%0D%0A%0D%0APlease fill out our online school admission form using the following link:%0D%0A${encodeURIComponent(`${window.location.origin}/admission/${schoolId}`)}%0D%0A%0D%0ABest regards,%0D%0A${encodeURIComponent(schoolName || 'School Administration')}`}
-                  className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:bg-indigo-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
+                  className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-slate-700 hover:bg-indigo-50/30 text-center transition-all flex flex-col items-center gap-1.5 group"
                 >
                   <Mail size={20} className="text-indigo-600 group-hover:scale-110 transition-transform" />
                   <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Send via Email</span>

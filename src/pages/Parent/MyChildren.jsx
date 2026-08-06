@@ -216,14 +216,14 @@ export default function MyChildren() {
               <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
                   onClick={() => handleEdit(index)}
-                  className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                  className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                   title="Edit"
                 >
                   <Pencil size={18} />
                 </button>
                 <button 
                   onClick={() => handleDelete(index)}
-                  className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                   title="Delete"
                 >
                   <Trash2 size={18} />
@@ -257,7 +257,7 @@ export default function MyChildren() {
                 <div className="mb-2">
                   <button 
                     onClick={() => handleOpenLinkModal(index)}
-                    className="w-full flex items-center justify-center gap-2 py-2 bg-primary-50 text-primary-700 rounded-xl font-semibold hover:bg-primary-100 transition-colors text-sm"
+                    className="w-full flex items-center justify-center gap-2 py-2 bg-primary-50 text-primary-700 rounded-xl font-semibold hover:bg-primary-100 dark:hover:bg-slate-700 transition-colors text-sm"
                   >
                     <LinkIcon size={16} /> Link Official Account
                   </button>

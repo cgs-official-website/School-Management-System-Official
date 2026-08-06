@@ -546,7 +546,7 @@ export default function TransportManagement() {
                       <div className="flex items-center gap-1 shrink-0">
                         <button 
                           onClick={() => { setSelectedRouteToView(route); setShowViewModal(true); }}
-                          className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                           title="View Details"
                         >
                           <Eye size={18} />
@@ -554,7 +554,7 @@ export default function TransportManagement() {
                         {hasEditPermission && (
                           <button 
                             onClick={() => { setNewRoute(route); setShowCreateModal(true); }}
-                            className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                             title="Edit Route"
                           >
                             <Edit size={18} />
@@ -563,7 +563,7 @@ export default function TransportManagement() {
                         {hasDeletePermission && (
                           <button 
                             onClick={() => setConfirmDeleteState({ isOpen: true, id: route.id, name: route.name })}
-                            className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                             title="Delete Route"
                           >
                             <Trash2 size={18} />
@@ -608,7 +608,7 @@ export default function TransportManagement() {
                       <button 
                         onClick={() => openAssignModal(route.id)}
                         disabled={isFull}
-                        className="w-full py-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 dark:border-slate-700 hover:border-primary-200 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-2.5 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary-200 dark:hover:border-slate-700 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isFull ? <><AlertTriangle size={16}/> Bus Full</> : <><Plus size={16}/> Assign Student</>}
                       </button>
@@ -771,7 +771,7 @@ export default function TransportManagement() {
                             <div className="flex justify-end gap-2">
                               <button 
                                 onClick={() => { setSelectedVehicleToView(vehicle); setShowViewVehicleModal(true); }}
-                                className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                 title="View Details"
                               >
                                 <Eye size={18} />
@@ -779,7 +779,7 @@ export default function TransportManagement() {
                               {hasEditPermission && (
                                 <button 
                                   onClick={() => { setNewVehicle(vehicle); setShowVehicleModal(true); }}
-                                  className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                   title="Edit Vehicle"
                                 >
                                   <Edit size={18} />
@@ -788,7 +788,7 @@ export default function TransportManagement() {
                               {hasDeletePermission && (
                                 <button 
                                   onClick={() => setVehicleConfirmDeleteState({ isOpen: true, id: vehicle.id, name: vehicle.vehicleName })}
-                                  className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                   title="Delete Vehicle"
                                 >
                                   <Trash2 size={18} />
@@ -1433,7 +1433,7 @@ export default function TransportManagement() {
                               <button 
                                 type="button"
                                 onClick={() => handleUnassignStudent(selectedRouteToView.id, sId)}
-                                className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                 title="Unassign Student"
                               >
                                 <Trash2 size={14} />

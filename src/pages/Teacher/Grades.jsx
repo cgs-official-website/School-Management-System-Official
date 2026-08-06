@@ -379,7 +379,7 @@ export default function Grades() {
           </button>
           <button 
             onClick={generateReportCards}
-            className="px-4 py-2 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 shadow-sm flex items-center gap-2 transition-colors border border-primary-200"
+            className="px-4 py-2 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 dark:hover:bg-slate-700 shadow-sm flex items-center gap-2 transition-colors border border-primary-200"
           >
             <Printer size={18} /> Print Report Cards
           </button>
@@ -427,7 +427,7 @@ export default function Grades() {
                     className={`w-full text-left p-4 rounded-2xl border transition-all ${
                       isActive 
                         ? 'bg-white dark:bg-slate-900 border-primary-500 shadow-md ring-1 ring-primary-500' 
-                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-primary-300 shadow-sm opacity-80 hover:opacity-100'
+                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-slate-700 shadow-sm opacity-80 hover:opacity-100'
                     }`}
                   >
                     <div className="font-bold text-slate-900 dark:text-white truncate">{assessment.title}</div>

@@ -265,7 +265,7 @@ export default function TimetableManagement() {
               classes.map(cls => {
                 const classSchedule = allTimetables[cls.id]?.[masterDay] || [];
                 return (
-                  <div key={cls.id} className="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-slate-900 hover:border-primary-200 transition-colors">
+                  <div key={cls.id} className="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm bg-white dark:bg-slate-900 hover:border-primary-200 dark:hover:border-slate-700 transition-colors">
                     <div className="bg-slate-50/80 px-5 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
                       <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-primary-500"></span>
@@ -273,7 +273,7 @@ export default function TimetableManagement() {
                       </h3>
                       <button 
                         onClick={() => setSelectedClassId(cls.id)}
-                        className="text-xs font-bold text-primary-600 hover:text-white bg-primary-50 hover:bg-primary-600 px-3 py-1.5 rounded-lg transition-colors border border-primary-100 hover:border-primary-600 shadow-sm"
+                        className="text-xs font-bold text-primary-600 hover:text-white bg-primary-50 hover:bg-primary-600 px-3 py-1.5 rounded-lg transition-colors border border-primary-100 hover:border-primary-600 dark:hover:border-slate-700 shadow-sm"
                       >
                         Edit Timetable
                       </button>
@@ -285,7 +285,7 @@ export default function TimetableManagement() {
                         </div>
                       ) : (
                         classSchedule.map(slot => (
-                          <div key={slot.id} className="shrink-0 w-52 border border-slate-100 dark:border-slate-800 rounded-xl p-3.5 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-primary-200 hover:shadow-md transition-all group">
+                          <div key={slot.id} className="shrink-0 w-52 border border-slate-100 dark:border-slate-800 rounded-xl p-3.5 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:shadow-md transition-all group">
                             <div className="text-xs font-bold text-primary-600 mb-2 flex items-center gap-1.5">
                               <Clock size={12} />
                               {slot.startTime} - {slot.endTime}
@@ -328,7 +328,7 @@ export default function TimetableManagement() {
                       });
                       setShowAddModal(true); 
                     }}
-                    className="md:mt-2 text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 p-1.5 md:mx-auto rounded-lg transition-colors flex items-center justify-center"
+                    className="md:mt-2 text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 dark:hover:bg-slate-700 p-1.5 md:mx-auto rounded-lg transition-colors flex items-center justify-center"
                     title={`Add slot to ${day}`}
                   >
                     <Plus size={16} />
@@ -374,7 +374,7 @@ export default function TimetableManagement() {
                           {hasEditPermission && (
                             <button 
                               onClick={() => handleEditSlot(day, slot)}
-                              className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
+                              className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg"
                               title="Edit Period"
                             >
                               <Edit2 size={14} />
@@ -383,7 +383,7 @@ export default function TimetableManagement() {
                           {hasDeletePermission && (
                             <button 
                               onClick={() => handleDeleteClick(day, slot.id)}
-                              className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                              className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg"
                               title="Delete Period"
                             >
                               <Trash2 size={14} />

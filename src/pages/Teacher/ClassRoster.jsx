@@ -259,7 +259,7 @@ export default function ClassRoster() {
 
         <div 
           onClick={() => navigate('/teacher/attendance')}
-          className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-primary-200 transition-all hover:bg-slate-50/50"
+          className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between cursor-pointer hover:shadow-md hover:border-primary-200 dark:hover:border-slate-700 transition-all hover:bg-slate-50/50"
         >
           <div className="flex justify-between items-start mb-2">
             <span className="text-slate-500 dark:text-slate-400 font-medium text-sm">Today's Attendance</span>
@@ -382,7 +382,7 @@ export default function ClassRoster() {
                       <div className="flex justify-end gap-2">
                         <button 
                           onClick={() => navigate('/teacher/grades')}
-                          className="px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-primary-700 hover:bg-primary-50 border border-slate-200 dark:border-slate-700 hover:border-primary-200 rounded-lg transition-colors"
+                          className="px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-primary-700 hover:bg-primary-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary-200 dark:hover:border-slate-700 rounded-lg transition-colors"
                         >
                           Add Grade
                         </button>
@@ -441,7 +441,7 @@ export default function ClassRoster() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(true)}
-                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 >
                   Select All
                 </button>

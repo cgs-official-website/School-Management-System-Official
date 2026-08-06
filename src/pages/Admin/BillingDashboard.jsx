@@ -202,7 +202,7 @@ export default function BillingDashboard() {
                         </span>
                       </td>
                       <td className="p-4 pr-6 text-right">
-                        <button className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                        <button className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                           <Download size={18} />
                         </button>
                       </td>

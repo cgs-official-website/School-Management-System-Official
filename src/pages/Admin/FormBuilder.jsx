@@ -541,7 +541,7 @@ export default function FormBuilder() {
                         <button 
                           onClick={() => moveModule(idx, 'up')} 
                           disabled={idx === 0} 
-                          className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-30"
+                          className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-30"
                           title="Move Up"
                         >
                           <MoveUp size={16} />
@@ -549,7 +549,7 @@ export default function FormBuilder() {
                         <button 
                           onClick={() => moveModule(idx, 'down')} 
                           disabled={idx === unifiedModules.length - 1} 
-                          className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-30"
+                          className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-30"
                           title="Move Down"
                         >
                           <MoveDown size={16}/>
@@ -636,7 +636,7 @@ export default function FormBuilder() {
               </h2>
               <button 
                 onClick={addSection}
-                className="px-4 py-2 bg-primary-50 text-primary-700 rounded-lg font-bold hover:bg-primary-100 transition-colors flex items-center gap-2 text-sm shadow-sm border border-primary-100"
+                className="px-4 py-2 bg-primary-50 text-primary-700 rounded-lg font-bold hover:bg-primary-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-2 text-sm shadow-sm border border-primary-100"
               >
                 <Plus size={16} /> Add Section
               </button>
@@ -662,15 +662,15 @@ export default function FormBuilder() {
               ) : (
                 <div className="space-y-8">
                   {sections.map((section, sIndex) => (
-                    <div key={section.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden transition-colors hover:border-primary-200">
+                    <div key={section.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden transition-colors hover:border-primary-200 dark:hover:border-slate-700">
                       {/* Section Header */}
                       <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-3 flex-1">
                           <div className="flex flex-col justify-center gap-1 shrink-0 text-slate-400 dark:text-slate-300">
-                            <button onClick={() => moveSection(sIndex, 'up')} disabled={sIndex === 0} className="p-1 hover:text-primary-600 hover:bg-primary-50 rounded disabled:opacity-30">
+                            <button onClick={() => moveSection(sIndex, 'up')} disabled={sIndex === 0} className="p-1 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded disabled:opacity-30">
                               <MoveUp size={16} />
                             </button>
-                            <button onClick={() => moveSection(sIndex, 'down')} disabled={sIndex === sections.length - 1} className="p-1 hover:text-primary-600 hover:bg-primary-50 rounded disabled:opacity-30">
+                            <button onClick={() => moveSection(sIndex, 'down')} disabled={sIndex === sections.length - 1} className="p-1 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded disabled:opacity-30">
                               <MoveDown size={16} />
                             </button>
                           </div>
@@ -683,10 +683,10 @@ export default function FormBuilder() {
                           />
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <button onClick={() => addField(section.id)} className="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg font-bold hover:bg-primary-100 text-sm flex items-center gap-1">
+                          <button onClick={() => addField(section.id)} className="px-3 py-1.5 bg-primary-50 text-primary-700 rounded-lg font-bold hover:bg-primary-100 dark:hover:bg-slate-700 text-sm flex items-center gap-1">
                             <Plus size={14} /> Add Field
                           </button>
-                          <button onClick={() => removeSection(section.id)} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg">
+                          <button onClick={() => removeSection(section.id)} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg">
                             <Trash2 size={18} />
                           </button>
                         </div>
@@ -702,10 +702,10 @@ export default function FormBuilder() {
                           section.fields.map((field, fIndex) => (
                             <div key={field.id} className="p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-800/50 flex gap-4 hover:border-slate-300 transition-colors flex-wrap md:flex-nowrap">
                               <div className="flex flex-col justify-center gap-1 shrink-0 text-slate-400 dark:text-slate-300">
-                                <button onClick={() => moveField(section.id, fIndex, 'up')} disabled={fIndex === 0} className="p-1 hover:text-primary-600 hover:bg-primary-50 rounded disabled:opacity-30">
+                                <button onClick={() => moveField(section.id, fIndex, 'up')} disabled={fIndex === 0} className="p-1 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded disabled:opacity-30">
                                   <MoveUp size={16} />
                                 </button>
-                                <button onClick={() => moveField(section.id, fIndex, 'down')} disabled={fIndex === section.fields.length - 1} className="p-1 hover:text-primary-600 hover:bg-primary-50 rounded disabled:opacity-30">
+                                <button onClick={() => moveField(section.id, fIndex, 'down')} disabled={fIndex === section.fields.length - 1} className="p-1 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded disabled:opacity-30">
                                   <MoveDown size={16} />
                                 </button>
                               </div>
@@ -781,7 +781,7 @@ export default function FormBuilder() {
                               <div className="shrink-0 pt-6">
                                 <button 
                                   onClick={() => removeField(section.id, field.id)}
-                                  className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                   title="Remove Field"
                                 >
                                   <Trash2 size={18} />

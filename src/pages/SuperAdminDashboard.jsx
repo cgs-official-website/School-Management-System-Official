@@ -106,7 +106,7 @@ export default function SuperAdminDashboard() {
             </div>
             <button 
               onClick={handleLogout}
-              className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+              className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-xl transition-colors"
               title="Logout"
             >
               <LuLogOut size={20} />

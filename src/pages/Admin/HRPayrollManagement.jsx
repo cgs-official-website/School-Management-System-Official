@@ -490,19 +490,19 @@ export default function HRPayrollManagement() {
                         {payroll.status === 'Payslip Released' && (
                           <button 
                             onClick={() => setShowPayslipModal(payroll)}
-                            className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                            className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                             title="Download Payslip"
                           >
                             <FileText size={16} />
                           </button>
                         )}
                         {hasEditPermission && (
-                          <button onClick={() => { setFormData(payroll); setShowModal(true); }} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors" title="Edit">
+                          <button onClick={() => { setFormData(payroll); setShowModal(true); }} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Edit">
                             <Edit size={16} />
                           </button>
                         )}
                         {hasDeletePermission && (
-                          <button onClick={() => handleDeleteClick(payroll.id)} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                          <button onClick={() => handleDeleteClick(payroll.id)} className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Delete">
                             <Trash2 size={16} />
                           </button>
                         )}
@@ -698,7 +698,7 @@ export default function HRPayrollManagement() {
                   </div>
                   <button 
                     onClick={handleRemoveSignature}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     title="Remove Signature"
                   >
                     <Trash2 size={20} />
@@ -921,7 +921,7 @@ export default function HRPayrollManagement() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(true)}
-                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 >
                   Select All
                 </button>

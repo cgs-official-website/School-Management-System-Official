@@ -725,10 +725,10 @@ export default function EnvironmentSetup() {
                     >
                       {p.status === 'active' ? 'Active' : 'Inactive'}
                     </button>
-                    <button type="button" onClick={() => openEditPeriod(p)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                    <button type="button" onClick={() => openEditPeriod(p)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                       <Pencil size={15} />
                     </button>
-                    <button type="button" onClick={() => handleDeletePeriod(p)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <button type="button" onClick={() => handleDeletePeriod(p)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                       <Trash size={15} />
                     </button>
                   </div>
@@ -856,10 +856,10 @@ export default function EnvironmentSetup() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button type="button" onClick={() => openEditLeaveRule(rule)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                    <button type="button" onClick={() => openEditLeaveRule(rule)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                       <Pencil size={15} />
                     </button>
-                    <button type="button" onClick={() => handleDeleteLeaveRule(rule)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                    <button type="button" onClick={() => handleDeleteLeaveRule(rule)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                       <Trash size={15} />
                     </button>
                   </div>

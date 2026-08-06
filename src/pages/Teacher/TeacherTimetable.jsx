@@ -285,7 +285,7 @@ export default function TeacherTimetable() {
                 
                 <div className="flex-1 space-y-4">
                   {schedule[day].length > 0 ? schedule[day].map(period => (
-                    <div key={period.id} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow-md transition-all group">
+                    <div key={period.id} className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-slate-700 hover:shadow-md transition-all group">
                       <div className="flex items-center gap-2 text-xs font-bold text-primary-600 mb-2">
                         <LuClock size={14} />
                         {period.time}
@@ -353,7 +353,7 @@ export default function TeacherTimetable() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(true)}
-                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 >
                   Select All
                 </button>

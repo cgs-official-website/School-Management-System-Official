@@ -512,25 +512,25 @@ export default function AdminOverview() {
             </div>
             <div className="p-6 flex-1 flex flex-col justify-center">
               <div className="grid grid-cols-2 gap-4 h-full">
-                <button onClick={() => window.location.href = '/admin/students'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                <button onClick={() => window.location.href = '/admin/students'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:bg-primary-50 dark:hover:bg-slate-800 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                     <UserPlus size={20} />
                   </div>
                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 text-center">Add Student</span>
                 </button>
-                <button onClick={() => window.location.href = '/admin/staff'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                <button onClick={() => window.location.href = '/admin/staff'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:bg-primary-50 dark:hover:bg-slate-800 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                     <Users size={20} />
                   </div>
                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 text-center">Add Staff</span>
                 </button>
-                <button onClick={() => window.location.href = '/admin/attendance'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                <button onClick={() => window.location.href = '/admin/attendance'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:bg-primary-50 dark:hover:bg-slate-800 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                     <ClipboardCheck size={20} />
                   </div>
                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 text-center">Mark Attendance</span>
                 </button>
-                <button onClick={() => window.location.href = '/admin/notices'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50 transition-colors group">
+                <button onClick={() => window.location.href = '/admin/notices'} className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:bg-primary-50 dark:hover:bg-slate-800 transition-colors group">
                   <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                     <FileEdit size={20} />
                   </div>
@@ -557,7 +557,7 @@ export default function AdminOverview() {
                     });
                   }} 
                   disabled={isCleaningAudio}
-                  className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-red-200 hover:bg-red-50 transition-colors group col-span-2 sm:col-span-1"
+                  className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-red-200 dark:hover:border-slate-700 hover:bg-red-50 dark:hover:bg-slate-800 transition-colors group col-span-2 sm:col-span-1"
                 >
                   <div className={`w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center mb-2 transition-transform ${isCleaningAudio ? 'animate-spin' : 'group-hover:scale-110'}`}>
                     <Trash2 size={20} />
@@ -637,7 +637,7 @@ export default function AdminOverview() {
                 <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">Metrics</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {['students', 'staff', 'classes', 'notices'].map(metric => (
-                    <label key={metric} className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <label key={metric} className="flex items-center gap-3 cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.metrics[metric] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300'}`}>
                         {metric === 'students' && <GraduationCap size={20} />}
                         {metric === 'staff' && <Users size={20} />}
@@ -666,7 +666,7 @@ export default function AdminOverview() {
                     { id: 'quickActions', name: 'Quick Actions', icon: <LinkIcon size={20} /> },
                     { id: 'attendanceSummary', name: 'Attendance Summary', icon: <BarChart2 size={20} /> }
                   ].map(widget => (
-                    <label key={widget.id} className="flex items-center justify-between cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <label key={widget.id} className="flex items-center justify-between cursor-pointer group p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${tempConfig.widgets[widget.id] !== false ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300'}`}>
                           {widget.icon}

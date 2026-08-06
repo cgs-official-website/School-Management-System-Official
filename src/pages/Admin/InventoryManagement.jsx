@@ -856,12 +856,12 @@ export default function InventoryManagement() {
                             </button>
                           )}
                           {canEdit('inventory') && (
-                            <button onClick={() => { setItemFormData(item); setShowItemModal(true); }} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                            <button onClick={() => { setItemFormData(item); setShowItemModal(true); }} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                               <Edit size={16} />
                             </button>
                           )}
                           {canDelete('inventory') && (
-                            <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'item', id: item.id, name: item.name })} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'item', id: item.id, name: item.name })} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                               <Trash2 size={16} />
                             </button>
                           )}
@@ -946,12 +946,12 @@ export default function InventoryManagement() {
                     <td className="p-4 pr-6 text-right">
                       <div className="flex items-center justify-end gap-2">
                         {canEdit('inventory') && (
-                          <button onClick={() => { setCategoryFormData(cat); setShowCategoryModal(true); }} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                          <button onClick={() => { setCategoryFormData(cat); setShowCategoryModal(true); }} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                             <Edit size={16} />
                           </button>
                         )}
                         {canDelete('inventory') && (
-                          <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'category', id: cat.id, name: cat.name })} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                          <button onClick={() => setConfirmDeleteState({ isOpen: true, type: 'category', id: cat.id, name: cat.name })} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                             <Trash2 size={16} />
                           </button>
                         )}
@@ -1206,13 +1206,13 @@ export default function InventoryManagement() {
                 <div className="flex gap-2 mt-1">
                   <button 
                     onClick={() => handleDownloadTemplate('xlsx')} 
-                    className="flex-1 px-3 py-1.5 bg-white dark:bg-slate-900 border border-primary-200 text-primary-700 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-primary-100 transition-all"
+                    className="flex-1 px-3 py-1.5 bg-white dark:bg-slate-900 border border-primary-200 text-primary-700 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-primary-100 dark:hover:bg-slate-700 transition-all"
                   >
                     <Download size={14} /> Excel Template
                   </button>
                   <button 
                     onClick={() => handleDownloadTemplate('csv')} 
-                    className="flex-1 px-3 py-1.5 bg-white dark:bg-slate-900 border border-primary-200 text-primary-700 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-primary-100 transition-all"
+                    className="flex-1 px-3 py-1.5 bg-white dark:bg-slate-900 border border-primary-200 text-primary-700 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-primary-100 dark:hover:bg-slate-700 transition-all"
                   >
                     <Download size={14} /> CSV Template
                   </button>

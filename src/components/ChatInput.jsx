@@ -179,7 +179,7 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
               <button 
                 type="button"
                 onClick={startRecording}
-                className="p-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 rounded-full transition-all shrink-0 shadow-sm border border-slate-200 dark:border-slate-700 hover:border-primary-200"
+                className="p-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 rounded-full transition-all shrink-0 shadow-sm border border-slate-200 dark:border-slate-700 hover:border-primary-200 dark:hover:border-slate-700"
                 title="Hold to Record"
               >
                 <Mic size={20} />

@@ -268,7 +268,7 @@ export default function AcademicCalendar({ isAdmin }) {
                       <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div> Holiday</span>
                       <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500"></div> Exam</span>
                     </div>
-                    <button onClick={goToCurrent} className="px-5 py-2.5 bg-primary-50 text-primary-700 font-bold rounded-xl hover:bg-primary-100 transition-colors">Today</button>
+                    <button onClick={goToCurrent} className="px-5 py-2.5 bg-primary-50 text-primary-700 font-bold rounded-xl hover:bg-primary-100 dark:hover:bg-slate-700 transition-colors">Today</button>
                   </div>
                 </div>
               );
@@ -391,7 +391,7 @@ export default function AcademicCalendar({ isAdmin }) {
                 {selectedEvent && (
                   <button 
                     type="button" onClick={handleDeleteEvent}
-                    className="px-5 py-2.5 text-red-600 font-medium hover:bg-red-50 flex items-center gap-2 rounded-xl transition-colors mr-auto"
+                    className="px-5 py-2.5 text-red-600 font-medium hover:bg-red-50 dark:hover:bg-slate-800 flex items-center gap-2 rounded-xl transition-colors mr-auto"
                   >
                     <Trash2 size={18} /> Delete
                   </button>

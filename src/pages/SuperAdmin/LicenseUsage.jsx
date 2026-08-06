@@ -403,7 +403,7 @@ export default function LicenseUsage() {
                       key={inc}
                       type="button"
                       onClick={() => setNewSeatLimit(prev => Number(prev) + inc)}
-                      className="text-xs px-2.5 py-1 rounded-lg font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200 transition-colors"
+                      className="text-xs px-2.5 py-1 rounded-lg font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 border border-primary-200 transition-colors"
                     >
                       {inc > 0 ? `+${inc}` : inc} Seats
                     </button>

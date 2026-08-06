@@ -348,7 +348,7 @@ export default function RaiseTicketModal({ isOpen, onClose, schoolName = 'School
               <div 
                 key={t.id}
                 onClick={() => setSelectedTicket(t)}
-                className="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-slate-900 flex items-center justify-between gap-3 group"
+                className="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-slate-700 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-slate-900 flex items-center justify-between gap-3 group"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">

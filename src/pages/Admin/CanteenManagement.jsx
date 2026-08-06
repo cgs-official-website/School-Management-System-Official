@@ -304,7 +304,7 @@ export default function CanteenManagement() {
                   setMealFilter('All');
                   setDateFilter('Today');
                 }}
-                className="flex items-center gap-1.5 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-2xl transition-colors"
+                className="flex items-center gap-1.5 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-slate-800 rounded-2xl transition-colors"
               >
                 <ResetIcon size={16} /> Reset
               </button>
@@ -395,7 +395,7 @@ export default function CanteenManagement() {
                             <button
                               onClick={() => handleUpdateStatus(req.id, 'Approved')}
                               disabled={updatingId !== null}
-                              className="p-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 hover:border-blue-300 transition-all active:scale-95 disabled:opacity-50"
+                              className="p-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 hover:border-blue-300 dark:hover:border-slate-700 transition-all active:scale-95 disabled:opacity-50"
                               title="Approve Request"
                             >
                               <Check size={16} />
@@ -415,7 +415,7 @@ export default function CanteenManagement() {
                             <button
                               onClick={() => handleUpdateStatus(req.id, 'Cancelled')}
                               disabled={updatingId !== null}
-                              className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 hover:border-red-300 transition-all active:scale-95 disabled:opacity-50"
+                              className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 hover:border-red-300 dark:hover:border-slate-700 transition-all active:scale-95 disabled:opacity-50"
                               title="Cancel Request"
                             >
                               <X size={16} />

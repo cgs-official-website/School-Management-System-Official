@@ -330,7 +330,7 @@ export default function RolesPermissions() {
                 <button 
                   onClick={(e) => handleDeleteRole(e, role)}
                   className={`p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 ${
-                    activeRole === role ? 'text-primary-600 hover:bg-primary-100' : 'text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50'
+                    activeRole === role ? 'text-primary-600 hover:bg-primary-100 dark:hover:bg-slate-700' : 'text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800'
                   }`}
                   title="Delete Role"
                 >
@@ -447,7 +447,7 @@ export default function RolesPermissions() {
                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                               isAll 
                                 ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600' 
-                                : 'bg-primary-50 text-primary-700 hover:bg-primary-100 border border-primary-200'
+                                : 'bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 border border-primary-200'
                             }`}
                           >
                             {isAll ? 'Clear All' : 'Select All'}

@@ -165,7 +165,7 @@ export default function UpgradePlan() {
                         ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300 cursor-not-allowed border border-slate-200 dark:border-slate-700'
                         : isPopular
                           ? 'bg-amber-400 hover:bg-amber-500 text-amber-950 shadow-lg shadow-amber-400/30'
-                          : 'bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200'
+                          : 'bg-primary-50 hover:bg-primary-100 dark:hover:bg-slate-700 text-primary-700 border border-primary-200'
                     }`}
                   >
                     {isCurrent ? 'Current Plan' : 'Select Plan'}

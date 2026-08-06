@@ -175,7 +175,7 @@ export default function PlanManagement() {
               <div className="p-4 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 shrink-0">
                 <button 
                   onClick={() => openEditor(plan)}
-                  className="w-full flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-primary-600 hover:border-primary-200 px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm"
+                  className="w-full flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-primary-600 hover:border-primary-200 dark:hover:border-slate-700 px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm"
                 >
                   <Edit2 size={18} /> Edit Plan Details
                 </button>

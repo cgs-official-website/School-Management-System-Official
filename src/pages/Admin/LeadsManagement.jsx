@@ -594,7 +594,7 @@ export default function LeadsManagement() {
                       </button>
                       <button
                         onClick={() => handleDeleteFormClick(f.id, f.title)}
-                        className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-red-50 hover:text-red-600 text-slate-400 dark:text-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1 ml-auto cursor-pointer"
+                        className="p-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 hover:bg-red-50 dark:hover:bg-slate-800 hover:text-red-600 text-slate-400 dark:text-slate-300 rounded-lg text-xs font-semibold flex items-center gap-1 ml-auto cursor-pointer"
                       >
                         <LuTrash2 size={13} />
                       </button>
@@ -773,7 +773,7 @@ export default function LeadsManagement() {
                           <button
                             type="button"
                             onClick={() => handleRemoveField(field.id)}
-                            className="p-1 hover:bg-red-50 text-red-500 rounded cursor-pointer"
+                            className="p-1 hover:bg-red-50 dark:hover:bg-slate-800 text-red-500 rounded cursor-pointer"
                           >
                             <LuTrash2 size={16} />
                           </button>

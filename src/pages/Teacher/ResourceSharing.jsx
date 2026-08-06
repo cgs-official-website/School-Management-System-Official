@@ -233,7 +233,7 @@ export default function ResourceSharing() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredResources.map(resource => (
-                <div key={resource.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow-md transition-all group flex flex-col">
+                <div key={resource.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-slate-700 hover:shadow-md transition-all group flex flex-col">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
                       {getTypeIcon(resource.type)}
@@ -263,7 +263,7 @@ export default function ResourceSharing() {
                       {(hasDeletePermission || resource.teacherId === currentUser.uid) && (
                         <button 
                           onClick={() => handleDeleteClick(resource.id, resource.title)}
-                          className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" 
+                          className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors" 
                           title="Delete"
                         >
                           <LuTrash2 size={16} />
@@ -279,7 +279,7 @@ export default function ResourceSharing() {
                         }}
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                        className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                         title={resource.type === 'link' || resource.type === 'video' ? 'Open Link' : 'Download File'}
                       >
                         {resource.type === 'link' || resource.type === 'video' ? (

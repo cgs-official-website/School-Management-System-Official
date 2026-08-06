@@ -161,7 +161,7 @@ export default function Performance() {
           {recentAssessments.length > 0 ? (
             <div className="space-y-4">
               {recentAssessments.map(assessment => (
-                <div key={assessment.id} className="flex justify-between items-center p-4 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 hover:bg-primary-50/30 transition-all">
+                <div key={assessment.id} className="flex justify-between items-center p-4 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:bg-primary-50/30 transition-all">
                   <div>
                     <h3 className="font-bold text-slate-900 dark:text-white">{assessment.title}</h3>
                     <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{new Date(assessment.date).toLocaleDateString('en-GB')}</p>

@@ -397,7 +397,7 @@ export default function PerformanceTracking() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(true)}
-                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 >
                   Select All
                 </button>

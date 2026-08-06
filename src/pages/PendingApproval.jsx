@@ -63,7 +63,7 @@ export default function PendingApproval() {
         <div className="flex flex-col gap-4 justify-center">
           <button 
             onClick={() => navigate('/admin')}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-primary-200 bg-primary-50 text-primary-700 hover:bg-primary-100 transition-colors font-medium"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-primary-200 bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 transition-colors font-medium"
           >
             Bypass & Enter Dashboard (Debug)
           </button>

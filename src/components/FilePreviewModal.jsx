@@ -99,7 +99,7 @@ export default function FilePreviewModal({ fileUrl, isOpen, onClose }) {
               <button
                 onClick={handleDownload}
                 disabled={isDownloading}
-                className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 font-medium rounded-lg hover:bg-primary-100 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-600 font-medium rounded-lg hover:bg-primary-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
               >
                 <LuDownload size={18} />
                 {isDownloading ? 'Downloading...' : 'Download File'}

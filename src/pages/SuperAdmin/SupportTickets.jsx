@@ -285,7 +285,7 @@ export default function SupportTickets() {
                 <div 
                   key={ticket.id} 
                   onClick={() => setSelectedTicket(ticket)}
-                  className="flex flex-col sm:flex-row gap-4 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-slate-900 group"
+                  className="flex flex-col sm:flex-row gap-4 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-slate-700 hover:shadow-md transition-all cursor-pointer bg-white dark:bg-slate-900 group"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">

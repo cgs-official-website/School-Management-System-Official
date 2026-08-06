@@ -229,7 +229,7 @@ export default function Noticeboard() {
                         
                         <button 
                           onClick={() => openViewersModal(notice.viewedBy)}
-                          className="ml-auto flex items-center gap-1.5 px-3 py-1 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg text-xs font-bold cursor-pointer transition-colors border border-primary-200"
+                          className="ml-auto flex items-center gap-1.5 px-3 py-1 bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 rounded-lg text-xs font-bold cursor-pointer transition-colors border border-primary-200"
                         >
                           <Eye size={14} /> {viewsCount} {viewsCount === 1 ? 'View' : 'Views'}
                         </button>
@@ -262,7 +262,7 @@ export default function Noticeboard() {
                     {hasDeletePermission && (
                       <button 
                         onClick={() => setConfirmModalState({ isOpen: true, noticeId: notice.id })}
-                        className="p-3 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors tooltip-trigger"
+                        className="p-3 text-red-400 hover:bg-red-50 dark:hover:bg-slate-800 hover:text-red-600 rounded-xl transition-colors tooltip-trigger"
                         title="Delete Notice"
                       >
                         <Trash2 size={20} />

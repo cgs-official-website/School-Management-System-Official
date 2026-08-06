@@ -410,7 +410,7 @@ export default function ClassManagement() {
                 {hasEditPermission && (
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleEditClick(cls); }}
-                    className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                    className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     title="Edit Class"
                   >
                     <Pencil size={18} />
@@ -419,7 +419,7 @@ export default function ClassManagement() {
                 {hasDeletePermission && (
                   <button 
                     onClick={(e) => { e.stopPropagation(); handleDeleteClick(cls.id); }}
-                    className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                     title="Delete Class"
                   >
                     <Trash2 size={18} />
@@ -495,7 +495,7 @@ export default function ClassManagement() {
                   ) : (
                     <button 
                       onClick={() => handleDeleteCategory(cat.id)}
-                      className="text-red-500 hover:text-red-700 p-1.5 hover:bg-red-50 rounded-lg transition-colors"
+                      className="text-red-500 hover:text-red-700 p-1.5 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                       title="Delete custom category"
                     >
                       <Trash2 size={16} />

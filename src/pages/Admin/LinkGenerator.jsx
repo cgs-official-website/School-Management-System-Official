@@ -150,14 +150,14 @@ export default function LinkGenerator() {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 hover:bg-primary-50 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors flex items-center justify-center"
+                    className="p-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors flex items-center justify-center"
                     title="Open Link in New Tab"
                   >
                     <ExternalLink size={20} />
                   </a>
                   <button 
                     onClick={() => handleEmailShare(link.url, link.title)}
-                    className="p-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 hover:bg-primary-50 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors"
+                    className="p-3 text-slate-500 dark:text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors"
                     title="Share via Email"
                   >
                     <Mail size={20} />

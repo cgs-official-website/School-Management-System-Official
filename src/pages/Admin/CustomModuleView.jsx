@@ -286,10 +286,10 @@ export default function CustomModuleView() {
                       ))}
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2">
-                          <button onClick={() => handleOpenModal(record)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                          <button onClick={() => handleOpenModal(record)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                             <LuPencil size={18} />
                           </button>
-                          <button onClick={() => handleDelete(record.id)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                          <button onClick={() => handleDelete(record.id)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                             <LuTrash2 size={18} />
                           </button>
                         </div>

@@ -190,12 +190,12 @@ export default function SubjectManagement() {
                 </div>
                 <div className="flex gap-2">
                   {hasEditPermission && (
-                    <button onClick={() => handleOpenModal(subject)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
+                    <button onClick={() => handleOpenModal(subject)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                       <LuPencil size={18} />
                     </button>
                   )}
                   {hasDeletePermission && (
-                    <button onClick={() => handleDelete(subject.id)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                    <button onClick={() => handleDelete(subject.id)} className="p-2 text-slate-400 dark:text-slate-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors">
                       <LuTrash2 size={18} />
                     </button>
                   )}

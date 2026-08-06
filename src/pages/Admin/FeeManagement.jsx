@@ -525,7 +525,7 @@ export default function FeeManagement() {
                             className={`px-4 py-2 rounded-xl font-bold transition-all text-xs border ${
                               isOverdue
                                 ? 'bg-red-600 hover:bg-red-700 text-white border-red-600 shadow-sm shadow-red-600/20'
-                                : 'bg-primary-50 text-primary-700 hover:bg-primary-600 hover:text-white border-primary-100 hover:border-primary-600'
+                                : 'bg-primary-50 text-primary-700 hover:bg-primary-600 hover:text-white border-primary-100 hover:border-primary-600 dark:hover:border-slate-700'
                             }`}
                           >
                             Record Payment

@@ -278,7 +278,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
             <>
               <button
                 onClick={() => setShowTicketModal(true)}
-                className="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-full transition-colors relative"
+                className="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 dark:hover:bg-slate-800 rounded-full transition-colors relative"
                 title="Raise Support Ticket to Zuna"
               >
                 <LifeBuoy size={20} />

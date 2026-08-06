@@ -875,7 +875,7 @@ export default function StaffAssignment() {
               setExportFileName('Staff_Directory');
               setShowExportModal(true);
             }}
-            className="px-4 py-2 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 shadow-sm flex items-center gap-2 transition-colors border border-primary-200"
+            className="px-4 py-2 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 dark:hover:bg-slate-700 shadow-sm flex items-center gap-2 transition-colors border border-primary-200"
           >
             <FileDown size={18} /> Export
           </button>
@@ -1108,7 +1108,7 @@ export default function StaffAssignment() {
                                 navigator.clipboard.writeText(inviteUrl);
                                 toast.success("Registration link copied!");
                               }}
-                              className="p-2 text-slate-500 dark:text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 dark:text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                               title="Copy Invite Link"
                             >
                               <LinkIcon size={18} />
@@ -1124,7 +1124,7 @@ export default function StaffAssignment() {
                               setEditStaffDocFiles({});
                               setViewStaffModalOpen(true);
                             }}
-                            className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 dark:text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                             title="View Details"
                           >
                             <Eye size={18} />
@@ -1132,7 +1132,7 @@ export default function StaffAssignment() {
                             {hasDeletePermission && (
                               <button 
                                 onClick={() => setConfirmDeleteState({ isOpen: true, id: member.id, name: member.name || `${member.firstName} ${member.lastName}` })}
-                                className="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                 title="Delete Staff Member"
                               >
                                 <Trash size={18} />
@@ -1347,7 +1347,7 @@ export default function StaffAssignment() {
                 </div>
               )}
 
-              <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 bg-slate-50 dark:bg-slate-800 relative overflow-hidden group hover:border-primary-400 hover:bg-primary-50 transition-all text-center">
+              <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 bg-slate-50 dark:bg-slate-800 relative overflow-hidden group hover:border-primary-400 dark:hover:border-slate-700 hover:bg-primary-50 dark:hover:bg-slate-800 transition-all text-center">
                 <input 
                   type="file" 
                   accept={selectedStaffForUpload ? "image/*, .pdf" : ".xlsx, .csv"}
@@ -2063,7 +2063,7 @@ export default function StaffAssignment() {
                                     return { ...prev, [key]: list };
                                   });
                                 }}
-                                className="text-red-500 hover:text-red-700 font-bold px-2 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                className="text-red-500 hover:text-red-700 font-bold px-2 flex items-center justify-center p-1 hover:bg-red-50 dark:hover:bg-slate-800 rounded"
                                 title="Remove Document"
                               >
                                 <Trash size={16} />
@@ -2353,7 +2353,7 @@ export default function StaffAssignment() {
                                     <button
                                       type="button"
                                       onClick={() => setPreviewUrl(file.url)}
-                                      className="flex items-center gap-2 hover:bg-indigo-50 transition-colors font-semibold text-indigo-600 text-left flex-1 min-w-0"
+                                      className="flex items-center gap-2 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors font-semibold text-indigo-600 text-left flex-1 min-w-0"
                                     >
                                       <Eye size={14} className="shrink-0" />
                                       <span className="truncate">{file.name}</span>
@@ -2365,7 +2365,7 @@ export default function StaffAssignment() {
                                         newList.splice(idx, 1);
                                         setEditStaffData(prev => ({ ...prev, [key]: newList }));
                                       }}
-                                      className="text-red-500 hover:text-red-700 font-bold px-3 shrink-0 border-l border-slate-100 dark:border-slate-800 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                      className="text-red-500 hover:text-red-700 font-bold px-3 shrink-0 border-l border-slate-100 dark:border-slate-800 flex items-center justify-center p-1 hover:bg-red-50 dark:hover:bg-slate-800 rounded"
                                       title="Delete Document"
                                     >
                                       <Trash size={16} />
@@ -2390,7 +2390,7 @@ export default function StaffAssignment() {
                                           return { ...prev, [key]: list };
                                         });
                                       }}
-                                      className="text-red-500 hover:text-red-700 font-bold px-2 ml-2 shrink-0 flex items-center justify-center p-1 hover:bg-red-50 rounded"
+                                      className="text-red-500 hover:text-red-700 font-bold px-2 ml-2 shrink-0 flex items-center justify-center p-1 hover:bg-red-50 dark:hover:bg-slate-800 rounded"
                                       title="Remove Document"
                                     >
                                       <Trash size={16} />

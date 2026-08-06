@@ -343,7 +343,7 @@ export default function ParentDashboard() {
                       setIsChildDropdownOpen(false);
                       setIsLinkAnotherModalOpen(true);
                     }}
-                    className="w-full flex items-center justify-center gap-2 py-2 text-sm font-bold text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                    className="w-full flex items-center justify-center gap-2 py-2 text-sm font-bold text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                   >
                     <Plus size={16} /> Link Another Child
                   </button>

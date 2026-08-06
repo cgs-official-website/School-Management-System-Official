@@ -555,7 +555,7 @@ export default function HomeworkManagement() {
                     if (status === 'Submitted') statusColor = "bg-emerald-100 text-emerald-700";
 
                     return (
-                      <div key={student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-primary-300 transition-colors gap-4">
+                      <div key={student.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-2xl hover:border-primary-300 dark:hover:border-slate-700 transition-colors gap-4">
                         <div>
                           <p className="font-bold text-slate-900 dark:text-white">{student.firstName} {student.lastName}</p>
                           <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">ADM: {student.admissionNumber} | Last Updated: {lastUpdated}</p>
@@ -612,7 +612,7 @@ export default function HomeworkManagement() {
                 <button
                   type="button"
                   onClick={() => handleSelectAll(true)}
-                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 >
                   Select All
                 </button>

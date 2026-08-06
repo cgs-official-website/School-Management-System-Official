@@ -86,7 +86,7 @@ export default function BrandingSettings() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Global Default Logo</label>
-                  <div className="w-full aspect-video rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center hover:border-primary-400 hover:bg-primary-50 transition-colors cursor-pointer relative overflow-hidden group">
+                  <div className="w-full aspect-video rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center hover:border-primary-400 dark:hover:border-slate-700 hover:bg-primary-50 dark:hover:bg-slate-800 transition-colors cursor-pointer relative overflow-hidden group">
                     <img src={settings.logoUrl} alt="Logo" className="w-24 h-24 object-contain mb-2" />
                     <div className="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <LuImagePlus className="text-white mb-2" size={32} />
@@ -97,7 +97,7 @@ export default function BrandingSettings() {
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Favicon</label>
-                  <div className="w-full aspect-video rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center hover:border-primary-400 hover:bg-primary-50 transition-colors cursor-pointer relative overflow-hidden group">
+                  <div className="w-full aspect-video rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center hover:border-primary-400 dark:hover:border-slate-700 hover:bg-primary-50 dark:hover:bg-slate-800 transition-colors cursor-pointer relative overflow-hidden group">
                     <img src={settings.faviconUrl} alt="Favicon" className="w-16 h-16 object-contain mb-2" />
                     <div className="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <LuImagePlus className="text-white mb-2" size={32} />
@@ -113,7 +113,7 @@ export default function BrandingSettings() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-2">Login Portal Design</h2>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Background Image</label>
-                <div className="w-full h-48 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center hover:border-primary-400 transition-colors cursor-pointer relative overflow-hidden group">
+                <div className="w-full h-48 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center hover:border-primary-400 dark:hover:border-slate-700 transition-colors cursor-pointer relative overflow-hidden group">
                   <img src={settings.loginBackgroundImage} alt="Login Background" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-slate-900/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <LuImagePlus className="text-white mb-2" size={32} />

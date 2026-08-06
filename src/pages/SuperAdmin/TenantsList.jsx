@@ -144,7 +144,7 @@ export default function TenantsList() {
                     <td className="p-4 pr-6 text-right">
                       <Link 
                         to={`/superadmin/tenants/${school.id}`}
-                        className="inline-flex items-center justify-center px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-primary-600 hover:bg-primary-50 transition-colors"
+                        className="inline-flex items-center justify-center px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 transition-colors"
                       >
                         View Details
                       </Link>
