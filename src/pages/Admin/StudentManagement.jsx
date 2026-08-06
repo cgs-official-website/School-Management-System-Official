@@ -562,86 +562,97 @@ export default function StudentManagement() {
             const wb = XLSX.read(bstr, { type: 'binary' });
             const wsname = wb.SheetNames[0];
             const ws = wb.Sheets[wsname];
-            const data = XLSX.utils.sheet_to_json(ws);
-            
-            let successCount = 0;
-            let skipCount = 0;
-            let replaceCount = 0;
-            let limitCappedCount = 0;
-            const importedAdmissions = new Set();
-            const existingAdmissionsMap = new Map(students.map(s => [s.admissionNumber?.toLowerCase(), s]));
+              const rawData = XLSX.utils.sheet_to_json(ws);
+              
+              // Normalize keys
+              const data = rawData.map(row => {
+                const normalized = {};
+                for (const key in row) {
+                  normalized[key.trim().toLowerCase()] = row[key];
+                }
+                return normalized;
+              });
+              
+              let successCount = 0;
+              let skipCount = 0;
+              let replaceCount = 0;
+              let limitCappedCount = 0;
+              const importedAdmissions = new Set();
+              const existingAdmissionsMap = new Map(students.map(s => [s.admissionNumber?.toLowerCase(), s]));
 
-            for (let i = 0; i < data.length; i++) {
-              const row = data[i];
-              if (row['Full Name'] && row['Admission Number']) {
-                const admissionNumber = row['Admission Number']?.toString().trim();
+              for (let i = 0; i < data.length; i++) {
+                const row = data[i];
                 
-                if (!admissionNumber) {
-                  skipCount++;
-                  continue;
-                }
+                // Flexible key matching
+                const fullName = row['full name'] || row['name'] || row['student name'] || row['fullname'];
+                const admissionNumberRaw = row['admission number'] || row['admission no'] || row['admission no.'] || row['roll number'] || row['id'];
 
-                const lowerAdmission = admissionNumber.toLowerCase();
+                if (fullName && admissionNumberRaw) {
+                  const admissionNumber = admissionNumberRaw.toString().trim();
+                  
+                  if (!admissionNumber) {
+                    skipCount++;
+                    continue;
+                  }
 
-                // Skip duplicates within the imported file itself
-                if (importedAdmissions.has(lowerAdmission)) {
-                  skipCount++;
-                  continue;
-                }
+                  const lowerAdmission = admissionNumber.toLowerCase();
 
-                const isReplacement = existingAdmissionsMap.has(lowerAdmission);
+                  if (importedAdmissions.has(lowerAdmission)) {
+                    skipCount++;
+                    continue;
+                  }
 
-                // If this is a new addition and we reached available capacity, skip and count limit cap
-                if (!isReplacement && (students.length + successCount - replaceCount) >= effectiveSeatLimit) {
-                  limitCappedCount++;
-                  continue;
-                }
+                  const isReplacement = existingAdmissionsMap.has(lowerAdmission);
 
-                // If exists in database, delete the old one completely to replace it
-                if (isReplacement) {
-                  const existingStudent = existingAdmissionsMap.get(lowerAdmission);
-                  await deleteDoc(doc(db, 'schools', schoolId, 'students', existingStudent.id));
-                  replaceCount++;
-                }
+                  if (!isReplacement && (students.length + successCount - replaceCount) >= effectiveSeatLimit) {
+                    limitCappedCount++;
+                    continue;
+                  }
 
-                importedAdmissions.add(lowerAdmission);
+                  if (isReplacement) {
+                    const existingStudent = existingAdmissionsMap.get(lowerAdmission);
+                    await deleteDoc(doc(db, 'schools', schoolId, 'students', existingStudent.id));
+                    replaceCount++;
+                  }
 
-                const fullName = row['Full Name'].toString().trim();
-                const nameParts = fullName.split(' ');
-                const firstName = nameParts[0];
-                const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-                
-                await addSubDocument(schoolId, 'students', {
-                  firstName: firstName,
-                  lastName: lastName,
-                  admissionNumber: admissionNumber,
-                  dob: row['Date of Birth']?.toString() || '',
-                  age: row['Age']?.toString() || '',
-                  gender: row['Gender']?.toString() || 'Male',
-                  bloodGroup: row['Blood Group']?.toString() || '',
-                  nationality: row['Nationality']?.toString() || '',
-                  religion: row['Religion']?.toString() || '',
-                  motherTongue: row['Mother Tongue']?.toString() || '',
-                  aadharNumber: row['Aadhar Number']?.toString() || '',
-                  homeAddress: row['Home Address']?.toString() || '',
-                  parentName: row['Parent/Guardian Name']?.toString() || '',
-                  parentPhone: row['Parent/Guardian Phone Number']?.toString() || '',
-                  parentEmail: row['Parent/Guardian Email Address']?.toString() || '',
-                  parentOccupation: row['Parent/Guardian Occupation']?.toString() || '',
-                  emergencyContact: row['Emergency Contact Number']?.toString() || '',
-                  annualIncome: row['Annual Income (INR)']?.toString() || '',
-                  siblingName: row['Sibling Name (Same School: Y/N)']?.toString() || '',
-                  previousSchool: row['Previous School Name']?.toString() || '',
-                  previousRecords: row['Previous Academic Records/Report Card Status']?.toString() || '',
-                  subjectsChosen: row['Subjects Chosen']?.toString() || '',
-                  busRoute: row['School Bus Route/Stop']?.toString() || '',
-                  tuitionFee: row['Tuition Fee (INR)']?.toString() || '',
-                  hostelFee: row['Hostel Fee (INR)']?.toString() || '',
-                  bookFee: row['Book Fee (INR)']?.toString() || '',
-                  otherFee: row['Other Fee (INR)']?.toString() || '',
-                  totalFee: row['Total Fee (INR)']?.toString() || '',
-                  username: row['Username']?.toString() || '',
-                  password: row['Password']?.toString() || '',
+                  importedAdmissions.add(lowerAdmission);
+
+                  const fullNameStr = fullName.toString().trim();
+                  const nameParts = fullNameStr.split(' ');
+                  const firstName = nameParts[0];
+                  const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+                  
+                  await addSubDocument(schoolId, 'students', {
+                    firstName: firstName,
+                    lastName: lastName,
+                    admissionNumber: admissionNumber,
+                    dob: (row['date of birth'] || row['dob'])?.toString() || '',
+                    age: row['age']?.toString() || '',
+                    gender: row['gender']?.toString() || 'Male',
+                  bloodGroup: row['blood group']?.toString() || '',
+                  nationality: row['nationality']?.toString() || '',
+                  religion: row['religion']?.toString() || '',
+                  motherTongue: row['mother tongue']?.toString() || '',
+                  aadharNumber: row['aadhar number']?.toString() || '',
+                  homeAddress: row['home address']?.toString() || '',
+                  parentName: row['parent/guardian name']?.toString() || row['parent name']?.toString() || '',
+                  parentPhone: row['parent/guardian phone number']?.toString() || row['parent phone']?.toString() || '',
+                  parentEmail: row['parent/guardian email address']?.toString() || row['parent email']?.toString() || '',
+                  parentOccupation: row['parent/guardian occupation']?.toString() || row['parent occupation']?.toString() || '',
+                  emergencyContact: row['emergency contact number']?.toString() || row['emergency contact']?.toString() || '',
+                  annualIncome: row['annual income (inr)']?.toString() || row['annual income']?.toString() || '',
+                  siblingName: row['sibling name (same school: y/n)']?.toString() || row['sibling name']?.toString() || '',
+                  previousSchool: row['previous school name']?.toString() || row['previous school']?.toString() || '',
+                  previousRecords: row['previous academic records/report card status']?.toString() || row['previous records']?.toString() || '',
+                  subjectsChosen: row['subjects chosen']?.toString() || '',
+                  busRoute: row['school bus route/stop']?.toString() || row['bus route']?.toString() || '',
+                  tuitionFee: row['tuition fee (inr)']?.toString() || row['tuition fee']?.toString() || '',
+                  hostelFee: row['hostel fee (inr)']?.toString() || row['hostel fee']?.toString() || '',
+                  bookFee: row['book fee (inr)']?.toString() || row['book fee']?.toString() || '',
+                  otherFee: row['other fee (inr)']?.toString() || row['other fee']?.toString() || '',
+                  totalFee: row['total fee (inr)']?.toString() || row['total fee']?.toString() || '',
+                  username: row['username']?.toString() || '',
+                  password: row['password']?.toString() || '',
                   status: 'Active',
                   classId: '',
                   createdAt: new Date().toISOString()
@@ -2038,9 +2049,25 @@ export default function StudentManagement() {
                   <br/><span className="text-xs text-slate-400 dark:text-slate-300 mt-1 block">File will be securely stored in: {schoolName}/Students/...</span>
                 </p>
               ) : (
-                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
-                  Upload an Excel or CSV file to bulk import students. Ensure it has columns: Full Name, Admission Number.
-                </p>
+                <div className="flex flex-col gap-3 mb-6 bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                  <p className="text-sm text-slate-700 dark:text-slate-300">
+                    Upload an Excel or CSV file to bulk import students. For best results, we highly recommend using our standard template.
+                  </p>
+                  <button
+                    onClick={() => {
+                      const ws_data = [
+                        ['Full Name', 'Admission Number', 'Date of Birth', 'Gender', 'Blood Group', 'Nationality', 'Religion', 'Aadhar Number', 'Home Address', 'Parent/Guardian Name', 'Parent Phone', 'Parent Email', 'Parent Occupation', 'Emergency Contact', 'Previous School']
+                      ];
+                      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+                      const wb = XLSX.utils.book_new();
+                      XLSX.utils.book_append_sheet(wb, ws, "Students");
+                      XLSX.writeFile(wb, "Bulk_Import_Template.xlsx");
+                    }}
+                    className="self-start text-sm px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg font-medium text-primary-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2"
+                  >
+                    <FileDown size={16} /> Download Standard Template
+                  </button>
+                </div>
               )}
 
               <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-8 bg-slate-50 dark:bg-slate-800 relative overflow-hidden group hover:border-primary-400 dark:hover:border-slate-700 hover:bg-primary-50 dark:hover:bg-slate-800 transition-all text-center">
