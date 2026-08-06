@@ -259,6 +259,18 @@
 .rbc-calendar { border: none; font-family: 'Inter', system-ui, sans-serif; }
 .rbc-month-view { border: 1px solid #f1f5f9; border-radius: 16px; overflow: hidden; background: #fff; }
 .rbc-header { padding: 12px 8px; font-weight: 700; color: #64748b; border-bottom: 1px solid #f1f5f9; border-left: none; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
+
+/* React Big Calendar Dark Mode Overrides */
+.dark .rbc-month-view { border-color: #1e293b; background: #0f172a; }
+.dark .rbc-header { color: #94a3b8; border-color: #1e293b; }
+.dark .rbc-day-bg + .rbc-day-bg { border-color: #1e293b; }
+.dark .rbc-month-row + .rbc-month-row { border-color: #1e293b; }
+.dark .rbc-off-range-bg { background: #020617; }
+.dark .rbc-today { background: #1e293b; }
+.dark .rbc-date-cell { color: #f8fafc; }
+.dark .rbc-off-range .rbc-date-cell { color: #475569; }
+.dark .rbc-btn-group button { color: #e2e8f0; border-color: #334155; }
+.dark .rbc-btn-group button:hover { background: #1e293b; }
 .rbc-day-bg + .rbc-day-bg { border-left: 1px solid #f1f5f9; }
 .rbc-month-row + .rbc-month-row { border-top: 1px solid #f1f5f9; }
 .rbc-today { background-color: #f8fafc; }

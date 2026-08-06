@@ -69,6 +69,31 @@ export default function AcademicCalendar({ isAdmin }) {
           });
         }
       });
+
+      // Inject Virtual Sundays for +/- 1 Year
+      const eventDates = new Set(formattedEvents.map(e => e.start.toDateString()));
+      const currentYear = new Date().getFullYear();
+      for (let y = currentYear - 1; y <= currentYear + 2; y++) {
+        for (let m = 0; m < 12; m++) {
+          const daysInMonth = new Date(y, m + 1, 0).getDate();
+          for (let d = 1; d <= daysInMonth; d++) {
+            const date = new Date(y, m, d);
+            if (date.getDay() === 0 && !eventDates.has(date.toDateString())) {
+              formattedEvents.push({
+                id: `virtual-sunday-${y}-${m}-${d}`,
+                title: 'Sunday (Holiday)',
+                start: date,
+                end: date,
+                type: 'holiday',
+                isVirtual: true,
+                isCustomDates: false,
+                customDates: []
+              });
+            }
+          }
+        }
+      }
+
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error fetching calendar events:", error);
@@ -105,7 +130,7 @@ export default function AcademicCalendar({ isAdmin }) {
         };
       }
       
-      if (selectedEvent) {
+      if (selectedEvent && !selectedEvent.isVirtual) {
         if (!hasEditPermission) {
           toast.error("You do not have permission to edit events.");
           return;
@@ -133,6 +158,10 @@ export default function AcademicCalendar({ isAdmin }) {
 
   const handleDeleteEvent = () => {
     if (!selectedEvent || !isAdmin) return;
+    if (selectedEvent.isVirtual) {
+      toast.error("Cannot delete a default Sunday holiday. You can edit it instead.");
+      return;
+    }
     if (!hasDeletePermission) {
       toast.error("You do not have permission to delete events.");
       return;
