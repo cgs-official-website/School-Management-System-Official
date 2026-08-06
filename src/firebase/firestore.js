@@ -855,30 +855,33 @@ export const cleanupOldChatAudio = async (schoolId) => {
     const chatSnapshot = await getDocs(chatsRef);
     
     let cleanedCount = 0;
-    const batch = writeBatch(db);
+    let batch = writeBatch(db);
     let batchCount = 0;
 
     for (const chatDoc of chatSnapshot.docs) {
       const messagesRef = collection(db, `schools/${schoolId}/chats/${chatDoc.id}/messages`);
       const q = query(
         messagesRef,
-        where("mediaType", "==", "audio"),
-        where("createdAt", "<", timeLimit)
+        where("mediaType", "==", "audio")
       );
       
       const messagesSnap = await getDocs(q);
       messagesSnap.forEach((msgDoc) => {
-        batch.update(msgDoc.ref, {
-          mediaUrl: null,
-          mediaType: null,
-          text: msgDoc.data().text ? msgDoc.data().text + '\n[Voice message automatically removed to save storage]' : '[Voice message automatically removed to save storage]'
-        });
-        cleanedCount++;
-        batchCount++;
+        const data = msgDoc.data();
+        if (data.createdAt && data.createdAt < timeLimit) {
+          batch.update(msgDoc.ref, {
+            mediaUrl: null,
+            mediaType: null,
+            text: data.text ? data.text + '\n[Voice message automatically removed to save storage]' : '[Voice message automatically removed to save storage]'
+          });
+          cleanedCount++;
+          batchCount++;
+        }
       });
       
       if (batchCount >= 400) {
         await batch.commit();
+        batch = writeBatch(db);
         batchCount = 0;
       }
     }
