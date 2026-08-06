@@ -274,7 +274,7 @@ export default function ParentChat() {
                 onClick={() => setPreviewFile({ url: msg.mediaUrl, type: 'image' })} 
                 className="focus:outline-none hover:opacity-90 transition-opacity text-left block"
               >
-                <img src={msg.mediaUrl} alt="Attachment" className="max-w-full h-auto max-h-48 rounded-lg object-contain bg-black/5 cursor-zoom-in" />
+                <img src={msg.mediaUrl} alt="Attachment" className="max-w-full h-auto max-h-48 rounded-lg object-contain bg-black/5 dark:bg-white/5 cursor-zoom-in" />
               </button>
             )}
             {msg.mediaType === 'audio' && (
@@ -283,7 +283,7 @@ export default function ParentChat() {
             {msg.mediaType === 'document' && (
               <button 
                 onClick={() => setPreviewFile({ url: msg.mediaUrl, type: 'document' })} 
-                className="flex items-center gap-2 p-3 bg-black/5 rounded-lg hover:bg-black/10 transition-colors focus:outline-none text-left w-full text-inherit"
+                className="flex items-center gap-2 p-3 bg-black/5 dark:bg-white/5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-colors focus:outline-none text-left w-full text-inherit"
               >
                 <FileIcon size={20} className="shrink-0" />
                 <span className="text-sm font-semibold underline truncate">View Document</span>
@@ -435,7 +435,7 @@ export default function ParentChat() {
               </div>
 
               {/* Messages Area */}
-              <div className="flex-1 p-4 md:p-6 overflow-y-auto overflow-x-hidden custom-scrollbar bg-[#f0f2f5] shadow-inner flex flex-col gap-4 relative">
+              <div className="flex-1 p-4 md:p-6 overflow-y-auto overflow-x-hidden custom-scrollbar bg-[#f0f2f5] dark:bg-slate-900/50 shadow-inner flex flex-col gap-4 relative">
                 {messages.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-300 text-center">
                     <MessageSquare size={48} className="mb-4 text-slate-200" />
@@ -470,7 +470,7 @@ export default function ParentChat() {
                         <React.Fragment key={msg.id}>
                           {showDateSeparator && (
                             <div className="flex justify-center my-4 z-10">
-                              <span className="bg-white/80 backdrop-blur-md shadow-sm text-slate-500 dark:text-slate-400 text-[11px] font-bold px-4 py-1.5 rounded-full border border-slate-200/50">
+                              <span className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md shadow-sm text-slate-500 dark:text-slate-400 text-[11px] font-bold px-4 py-1.5 rounded-full border border-slate-200/50 dark:border-slate-700/50">
                                 {formatDateSeparator(msg.createdAt)}
                               </span>
                             </div>
@@ -489,7 +489,7 @@ export default function ParentChat() {
                             <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
                               isMe 
                                 ? (msg.isDeletedForEveryone ? 'bg-primary-500 text-white/80 rounded-tr-sm' : 'bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-tr-sm shadow-md shadow-primary-500/20')
-                                : (msg.isDeletedForEveryone ? 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-tl-sm shadow-sm' : 'bg-white dark:bg-slate-900 border-0 text-slate-800 dark:text-slate-100 rounded-tl-sm shadow-md shadow-slate-200/50')
+                                : (msg.isDeletedForEveryone ? 'bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-tl-sm shadow-sm' : 'bg-white dark:bg-slate-900 border-0 text-slate-800 dark:text-slate-100 rounded-tl-sm shadow-md shadow-slate-200/50 dark:shadow-none')
                             } relative`}>
                               
                               {renderMessageContent(msg, isMe)}
@@ -565,7 +565,7 @@ export default function ParentChat() {
               </div>
 
               {/* Messages Area */}
-              <div className="flex-1 p-4 md:p-6 overflow-y-auto overflow-x-hidden custom-scrollbar bg-[#f0f2f5] shadow-inner flex flex-col gap-4">
+              <div className="flex-1 p-4 md:p-6 overflow-y-auto overflow-x-hidden custom-scrollbar bg-[#f0f2f5] dark:bg-slate-900/50 shadow-inner flex flex-col gap-4">
                 {messages.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-slate-400 dark:text-slate-300 text-center">
                     <MessageSquare size={48} className="mb-4 text-slate-200" />
@@ -583,7 +583,7 @@ export default function ParentChat() {
                         <div className={`max-w-[85%] md:max-w-[75%] rounded-2xl p-4 ${
                           isMe 
                             ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-tr-sm shadow-md shadow-primary-500/20' 
-                            : (isTeacher ? 'bg-primary-50 text-slate-900 dark:text-white rounded-tl-sm shadow-sm' : 'bg-white dark:bg-slate-900 border-0 text-slate-800 dark:text-slate-100 rounded-tl-sm shadow-md shadow-slate-200/50')
+                            : (isTeacher ? 'bg-primary-50 text-slate-900 dark:text-white rounded-tl-sm shadow-sm' : 'bg-white dark:bg-slate-900 border-0 text-slate-800 dark:text-slate-100 rounded-tl-sm shadow-md shadow-slate-200/50 dark:shadow-none')
                         } relative`}>
                           {renderMessageContent(msg, isMe)}
                           
