@@ -89,15 +89,32 @@ export const updateAssessmentGrades = async (schoolId, assessmentId, gradesMap) 
 // --- Parent Portal Operations ---
 export const findStudentByAdmission = async (schoolId, admissionNumber, dob) => {
   try {
+    if (!schoolId) {
+      console.error("School ID is missing in findStudentByAdmission.");
+      return null;
+    }
+
     const studentsRef = collection(db, `schools/${schoolId}/students`);
-    const cleanAdmission = (admissionNumber || '').trim().toUpperCase();
-    const q = query(
-      studentsRef, 
-      where("admissionNumber", "==", cleanAdmission)
-    );
-    const querySnapshot = await getDocs(q);
+    
+    // 1. Try exact match
+    let cleanAdmission = (admissionNumber || '').trim();
+    let q = query(studentsRef, where("admissionNumber", "==", cleanAdmission));
+    let querySnapshot = await getDocs(q);
+    
+    // 2. Try Uppercase match
+    if (querySnapshot.empty) {
+      q = query(studentsRef, where("admissionNumber", "==", cleanAdmission.toUpperCase()));
+      querySnapshot = await getDocs(q);
+    }
+    
+    // 3. Try Lowercase match
+    if (querySnapshot.empty) {
+      q = query(studentsRef, where("admissionNumber", "==", cleanAdmission.toLowerCase()));
+      querySnapshot = await getDocs(q);
+    }
     
     if (querySnapshot.empty) {
+      console.warn(`No student found for admission number: ${admissionNumber}`);
       return null;
     }
     
@@ -107,24 +124,40 @@ export const findStudentByAdmission = async (schoolId, admissionNumber, dob) => 
     // Normalize both dates to compare robustly (e.g. YYYY-MM-DD)
     const normalizeDate = (dStr) => {
       if (!dStr) return '';
-      // Try parsing with JS Date
-      const parsed = new Date(dStr);
-      if (!isNaN(parsed.getTime())) {
-        return parsed.toISOString().split('T')[0];
+      
+      // Support Firestore Timestamps
+      if (typeof dStr === 'object' && typeof dStr.toDate === 'function') {
+        return dStr.toDate().toISOString().split('T')[0];
       }
-      // Manual regex split for formats like DD-MM-YYYY or DD/MM/YYYY
-      const parts = dStr.split(/[-/.]/);
-      if (parts.length === 3) {
-        // YYYY-MM-DD
-        if (parts[0].length === 4) {
-          return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
-        }
-        // DD-MM-YYYY or MM-DD-YYYY
-        if (parts[2].length === 4) {
-          return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-        }
+      
+      // Support JS Date objects
+      if (dStr instanceof Date) {
+        return dStr.toISOString().split('T')[0];
       }
-      return dStr.trim();
+
+      // String formats
+      if (typeof dStr === 'string') {
+        // Try parsing with JS Date
+        const parsed = new Date(dStr);
+        if (!isNaN(parsed.getTime())) {
+          return parsed.toISOString().split('T')[0];
+        }
+        // Manual regex split for formats like DD-MM-YYYY or DD/MM/YYYY
+        const parts = dStr.split(/[-/.]/);
+        if (parts.length === 3) {
+          // YYYY-MM-DD
+          if (parts[0].length === 4) {
+            return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+          }
+          // DD-MM-YYYY or MM-DD-YYYY
+          if (parts[2].length === 4) {
+            return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+          }
+        }
+        return dStr.trim();
+      }
+      
+      return String(dStr);
     };
 
     const dbDob = normalizeDate(studentData.dob);
