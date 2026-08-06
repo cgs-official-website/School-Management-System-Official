@@ -23,7 +23,8 @@ export const NotificationProvider = ({ children }) => {
 
   const [lastViewed, setLastViewed] = useState({
     noticeboard: localStorage.getItem('lastViewed_noticeboard') || '1970-01-01T00:00:00.000Z',
-    homework: localStorage.getItem('lastViewed_homework') || '1970-01-01T00:00:00.000Z'
+    homework: localStorage.getItem('lastViewed_homework') || '1970-01-01T00:00:00.000Z',
+    notifications: localStorage.getItem('lastViewed_notifications') || '1970-01-01T00:00:00.000Z'
   });
 
   const clearBadge = useCallback((moduleKey) => {
@@ -185,7 +186,7 @@ export const NotificationProvider = ({ children }) => {
   }, [schoolId, role, currentUser, lastViewed.noticeboard, lastViewed.homework]);
 
   return (
-    <NotificationContext.Provider value={{ unreadCounts, clearBadge }}>
+    <NotificationContext.Provider value={{ unreadCounts, clearBadge, lastViewed }}>
       {children}
     </NotificationContext.Provider>
   );

@@ -10,7 +10,7 @@ import { useNotifications } from '../context/NotificationContext';
 
 export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navItems = [] }) {
   const { userProfile } = useAuth();
-  const { unreadCounts } = useNotifications();
+  const { unreadCounts, clearBadge, lastViewed } = useNotifications();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -25,28 +25,13 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
 
-  const [readNotices, setReadNotices] = useState(() => {
-    try {
-      const stored = localStorage.getItem(`readNotices_${userProfile?.uid}`);
-      return stored ? JSON.parse(stored) : [];
-    } catch (e) {
-      return [];
-    }
-  });
-
-  const unreadNotices = notices.filter(n => !readNotices.includes(n.id));
-
-  const handleMarkAsRead = (noticeId) => {
-    const updated = [...readNotices, noticeId];
-    setReadNotices(updated);
-    localStorage.setItem(`readNotices_${userProfile?.uid}`, JSON.stringify(updated));
+  const handleMarkAsRead = (moduleKey) => {
+    clearBadge(moduleKey);
   };
 
   const handleMarkAllAsRead = () => {
-    const allIds = notices.map(n => n.id);
-    const updated = [...new Set([...readNotices, ...allIds])];
-    setReadNotices(updated);
-    localStorage.setItem(`readNotices_${userProfile?.uid}`, JSON.stringify(updated));
+    clearBadge('noticeboard');
+    clearBadge('notifications');
   };
 
   // Close dropdown when clicking outside
@@ -96,7 +81,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   }, [userProfile?.schoolId, userProfile?.role, userProfile?.uid]);
 
   const allNotifications = [
-    ...notifications,
+    ...notifications.map(n => ({ ...n, type: 'personal' })),
     ...notices.map(n => ({ ...n, type: 'notice' }))
   ];
 
@@ -113,8 +98,9 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
   allNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const unreadCount = allNotifications.filter(n => {
-    if (n.type === 'notice') return !readNotices.includes(n.id);
-    return true;
+    if (n.type === 'notice') return n.createdAt > (lastViewed?.noticeboard || '1970');
+    if (n.type === 'personal') return n.createdAt > (lastViewed?.notifications || '1970');
+    return true; // chats are unread by definition if they exist here
   }).length;
 
   const handleRefresh = () => {
@@ -306,12 +292,24 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                 ) : (
                   <div className="divide-y divide-slate-100">
                     {allNotifications.map((notice) => {
-                      const isUnread = notice.type !== 'notice' || !readNotices.includes(notice.id);
+                      const isUnread = notice.type === 'notice' 
+                        ? notice.createdAt > (lastViewed?.noticeboard || '1970')
+                        : notice.type === 'personal'
+                          ? notice.createdAt > (lastViewed?.notifications || '1970')
+                          : true;
+
                       return (
                         <div 
                           key={notice.id} 
-                          onClick={() => notice.type === 'notice' && handleMarkAsRead(notice.id)}
-                          className={`p-4 hover:bg-slate-50 transition-colors ${notice.priority === 'high' || notice.type !== 'notice' ? 'bg-red-50/10' : ''} ${isUnread ? 'bg-primary-50/30' : 'opacity-70'}`}
+                          onClick={() => {
+                            if (notice.type === 'notice') handleMarkAsRead('noticeboard');
+                            if (notice.type === 'personal') handleMarkAsRead('notifications');
+                            if (notice.type === 'chat') {
+                              setShowNotifications(false);
+                              navigate(`/${userProfile?.role?.toLowerCase() || 'admin'}/chat`);
+                            }
+                          }}
+                          className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer ${notice.priority === 'high' || notice.type !== 'notice' ? 'bg-red-50/10' : ''} ${isUnread ? 'bg-primary-50/30' : 'opacity-70'}`}
                         >
                           <div className="flex gap-3">
                             <div className={`shrink-0 mt-1 ${notice.priority === 'high' ? 'text-red-500' : 'text-primary-500'}`}>
@@ -319,14 +317,17 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                             </div>
                             <div>
                               <p className="text-sm font-bold text-slate-900 line-clamp-1">{notice.title}</p>
-                              <p className="text-xs font-semibold text-slate-700 mt-1 line-clamp-2 leading-relaxed">{notice.message}</p>
+                              <p className="text-xs font-semibold text-slate-700 mt-1 line-clamp-2 leading-relaxed">{notice.description || notice.message}</p>
                               <p className="text-[10px] text-slate-500 mt-2 font-bold">
                                 {new Date(notice.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                               </p>
                             </div>
-                            {isUnread && notice.type === 'notice' && (
+                            {isUnread && (notice.type === 'notice' || notice.type === 'personal') && (
                               <button 
-                                onClick={() => handleMarkAsRead(notice.id)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleMarkAsRead(notice.type === 'notice' ? 'noticeboard' : 'notifications');
+                                }}
                                 className="ml-auto mt-1 shrink-0 w-2.5 h-2.5 bg-primary-500 rounded-full self-start hover:scale-125 transition-transform"
                                 title="Mark as read"
                               />
