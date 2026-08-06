@@ -134,7 +134,7 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
             <button 
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-3 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all shrink-0"
+              className="p-3 text-slate-500 hover:text-primary-600 hover:bg-white rounded-full transition-all shrink-0 shadow-sm border border-transparent hover:border-slate-200"
               title="Attach File"
             >
               <Paperclip size={22} />
@@ -147,13 +147,13 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
               />
             </button>
             
-            <div className="flex-1 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-slate-900/10 focus-within:border-slate-900 transition-all">
+            <div className="flex-1 bg-white rounded-[24px] border border-slate-200 overflow-hidden shadow-sm focus-within:ring-4 focus-within:ring-primary-500/10 focus-within:border-primary-400 transition-all flex items-center px-2">
               <textarea 
                 rows="1"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Type a message..."
-                className="w-full max-h-32 px-4 py-3 bg-transparent border-none focus:ring-0 resize-none font-medium custom-scrollbar"
+                className="w-full max-h-32 px-4 py-3 bg-transparent border-none focus:outline-none focus:ring-0 resize-none font-medium custom-scrollbar text-sm text-slate-700 placeholder-slate-400"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -162,9 +162,32 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
                 }}
               />
             </div>
+            
+            {inputText.trim() || mediaFile ? (
+              <button 
+                type="submit" 
+                disabled={uploading}
+                className="p-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:shadow-lg hover:shadow-primary-500/30 hover:-translate-y-0.5 rounded-full transition-all shrink-0 disabled:opacity-50 flex items-center justify-center"
+              >
+                {uploading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                ) : (
+                  <Send size={20} className="ml-1" />
+                )}
+              </button>
+            ) : (
+              <button 
+                type="button"
+                onClick={startRecording}
+                className="p-3 text-slate-500 hover:text-primary-600 hover:bg-white rounded-full transition-all shrink-0 shadow-sm border border-slate-200 hover:border-primary-200"
+                title="Hold to Record"
+              >
+                <Mic size={20} />
+              </button>
+            )}
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-between bg-red-50 border border-red-100 rounded-2xl px-4 py-3 animate-pulse">
+          <div className="flex-1 flex items-center justify-between bg-red-50 border border-red-100 rounded-full px-6 py-3 animate-pulse">
             <div className="flex items-center gap-3 text-red-600 font-bold">
               <div className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping" />
               Recording... {formatTime(recordingTime)}
@@ -172,38 +195,11 @@ export default function ChatInput({ schoolId, chatRoomId, onSendMessage }) {
             <button 
               type="button"
               onClick={stopRecording}
-              className="p-1.5 bg-white text-red-600 rounded-lg shadow-sm hover:bg-red-50 border border-red-100"
+              className="p-2 bg-white text-red-600 rounded-full shadow-sm hover:bg-red-100 border border-red-200"
             >
               <Square size={16} fill="currentColor" />
             </button>
           </div>
-        )}
-
-        {inputText.trim() || mediaFile ? (
-          <button 
-            type="submit"
-            disabled={uploading}
-            className={`p-3 rounded-xl shadow-sm shrink-0 transition-all ${
-              uploading ? 'bg-slate-300 text-slate-500' : 'bg-primary-600 text-white hover:bg-primary-700'
-            }`}
-          >
-            {uploading ? (
-              <div className="w-6 h-6 border-2 border-slate-500 border-t-transparent rounded-full animate-spin" />
-            ) : (
-              <Send size={22} className={inputText.trim() || mediaFile ? 'ml-1' : ''} />
-            )}
-          </button>
-        ) : (
-          !isRecording && (
-            <button 
-              type="button"
-              onClick={startRecording}
-              className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all shrink-0"
-              title="Voice Message"
-            >
-              <Mic size={22} />
-            </button>
-          )
         )}
       </form>
     </div>
