@@ -197,14 +197,21 @@ export default function AdminOverview() {
     // Subscriptions for pending attendance alerts
     const alertsQuery = query(
       collection(db, `schools/${schoolId}/notifications`),
-      where('type', '==', 'attendance_pending'),
-      where('read', '==', false),
-      orderBy('createdAt', 'desc')
+      where('type', '==', 'attendance_pending')
     );
     alertsUnsub = onSnapshot(alertsQuery, (snapshot) => {
       const alerts = [];
       snapshot.forEach(docSnap => {
-        alerts.push({ id: docSnap.id, ...docSnap.data() });
+        const data = docSnap.data();
+        if (data.read === false) {
+          alerts.push({ id: docSnap.id, ...data });
+        }
+      });
+      // Sort by createdAt desc in memory to bypass composite index requirement
+      alerts.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA;
       });
       setPendingAttendanceAlerts(alerts);
     }, (error) => {
