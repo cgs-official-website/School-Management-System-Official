@@ -105,16 +105,16 @@ export default function CanteenManagement() {
   const getReqDateStr = (r) => {
     if (r.date) return r.date;
     if (r.timestamp) {
-      return new Date(r.timestamp).toLocaleDateString('en-GB');
+      return new Date(r.timestamp).toISOString().split('T')[0];
     }
     if (r.createdAt) {
-      return new Date(r.createdAt).toLocaleDateString('en-GB');
+      return new Date(r.createdAt).toISOString().split('T')[0];
     }
     return '';
   };
 
   // Filter Logic
-  const todayStr = new Date().toLocaleDateString('en-GB');
+  const todayStr = new Date().toISOString().split('T')[0];
 
   const filteredRequests = React.useMemo(() => {
     return requests
