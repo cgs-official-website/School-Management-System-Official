@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { findStudentByAdmission, linkStudentToParent } from '../../firebase/firestore';
+import { findStudentByAdmission, linkStudentToParent, unlinkStudentFromParent } from '../../firebase/firestore';
 import { LuPlus as Plus, LuPencil as Pencil, LuTrash2 as Trash2, LuUsers as Users, LuX as X, LuBaby as Baby, LuLink as LinkIcon, LuSquareCheck as CheckCircle } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
@@ -95,9 +95,16 @@ export default function MyChildren() {
     if (!window.confirm("Are you sure you want to remove this child?")) return;
     
     try {
+      const childToRemove = children[index];
       const updatedChildren = children.filter((_, i) => i !== index);
       const userRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userRef, { children: updatedChildren });
+      
+      // If the child was officially linked, unlink them from the dashboard context
+      if (childToRemove.studentId) {
+        await unlinkStudentFromParent(currentUser.uid, childToRemove.studentId);
+        await updateProfileData();
+      }
       
       setChildren(updatedChildren);
       toast.success("Child removed successfully.");

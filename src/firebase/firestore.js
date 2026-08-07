@@ -240,6 +240,41 @@ export const switchActiveStudent = async (parentId, studentId, classId) => {
   }
 };
 
+export const unlinkStudentFromParent = async (parentId, studentId) => {
+  try {
+    const userRef = doc(db, "users", parentId);
+    await runTransaction(db, async (transaction) => {
+      const userDoc = await transaction.get(userRef);
+      if (!userDoc.exists()) return;
+      
+      const data = userDoc.data();
+      const currentLinked = data.linkedStudents || [];
+      const updatedLinked = currentLinked.filter(s => s.studentId !== studentId);
+      
+      const updates = { 
+        linkedStudents: updatedLinked,
+        updatedAt: new Date().toISOString()
+      };
+      
+      // If the active student is the one being removed, auto-switch
+      if (data.linkedStudentId === studentId) {
+        if (updatedLinked.length > 0) {
+          updates.linkedStudentId = updatedLinked[0].studentId;
+          updates.linkedClassId = updatedLinked[0].classId;
+        } else {
+          updates.linkedStudentId = null;
+          updates.linkedClassId = null;
+        }
+      }
+      
+      transaction.update(userRef, updates);
+    });
+  } catch (error) {
+    console.error("Error unlinking student:", error);
+    throw error;
+  }
+};
+
 // --- School Operations ---
 export const generateSchoolId = async () => {
   try {
