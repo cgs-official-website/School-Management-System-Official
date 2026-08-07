@@ -28,8 +28,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
 
   // Theme State
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'dark' || 
-      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    return localStorage.getItem('theme') === 'dark';
   });
 
   // Apply Theme on load and change
