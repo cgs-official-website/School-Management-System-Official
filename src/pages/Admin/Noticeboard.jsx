@@ -162,16 +162,16 @@ export default function Noticeboard() {
         )}
       </div>
 
-      <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700">
+      <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto custom-scrollbar w-full">
         <button
           onClick={() => setActiveTab('global')}
-          className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'global' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+          className={`pb-3 px-4 font-bold transition-colors whitespace-nowrap ${activeTab === 'global' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
         >
           Global Notices
         </button>
         <button
           onClick={() => setActiveTab('class')}
-          className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'class' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+          className={`pb-3 px-4 font-bold transition-colors whitespace-nowrap ${activeTab === 'class' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
         >
           Class Notices (From Teachers)
         </button>

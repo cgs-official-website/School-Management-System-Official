@@ -54,7 +54,7 @@ export default function SubscriptionsList() {
   const paginatedApprovedSchools = approvedSchools.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto min-w-0">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Subscriptions Overview</h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1">Monitor active tenant subscriptions and revenue.</p>
@@ -108,8 +108,8 @@ export default function SubscriptionsList() {
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">Tenant Subscriptions</h2>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div className="w-full min-w-0 overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse min-w-max">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                     <th className="p-4 pl-6">School Name</th>

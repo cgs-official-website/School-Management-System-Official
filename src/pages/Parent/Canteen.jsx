@@ -61,9 +61,9 @@ export default function Canteen() {
   const requestedLunch = requests.some(r => r.date === todayStr && r.mealType === 'Lunch');
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Emergency Canteen Requests</h1>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto pb-24 min-w-0 w-full">
+      <div className="mb-8 min-w-0 w-full">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white truncate">Emergency Canteen Requests</h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1">If your child forgot their meal, you can request a meal from the school canteen for today.</p>
       </div>
 
@@ -123,34 +123,36 @@ export default function Canteen() {
             No past canteen requests found.
           </div>
         ) : (
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
-                <th className="p-4 pl-6">Date</th>
-                <th className="p-4">Meal Type</th>
-                <th className="p-4 pr-6 text-right">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {requests.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).map((req) => (
-                <tr key={req.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                  <td className="p-4 pl-6 font-medium text-slate-900 dark:text-white">{req.date}</td>
-                  <td className="p-4 text-slate-600 dark:text-slate-300">{req.mealType}</td>
-                  <td className="p-4 pr-6 text-right">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${
-                      req.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                      req.status === 'Approved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                      req.status === 'Delivered' ? 'bg-green-50 text-green-700 border-green-200' :
-                      req.status === 'Cancelled' ? 'bg-red-50 text-red-700 border-red-200' :
-                      'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
-                    }`}>
-                      {req.status}
-                    </span>
-                  </td>
+          <div className="w-full min-w-0 overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left border-collapse min-w-max">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
+                  <th className="p-4 pl-6">Date</th>
+                  <th className="p-4">Meal Type</th>
+                  <th className="p-4 pr-6 text-right">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {requests.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp)).map((req) => (
+                  <tr key={req.id} className="hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <td className="p-4 pl-6 font-medium text-slate-900 dark:text-white">{req.date}</td>
+                    <td className="p-4 text-slate-600 dark:text-slate-300">{req.mealType}</td>
+                    <td className="p-4 pr-6 text-right">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${
+                        req.status === 'Pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                        req.status === 'Approved' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                        req.status === 'Delivered' ? 'bg-green-50 text-green-700 border-green-200' :
+                        req.status === 'Cancelled' ? 'bg-red-50 text-red-700 border-red-200' :
+                        'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                      }`}>
+                        {req.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

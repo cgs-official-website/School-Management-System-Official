@@ -885,7 +885,7 @@ export default function StaffAssignment() {
                 setAddStaffActiveTab('Personal');
                 setAddStaffModalOpen(true);
               }}
-              className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
+              className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-sm font-semibold hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
             >
               <UserPlus size={18} /> Add Staff
             </button>

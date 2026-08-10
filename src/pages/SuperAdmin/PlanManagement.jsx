@@ -92,7 +92,7 @@ export default function PlanManagement() {
         </div>
         <button 
           onClick={handleInitializeDefaults}
-          className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2.5 rounded-xl font-bold transition-colors"
+          className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2 text-sm font-semibold rounded-xl transition-colors"
         >
           <Database size={18} /> Initialize Defaults
         </button>
@@ -175,7 +175,7 @@ export default function PlanManagement() {
               <div className="p-4 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 shrink-0">
                 <button 
                   onClick={() => openEditor(plan)}
-                  className="w-full flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-primary-600 hover:border-primary-200 dark:hover:border-slate-700 px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm"
+                  className="w-full flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-primary-600 hover:border-primary-200 dark:hover:border-slate-700 px-4 py-2 text-sm font-semibold rounded-xl transition-all shadow-sm"
                 >
                   <Edit2 size={18} /> Edit Plan Details
                 </button>
@@ -281,12 +281,12 @@ export default function PlanManagement() {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-              <button onClick={closeEditor} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Cancel</button>
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
+              <button onClick={closeEditor} className="w-full sm:w-auto px-4 py-2 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Cancel</button>
               <button 
                 onClick={handleSavePlan}
                 disabled={loading}
-                className="flex items-center gap-2 px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 disabled:bg-primary-400 rounded-xl shadow-sm transition-colors"
+                className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 disabled:bg-primary-400 rounded-xl shadow-sm transition-colors"
               >
                 <Save size={20} /> {loading ? 'Saving...' : 'Save Plan Details'}
               </button>

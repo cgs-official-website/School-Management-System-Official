@@ -100,10 +100,10 @@ export default function ParentAttendance() {
   const percentage = totalCount === 0 ? 100 : Math.round(((presentCount + lateCount) / totalCount) * 100);
 
   return (
-    <div className="p-4 sm:p-8 max-w-5xl mx-auto animate-fade-in-up pb-24">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Detailed Attendance</h1>
+    <div className="p-4 sm:p-8 max-w-5xl mx-auto animate-fade-in-up pb-24 min-w-0 w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 w-full">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight truncate">Detailed Attendance</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">View your child's daily attendance records.</p>
         </div>
         

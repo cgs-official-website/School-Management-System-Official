@@ -164,7 +164,7 @@ export default function LandingPage() {
             </button>
           </div>
 
-          <button className="md:hidden text-[#F5F5F7]" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle menu">
+          <button className="md:hidden text-[#F5F5F7] p-2 -mr-2" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle menu">
             {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>

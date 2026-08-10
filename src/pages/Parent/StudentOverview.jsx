@@ -135,17 +135,17 @@ export default function StudentOverview() {
     : Math.round(((attendanceStats.present + attendanceStats.late) / attendanceStats.total) * 100);
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto pb-24 min-w-0 w-full">
       {/* Student Header */}
-      <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden mb-8">
+      <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden mb-8 w-full">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
         
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6">
           <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 text-3xl font-black border-4 border-white/10 shrink-0 shadow-xl">
             {(student.firstName?.charAt(0) || '')}{(student.lastName?.charAt(0) || '')}
           </div>
-          <div className="text-center md:text-left">
-            <h1 className="text-4xl font-black mb-2 tracking-tight">
+          <div className="text-center md:text-left min-w-0 w-full">
+            <h1 className="text-4xl font-black mb-2 tracking-tight truncate">
               {student.firstName || ''} {student.lastName || ''}
             </h1>
             <p className="text-slate-300 text-lg flex flex-wrap items-center justify-center md:justify-start gap-3">
@@ -163,8 +163,8 @@ export default function StudentOverview() {
           feeSummary.overdueCount > 0 
             ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200 text-red-900' 
             : 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 text-amber-900'
-        }`}>
-          <div className="flex items-start gap-4">
+        } w-full min-w-0`}>
+          <div className="flex items-start gap-4 min-w-0 w-full">
             <div className={`p-3.5 rounded-2xl shrink-0 mt-0.5 shadow-md ${
               feeSummary.overdueCount > 0 
                 ? 'bg-red-500 text-white shadow-red-500/30 animate-pulse' 
@@ -172,8 +172,8 @@ export default function StudentOverview() {
             }`}>
               <AlertTriangle size={26} />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className={`text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
                   feeSummary.overdueCount > 0 ? 'bg-red-200 text-red-950 font-black' : 'bg-amber-200 text-amber-950 font-bold'
                 }`}>

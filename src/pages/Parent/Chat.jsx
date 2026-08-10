@@ -309,16 +309,16 @@ export default function ParentChat() {
   }
 
   return (
-    <div className="p-0 sm:p-4 md:p-8 max-w-7xl mx-auto h-[100dvh] md:h-[calc(100vh-2rem)] flex flex-col bg-slate-50 dark:bg-slate-800 md:bg-transparent">
-      <div className="mb-4 md:mb-6 shrink-0 p-4 md:p-0 bg-white dark:bg-slate-900 md:bg-transparent border-b border-slate-200 dark:border-slate-700 md:border-transparent">
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">Staff Chat</h1>
+    <div className="p-0 sm:p-4 md:p-8 max-w-7xl mx-auto h-[100dvh] md:h-[calc(100vh-2rem)] flex flex-col bg-slate-50 dark:bg-slate-800 md:bg-transparent min-w-0 w-full">
+      <div className="mb-4 md:mb-6 shrink-0 p-4 md:p-0 bg-white dark:bg-slate-900 md:bg-transparent border-b border-slate-200 dark:border-slate-700 md:border-transparent min-w-0 w-full">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white truncate">Staff Chat</h1>
         <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-1">Communicate directly with teachers.</p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-0 md:gap-6 flex-1 min-h-0 bg-white dark:bg-slate-900 md:bg-transparent">
+      <div className="flex flex-col lg:flex-row gap-0 md:gap-6 flex-1 min-h-0 bg-white dark:bg-slate-900 md:bg-transparent w-full min-w-0">
         
         {/* Sidebar */}
-        <div className={`w-full lg:w-80 flex-col bg-white dark:bg-slate-900 md:border md:border-slate-200 md:rounded-3xl overflow-hidden md:shadow-sm shrink-0 ${
+        <div className={`w-full lg:w-80 flex-col bg-white dark:bg-slate-900 md:border md:border-slate-200 md:rounded-3xl overflow-hidden md:shadow-sm shrink-0 min-w-0 ${
           activeTeacher || activeChannel ? 'hidden lg:flex' : 'flex'
         }`}>
           <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col gap-4">
@@ -421,11 +421,11 @@ export default function ParentChat() {
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                 </button>
-                <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg">
+                <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg shrink-0">
                   {(activeTeacher.firstName || activeTeacher.name || 'T').charAt(0).toUpperCase()}
                 </div>
-                <div>
-                  <h2 className="font-bold text-slate-900 dark:text-white text-lg">
+                <div className="min-w-0">
+                  <h2 className="font-bold text-slate-900 dark:text-white text-lg truncate">
                     {activeTeacher.firstName ? `${activeTeacher.firstName} ${activeTeacher.lastName}` : (activeTeacher.name || 'Teacher')}
                   </h2>
                   <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
@@ -550,14 +550,14 @@ export default function ParentChat() {
                   >
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                   </button>
-                  <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg">
+                  <div className="w-12 h-12 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-lg shrink-0">
                     #
                   </div>
-                  <div>
-                    <h2 className="font-bold text-slate-900 dark:text-white text-lg">
+                  <div className="min-w-0">
+                    <h2 className="font-bold text-slate-900 dark:text-white text-lg truncate">
                       {activeChannel.name}
                     </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                       {activeChannel.description || 'Group Channel'}
                     </p>
                   </div>

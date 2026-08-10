@@ -210,9 +210,9 @@ export default function TenantManagement() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24 flex flex-col">
-      <div className="flex justify-between items-end mb-8 shrink-0">
-        <div>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto pb-24 flex flex-col min-w-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8 shrink-0">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Tenant Management</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage licenses and access for all schools on the platform.</p>
         </div>
@@ -230,7 +230,7 @@ export default function TenantManagement() {
             className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 transition-shadow"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {['all', 'pending', 'approved', 'suspended'].map(status => (
             <button
               key={status}
@@ -249,8 +249,8 @@ export default function TenantManagement() {
 
       {/* Data Table */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden mb-6">
-        <div className="overflow-x-auto flex-1">
-          <table className="w-full text-left border-collapse">
+        <div className="w-full min-w-0 overflow-x-auto custom-scrollbar flex-1">
+          <table className="w-full text-left border-collapse min-w-max">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm">
                 <th className="p-4 font-semibold w-1/3">School Details</th>
@@ -530,14 +530,14 @@ export default function TenantManagement() {
                     </h4>
                   </div>
                   <div className="p-4 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="min-w-0">
                         <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">UDISE Code</p>
-                        <p className="font-medium text-slate-900 dark:text-white">{selectedSchool.verificationDetails.udise || 'N/A'}</p>
+                        <p className="font-medium text-slate-900 dark:text-white truncate">{selectedSchool.verificationDetails.udise || 'N/A'}</p>
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">Board Affiliation</p>
-                        <p className="font-medium text-slate-900 dark:text-white">{selectedSchool.verificationDetails.boardAffiliation || 'N/A'}</p>
+                        <p className="font-medium text-slate-900 dark:text-white truncate">{selectedSchool.verificationDetails.boardAffiliation || 'N/A'}</p>
                       </div>
                     </div>
                     <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
@@ -590,15 +590,15 @@ export default function TenantManagement() {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-              <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
+              <button type="button" onClick={() => setShowModal(false)} className="w-full sm:w-auto px-4 py-2 text-slate-700 dark:text-slate-200 text-sm font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
                 Cancel
               </button>
               <button 
                 type="button" 
                 onClick={handleSavePermissions}
                 disabled={saving} 
-                className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors"
+                className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl shadow-sm transition-colors"
               >
                 {saving ? 'Saving...' : modalAction === 'approve' ? 'Approve & Save' : 'Save Permissions'}
               </button>
@@ -611,9 +611,9 @@ export default function TenantManagement() {
       {previewDoc && (
         <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 lg:p-8">
           <div className="bg-white dark:bg-slate-900 w-full max-w-5xl h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
-              <h3 className="font-bold text-xl text-slate-900 dark:text-white">{previewDoc.title}</h3>
-              <div className="flex items-center gap-3">
+            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-slate-800 shrink-0">
+              <h3 className="font-bold text-xl text-slate-900 dark:text-white truncate w-full">{previewDoc.title}</h3>
+              <div className="flex items-center gap-3 w-full sm:w-auto overflow-x-auto">
                 <a 
                   href={previewDoc.url} 
                   download 

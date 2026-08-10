@@ -146,11 +146,13 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
     return 'U';
   };
 
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+
   return (
-    <header className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-[4.5rem] shrink-0 flex items-center justify-between px-4 lg:px-8 z-30 relative min-w-0">
+    <header className="bg-white dark:bg-slate-900 rounded-none lg:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-16 lg:h-[4.5rem] shrink-0 flex items-center justify-between px-4 lg:px-8 z-30 relative min-w-0">
       
       {/* Left section: Mobile menu & Logo (if needed) */}
-      <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+      <div className={`flex items-center gap-2 sm:gap-4 flex-1 min-w-0 ${isMobileSearchOpen ? 'hidden md:flex' : 'flex'}`}>
         <button 
           onClick={() => navigate(-1)}
           className="p-2 -ml-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-1 transition-colors"
@@ -167,36 +169,38 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
             <Menu size={24} />
           </button>
         )}
+      </div>
         
-        {/* Search Bar Wrapper */}
-        <div className="relative hidden md:block w-36 lg:w-56 h-10 mr-4 z-20">
-          <form onSubmit={handleSearch} className="absolute top-0 left-0 w-36 lg:w-56 focus-within:w-72 lg:focus-within:w-96 h-10 transition-all duration-300 ease-out" ref={dropdownRef}>
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-              <Search size={18} className="text-slate-400 dark:text-slate-300" />
-            </div>
-            <input
-              type="text"
-              className="block w-full h-full pl-10 pr-3 border border-transparent rounded-2xl text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-primary-200 focus:shadow-md transition-all duration-300 ease-out"
-              placeholder="Search modules..."
+      {/* Search Bar Wrapper */}
+      <div className={`absolute inset-0 px-4 flex items-center z-40 bg-white dark:bg-slate-900 md:relative md:inset-auto md:px-0 md:bg-transparent md:flex w-full md:w-36 lg:w-56 h-10 md:mr-4 md:z-20 ${isMobileSearchOpen ? 'flex' : 'hidden md:flex'}`}>
+        <form onSubmit={handleSearch} className="relative w-full h-10 transition-all duration-300 ease-out md:focus-within:w-72 lg:focus-within:w-96" ref={dropdownRef}>
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+            <Search size={18} className="text-slate-400 dark:text-slate-300" />
+          </div>
+          <input
+            type="text"
+            className="block w-full h-full pl-10 pr-10 border border-slate-200 dark:border-slate-700 md:border-transparent rounded-2xl text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-primary-200 focus:shadow-md transition-all duration-300 ease-out"
+            placeholder="Search modules..."
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
               setShowDropdown(true);
             }}
             onFocus={() => setShowDropdown(true)}
+            autoFocus={isMobileSearchOpen}
           />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchQuery('');
-                setShowDropdown(false);
-              }}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-            >
-              <X size={16} />
-            </button>
-          )}
+          {/* Close Search Mobile / Clear Search Desktop */}
+          <button
+            type="button"
+            onClick={() => {
+              setSearchQuery('');
+              setShowDropdown(false);
+              if (isMobileSearchOpen) setIsMobileSearchOpen(false);
+            }}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+          >
+            <X size={16} />
+          </button>
           
           {/* Search Dropdown */}
           {showDropdown && searchQuery && (
@@ -211,6 +215,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
                           navigate(item.path);
                           setShowDropdown(false);
                           setSearchQuery('');
+                          setIsMobileSearchOpen(false);
                         }}
                         className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition-colors"
                       >
@@ -232,15 +237,17 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
               )}
             </div>
           )}
-          </form>
-        </div>
+        </form>
       </div>
 
       {/* Right section: Icons & Profile */}
-      <div className="flex items-center gap-2 sm:gap-4 shrink-0 min-w-0">
+      <div className={`flex items-center gap-2 sm:gap-4 shrink-0 min-w-0 ${isMobileSearchOpen ? 'hidden md:flex' : 'flex'}`}>
         
         {/* Mobile Search Icon (Instead of full bar) */}
-        <button className="md:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors shrink-0">
+        <button 
+          onClick={() => setIsMobileSearchOpen(true)}
+          className="md:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors shrink-0"
+        >
           <Search size={20} />
         </button>
 

@@ -177,9 +177,9 @@ export default function LicenseUsage() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto flex flex-col">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto flex flex-col min-w-0">
       <div className="mb-8 shrink-0 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuKey className="text-primary-600" /> License & Usage Management
           </h1>
@@ -235,14 +235,14 @@ export default function LicenseUsage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto">
+        <div className="w-full min-w-0 overflow-x-auto custom-scrollbar flex-1">
           {loading ? (
             <div className="p-12 text-center text-slate-500 dark:text-slate-400">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent mx-auto mb-4"></div>
               <p className="font-semibold">Loading live school licenses...</p>
             </div>
           ) : (
-            <table className="w-full text-left border-collapse min-w-[850px]">
+            <table className="w-full text-left border-collapse min-w-max">
               <thead className="sticky top-0 bg-white dark:bg-slate-900 shadow-sm z-10">
                 <tr className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm border-b border-slate-200 dark:border-slate-700">
                   <th className="p-4 font-bold">School Name</th>
@@ -368,14 +368,14 @@ export default function LicenseUsage() {
             </div>
 
             <div className="p-6 space-y-6">
-              <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                <h3 className="font-bold text-slate-900 dark:text-white text-lg">{selectedSchool.name}</h3>
-                <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs">
-                  <div>
+              <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 min-w-0">
+                <h3 className="font-bold text-slate-900 dark:text-white text-lg truncate w-full">{selectedSchool.name}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 text-xs">
+                  <div className="min-w-0">
                     <span className="text-slate-500 dark:text-slate-400 font-medium">Current Students:</span>
                     <p className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">{selectedSchool.students.current} enrolled</p>
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <span className="text-slate-500 dark:text-slate-400 font-medium">Current Teachers:</span>
                     <p className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">{selectedSchool.teachers.current} registered</p>
                   </div>

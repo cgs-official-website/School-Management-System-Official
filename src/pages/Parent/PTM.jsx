@@ -72,10 +72,10 @@ export default function PTM() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto pb-24 h-full flex flex-col">
-      <div className="mb-8 shrink-0">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-          <LuCalendarClock className="text-primary-600" /> Parent-Teacher Meetings
+    <div className="p-4 md:p-8 max-w-7xl mx-auto pb-24 h-full flex flex-col min-w-0 w-full">
+      <div className="mb-8 shrink-0 min-w-0 w-full">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3 truncate">
+          <LuCalendarClock className="text-primary-600 shrink-0" /> Parent-Teacher Meetings
         </h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1">View your scheduled meetings with teachers.</p>
       </div>
@@ -91,13 +91,13 @@ export default function PTM() {
             {upcomingMeetings.map(meeting => (
               <div key={meeting.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-primary-300 dark:hover:border-slate-700 hover:shadow-md transition-all flex flex-col group">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-300 shrink-0">
                       <LuUsers size={24} />
                     </div>
-                    <div>
-                      <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">Class Teacher</h3>
-                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Ref: {meeting.studentName}</p>
+                    <div className="min-w-0">
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight truncate">Class Teacher</h3>
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">Ref: {meeting.studentName}</p>
                     </div>
                   </div>
                   {getStatusBadge(meeting.status)}
@@ -147,13 +147,13 @@ export default function PTM() {
               {pastMeetings.map(meeting => (
                 <div key={meeting.id} className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col group">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-300 shrink-0">
                         <LuUsers size={24} />
                       </div>
-                      <div>
-                        <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight">Class Teacher</h3>
-                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Ref: {meeting.studentName}</p>
+                      <div className="min-w-0">
+                        <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight truncate">Class Teacher</h3>
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5 truncate">Ref: {meeting.studentName}</p>
                       </div>
                     </div>
                     {getStatusBadge(meeting.status)}

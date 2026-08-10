@@ -70,9 +70,9 @@ export default function ParentGrades() {
     const assessmentIds = Object.keys(selectedReport.marks || {});
 
     return (
-      <div className="p-4 sm:p-8 max-w-4xl mx-auto pb-24">
+      <div className="p-4 sm:p-8 max-w-4xl mx-auto pb-24 min-w-0 w-full">
         {/* Actions bar */}
-        <div className="flex justify-between items-center mb-6 print:hidden">
+        <div className="flex justify-between items-center mb-6 print:hidden w-full">
           <button 
             onClick={() => setSelectedReport(null)}
             className="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
@@ -142,9 +142,10 @@ export default function ParentGrades() {
           </div>
 
           {/* Grades Table */}
-          <div className="flex-1">
-            <table className="w-full text-left border-collapse border border-slate-300 dark:border-slate-600 font-sans text-xs">
-              <thead>
+          <div className="flex-1 min-w-0 w-full">
+            <div className="w-full min-w-0 overflow-x-auto">
+              <table className="w-full text-left border-collapse border border-slate-300 dark:border-slate-600 font-sans text-xs min-w-max">
+                <thead>
                 <tr className="text-white uppercase" style={{ backgroundColor: template.themeColor }}>
                   <th className="p-3 border border-slate-300 dark:border-slate-600 font-bold">Assessment / Subject</th>
                   <th className="p-3 border border-slate-300 dark:border-slate-600 text-center font-bold">Marks Obtained</th>
@@ -169,6 +170,7 @@ export default function ParentGrades() {
                 })}
               </tbody>
             </table>
+            </div>
 
             {/* Performance summary card */}
             <div className="mt-8 flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-sans">
@@ -200,13 +202,13 @@ export default function ParentGrades() {
   }
 
   return (
-    <div className="p-4 sm:p-8 max-w-5xl mx-auto pb-24">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center shadow-sm">
+    <div className="p-4 sm:p-8 max-w-5xl mx-auto pb-24 min-w-0 w-full">
+      <div className="flex items-center gap-3 mb-8 w-full">
+        <div className="w-12 h-12 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center shadow-sm shrink-0">
           <Award size={24} />
         </div>
-        <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Academic Report Cards</h1>
+        <div className="min-w-0">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight truncate">Academic Report Cards</h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5 font-medium">View and download your child's published academic progress records</p>
         </div>
       </div>

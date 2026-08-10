@@ -1248,7 +1248,7 @@ export default function StudentManagement() {
               setExportFileName('Student_Directory');
               setShowExportModal(true);
             }}
-            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
+            className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-sm font-semibold hover:bg-indigo-100 shadow-sm flex items-center gap-2 transition-colors border border-indigo-200"
           >
             <FileDown size={18} /> Export
           </button>
@@ -1259,7 +1259,7 @@ export default function StudentManagement() {
                 setSelectedStudentForUpload(null);
                 setUploadModalOpen(true);
               }}
-              className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl font-medium hover:bg-emerald-200 shadow-sm flex items-center gap-2 transition-colors"
+              className="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-sm font-semibold hover:bg-emerald-200 shadow-sm flex items-center gap-2 transition-colors"
             >
               <UploadCloud size={18} /> Bulk Import
             </button>
@@ -1268,7 +1268,7 @@ export default function StudentManagement() {
             showForm ? (
               <button 
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-xl font-medium shadow-sm flex items-center gap-2 transition-colors border border-red-200"
+                className="px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2 transition-colors border border-red-200"
               >
                 Cancel Admission
               </button>
@@ -1277,7 +1277,7 @@ export default function StudentManagement() {
                 <button
                   type="button"
                   onClick={() => setNewAdmissionDropdownOpen(!newAdmissionDropdownOpen)}
-                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium shadow-sm flex items-center gap-2 transition-colors focus:outline-none"
+                  className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2 transition-colors focus:outline-none"
                 >
                   <UserPlus size={18} /> New Admission <span className="text-[10px]">▼</span>
                 </button>
@@ -1666,7 +1666,7 @@ export default function StudentManagement() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto w-full custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider">
@@ -1885,7 +1885,7 @@ export default function StudentManagement() {
           </div>
 
           {/* Applications Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto w-full custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider">

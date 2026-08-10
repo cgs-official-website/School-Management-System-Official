@@ -119,9 +119,9 @@ export default function HomeworkOverview() {
   }
 
   return (
-    <div className="p-4 sm:p-8 max-w-5xl mx-auto animate-fade-in-up">
-      <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Homework & Assignments</h1>
+    <div className="p-4 sm:p-8 max-w-5xl mx-auto animate-fade-in-up min-w-0 w-full">
+      <div className="mb-8 min-w-0 w-full">
+        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight truncate">Homework & Assignments</h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1">Track upcoming tasks and recent evaluations.</p>
       </div>
 
@@ -145,11 +145,11 @@ export default function HomeworkOverview() {
 
             return (
               <div key={hw.id} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-xl ${isOverdue ? 'bg-red-50 text-red-600' : 'bg-primary-50 text-primary-600'}`}>
+                <div className="flex items-start gap-4 min-w-0">
+                  <div className={`p-3 rounded-xl shrink-0 ${isOverdue ? 'bg-red-50 text-red-600' : 'bg-primary-50 text-primary-600'}`}>
                     <FileText size={24} />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white">{hw.title}</h3>
                     <p className="text-slate-600 dark:text-slate-300 mt-1 mb-3">{hw.description}</p>
                     {hw.remarks && (

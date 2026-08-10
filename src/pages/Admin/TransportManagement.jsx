@@ -436,23 +436,23 @@ export default function TransportManagement() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Transport Management</h1>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto min-w-0 pb-24">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 w-full">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white truncate">Transport Management</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage bus routes, drivers, school vehicles, and student assignments.</p>
         </div>
         
         {/* Actions based on active tab */}
         {hasCreatePermission && (
-          <div>
+          <div className="w-full sm:w-auto">
             {activeTab === 'routes' && (
               <button 
                 onClick={() => {
                   setNewRoute({ name: '', vehicleNumber: '', driverName: '', driverPhone: '', capacity: '', customData: {} });
                   setShowCreateModal(true);
                 }}
-                className="px-4 py-2.5 bg-primary-600 text-white rounded-xl font-semibold shadow-sm flex items-center gap-2 hover:bg-primary-700 transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 bg-primary-600 text-white rounded-xl font-semibold shadow-sm flex items-center justify-center gap-2 hover:bg-primary-700 transition-colors"
               >
                 <Plus size={18} /> Add New Route
               </button>
@@ -475,7 +475,7 @@ export default function TransportManagement() {
                   });
                   setShowVehicleModal(true);
                 }}
-                className="px-4 py-2.5 bg-primary-600 text-white rounded-xl font-semibold shadow-sm flex items-center gap-2 hover:bg-primary-700 transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 bg-primary-600 text-white rounded-xl font-semibold shadow-sm flex items-center justify-center gap-2 hover:bg-primary-700 transition-colors"
               >
                 <Plus size={18} /> Register Vehicle
               </button>
@@ -485,10 +485,10 @@ export default function TransportManagement() {
       </div>
 
       {/* Tabs Switcher */}
-      <div className="flex items-center gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 pb-3">
+      <div className="flex items-center gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 pb-3 overflow-x-auto w-full custom-scrollbar">
         <button
           onClick={() => setActiveTab('routes')}
-          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all ${
             activeTab === 'routes'
               ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
@@ -500,7 +500,7 @@ export default function TransportManagement() {
 
         <button
           onClick={() => setActiveTab('vehicles')}
-          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all ${
             activeTab === 'vehicles'
               ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
@@ -512,7 +512,7 @@ export default function TransportManagement() {
 
         <button
           onClick={() => setActiveTab('assignments')}
-          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap transition-all ${
             activeTab === 'assignments'
               ? 'bg-primary-600 text-white shadow-md shadow-primary-500/20'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
@@ -694,8 +694,8 @@ export default function TransportManagement() {
 
           {/* Vehicles Table */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div className="overflow-x-auto w-full min-w-0">
+              <table className="w-full text-left border-collapse min-w-max">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider">
                     <th className="py-4 px-6">Vehicle Details</th>
@@ -826,8 +826,8 @@ export default function TransportManagement() {
           </div>
 
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div className="overflow-x-auto w-full min-w-0">
+              <table className="w-full text-left border-collapse min-w-max">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider">
                     <th className="py-4 px-6">Student</th>

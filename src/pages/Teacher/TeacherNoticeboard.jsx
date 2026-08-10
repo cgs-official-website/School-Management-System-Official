@@ -167,11 +167,11 @@ export default function TeacherNoticeboard() {
   const displayedNotices = activeTab === 'global' ? globalNotices : classNotices;
 
   return (
-    <div className="p-8 max-w-5xl mx-auto pb-24">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <Megaphone className="text-primary-600" />
+    <div className="p-4 sm:p-8 max-w-5xl mx-auto pb-24 min-w-0 w-full">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 w-full shrink-0">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3 truncate">
+            <Megaphone className="text-primary-600 shrink-0" />
             Noticeboard
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">View official announcements and broadcast messages to your class.</p>
@@ -184,23 +184,23 @@ export default function TeacherNoticeboard() {
               setNewNotice({ title: '', message: '', audience: 'all', priority: 'normal', sendWhatsApp: false, targetStudentIds: [] });
               setShowCreateModal(true);
             }}
-            className="px-5 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+            className="w-full sm:w-auto justify-center px-5 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
           >
             <Plus size={20} /> Create Class Notice
           </button>
         )}
       </div>
 
-      <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700">
+      <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700 overflow-x-auto w-full custom-scrollbar shrink-0">
         <button
           onClick={() => setActiveTab('global')}
-          className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'global' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+          className={`pb-3 px-4 font-bold whitespace-nowrap transition-colors ${activeTab === 'global' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
         >
           Global Notices
         </button>
         <button
           onClick={() => setActiveTab('class')}
-          className={`pb-3 px-4 font-bold transition-colors ${activeTab === 'class' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
+          className={`pb-3 px-4 font-bold whitespace-nowrap transition-colors ${activeTab === 'class' ? 'text-primary-600 border-b-2 border-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
         >
           Class Noticeboard
         </button>

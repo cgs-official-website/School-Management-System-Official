@@ -121,7 +121,7 @@ export default function BillingDashboard() {
                 </div>
                 <button 
                   onClick={() => navigate('/admin/upgrade')}
-                  className="px-5 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors flex items-center gap-2 shadow-sm"
+                  className="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2 shadow-sm"
                 >
                   <Zap size={16} /> Upgrade Plan
                 </button>
@@ -244,7 +244,7 @@ export default function BillingDashboard() {
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 pl-8">
               If you have questions about your billing or need a custom enterprise plan, please contact our support team.
             </p>
-            <button className="w-full py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            <button className="w-full px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm">
               Contact Support
             </button>
           </div>

@@ -234,26 +234,26 @@ export default function TeacherTimetable() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto h-full flex flex-col">
-      <div className="mb-8 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <LuCalendarDays className="text-primary-600" /> My Timetable
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto h-full flex flex-col min-w-0 w-full">
+      <div className="mb-8 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 w-full">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3 truncate">
+            <LuCalendarDays className="text-primary-600 shrink-0" /> My Timetable
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">View your weekly class schedule and teaching periods.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {isClassTeacher && (
             <select
               value={viewType}
               onChange={(e) => setViewType(e.target.value)}
-              className="px-4 py-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold shadow-sm focus:ring-2 focus:ring-primary-500"
+              className="w-full sm:w-auto px-4 py-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold shadow-sm focus:ring-2 focus:ring-primary-500"
             >
               <option value="subject">My Subject Timetable</option>
               <option value="class">My Class Timetable</option>
             </select>
           )}
-          <div className="bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-200 shadow-sm">
+          <div className="w-full sm:w-auto text-center bg-white dark:bg-slate-900 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-200 shadow-sm">
             {currentWeek}
           </div>
           <button
@@ -266,7 +266,7 @@ export default function TeacherTimetable() {
               setExportFileName(viewType === 'class' ? "My_Class_Timetable" : "My_Subject_Timetable");
               setShowExportModal(true);
             }}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
+            className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
           >
             <LuFileDown size={18} />
             Export

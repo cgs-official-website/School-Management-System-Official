@@ -242,9 +242,9 @@ export default function SupportTickets() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto flex flex-col">
-      <div className="mb-8 shrink-0 flex justify-between items-end">
-        <div>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto flex flex-col min-w-0">
+      <div className="mb-8 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuLifeBuoy className="text-primary-600" /> Support Tickets
           </h1>
@@ -253,8 +253,8 @@ export default function SupportTickets() {
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden mb-6">
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex gap-4 shrink-0">
-          <div className="relative flex-1 max-w-md">
+        <div className="p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row gap-4 shrink-0 min-w-0">
+          <div className="relative flex-1 max-w-full sm:max-w-md">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-300" size={20} />
             <input 
               type="text"
@@ -395,7 +395,7 @@ export default function SupportTickets() {
               </div>
             </div>
 
-            <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between gap-4 text-xs">
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs">
               <div className="flex items-center gap-2">
                 <span className="text-slate-500 dark:text-slate-400 font-bold">Status:</span>
                 <select
@@ -449,7 +449,7 @@ export default function SupportTickets() {
               <button 
                 type="submit"
                 disabled={submittingReply}
-                className="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs rounded-2xl flex items-center gap-2 transition-all shadow-md shadow-primary-500/20 disabled:opacity-50"
+                className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-2xl flex items-center gap-2 transition-all shadow-sm disabled:opacity-50"
               >
                 <LuSend size={14} /> {submittingReply ? 'Sending...' : 'Reply'}
               </button>

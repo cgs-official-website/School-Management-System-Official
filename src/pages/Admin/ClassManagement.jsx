@@ -260,13 +260,13 @@ export default function ClassManagement() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-        <div>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 w-full">
+        <div className="w-full md:w-auto">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Class & Section Management</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Define the academic structure and categories of your institution.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap w-full md:w-auto">
           {hasCreatePermission && (
             <button 
               onClick={() => setShowCategoryModal(true)}
@@ -335,7 +335,7 @@ export default function ClassManagement() {
             <button 
               type="submit" 
               disabled={saving}
-              className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 disabled:opacity-50 transition-colors h-12 shrink-0"
+              className="px-4 py-2 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-slate-800 disabled:opacity-50 transition-colors h-11 shrink-0"
             >
               {saving ? 'Saving...' : (editingId ? 'Update Class' : 'Save Class')}
             </button>
@@ -493,7 +493,7 @@ export default function ClassManagement() {
                 />
                 <button 
                   type="submit" 
-                  className="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-slate-800 transition-colors flex items-center gap-2"
                 >
                   <Plus size={16} /> Add
                 </button>

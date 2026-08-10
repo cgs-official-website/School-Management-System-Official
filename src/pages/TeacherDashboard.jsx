@@ -170,7 +170,7 @@ export default function TeacherDashboard() {
   // Removed strict Awaiting Assignment block so Subject Teachers can access their Timetable and other modules.
 
   return (
-    <div className="flex h-screen bg-[#f4f7fe] dark:bg-[#0b0f19] font-sans overflow-hidden p-4 gap-4">
+    <div className="flex h-screen bg-[#f4f7fe] dark:bg-[#0b0f19] font-sans overflow-hidden p-0 lg:p-4 gap-0 lg:gap-4">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
@@ -181,7 +181,7 @@ export default function TeacherDashboard() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-4 left-4 z-50 w-64 bg-white dark:bg-slate-900 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
+        fixed inset-y-0 left-0 lg:inset-y-4 lg:left-4 z-50 w-64 bg-white dark:bg-slate-900 rounded-none lg:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-[120%]'}
       `}>
         <div className="px-6 pb-6 pt-8 flex justify-between items-start">

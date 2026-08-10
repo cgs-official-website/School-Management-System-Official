@@ -103,11 +103,11 @@ export default function ParentFees() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto min-w-0 w-full">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Fees & Payments</h1>
+      <div className="flex justify-between items-center min-w-0 w-full">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight truncate">Fees & Payments</h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm">Monitor fee invoices, receipts, and outstanding dues for your linked student.</p>
         </div>
       </div>
@@ -171,13 +171,13 @@ export default function ParentFees() {
             ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200 text-red-900'
             : 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-200 text-amber-900'
         }`}>
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 min-w-0 w-full">
             <div className={`p-3 rounded-2xl shrink-0 mt-0.5 ${
               stats.overdueCount > 0 ? 'bg-red-500 text-white shadow-md shadow-red-500/20 animate-pulse' : 'bg-amber-500 text-white shadow-md shadow-amber-500/20'
             }`}>
               <AlertTriangle size={24} />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className={`text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
                   stats.overdueCount > 0 ? 'bg-red-200 text-red-950 font-black' : 'bg-amber-200 text-amber-950 font-bold'
@@ -219,8 +219,8 @@ export default function ParentFees() {
             <p className="font-medium text-sm">No fee invoices generated yet.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto min-w-0 w-full custom-scrollbar">
+            <table className="w-full text-left border-collapse min-w-max">
               <thead>
                 <tr className="border-b border-slate-100 dark:border-slate-800 text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider bg-slate-50/30">
                   <th className="py-4 px-6">Fee Details</th>
@@ -300,7 +300,7 @@ export default function ParentFees() {
       {/* Simulated Payment Modal */}
       {selectedInvoice && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full border border-slate-100 dark:border-slate-800 shadow-2xl relative animate-in fade-in zoom-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-slate-100 dark:border-slate-800 shadow-2xl relative animate-in fade-in zoom-in duration-200">
             <h3 className="text-lg font-bold text-slate-950 mb-2">Simulate Fee Payment</h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
               You are simulating a secure online payment of <span className="font-bold text-slate-900 dark:text-white">₹{selectedInvoice.amount}</span> for <strong>{selectedInvoice.name}</strong>.

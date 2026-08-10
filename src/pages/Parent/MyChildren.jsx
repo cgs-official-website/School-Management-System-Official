@@ -188,10 +188,10 @@ export default function MyChildren() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">My Children</h1>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto pb-24 min-w-0 w-full">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 w-full">
+        <div className="min-w-0 w-full">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white truncate">My Children</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage personal details of your children.</p>
         </div>
         <button 
@@ -301,7 +301,7 @@ export default function MyChildren() {
       {/* Add/Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-scale-up">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-scale-up flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 {editingIndex !== null ? 'Edit Child Details' : 'Add Child Details'}
@@ -314,7 +314,7 @@ export default function MyChildren() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto custom-scrollbar">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Full Name <span className="text-red-500">*</span></label>
                 <input 
@@ -420,7 +420,7 @@ export default function MyChildren() {
       {/* Link Official Account Modal */}
       {isLinkModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-scale-up flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
               <h3 className="text-xl font-bold text-slate-900 dark:text-white">Link Official Account</h3>
               <button 
@@ -431,7 +431,7 @@ export default function MyChildren() {
               </button>
             </div>
 
-            <form onSubmit={handleLinkSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleLinkSubmit} className="p-6 space-y-4 overflow-y-auto custom-scrollbar">
               <div className="bg-primary-50 text-primary-800 p-4 rounded-xl text-sm mb-4">
                 Linking <strong>{children[linkingIndex]?.name}</strong>. Their date of birth will be used automatically for verification.
               </div>

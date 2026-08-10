@@ -158,10 +158,10 @@ export default function SubjectManagement() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24 h-[calc(100vh-2rem)] flex flex-col">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 shrink-0">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Subject Management</h1>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto pb-24 h-[calc(100vh-2rem)] flex flex-col print:p-0 print:h-auto">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 shrink-0 w-full">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white truncate">Subject Management</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Create subjects and assign them to teaching staff.</p>
         </div>
         {hasCreatePermission && (
@@ -298,7 +298,7 @@ export default function SubjectManagement() {
               <button 
                 onClick={handleSave}
                 disabled={saving}
-                className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-50"
+                className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl transition-colors disabled:opacity-50"
               >
                 {saving ? 'Saving...' : 'Save Subject'}
               </button>

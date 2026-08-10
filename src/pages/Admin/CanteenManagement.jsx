@@ -178,10 +178,10 @@ export default function CanteenManagement() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24 font-sans">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto pb-24 font-sans">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 shrink-0 w-full">
+        <div className="min-w-0">
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white flex items-center gap-3">
             <Coffee className="text-primary-600" /> Canteen Orders & Requests
           </h1>
@@ -322,8 +322,8 @@ export default function CanteenManagement() {
             <p className="text-sm max-w-sm text-slate-400 dark:text-slate-300">Try adjusting your filters or wait for a parent to submit a request.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto w-full min-w-0">
+            <table className="w-full text-left border-collapse min-w-max">
               <thead>
                 <tr className="bg-slate-50/75 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-extrabold">
                   <th className="p-5 pl-8">Student / Admission</th>

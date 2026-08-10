@@ -376,13 +376,13 @@ export default function HRPayrollManagement() {
   };
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto h-[calc(100vh-2rem)] flex flex-col print:p-0 print:h-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 shrink-0 print:hidden">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto h-[calc(100vh-2rem)] flex flex-col min-w-0 print:p-0 print:h-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4 shrink-0 print:hidden w-full">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">HR & Payroll</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage staff salaries, deductions, and payslips.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto mt-2 sm:mt-0">
           {hasEditPermission && (
             <button 
               onClick={() => setShowSettingsModal(true)}
@@ -452,7 +452,8 @@ export default function HRPayrollManagement() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto custom-scrollbar">          <table className="w-full text-left border-collapse table-fixed">
+        <div className="flex-1 w-full min-w-0 overflow-x-auto overflow-y-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse min-w-max">
             <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10">
               <tr>
                 <th className="w-[22%] min-w-[150px] p-4 font-semibold text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">Staff Name</th>
@@ -579,7 +580,7 @@ export default function HRPayrollManagement() {
             
             <form onSubmit={handleSave} className="flex-1 overflow-y-auto custom-scrollbar">
               <div className="p-6 space-y-5">
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Staff Member</label>
                     <select
@@ -608,7 +609,7 @@ export default function HRPayrollManagement() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Base Salary (₹)</label>
                     <input 

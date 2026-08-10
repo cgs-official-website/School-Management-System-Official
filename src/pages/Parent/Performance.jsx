@@ -114,10 +114,10 @@ export default function Performance() {
   const trendStatus = student.performanceStatus || 'stable';
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto pb-24">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-          <LuTrendingUp className="text-primary-600" /> Academic Performance
+    <div className="p-4 md:p-8 max-w-7xl mx-auto pb-24 min-w-0 w-full">
+      <div className="mb-8 min-w-0 w-full">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3 truncate">
+          <LuTrendingUp className="text-primary-600 shrink-0" /> Academic Performance
         </h1>
         <p className="text-slate-500 dark:text-slate-400 mt-1">Review your child's academic progress and teacher feedback.</p>
       </div>
@@ -161,12 +161,12 @@ export default function Performance() {
           {recentAssessments.length > 0 ? (
             <div className="space-y-4">
               {recentAssessments.map(assessment => (
-                <div key={assessment.id} className="flex justify-between items-center p-4 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:bg-primary-50/30 transition-all">
-                  <div>
-                    <h3 className="font-bold text-slate-900 dark:text-white">{assessment.title}</h3>
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{new Date(assessment.date).toLocaleDateString('en-GB')}</p>
+                <div key={assessment.id} className="flex justify-between items-center p-4 rounded-2xl border border-slate-100 dark:border-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:bg-primary-50/30 transition-all gap-4 w-full min-w-0">
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-slate-900 dark:text-white truncate">{assessment.title}</h3>
+                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400 truncate">{new Date(assessment.date).toLocaleDateString('en-GB')}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right shrink-0">
                     <p className="font-black text-lg text-slate-900 dark:text-white">{assessment.score} <span className="text-slate-400 dark:text-slate-300 text-sm font-bold">/ {assessment.totalMarks}</span></p>
                     <p className="text-xs font-bold text-primary-600">{assessment.perc}%</p>
                   </div>

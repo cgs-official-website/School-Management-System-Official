@@ -492,38 +492,40 @@ export default function Attendance() {
           <p className="text-slate-500 dark:text-slate-400 mt-1">View analytics, run cutoff audits, and log student attendance records.</p>
         </div>
 
-        {/* Tab Selection */}
-        <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 p-1.5 rounded-2xl border border-slate-200/60 shadow-sm shrink-0">
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
-              activeTab === 'dashboard'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
-            }`}
-          >
-            <DashboardIcon size={16} /> Dashboard
-          </button>
-          <button
-            onClick={() => setActiveTab('marking')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
-              activeTab === 'marking'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
-            }`}
-          >
-            <ClipboardIcon size={16} /> Daily Marking
-          </button>
-          <button
-            onClick={() => setActiveTab('analytics')}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
-              activeTab === 'analytics'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
-            }`}
-          >
-            <TrendIcon size={16} /> Analytics
-          </button>
+        {/* Tab Selection Wrapper for Mobile Scroll */}
+        <div className="w-full min-w-0 overflow-x-auto custom-scrollbar pb-1 -mb-1">
+          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 p-1.5 rounded-2xl border border-slate-200/60 shadow-sm min-w-max">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                activeTab === 'dashboard'
+                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
+              }`}
+            >
+              <DashboardIcon size={16} /> Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab('marking')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                activeTab === 'marking'
+                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
+              }`}
+            >
+              <ClipboardIcon size={16} /> Daily Marking
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                activeTab === 'analytics'
+                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
+              }`}
+            >
+              <TrendIcon size={16} /> Analytics
+            </button>
+          </div>
         </div>
       </div>
 

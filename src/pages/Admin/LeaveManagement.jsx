@@ -122,16 +122,16 @@ export default function LeaveManagement() {
       {/* Main Container */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col flex-1 min-h-0 overflow-hidden">
         {/* Tabs */}
-        <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-6 pt-4 shrink-0">
+        <div className="flex border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 px-6 pt-4 shrink-0 overflow-x-auto w-full custom-scrollbar">
           <button 
             onClick={() => setActiveTab('pending')}
-            className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'pending' ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50'}`}
+            className={`px-6 py-3 font-bold text-sm border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${activeTab === 'pending' ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50'}`}
           >
             <LuClock size={18} /> Pending Requests ({pendingLeaves.length})
           </button>
           <button 
             onClick={() => setActiveTab('history')}
-            className={`px-6 py-3 font-bold text-sm border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'history' ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50'}`}
+            className={`px-6 py-3 font-bold text-sm border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${activeTab === 'history' ? 'border-primary-600 text-primary-700 bg-white dark:bg-slate-900' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100/50'}`}
           >
             <LuFileText size={18} /> History ({pastLeaves.length})
           </button>
@@ -325,13 +325,13 @@ export default function LeaveManagement() {
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-between gap-3 shrink-0">
-              <div>
+            <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 shrink-0">
+              <div className="w-full sm:w-auto flex justify-center">
                 {hasDeletePermission && (
                   <button
                     type="button"
                     onClick={() => handleDeleteClick(selectedLeave.id)}
-                    className="px-4 py-2 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
+                    className="w-full sm:w-auto justify-center px-4 py-2 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
                   >
                     <LuTrash2 size={16} />
                     Delete Request
@@ -339,14 +339,14 @@ export default function LeaveManagement() {
                 )}
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                 {selectedLeave.status === 'Pending' ? (
                   <>
                     {hasEditPermission && (
                       <button
                         type="button"
                         onClick={() => handleStatusUpdateClick(selectedLeave.id, 'Rejected')}
-                        className="px-5 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
+                        className="w-full sm:w-auto justify-center px-5 py-2.5 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-xl text-sm font-bold transition-colors flex items-center gap-1.5"
                       >
                         <LuX size={18} />
                         Reject Leave
@@ -356,26 +356,26 @@ export default function LeaveManagement() {
                       <button
                         type="button"
                         onClick={() => handleStatusUpdateClick(selectedLeave.id, 'Approved')}
-                        className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-1.5"
+                        className="w-full sm:w-auto justify-center px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-1.5"
                       >
                         <LuCheck size={18} />
                         Approve Leave
                       </button>
                     )}
                     {!hasEditPermission && (
-                      <p className="text-slate-500 dark:text-slate-400 font-semibold text-sm italic">View only access</p>
+                      <p className="text-slate-500 dark:text-slate-400 font-semibold text-sm italic text-center w-full">View only access</p>
                     )}
                   </>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                    <div className="flex items-center justify-center gap-2">
                       <span className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase">Status:</span>
                       {getStatusBadge(selectedLeave.status)}
                     </div>
                     <button
                       type="button"
                       onClick={() => setSelectedLeave(null)}
-                      className="px-5 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
+                      className="w-full sm:w-auto justify-center px-5 py-2 border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 transition-colors"
                     >
                       Close Details
                     </button>

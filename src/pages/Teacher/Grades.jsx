@@ -363,29 +363,29 @@ export default function Grades() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24 h-[calc(100vh-2rem)] flex flex-col">
-      <div className="flex justify-between items-end mb-8 shrink-0">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Grades & Assessments</h1>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto pb-24 h-[calc(100vh-2rem)] flex flex-col min-w-0 w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 shrink-0 gap-4 w-full">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white truncate">Grades & Assessments</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Create exams and log student performance.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <button 
             onClick={handlePublishReportCards}
             disabled={publishing}
-            className="px-4 py-2 bg-green-50 text-green-700 rounded-xl font-medium hover:bg-green-100 shadow-sm flex items-center gap-2 transition-colors border border-green-200 disabled:opacity-50"
+            className="w-full sm:w-auto justify-center px-4 py-2 bg-green-50 text-green-700 rounded-xl font-medium hover:bg-green-100 shadow-sm flex items-center gap-2 transition-colors border border-green-200 disabled:opacity-50"
           >
             <Send size={18} className={publishing ? "animate-spin" : ""} /> {publishing ? "Publishing..." : "Publish to Parent Portal"}
           </button>
           <button 
             onClick={generateReportCards}
-            className="px-4 py-2 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 dark:hover:bg-slate-700 shadow-sm flex items-center gap-2 transition-colors border border-primary-200"
+            className="w-full sm:w-auto justify-center px-4 py-2 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 dark:hover:bg-slate-700 shadow-sm flex items-center gap-2 transition-colors border border-primary-200"
           >
             <Printer size={18} /> Print Report Cards
           </button>
           <button 
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+            className="w-full sm:w-auto justify-center px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
           >
             <Plus size={18} /> New Assessment
           </button>
@@ -467,7 +467,7 @@ export default function Grades() {
                 <button 
                   onClick={handleSaveGrades}
                   disabled={savingGrades || students.length === 0}
-                  className="px-6 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
+                  className="w-full sm:w-auto justify-center px-6 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
                 >
                   {savingGrades ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div> : <Save size={18} />}
                   {savingGrades ? 'Saving...' : 'Save Grades'}
@@ -475,8 +475,8 @@ export default function Grades() {
               </div>
 
               {/* Data Table */}
-              <div className="flex-1 overflow-y-auto">
-                <table className="w-full text-left border-collapse">
+              <div className="flex-1 overflow-y-auto overflow-x-auto w-full min-w-0">
+                <table className="w-full text-left border-collapse min-w-max">
                   <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800 shadow-sm z-10">
                     <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                       <th className="p-4 pl-6">Student</th>

@@ -246,16 +246,16 @@ export default function ExamManagement() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24">
-      <div className="flex justify-between items-end mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Examinations & Results</h1>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto pb-24">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white truncate">Examinations & Results</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage school-wide exams and generate report cards.</p>
         </div>
         {activeTab === 'manage' && (
           <button 
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+            className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors w-full sm:w-auto justify-center"
           >
             <Plus size={18} /> Create Exam
           </button>
@@ -264,7 +264,7 @@ export default function ExamManagement() {
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col min-h-[500px]">
         {/* Header Tabs */}
-        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex gap-2 bg-slate-50 dark:bg-slate-800 rounded-t-3xl">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex gap-2 bg-slate-50 dark:bg-slate-800 rounded-t-3xl overflow-x-auto custom-scrollbar">
           <button 
             onClick={() => setActiveTab('manage')}
             className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${activeTab === 'manage' ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}
@@ -352,14 +352,14 @@ export default function ExamManagement() {
                 <button 
                   onClick={generateReportCard}
                   disabled={!selectedExamId || !selectedClassId || generatingReport}
-                  className="px-6 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center gap-2 h-11 shrink-0"
+                  className="px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 h-11 shrink-0 w-full md:w-auto"
                 >
                   {generatingReport ? <Loader2 size={18} className="animate-spin" /> : <FileBarChart size={18} />}
                   Generate View
                 </button>
                 <button 
                   onClick={() => setIsBuildingTemplate(true)}
-                  className="px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors flex items-center gap-2 h-11 shrink-0"
+                  className="px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 h-11 shrink-0 w-full md:w-auto"
                 >
                   <Palette size={18} />
                   Customize Design
@@ -374,18 +374,18 @@ export default function ExamManagement() {
                   </div>
                 ) : (
                   <div>
-                    <div className="flex justify-between items-end mb-6">
-                      <div>
-                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{reportData.examName}</h2>
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
+                      <div className="min-w-0">
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white truncate">{reportData.examName}</h2>
                         <p className="text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2 mt-1">
                           <GraduationCap size={16} /> Class: {reportData.className}
                         </p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2 w-full md:w-auto">
                         <button 
                           onClick={handlePublishReportCards}
                           disabled={publishing}
-                          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
+                          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
                         >
                           <FileText size={18} /> {publishing ? 'Publishing...' : 'Publish Report Cards'}
                         </button>
@@ -680,7 +680,7 @@ export default function ExamManagement() {
                 <button type="button" onClick={() => setShowCreateModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">
                   Cancel
                 </button>
-                <button type="submit" disabled={creating} className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">
+                <button type="submit" disabled={creating} className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">
                   {creating ? 'Saving...' : 'Create Exam'}
                 </button>
               </div>

@@ -354,7 +354,7 @@ export default function Attendance() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto h-full flex flex-col">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto h-full flex flex-col min-w-0 w-full">
       {/* Banner */}
       <div className="relative bg-gradient-to-br from-primary-600 to-indigo-700 rounded-3xl p-6 md:p-8 text-white overflow-hidden shadow-lg mb-8 shrink-0">
         {/* Decorative elements */}
@@ -376,17 +376,17 @@ export default function Attendance() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 shrink-0">
-        <div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 shrink-0 w-full">
+        <div className="min-w-0">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Mark Attendance</h2>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Select date/session to register or view class attendance statistics.</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-4 bg-slate-50/50 dark:bg-slate-800/50 p-2 rounded-2xl border border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 bg-slate-50/50 dark:bg-slate-800/50 p-2 rounded-2xl border border-slate-100 dark:border-slate-800 w-full sm:w-auto">
           <select 
             value={viewMode}
             onChange={(e) => setViewMode(e.target.value)}
-            className="border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary-500 text-slate-700 dark:text-slate-200 font-semibold py-2 pl-4 pr-10 bg-white dark:bg-slate-900 shadow-sm outline-none"
+            className="w-full sm:w-auto border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary-500 text-slate-700 dark:text-slate-200 font-semibold py-2 pl-4 pr-10 bg-white dark:bg-slate-900 shadow-sm outline-none"
           >
             <option value="daily">Daily Marking</option>
             <option value="weekly">This Week Report</option>
@@ -394,8 +394,8 @@ export default function Attendance() {
             <option value="term">This Term Report</option>
           </select>
           {viewMode === 'daily' && (
-            <div className="flex items-center gap-2 shrink-0">
-              <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 w-full sm:w-auto">
+              <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm w-full sm:w-auto">
                 <div className="pl-2 text-slate-400 dark:text-slate-300">
                   <CalendarIcon size={20} />
                 </div>
@@ -403,13 +403,13 @@ export default function Attendance() {
                   type="date" 
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="border-none focus:ring-0 text-slate-700 dark:text-slate-200 font-medium py-1 pr-2 bg-transparent cursor-pointer outline-none"
+                  className="w-full sm:w-auto border-none focus:ring-0 text-slate-700 dark:text-slate-200 font-medium py-1 pr-2 bg-transparent cursor-pointer outline-none"
                 />
               </div>
               <select 
                 value={selectedSession}
                 onChange={(e) => setSelectedSession(e.target.value)}
-                className="border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary-500 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-4 bg-white dark:bg-slate-900 shadow-sm outline-none"
+                className="w-full sm:w-auto border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary-500 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-4 bg-white dark:bg-slate-900 shadow-sm outline-none"
               >
                 <option value="FN">FN (Forenoon)</option>
                 <option value="AN">AN (Afternoon)</option>
@@ -438,12 +438,12 @@ export default function Attendance() {
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {/* Table Header */}
-        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex justify-between items-center">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 pl-2">
             <Users size={18} />
             <span>{students.length} Students</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <button 
               onClick={() => {
                 if (students.length === 0) {
@@ -458,7 +458,7 @@ export default function Attendance() {
                 setShowExportModal(true);
               }}
               disabled={loading || students.length === 0}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98] disabled:opacity-50"
+              className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98] disabled:opacity-50"
             >
               <LuFileDown size={18} />
               Export
@@ -467,7 +467,7 @@ export default function Attendance() {
               <button 
                 onClick={handleSave}
                 disabled={saving || loading || students.length === 0}
-                className="px-6 py-2 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
+                className="w-full sm:w-auto justify-center px-6 py-2 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
               >
                 {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div> : <Save size={18} />}
                 {saving ? 'Saving...' : 'Save Attendance'}
@@ -556,8 +556,8 @@ export default function Attendance() {
             })}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto w-full min-w-0">
+            <table className="w-full text-left border-collapse min-w-max">
               <thead>
                 <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                   <th className="p-4 pl-6">Student Name</th>

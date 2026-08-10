@@ -230,17 +230,17 @@ export default function HomeworkManagement() {
   }
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto animate-fade-in-up">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Homework Management</h1>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto animate-fade-in-up min-w-0 w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 w-full">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight truncate">Homework Management</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Assign tasks and evaluate student progress.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {hasCreatePermission && (
             <button 
               onClick={() => setShowExcelModal(true)}
-              className="flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2.5 rounded-xl hover:bg-emerald-200 transition-colors font-semibold"
+              className="w-full sm:w-auto justify-center flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2.5 rounded-xl hover:bg-emerald-200 transition-colors font-semibold"
             >
               <Upload size={18} />
               Evaluate via Excel
@@ -249,7 +249,7 @@ export default function HomeworkManagement() {
           {hasCreatePermission && (
             <button 
               onClick={() => setShowCreateModal(true)}
-              className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl hover:bg-primary-700 transition-colors font-semibold shadow-sm shadow-primary-600/20"
+              className="w-full sm:w-auto justify-center flex items-center gap-2 bg-primary-600 text-white px-4 py-2.5 rounded-xl hover:bg-primary-700 transition-colors font-semibold shadow-sm shadow-primary-600/20"
             >
               <Plus size={18} />
               Assign Homework
@@ -513,12 +513,12 @@ export default function HomeworkManagement() {
       {showTrackingModal && selectedHomework && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-3xl flex flex-col max-h-[90vh] overflow-hidden shadow-2xl animate-fade-in-up">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800 shrink-0">
-              <div>
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-slate-800 shrink-0 w-full">
+              <div className="min-w-0">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedHomework.title}</h2>
                 <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Student Progress Tracking</p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                 <button
                   onClick={() => {
                     if (classStudents.length === 0) {
@@ -529,12 +529,12 @@ export default function HomeworkManagement() {
                     setExportFileName(`${defaultName}_Submissions`);
                     setShowExportModal(true);
                   }}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
+                  className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-4 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
                 >
                   <FileDown size={18} />
                   Export
                 </button>
-                <button onClick={() => setShowTrackingModal(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300">
+                <button onClick={() => setShowTrackingModal(false)} className="w-full sm:w-auto justify-center p-2 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 bg-slate-100 dark:bg-slate-700 sm:bg-transparent rounded-xl transition-colors">
                   <X size={24} />
                 </button>
               </div>

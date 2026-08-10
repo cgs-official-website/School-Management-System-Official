@@ -200,18 +200,18 @@ export default function TimetableManagement() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24 h-[calc(100vh-2rem)] flex flex-col">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 shrink-0">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Timetable Management</h1>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto pb-24 h-[calc(100vh-2rem)] flex flex-col">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 shrink-0 w-full">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white truncate">Timetable Management</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Structure the weekly schedule for each class.</p>
         </div>
         
-        <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm w-full md:w-auto">
           <select 
             value={selectedClassId}
             onChange={(e) => setSelectedClassId(e.target.value)}
-            className="px-4 py-2 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 font-medium w-full md:w-64"
+            className="px-4 py-2 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 font-medium w-full sm:w-64"
           >
             <option value="">Select a Class...</option>
             {classes.map(c => (

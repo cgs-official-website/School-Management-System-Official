@@ -649,20 +649,20 @@ export default function InventoryManagement() {
   };
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto flex flex-col min-h-screen pb-12">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto flex flex-col min-w-0 min-h-screen pb-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 shrink-0">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
-            <LuPackage className="text-primary-600" /> Inventory & Assets
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 shrink-0 w-full">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3 truncate">
+            <LuPackage className="text-primary-600 shrink-0" /> <span className="truncate">Inventory & Assets</span>
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Track school assets, stock, and inventory.</p>
         </div>
         
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
           <button 
             onClick={() => navigate('/admin/inventory/audit-logs')}
-            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
+            className="w-full sm:w-auto justify-center flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
           >
             <LuClipboardList size={18} /> Audit Logs
           </button>
@@ -670,7 +670,7 @@ export default function InventoryManagement() {
           {canCreate('inventory') && (
             <button 
               onClick={() => setShowImportModal(true)}
-              className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
+              className="w-full sm:w-auto justify-center flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
             >
               <Upload size={18} /> Bulk Import
             </button>
@@ -685,7 +685,7 @@ export default function InventoryManagement() {
               setExportFileName('inventory_products_' + new Date().toISOString().slice(0,10));
               setShowExportModal(true);
             }}
-            className="flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
+            className="w-full sm:w-auto justify-center flex items-center gap-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-semibold"
           >
             <Download size={18} /> Bulk Export
           </button>
@@ -694,7 +694,7 @@ export default function InventoryManagement() {
             canCreate('inventory') ? (
               <button 
                 onClick={() => { setItemFormData({ id: '', productId: '', name: '', category: '', quantity: 0, unit: 'pcs', status: 'In Stock' }); setShowItemModal(true); }}
-                className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2 rounded-xl hover:bg-primary-700 transition-all font-semibold shadow-sm"
+                className="w-full sm:w-auto justify-center flex items-center gap-2 bg-primary-600 text-white px-5 py-2 rounded-xl hover:bg-primary-700 transition-all font-semibold shadow-sm"
               >
                 <Plus size={18} /> Add Item
               </button>
@@ -703,7 +703,7 @@ export default function InventoryManagement() {
             canCreate('inventory') ? (
               <button 
                 onClick={() => { setCategoryFormData({ id: '', name: '', description: '' }); setShowCategoryModal(true); }}
-                className="flex items-center gap-2 bg-primary-600 text-white px-5 py-2 rounded-xl hover:bg-primary-700 transition-all font-semibold shadow-sm"
+                className="w-full sm:w-auto justify-center flex items-center gap-2 bg-primary-600 text-white px-5 py-2 rounded-xl hover:bg-primary-700 transition-all font-semibold shadow-sm"
               >
                 <Plus size={18} /> Add Category
               </button>
@@ -713,10 +713,10 @@ export default function InventoryManagement() {
       </div>
 
       {/* Tabs Selector */}
-      <div className="flex border-b border-slate-200 dark:border-slate-700 mb-6 shrink-0 gap-4">
+      <div className="flex border-b border-slate-200 dark:border-slate-700 mb-6 shrink-0 gap-4 overflow-x-auto w-full custom-scrollbar">
         <button 
           onClick={() => setActiveTab('items')}
-          className={`pb-3 text-sm font-bold border-b-2 transition-all ${
+          className={`pb-3 text-sm font-bold border-b-2 whitespace-nowrap transition-all ${
             activeTab === 'items' ? 'border-primary-600 text-primary-600' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
         >
@@ -724,7 +724,7 @@ export default function InventoryManagement() {
         </button>
         <button 
           onClick={() => setActiveTab('categories')}
-          className={`pb-3 text-sm font-bold border-b-2 transition-all ${
+          className={`pb-3 text-sm font-bold border-b-2 whitespace-nowrap transition-all ${
             activeTab === 'categories' ? 'border-primary-600 text-primary-600' : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
           }`}
         >
@@ -802,8 +802,8 @@ export default function InventoryManagement() {
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[800px]">
+            <div className="overflow-x-auto w-full min-w-0">
+              <table className="w-full text-left border-collapse min-w-max">
                 <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
                   <tr className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">
                     <th className="p-4 pl-6 w-12">
@@ -929,8 +929,8 @@ export default function InventoryManagement() {
       ) : (
         /* Categories Tab */
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm mb-4">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[600px]">
+          <div className="overflow-x-auto w-full min-w-0">
+            <table className="w-full text-left border-collapse min-w-max">
               <thead className="bg-slate-50 dark:bg-slate-800 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
                 <tr className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase">
                   <th className="p-4 pl-6">Category Name</th>
@@ -1004,7 +1004,7 @@ export default function InventoryManagement() {
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Category</label>
                     <select 

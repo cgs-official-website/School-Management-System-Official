@@ -278,17 +278,17 @@ export default function LibraryManagement() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto pb-24">
-      <div className="flex justify-between items-end mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Library Management</h1>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto min-w-0 pb-24">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 w-full">
+        <div className="min-w-0">
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white truncate">Library Management</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage book inventory, issuing, and returns.</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3 w-full sm:w-auto">
           {hasEditPermission && (
             <button
               onClick={() => setShowIssueModal(true)}
-              className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm flex items-center gap-2 transition-colors"
+              className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm flex items-center justify-center gap-2 transition-colors flex-1 sm:flex-none"
             >
               <Library size={18} /> Issue Book
             </button>
@@ -296,7 +296,7 @@ export default function LibraryManagement() {
           {hasCreatePermission && (
             <button
               onClick={() => setShowAddModal(true)}
-              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
+              className="px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 shadow-sm flex items-center justify-center gap-2 transition-colors flex-1 sm:flex-none"
             >
               <Plus size={18} /> Add New Book
             </button>
@@ -335,9 +335,9 @@ export default function LibraryManagement() {
         </div>
 
         {/* Content area */}
-        <div className="flex-1 overflow-x-auto">
+        <div className="flex-1 overflow-x-auto w-full min-w-0">
           {activeTab === 'inventory' ? (
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-max">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm">
                   <th className="p-4 font-semibold w-2/5">Book Details</th>
@@ -396,7 +396,7 @@ export default function LibraryManagement() {
               </tbody>
             </table>
           ) : (
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse min-w-max">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm">
                   <th className="p-4 font-semibold w-1/3">Book</th>

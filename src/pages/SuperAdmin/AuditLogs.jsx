@@ -77,9 +77,9 @@ export default function AuditLogs() {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto flex flex-col">
-      <div className="mb-8 shrink-0 flex justify-between items-end">
-        <div>
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto flex flex-col min-w-0">
+      <div className="mb-8 shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div className="min-w-0">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuClipboardList className="text-primary-600" /> Audit Logs
           </h1>
@@ -87,7 +87,7 @@ export default function AuditLogs() {
         </div>
         <button 
           onClick={handleExportCSV}
-          className="px-4 py-2 bg-primary-600 text-white hover:bg-primary-700 font-bold rounded-xl shadow-sm transition-colors flex items-center gap-2"
+          className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white hover:bg-primary-700 text-sm font-semibold rounded-xl shadow-sm transition-colors flex justify-center items-center gap-2"
         >
           <LuDownload size={18} /> Export CSV
         </button>
@@ -105,16 +105,16 @@ export default function AuditLogs() {
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
             />
           </div>
-          <button className="w-full justify-center px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
+          <button className="w-full justify-center px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
             <LuFilter size={18} /> Event Type
           </button>
-          <button className="w-full justify-center px-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
+          <button className="w-full justify-center px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
             <LuCalendar size={18} /> Date Range
           </button>
         </div>
 
-        <div className="flex-1 overflow-auto">
-          <table className="w-full text-left border-collapse min-w-[800px]">
+        <div className="w-full min-w-0 overflow-x-auto custom-scrollbar flex-1">
+          <table className="w-full text-left border-collapse min-w-max">
             <thead className="sticky top-0 bg-white dark:bg-slate-900 shadow-sm z-10">
               <tr className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-sm border-b border-slate-200 dark:border-slate-700">
                 <th className="p-4 font-bold">Timestamp</th>
