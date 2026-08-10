@@ -1,6 +1,6 @@
 {
   "name": "Zuna School Management System",
-  "short_name": "Zuna SMS",
+  "short_name": "School Trio",
   "description": "Multi-tenant cloud ecosystem for schools.",
   "start_url": "/",
   "display": "standalone",
