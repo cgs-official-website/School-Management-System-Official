@@ -268,8 +268,8 @@ export default function RolesPermissions() {
   const activeRolePerms = permissions[activeRole] || {};
 
   return (
-    <div className="p-8 max-w-7xl mx-auto h-[calc(100vh-80px)] flex flex-col">
-      <div className="flex justify-between items-end mb-6 shrink-0">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto min-h-[calc(100vh-80px)] lg:h-[calc(100vh-80px)] flex flex-col">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6 shrink-0">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
             <LuShield className="text-primary-600" />
@@ -287,9 +287,9 @@ export default function RolesPermissions() {
         </button>
       </div>
 
-      <div className="flex gap-6 flex-1 min-h-0">
+      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0">
         {/* Roles List */}
-        <div className="w-64 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden shrink-0">
+        <div className="w-full lg:w-64 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden shrink-0 max-h-[300px] lg:max-h-none">
           <div className="p-4 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
             <span className="font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider text-xs">Select Role</span>
             <button 
@@ -343,7 +343,7 @@ export default function RolesPermissions() {
 
         {/* Permissions Matrix */}
         <div className="flex-1 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden">
-          <div className="p-6 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center shrink-0">
+          <div className="p-4 md:p-6 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row justify-between sm:items-center gap-4 shrink-0">
             <div>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">{activeRole} Permissions</h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Select the modules and actions this role can access.</p>
@@ -361,8 +361,8 @@ export default function RolesPermissions() {
             </div>
           </div>
           
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-0">
-            <table className="w-full text-left border-collapse">
+          <div className="flex-1 overflow-auto custom-scrollbar p-0">
+            <table className="w-full text-left border-collapse min-w-[700px]">
               <thead className="sticky top-0 bg-white dark:bg-slate-900 shadow-sm z-10">
                 <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-semibold">
                   <th className="p-4 pl-6">Module Name</th>
