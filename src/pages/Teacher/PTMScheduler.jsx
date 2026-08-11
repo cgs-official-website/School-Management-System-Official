@@ -9,6 +9,75 @@ import {
 import { LuCalendarClock, LuPlus, LuCalendarCheck, LuClock, LuUsers, LuCircleCheck, LuVideo, LuMapPin, LuCircleX, LuX } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 
+const TimePicker12Hour = ({ value, onChange, required }) => {
+  let initialHour12 = '';
+  let initialMinute = '';
+  let initialPeriod = 'AM';
+
+  if (value) {
+    const [h, m] = value.split(':');
+    const hour24 = parseInt(h, 10);
+    initialPeriod = hour24 >= 12 ? 'PM' : 'AM';
+    initialHour12 = (hour24 % 12 || 12).toString().padStart(2, '0');
+    initialMinute = m;
+  }
+
+  const [hour, setHour] = useState(initialHour12);
+  const [minute, setMinute] = useState(initialMinute);
+  const [period, setPeriod] = useState(initialPeriod);
+
+  const handleChange = (h, m, p) => {
+    setHour(h);
+    setMinute(m);
+    setPeriod(p);
+    
+    if (h && m) {
+      let h24 = parseInt(h, 10);
+      if (p === 'PM' && h24 !== 12) h24 += 12;
+      if (p === 'AM' && h24 === 12) h24 = 0;
+      
+      const time24 = `${h24.toString().padStart(2, '0')}:${m}`;
+      onChange(time24);
+    } else {
+      onChange(''); 
+    }
+  };
+
+  const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  const minutes = Array.from({ length: 12 }, (_, i) => (i * 5).toString().padStart(2, '0'));
+
+  return (
+    <div className="flex w-full bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-primary-500 overflow-hidden divide-x divide-slate-200 dark:divide-slate-700">
+      <select 
+        required={required}
+        value={hour} 
+        onChange={(e) => handleChange(e.target.value, minute, period)}
+        className="flex-1 px-3 py-2.5 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 appearance-none text-center cursor-pointer outline-none"
+      >
+        <option value="" disabled>HH</option>
+        {hours.map(h => <option key={h} value={h}>{h}</option>)}
+      </select>
+      <select 
+        required={required}
+        value={minute} 
+        onChange={(e) => handleChange(hour, e.target.value, period)}
+        className="flex-1 px-3 py-2.5 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 appearance-none text-center cursor-pointer outline-none"
+      >
+        <option value="" disabled>MM</option>
+        {minutes.map(m => <option key={m} value={m}>{m}</option>)}
+      </select>
+      <select 
+        value={period} 
+        onChange={(e) => handleChange(hour, minute, e.target.value)}
+        className="flex-1 px-3 py-2.5 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 appearance-none text-center cursor-pointer font-bold outline-none"
+      >
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
+      </select>
+    </div>
+  );
+};
+
 export default function PTMScheduler() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
@@ -111,6 +180,15 @@ export default function PTMScheduler() {
     }
   });
 
+  const formatTime12hr = (time24) => {
+    if (!time24) return '';
+    const [hours, minutes] = time24.split(':');
+    const h = parseInt(hours, 10);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 || 12;
+    return `${h12.toString().padStart(2, '0')}:${minutes} ${ampm}`;
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -172,7 +250,7 @@ export default function PTMScheduler() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Date & Time</p>
-                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{new Date(meeting.date).toLocaleDateString('en-GB')} at {meeting.time}</p>
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{new Date(meeting.date).toLocaleDateString('en-GB')} at {formatTime12hr(meeting.time)}</p>
                     </div>
                     <div>
                       <p className="text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Meeting Type</p>
@@ -249,11 +327,10 @@ export default function PTMScheduler() {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Time</label>
-                    <input 
-                      type="time" required
+                    <TimePicker12Hour 
+                      required
                       value={newMeeting.time}
-                      onChange={(e) => setNewMeeting({...newMeeting, time: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
+                      onChange={(val) => setNewMeeting({...newMeeting, time: val})}
                     />
                   </div>
                 </div>

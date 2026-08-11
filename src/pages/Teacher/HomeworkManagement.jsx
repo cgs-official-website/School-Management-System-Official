@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { getSubCollection, addSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
-import { LuPlus as Plus, LuUpload as Upload, LuFileText as FileText, LuSearch as Search, LuX as X, LuCircleCheck as CheckCircle, LuFileDown as FileDown, LuCheck as Check } from 'react-icons/lu';
+import { getSubCollection, addSubDocument, updateSubDocument, subscribeToSubCollection } from '../../firebase/firestore';
+import { LuPlus as Plus, LuUpload as Upload, LuFileText as FileText, LuSearch as Search, LuX as X, LuCircleCheck as CheckCircle, LuFileDown as FileDown, LuCheck as Check, LuPaperclip as Paperclip } from 'react-icons/lu';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { TableSkeleton } from '../../components/Skeleton';
+import { uploadFileToCloudinaryOrFirebase } from '../../utils/cloudinary';
 import usePermissions from '../../hooks/usePermissions';
 import { sortClassesAscending } from '../../utils/classSorting';
 
@@ -104,7 +105,12 @@ export default function HomeworkManagement() {
     selectedSubjects: [],
     dueDate: '',
     remarks: '',
+    attachment: null,
   });
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingHomework, setEditingHomework] = useState(null);
+  const [updating, setUpdating] = useState(false);
 
   const [excelFile, setExcelFile] = useState(null);
 
@@ -148,6 +154,83 @@ export default function HomeworkManagement() {
     });
   };
 
+  const openEditModal = (hw) => {
+    setEditingHomework({
+      ...hw,
+      selectedSubjects: hw.subjects || (hw.subject ? [hw.subject] : []),
+      attachment: null,
+    });
+    setShowEditModal(true);
+  };
+
+  const validateFile = (file) => {
+    if (!file) return true;
+    
+    // 1. File size
+    const maxSize = 3 * 1024 * 1024;
+    if (file.size > maxSize) {
+      toast.error("File size must not exceed 3 MB.");
+      return false;
+    }
+
+    // 2. File type
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const extensionMatches = file.name.match(/\.(pdf|jpg|jpeg|png|webp)$/i);
+    if (!allowedTypes.includes(file.type) && !extensionMatches) {
+      toast.error("Only PDF, JPG, JPEG, PNG, and WEBP files are allowed.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const chosenSubjects = editingHomework.selectedSubjects?.length > 0 
+      ? editingHomework.selectedSubjects 
+      : (editingHomework.subject ? [editingHomework.subject] : []);
+
+    if (chosenSubjects.length === 0) {
+      toast.error("Please select at least one subject.");
+      return;
+    }
+
+    if (editingHomework.attachment && !validateFile(editingHomework.attachment)) {
+      return;
+    }
+
+    setUpdating(true);
+    try {
+      let attachmentUrl = editingHomework.attachmentUrl || '';
+      if (editingHomework.attachment) {
+        const safeFileName = editingHomework.attachment.name.replace(/[^a-z0-9.]/gi, '_');
+        const fallbackPath = `HomeworkAttachments/${schoolId}/${Date.now()}_${safeFileName}`;
+        attachmentUrl = await uploadFileToCloudinaryOrFirebase(editingHomework.attachment, schoolId, fallbackPath);
+      }
+
+      const formattedSubject = chosenSubjects.join(', ');
+      await updateSubDocument(schoolId, 'homeworks', editingHomework.id, {
+        title: editingHomework.title,
+        description: editingHomework.description,
+        classId: editingHomework.classId,
+        subject: formattedSubject,
+        subjects: chosenSubjects,
+        dueDate: editingHomework.dueDate,
+        maxMarks: editingHomework.maxMarks || 0,
+        remarks: editingHomework.remarks || '',
+        attachmentUrl,
+      });
+      toast.success("Homework updated successfully!");
+      setShowEditModal(false);
+      setEditingHomework(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update homework");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const handleCreate = async (e) => {
     e.preventDefault();
     const chosenSubjects = newHomework.selectedSubjects.length > 0 
@@ -159,11 +242,30 @@ export default function HomeworkManagement() {
       return;
     }
 
+    if (newHomework.attachment && !validateFile(newHomework.attachment)) {
+      return;
+    }
+
     setCreating(true);
     try {
+      let attachmentUrl = '';
+      if (newHomework.attachment) {
+        const safeFileName = newHomework.attachment.name.replace(/[^a-z0-9.]/gi, '_');
+        const fallbackPath = `HomeworkAttachments/${schoolId}/${Date.now()}_${safeFileName}`;
+        attachmentUrl = await uploadFileToCloudinaryOrFirebase(newHomework.attachment, schoolId, fallbackPath);
+      }
+
       const formattedSubject = chosenSubjects.join(', ');
       await addSubDocument(schoolId, 'homeworks', {
-        ...newHomework,
+        title: newHomework.title,
+        description: newHomework.description,
+        classId: newHomework.classId,
+        subject: formattedSubject,
+        subjects: chosenSubjects,
+        dueDate: newHomework.dueDate,
+        maxMarks: newHomework.maxMarks || 0,
+        remarks: newHomework.remarks || '',
+        attachmentUrl,
         subjects: chosenSubjects,
         subject: formattedSubject,
         teacherId: userProfile.uid,
@@ -174,7 +276,7 @@ export default function HomeworkManagement() {
       });
       toast.success("Homework assigned successfully!");
       setShowCreateModal(false);
-      setNewHomework({ title: '', description: '', classId: '', subject: '', selectedSubjects: [], dueDate: '', remarks: '' });
+      setNewHomework({ title: '', description: '', classId: '', subject: '', selectedSubjects: [], dueDate: '', remarks: '', attachment: null });
       // loadData(); - handled by real-time listener
     } catch (err) {
       console.error(err);
@@ -283,7 +385,8 @@ export default function HomeworkManagement() {
                     <span className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-xs font-bold">
                       {cls ? cls.name : 'Unknown Class'} • {hw.subject}
                     </span>
-                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-300">
+                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-300 flex items-center gap-2">
+                      {hw.attachmentUrl && <Paperclip size={14} className="text-primary-500" />}
                       Due: {new Date(hw.dueDate).toLocaleDateString('en-GB')}
                     </span>
                   </div>
@@ -294,7 +397,17 @@ export default function HomeworkManagement() {
                     <span className="text-sm font-medium text-emerald-600 flex items-center gap-1">
                       <CheckCircle size={16} /> Active
                     </span>
-                    <span className="text-xs font-bold text-primary-600 group-hover:underline">View Tracking &rarr;</span>
+                    <div className="flex items-center gap-4">
+                      {hasEditPermission && (
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); openEditModal(hw); }} 
+                          className="text-xs font-bold text-amber-600 hover:text-amber-700"
+                        >
+                          Edit
+                        </button>
+                      )}
+                      <span className="text-xs font-bold text-primary-600 group-hover:underline">View Tracking &rarr;</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -434,6 +547,35 @@ export default function HomeworkManagement() {
                     />
                   </div>
                 </div>
+                
+                <div className="space-y-1">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Attachment (Optional)</label>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Max size: 3MB. Allowed: PDF, JPG, PNG, WEBP.</p>
+                  <div className="flex items-center gap-3">
+                    <label className="cursor-pointer px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold flex items-center gap-2">
+                      <Upload size={16} />
+                      Choose File
+                      <input 
+                        type="file"
+                        className="hidden"
+                        accept=".jpg,.jpeg,.png,.webp,.pdf"
+                        onChange={(e) => setNewHomework({ ...newHomework, attachment: e.target.files[0] })}
+                      />
+                    </label>
+                    <span className="text-sm text-slate-600 dark:text-slate-300 font-medium truncate max-w-[200px]">
+                      {newHomework.attachment ? newHomework.attachment.name : 'No file chosen'}
+                    </span>
+                    {newHomework.attachment && (
+                      <button 
+                        type="button" 
+                        onClick={() => setNewHomework({ ...newHomework, attachment: null })}
+                        className="p-1 hover:bg-red-50 text-red-500 rounded-lg transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3">
                 <button
@@ -449,6 +591,206 @@ export default function HomeworkManagement() {
                   className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold shadow-md shadow-primary-600/10 transition-colors"
                 >
                   {creating ? 'Creating...' : 'Create Assignment'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && editingHomework && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-fade-in-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Edit Homework Assignment</h2>
+              <button onClick={() => setShowEditModal(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300">
+                <X size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleUpdate}>
+              <div className="p-6 space-y-4">
+                <div className="space-y-1">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Homework Title</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingHomework.title}
+                    onChange={(e) => setEditingHomework({ ...editingHomework, title: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Description</label>
+                  <textarea
+                    rows="3"
+                    value={editingHomework.description}
+                    onChange={(e) => setEditingHomework({ ...editingHomework, description: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Class</label>
+                  <select
+                    required
+                    value={editingHomework.classId}
+                    onChange={(e) => setEditingHomework({ ...editingHomework, classId: e.target.value })}
+                    className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none bg-white dark:bg-slate-900 text-sm font-semibold"
+                  >
+                    <option value="">Select a Class</option>
+                    {classes.map(c => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} - Section {c.section}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Select Subjects (Multiple)</label>
+                    <div className="flex items-center gap-2 text-xs">
+                      <button 
+                        type="button" 
+                        onClick={() => setEditingHomework({ ...editingHomework, selectedSubjects: subjects.map(s => s.name) })}
+                        className="text-primary-600 font-bold hover:underline"
+                      >
+                        Select All
+                      </button>
+                      <span className="text-slate-300">|</span>
+                      <button 
+                        type="button" 
+                        onClick={() => setEditingHomework({ ...editingHomework, selectedSubjects: [] })}
+                        className="text-slate-500 dark:text-slate-400 font-medium hover:underline"
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-800/50 custom-scrollbar">
+                    {subjects.length === 0 ? (
+                      <span className="text-xs text-slate-400 dark:text-slate-300 font-semibold col-span-full">No subjects available</span>
+                    ) : (
+                      subjects.map(s => {
+                        const isChecked = editingHomework.selectedSubjects?.includes(s.name) || false;
+                        return (
+                          <label
+                            key={s.id}
+                            className={`flex items-center gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all ${
+                              isChecked
+                                ? 'bg-primary-50/80 border-primary-300 text-primary-900 font-bold'
+                                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 font-semibold'
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={(e) => {
+                                const current = editingHomework.selectedSubjects || [];
+                                const next = e.target.checked
+                                  ? [...current, s.name]
+                                  : current.filter(item => item !== s.name);
+                                setEditingHomework({ ...editingHomework, selectedSubjects: next });
+                              }}
+                              className="w-4 h-4 text-primary-600 rounded border-slate-300 dark:border-slate-600 focus:ring-primary-500 cursor-pointer"
+                            />
+                            <span className="text-sm truncate">{s.name}</span>
+                          </label>
+                        );
+                      })
+                    )}
+                  </div>
+                  {editingHomework.selectedSubjects?.length > 0 && (
+                    <p className="text-xs font-semibold text-primary-700">
+                      Selected ({editingHomework.selectedSubjects.length}): {editingHomework.selectedSubjects.join(', ')}
+                    </p>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Due Date</label>
+                    <input
+                      type="date"
+                      required
+                      value={editingHomework.dueDate}
+                      onChange={(e) => setEditingHomework({ ...editingHomework, dueDate: e.target.value })}
+                      className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Max Marks</label>
+                    <input
+                      type="number"
+                      required
+                      value={editingHomework.maxMarks || ''}
+                      onChange={(e) => setEditingHomework({ ...editingHomework, maxMarks: parseInt(e.target.value) })}
+                      className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Attachment (Optional)</label>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Max size: 3MB. Allowed: PDF, JPG, PNG, WEBP.</p>
+                  
+                  {editingHomework.attachmentUrl && !editingHomework.attachment && (
+                    <div className="flex items-center gap-2 mb-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+                      <Paperclip size={16} className="text-primary-500" />
+                      <a href={editingHomework.attachmentUrl} target="_blank" rel="noreferrer" className="text-sm text-primary-600 font-bold hover:underline truncate flex-1">
+                        View Current Attachment
+                      </a>
+                      <button 
+                        type="button" 
+                        onClick={() => setEditingHomework({ ...editingHomework, attachmentUrl: '' })}
+                        className="text-xs font-bold text-red-500 hover:underline px-2 py-1"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    <label className="cursor-pointer px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold flex items-center gap-2">
+                      <Upload size={16} />
+                      Choose New File
+                      <input 
+                        type="file"
+                        className="hidden"
+                        accept=".jpg,.jpeg,.png,.webp,.pdf"
+                        onChange={(e) => setEditingHomework({ ...editingHomework, attachment: e.target.files[0] })}
+                      />
+                    </label>
+                    <span className="text-sm text-slate-600 dark:text-slate-300 font-medium truncate max-w-[200px]">
+                      {editingHomework.attachment ? editingHomework.attachment.name : 'No new file chosen'}
+                    </span>
+                    {editingHomework.attachment && (
+                      <button 
+                        type="button" 
+                        onClick={() => setEditingHomework({ ...editingHomework, attachment: null })}
+                        className="p-1 hover:bg-red-50 text-red-500 rounded-lg transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+              <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updating}
+                  className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold shadow-md shadow-primary-600/10 transition-colors"
+                >
+                  {updating ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </form>
@@ -514,8 +856,20 @@ export default function HomeworkManagement() {
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 z-50">
           <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-3xl flex flex-col max-h-[90vh] overflow-hidden shadow-2xl animate-fade-in-up">
             <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 dark:bg-slate-800 shrink-0 w-full">
-              <div className="min-w-0">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedHomework.title}</h2>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  {selectedHomework.title}
+                  {selectedHomework.attachmentUrl && (
+                    <a 
+                      href={selectedHomework.attachmentUrl} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 rounded-full hover:bg-primary-100 transition-colors font-bold whitespace-nowrap"
+                    >
+                      <Paperclip size={14} /> View File
+                    </a>
+                  )}
+                </h2>
                 <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">Student Progress Tracking</p>
               </div>
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
