@@ -467,7 +467,7 @@ export default function Attendance() {
               <button 
                 onClick={handleSave}
                 disabled={saving || loading || students.length === 0}
-                className="w-full sm:w-auto justify-center px-6 py-2 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
+                className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors"
               >
                 {saving ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div> : <Save size={18} />}
                 {saving ? 'Saving...' : 'Save Attendance'}
@@ -687,7 +687,7 @@ export default function Attendance() {
               <button
                 type="button"
                 onClick={handleExport}
-                className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+                className="w-full sm:w-auto px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-colors flex justify-center items-center gap-2"
               >
                 <LuFileDown size={18} />
                 Generate Sheet

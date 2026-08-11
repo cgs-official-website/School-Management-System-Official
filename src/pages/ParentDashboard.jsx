@@ -490,7 +490,7 @@ export default function ParentDashboard() {
                 <button 
                   type="submit" 
                   disabled={isLinkingAnother}
-                  className="px-8 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 shadow-sm transition-colors disabled:opacity-50 flex justify-center items-center gap-2"
                 >
                   {isLinkingAnother ? 'Linking...' : 'Link Child'}
                 </button>

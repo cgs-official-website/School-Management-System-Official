@@ -280,7 +280,7 @@ export default function RolesPermissions() {
         <button 
           onClick={handleSave}
           disabled={saving}
-          className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
+          className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl shadow-sm disabled:opacity-50 transition-colors flex justify-center items-center gap-2"
         >
           <LuSave size={18} />
           {saving ? 'Saving...' : 'Save Permissions'}

@@ -1090,7 +1090,7 @@ export default function TransportManagement() {
                 <button 
                   type="submit"
                   disabled={savingVehicle}
-                  className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors disabled:opacity-50"
+                  className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl shadow-sm transition-colors disabled:opacity-50"
                 >
                   {savingVehicle ? 'Saving...' : (newVehicle.id ? 'Save Details' : 'Register Vehicle')}
                 </button>
@@ -1285,7 +1285,7 @@ export default function TransportManagement() {
                 <button 
                   type="submit"
                   disabled={creating}
-                  className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl shadow-sm transition-colors"
                 >
                   {creating ? 'Saving...' : (newRoute.id ? 'Save Changes' : 'Create Route')}
                 </button>
@@ -1347,7 +1347,7 @@ export default function TransportManagement() {
                 <button 
                   type="submit"
                   disabled={assigning || unassignedStudents.length === 0}
-                  className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors disabled:opacity-50"
+                  className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl shadow-sm transition-colors disabled:opacity-50"
                 >
                   {assigning ? 'Assigning...' : 'Assign to Route'}
                 </button>

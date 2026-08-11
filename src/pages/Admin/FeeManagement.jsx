@@ -658,7 +658,7 @@ export default function FeeManagement() {
                 <button 
                   type="submit"
                   disabled={creating}
-                  className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl shadow-sm transition-colors"
                 >
                   {creating ? 'Saving...' : 'Assign Fee'}
                 </button>

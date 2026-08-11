@@ -330,7 +330,7 @@ export default function ParentFees() {
               <button
                 disabled={paying}
                 onClick={executePayment}
-                className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md shadow-primary-500/20"
+                className="w-full sm:w-auto px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold transition-all flex justify-center items-center gap-2 shadow-sm"
               >
                 {paying ? (
                   <>

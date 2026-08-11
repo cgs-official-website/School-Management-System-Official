@@ -670,7 +670,7 @@ export default function HRPayrollManagement() {
 
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
                 <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors">Cancel</button>
-                <button type="submit" className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">Save Record</button>
+                <button type="submit" className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl shadow-sm transition-colors">Save Record</button>
               </div>
             </form>
           </div>
@@ -717,7 +717,7 @@ export default function HRPayrollManagement() {
                 <button 
                   onClick={handleUploadSignature}
                   disabled={!signatureFile || uploadingSig}
-                  className="px-4 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors disabled:opacity-50 flex justify-center items-center gap-2"
                 >
                   {uploadingSig ? 'Uploading...' : <><UploadCloud size={18}/> Upload</>}
                 </button>
@@ -738,13 +738,13 @@ export default function HRPayrollManagement() {
               <div className="flex items-center gap-3">
                 <button 
                   onClick={handleDownloadPDF}
-                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg flex items-center gap-2 font-semibold transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-semibold flex justify-center items-center gap-2 transition-colors"
                 >
                   <Download size={18} /> Download
                 </button>
                 <button 
                   onClick={handlePrint}
-                  className="px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-lg flex items-center gap-2 font-semibold transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold flex justify-center items-center gap-2 transition-colors"
                 >
                   <Printer size={18} /> Print
                 </button>
@@ -966,7 +966,7 @@ export default function HRPayrollManagement() {
               <button 
                 type="button"
                 onClick={handleExport}
-                className="px-6 py-2.5 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 shadow-md shadow-primary-600/10 transition-all active:scale-[0.98]"
+                className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 shadow-sm transition-colors active:scale-[0.98]"
               >
                 Export Excel
               </button>

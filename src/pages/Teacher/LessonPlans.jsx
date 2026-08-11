@@ -250,7 +250,7 @@ export default function LessonPlans() {
           {hasCreatePermission && (
             <button 
               onClick={handleOpenCreate}
-              className="w-full sm:w-auto justify-center px-6 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-colors flex items-center gap-2"
+              className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-colors"
             >
               <LuPlus size={18} /> New Plan
             </button>
@@ -485,7 +485,7 @@ export default function LessonPlans() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors disabled:opacity-50"
+                    className="w-full sm:w-auto px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-colors disabled:opacity-50"
                   >
                     {submitting ? 'Saving...' : 'Save Plan'}
                   </button>
@@ -579,7 +579,7 @@ export default function LessonPlans() {
               <button
                 type="button"
                 onClick={handleExport}
-                className="px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-bold shadow-sm transition-colors flex items-center gap-2"
+                className="w-full sm:w-auto px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold shadow-sm transition-colors flex justify-center items-center gap-2"
               >
                 <LuFileDown size={18} />
                 Generate Sheet

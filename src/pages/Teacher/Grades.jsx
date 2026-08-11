@@ -373,13 +373,13 @@ export default function Grades() {
           <button 
             onClick={handlePublishReportCards}
             disabled={publishing}
-            className="w-full sm:w-auto justify-center px-4 py-2 bg-green-50 text-green-700 rounded-xl font-medium hover:bg-green-100 shadow-sm flex items-center gap-2 transition-colors border border-green-200 disabled:opacity-50"
+            className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-xl text-sm font-semibold hover:bg-green-100 shadow-sm transition-colors border border-green-200 disabled:opacity-50"
           >
             <Send size={18} className={publishing ? "animate-spin" : ""} /> {publishing ? "Publishing..." : "Publish to Parent Portal"}
           </button>
           <button 
             onClick={generateReportCards}
-            className="w-full sm:w-auto justify-center px-4 py-2 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 dark:hover:bg-slate-700 shadow-sm flex items-center gap-2 transition-colors border border-primary-200"
+            className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-xl text-sm font-semibold hover:bg-primary-100 dark:hover:bg-slate-700 shadow-sm transition-colors border border-primary-200"
           >
             <Printer size={18} /> Print Report Cards
           </button>
@@ -467,7 +467,7 @@ export default function Grades() {
                 <button 
                   onClick={handleSaveGrades}
                   disabled={savingGrades || students.length === 0}
-                  className="w-full sm:w-auto justify-center px-6 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors flex items-center gap-2"
+                  className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 shadow-sm disabled:opacity-50 transition-colors"
                 >
                   {savingGrades ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div> : <Save size={18} />}
                   {savingGrades ? 'Saving...' : 'Save Grades'}
@@ -633,7 +633,7 @@ export default function Grades() {
                 <button 
                   type="submit"
                   disabled={creating}
-                  className="px-6 py-2.5 bg-primary-600 text-white font-bold hover:bg-primary-700 rounded-xl shadow-sm disabled:opacity-50 transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 rounded-xl shadow-sm disabled:opacity-50 transition-colors"
                 >
                   {creating ? 'Creating...' : 'Create Assessment'}
                 </button>
