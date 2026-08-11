@@ -106,7 +106,7 @@ export default function LinkGenerator() {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto w-full overflow-hidden">
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Generate Access Links</h1>
         <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg">Easily onboard your teachers and parents by sharing these unique registration links.</p>
@@ -114,27 +114,27 @@ export default function LinkGenerator() {
 
       <div className="space-y-6">
         {links.map((link) => (
-          <div key={link.id} className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-8 flex flex-col md:flex-row gap-8 items-start">
+          <div key={link.id} className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 md:p-8 flex flex-col md:flex-row gap-5 md:gap-8 items-start w-full overflow-hidden">
             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${
               link.color === 'emerald' ? 'bg-emerald-50 text-emerald-600' : link.color === 'blue' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
             }`}>
               <link.icon size={32} />
             </div>
 
-            <div className="flex-1">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{link.title}</h2>
+            <div className="flex-1 min-w-0 w-full">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2 break-words">{link.title}</h2>
               <p className="text-slate-600 dark:text-slate-300 mb-6">{link.description}</p>
               
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1 flex items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-mono text-sm text-slate-700 dark:text-slate-200 overflow-hidden relative">
+              <div className="flex flex-col lg:flex-row gap-3 w-full">
+                <div className="flex-1 flex items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-mono text-sm text-slate-700 dark:text-slate-200 overflow-hidden relative min-w-0">
                   <LinkIcon size={16} className="text-slate-400 dark:text-slate-300 shrink-0 mr-3" />
-                  <span className="truncate">{link.url}</span>
+                  <span className="truncate block flex-1 min-w-0">{link.url}</span>
                 </div>
                 
-                <div className="flex gap-2 shrink-0">
+                <div className="flex gap-2 shrink-0 w-full lg:w-auto">
                   <button 
                     onClick={() => handleCopy(link.id, link.url)}
-                    className={`px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${
+                    className={`flex-1 lg:flex-none justify-center px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${
                       copiedLink === link.id 
                         ? 'bg-green-100 text-green-700 hover:bg-green-200' 
                         : 'bg-primary-600 text-white hover:bg-primary-700 shadow-sm'
@@ -169,23 +169,23 @@ export default function LinkGenerator() {
         ))}
       </div>
 
-      <div className="mt-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-8 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+      <div className="mt-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl p-5 md:p-8 shadow-sm w-full overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+          <div className="w-12 h-12 shrink-0 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
             <Settings2 size={24} />
           </div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Customize Staff Registration Form</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Select which additional fields should appear on the teacher registration form.</p>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white break-words">Customize Staff Registration Form</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Select which additional fields should appear on the teacher registration form.</p>
           </div>
         </div>
 
-        <div className="space-y-4 mb-8">
+        <div className="space-y-4 mb-8 w-full">
           {availableFields.map(field => (
-            <div key={field.name} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-              <div>
-                <p className="font-bold text-slate-700 dark:text-slate-200">{field.label}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Require teachers to provide their {field.label.toLowerCase()} during registration.</p>
+            <div key={field.name} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-slate-700 dark:text-slate-200 truncate">{field.label}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug">Require teachers to provide their {field.label.toLowerCase()} during registration.</p>
               </div>
               <button 
                 onClick={() => toggleField(field.name)}
@@ -197,11 +197,11 @@ export default function LinkGenerator() {
           ))}
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end w-full">
           <button
             onClick={saveFormConfig}
             disabled={isSaving}
-            className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold flex items-center gap-2 transition-colors disabled:opacity-70"
+            className="w-full sm:w-auto justify-center px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold flex items-center gap-2 transition-colors disabled:opacity-70"
           >
             {isSaving ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
