@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LuUsers as Users, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuMessageSquare as MessageSquare, LuLock as Lock, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuBuilding2 as Building2, LuCalendarDays, LuBookOpen, LuCalendarOff, LuTrendingUp, LuFolderDown, LuCalendarClock, LuBanknote, LuUser as UserIcon } from 'react-icons/lu';
+import { LuUsers as Users, LuLogOut as LogOut, LuSquareCheck as CheckSquare, LuGraduationCap as GraduationCap, LuMessageSquare as MessageSquare, LuLock as Lock, LuBell as Bell, LuMenu as Menu, LuX as X, LuFileText as FileText, LuCalendar as Calendar, LuBuilding2 as Building2, LuCalendarDays, LuBookOpen, LuCalendarOff, LuTrendingUp, LuFolderDown, LuCalendarClock, LuBanknote, LuUser as UserIcon, LuBus } from 'react-icons/lu';
 import { logoutUser } from '../firebase/auth';
 import { useAuth } from '../context/AuthContext';
 import { getDoc, doc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
@@ -147,6 +147,7 @@ export default function TeacherDashboard() {
     { name: 'Homework', path: '/teacher/homework', icon: FileText, moduleKey: 'homework' },
     { name: 'Performance', path: '/teacher/performance', icon: LuTrendingUp, moduleKey: 'performance' },
     { name: 'PTM Scheduler', path: '/teacher/ptm', icon: LuCalendarClock, moduleKey: 'ptm' },
+    { name: 'Transport', path: '/teacher/transport', icon: LuBus, moduleKey: 'transport' },
     { name: 'Grades & Exams', path: '/teacher/grades', icon: GraduationCap, moduleKey: 'exams' },
     { name: 'Messages', path: '/teacher/chat', icon: MessageSquare, moduleKey: 'chats' },
     { name: 'My Salary', path: '/teacher/salary', icon: LuBanknote, moduleKey: 'hr-payroll' },

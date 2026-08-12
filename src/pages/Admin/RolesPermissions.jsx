@@ -78,7 +78,7 @@ const ADMIN_PANEL_MODULES = [
 
 const TEACHER_PANEL_MODULES = [
   'noticeboard', 'calendar', 'timetables', 'lesson_plans', 'resources', 'attendance',
-  'homework', 'performance', 'ptm', 'exams', 'chats', 'hr-payroll', 'leaves'
+  'homework', 'performance', 'ptm', 'exams', 'chats', 'hr-payroll', 'leaves', 'transport'
 ];
 
 export default function RolesPermissions() {

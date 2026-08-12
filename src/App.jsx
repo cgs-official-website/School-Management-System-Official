@@ -85,6 +85,7 @@ const ResourceSharing = lazy(() => import('./pages/Teacher/ResourceSharing'));
 const PTMScheduler = lazy(() => import('./pages/Teacher/PTMScheduler'));
 const MySalary = lazy(() => import('./pages/Teacher/MySalary'));
 const TeacherLeaves = lazy(() => import('./pages/Teacher/LeaveRequests'));
+const TeacherTransport = lazy(() => import('./pages/Teacher/TransportDetails'));
 
 // Admin Leaves
 const AdminLeaves = lazy(() => import('./pages/Admin/LeaveManagement'));
@@ -251,6 +252,7 @@ function App() {
               <Route path="ptm" element={<ProtectedRoute allowedRoles={['admin', 'staff', 'teacher']} moduleKey="ptm"><PTMScheduler /></ProtectedRoute>} />
               <Route path="salary" element={<ProtectedRoute allowedRoles={['admin', 'staff', 'teacher']} moduleKey="hr-payroll"><MySalary /></ProtectedRoute>} />
               <Route path="leaves" element={<ProtectedRoute allowedRoles={['admin', 'staff', 'teacher']} moduleKey="leaves"><TeacherLeaves /></ProtectedRoute>} />
+              <Route path="transport" element={<ProtectedRoute allowedRoles={['admin', 'staff', 'teacher']} moduleKey="transport"><TeacherTransport /></ProtectedRoute>} />
               <Route path="profile" element={<ProfileSetup />} />
             </Route>
 
