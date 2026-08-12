@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getSubCollection, addSubDocument, subscribeToSubCollection, updateSubDocument } from '../../firebase/firestore';
-import { deleteDoc, doc } from 'firebase/firestore';
+import { deleteDoc, doc, writeBatch, collection } from 'firebase/firestore';
 import { db } from '../../firebase/config';
-import { LuBookOpen as BookOpen, LuPlus as Plus, LuTrash2 as Trash2, LuUsers as Users, LuPencil as Pencil, LuTags, LuFilter, LuX } from 'react-icons/lu';
+import { LuBookOpen as BookOpen, LuPlus as Plus, LuTrash2 as Trash2, LuUsers as Users, LuPencil as Pencil, LuTags, LuFilter, LuX, LuFileDown, LuUpload } from 'react-icons/lu';
+import * as XLSX from 'xlsx';
 import { TableSkeleton } from '../../components/Skeleton';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
@@ -42,6 +43,11 @@ export default function ClassManagement() {
   // Category Modal State
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
+
+  // Bulk Import State
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importFile, setImportFile] = useState(null);
+  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     if (!schoolId) return;
@@ -251,6 +257,138 @@ export default function ClassManagement() {
     return cat ? cat.name : 'Unknown Category';
   };
 
+  const handleDownloadTemplate = () => {
+    const templateData = [
+      {
+        "Class Name": "Grade 10",
+        "Section": "A",
+        "Category": "High School"
+      },
+      {
+        "Class Name": "Grade 10",
+        "Section": "B",
+        "Category": "High School"
+      }
+    ];
+    const worksheet = XLSX.utils.json_to_sheet(templateData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Classes Template");
+    XLSX.writeFile(workbook, "Class_Import_Template.xlsx");
+  };
+
+  const handleFileUpload = async () => {
+    if (!importFile) {
+      toast.error("Please select a file first.");
+      return;
+    }
+
+    setImporting(true);
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        if (jsonData.length === 0) {
+          toast.error("The uploaded file is empty.");
+          setImporting(false);
+          return;
+        }
+
+        const batch = writeBatch(db);
+        let addedCount = 0;
+        let skippedCount = 0;
+        let categoryCreationCount = 0;
+        
+        // Map to keep track of newly created categories during this import run
+        const createdCategoriesMap = new Map();
+
+        for (const row of jsonData) {
+          const classNameRaw = row['Class Name'] || row['class name'] || row['Class'] || '';
+          const sectionRaw = row['Section'] || row['section'] || '';
+          const categoryRaw = row['Category'] || row['category'] || '';
+
+          const className = String(classNameRaw).trim();
+          const section = String(sectionRaw).trim().toUpperCase();
+          const categoryText = String(categoryRaw).trim();
+
+          if (!className || !section) {
+            skippedCount++;
+            continue;
+          }
+
+          // Duplicate check
+          const isDuplicate = classes.some(
+            c => c.name.toLowerCase() === className.toLowerCase() && 
+                 c.section.toLowerCase() === section.toLowerCase()
+          );
+
+          if (isDuplicate) {
+            skippedCount++;
+            continue;
+          }
+
+          let matchedCategoryId = '';
+
+          if (categoryText) {
+             const existingCat = allCategories.find(c => c.name.toLowerCase() === categoryText.toLowerCase());
+             if (existingCat) {
+               matchedCategoryId = existingCat.id;
+             } else if (createdCategoriesMap.has(categoryText.toLowerCase())) {
+               matchedCategoryId = createdCategoriesMap.get(categoryText.toLowerCase());
+             } else {
+               // Create new category
+               const newCatRef = doc(collection(db, `schools/${schoolId}/classCategories`));
+               batch.set(newCatRef, {
+                 name: categoryText,
+                 isDefault: false,
+                 createdAt: new Date().toISOString()
+               });
+               matchedCategoryId = newCatRef.id;
+               createdCategoriesMap.set(categoryText.toLowerCase(), matchedCategoryId);
+               categoryCreationCount++;
+             }
+          }
+
+          const newClassRef = doc(collection(db, `schools/${schoolId}/classes`));
+          batch.set(newClassRef, {
+            name: className,
+            section: section,
+            categoryId: matchedCategoryId,
+            createdAt: new Date().toISOString()
+          });
+
+          addedCount++;
+        }
+
+        if (addedCount > 0 || categoryCreationCount > 0) {
+          await batch.commit();
+          toast.success(`Imported ${addedCount} classes and created ${categoryCreationCount} categories. Skipped ${skippedCount} existing/invalid rows.`);
+          setShowImportModal(false);
+          setImportFile(null);
+        } else {
+          toast.error(`No new classes to import. Skipped ${skippedCount} rows.`);
+        }
+      } catch (error) {
+        console.error("Error processing file:", error);
+        toast.error("Error parsing the file. Please check the format.");
+      } finally {
+        setImporting(false);
+      }
+    };
+
+    reader.onerror = () => {
+      toast.error("Failed to read file");
+      setImporting(false);
+    };
+
+    reader.readAsArrayBuffer(importFile);
+  };
+
   if (loading) {
     return (
       <div className="p-8 max-w-7xl mx-auto animate-fade-in-up">
@@ -273,6 +411,14 @@ export default function ClassManagement() {
               className="px-4 py-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm flex items-center gap-2 transition-colors"
             >
               <LuTags size={18} /> Manage Categories
+            </button>
+          )}
+          {hasCreatePermission && (
+            <button 
+              onClick={() => setShowImportModal(true)}
+              className="px-4 py-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm flex items-center gap-2 transition-colors"
+            >
+              <LuUpload size={18} /> Bulk Import
             </button>
           )}
           {hasCreatePermission && (
@@ -522,6 +668,67 @@ export default function ClassManagement() {
                 className="px-6 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Import Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-md overflow-hidden shadow-xl animate-scale-up">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Bulk Import Classes</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Upload an Excel file to create multiple classes.</p>
+              </div>
+              <button onClick={() => setShowImportModal(false)} className="text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                <LuX size={20} />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-2">Instructions:</h4>
+                <ul className="text-sm text-slate-600 dark:text-slate-400 list-disc list-inside space-y-1">
+                  <li>Download the template file.</li>
+                  <li>Fill in <b>Class Name</b> and <b>Section</b> (Mandatory).</li>
+                  <li>Fill in <b>Category</b> (Optional). New categories will be auto-created.</li>
+                  <li>Upload the filled file below.</li>
+                </ul>
+                <button 
+                  onClick={handleDownloadTemplate}
+                  className="mt-3 text-primary-600 hover:text-primary-700 text-sm font-semibold flex items-center gap-1 transition-colors"
+                >
+                  <LuFileDown size={16} /> Download Template
+                </button>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Select Excel File</label>
+                <input 
+                  type="file" 
+                  accept=".xlsx, .xls, .csv"
+                  onChange={(e) => setImportFile(e.target.files[0])}
+                  className="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-all border border-slate-200 dark:border-slate-700 rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex justify-end gap-3">
+              <button 
+                onClick={() => setShowImportModal(false)}
+                className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleFileUpload}
+                disabled={importing || !importFile}
+                className="px-6 py-2 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center gap-2"
+              >
+                {importing ? 'Importing...' : <><LuUpload size={18} /> Start Import</>}
               </button>
             </div>
           </div>
