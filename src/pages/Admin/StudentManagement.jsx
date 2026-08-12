@@ -579,6 +579,7 @@ export default function StudentManagement() {
               let limitCappedCount = 0;
               const importedAdmissions = new Set();
               const existingAdmissionsMap = new Map(students.map(s => [s.admissionNumber?.toLowerCase(), s]));
+              const createdClassesMap = new Map(); // Tracks dynamically created classes in this import
 
               let currentBatch = writeBatch(db);
               let operationsInBatch = 0;
@@ -635,6 +636,48 @@ export default function StudentManagement() {
                   const firstName = nameParts[0];
                   const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
                   
+                  // Class and Section Matching/Creation
+                  const classNameRaw = row['class'] || row['grade'] || '';
+                  const sectionRaw = row['section'] || row['group'] || '';
+                  let matchedClassId = '';
+                  
+                  if (classNameRaw) {
+                    const classLower = classNameRaw.toString().toLowerCase().trim();
+                    const sectionLower = sectionRaw.toString().toLowerCase().trim();
+                    const classKey = `${classLower}_${sectionLower}`;
+                    
+                    const matchedClass = classes.find(c => {
+                      const cName = (c.name || '').toLowerCase();
+                      const cSec = (c.section || '').toLowerCase();
+                      
+                      if (sectionLower) {
+                        return cName === classLower && cSec === sectionLower;
+                      } else {
+                        return cName === classLower;
+                      }
+                    });
+
+                    if (matchedClass) {
+                      matchedClassId = matchedClass.id;
+                    } else if (createdClassesMap.has(classKey)) {
+                      matchedClassId = createdClassesMap.get(classKey);
+                    } else {
+                      // Create new class
+                      const newClassRef = doc(collection(db, 'schools', schoolId, 'classes'));
+                      matchedClassId = newClassRef.id;
+                      
+                      currentBatch.set(newClassRef, {
+                        name: classNameRaw.toString().trim(),
+                        section: sectionRaw.toString().trim().toUpperCase(),
+                        categoryId: 'cat_mid', // Using 'Middle' as a safe fallback category
+                        createdAt: new Date().toISOString()
+                      });
+                      operationsInBatch++;
+                      
+                      createdClassesMap.set(classKey, matchedClassId);
+                    }
+                  }
+
                   const newStudentRef = doc(collection(db, 'schools', schoolId, 'students'));
                   currentBatch.set(newStudentRef, {
                     firstName: firstName,
@@ -668,7 +711,7 @@ export default function StudentManagement() {
                     username: row['username']?.toString() || '',
                     password: row['password']?.toString() || '',
                     status: 'Active',
-                    classId: '',
+                    classId: matchedClassId,
                     createdAt: new Date().toISOString()
                   });
                   operationsInBatch++;

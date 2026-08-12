@@ -134,8 +134,8 @@ export default function ClassManagement() {
       toast.error("You do not have permission to create classes.");
       return;
     }
-    if (!formData.name.trim() || !formData.section.trim() || !formData.categoryId) {
-      toast.error("Please fill all required fields, including Category.");
+    if (!formData.name.trim() || !formData.section.trim()) {
+      toast.error("Please fill all required fields.");
       return;
     }
 
@@ -297,12 +297,11 @@ export default function ClassManagement() {
           <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">{editingId ? 'Edit Class' : 'Add New Class'}</h3>
           <form onSubmit={handleCreate} className="flex flex-col md:flex-row gap-4 items-end">
             <div className="w-full md:w-64">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Category <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Category (Optional)</label>
               <select
                 value={formData.categoryId}
                 onChange={(e) => setFormData({...formData, categoryId: e.target.value})}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 shadow-sm"
-                required
               >
                 <option value="">Select Category...</option>
                 {allCategories.map(cat => (
