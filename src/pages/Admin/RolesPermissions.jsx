@@ -67,7 +67,8 @@ const ALL_AVAILABLE_MODULES = [
   { id: 'lesson_plans', label: 'Lesson Plans' },
   { id: 'resources', label: 'Resource Sharing' },
   { id: 'ptm', label: 'PTM Scheduler' },
-  { id: 'performance', label: 'Performance Tracking' }
+  { id: 'performance', label: 'Performance Tracking' },
+  { id: 'billing', label: 'Billing & Subscriptions' }
 ];
 
 const ADMIN_PANEL_MODULES = [

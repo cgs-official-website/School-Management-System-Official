@@ -212,7 +212,7 @@ function App() {
               <Route path="notices" element={<ProtectedRoute allowedRoles={['admin', 'staff', 'teacher']} moduleKey="noticeboard"><Noticeboard /></ProtectedRoute>} />
               <Route path="chats" element={<ProtectedRoute allowedRoles={['admin', 'staff', 'teacher']} moduleKey="chats"><ChatMonitor /></ProtectedRoute>} />
               <Route path="api" element={<ProtectedRoute allowedRoles={['admin']}><APIIntegrations /></ProtectedRoute>} />
-              <Route path="billing" element={<ProtectedRoute allowedRoles={['admin']}><BillingDashboard /></ProtectedRoute>} />
+              <Route path="billing" element={<ProtectedRoute allowedRoles={['admin']} moduleKey="billing"><BillingDashboard /></ProtectedRoute>} />
               <Route path="upgrade" element={<ProtectedRoute allowedRoles={['admin']}><UpgradePlan /></ProtectedRoute>} />
               <Route path="calendar" element={<ProtectedRoute allowedRoles={['admin', 'staff', 'teacher']} moduleKey="calendar"><AdminCalendar /></ProtectedRoute>} />
               <Route path="inventory" element={<ProtectedRoute allowedRoles={['admin', 'staff', 'teacher']} moduleKey="inventory"><InventoryManagement /></ProtectedRoute>} />

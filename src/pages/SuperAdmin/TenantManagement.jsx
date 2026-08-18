@@ -39,7 +39,8 @@ const AVAILABLE_MODULES = [
   { id: 'alumni', label: 'Alumni Management' },
   { id: 'documents', label: 'Document Management' },
   { id: 'branches', label: 'Multi-Branch Management' },
-  { id: 'reports', label: 'Reports & Analytics' }
+  { id: 'reports', label: 'Reports & Analytics' },
+  { id: 'billing', label: 'Billing & Subscriptions' }
 ];
 
 export default function TenantManagement() {
