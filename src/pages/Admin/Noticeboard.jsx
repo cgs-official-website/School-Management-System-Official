@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToGlobalNotices, subscribeToClassNotices, createNotice, deleteNotice, updateNotice, subscribeToSubCollection } from '../../firebase/firestore';
 import { LuBell as Bell, LuMegaphone as Megaphone, LuPlus as Plus, LuX as X, LuTrash2 as Trash2, LuUsers as Users, LuGraduationCap as GraduationCap, LuTriangleAlert as AlertTriangle, LuSend as Send, LuPencil as Edit, LuEye as Eye } from 'react-icons/lu';
+import { whatsappService } from '../../services/whatsappService';
 import toast from 'react-hot-toast';
 import ConfirmModal from '../../components/ConfirmModal';
 import usePermissions from '../../hooks/usePermissions';
@@ -32,8 +33,7 @@ export default function Noticeboard() {
     title: '',
     message: '',
     audience: 'all',
-    priority: 'normal',
-    sendWhatsApp: false
+    priority: 'normal'
   });
 
   useEffect(() => {
@@ -81,23 +81,22 @@ export default function Noticeboard() {
         });
         toast.success("Notice updated successfully!");
       } else {
-        await createNotice(schoolId, {
+        const noticePayload = {
           ...newNotice,
           type: 'global',
           authorId: currentUser.uid,
           authorName: (userProfile.name && userProfile.name !== 'undefined') ? userProfile.name : ((userProfile.firstName && userProfile.firstName !== 'undefined') ? `${userProfile.firstName} ${userProfile.lastName}` : 'Admin User')
-        });
+        };
+        const noticeId = await createNotice(schoolId, noticePayload);
         
-        if (newNotice.sendWhatsApp) {
-          toast.success("Notice published! WhatsApp messages queued for delivery.");
-        } else {
-          toast.success("Notice published successfully!");
-        }
+        toast.success("Notice published successfully! WhatsApp messages queued.");
+        
+        whatsappService.sendNoticeNotification(schoolId, noticeId, noticePayload);
       }
       
       setShowCreateModal(false);
       setEditingNotice(null);
-      setNewNotice({ title: '', message: '', audience: 'all', priority: 'normal', sendWhatsApp: false });
+      setNewNotice({ title: '', message: '', audience: 'all', priority: 'normal' });
     } catch (error) {
       toast.error(`Failed to ${editingNotice ? 'update' : 'create'} notice.`);
     } finally {
@@ -111,8 +110,7 @@ export default function Noticeboard() {
       title: notice.title,
       message: notice.message,
       audience: notice.audience,
-      priority: notice.priority,
-      sendWhatsApp: notice.sendWhatsApp || false
+      priority: notice.priority
     });
     setShowCreateModal(true);
   };
@@ -152,7 +150,7 @@ export default function Noticeboard() {
           <button 
             onClick={() => {
               setEditingNotice(null);
-              setNewNotice({ title: '', message: '', audience: 'all', priority: 'normal', sendWhatsApp: false });
+              setNewNotice({ title: '', message: '', audience: 'all', priority: 'normal' });
               setShowCreateModal(true);
             }}
             className="px-5 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 shadow-sm flex items-center gap-2 transition-colors"
@@ -347,23 +345,6 @@ export default function Noticeboard() {
                     </select>
                   </div>
                 </div>
-                
-                {activeTab === 'global' && !editingNotice && (
-                  <div className="pt-2">
-                    <label className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-100 rounded-xl cursor-pointer hover:bg-emerald-100 transition-colors">
-                      <input 
-                        type="checkbox" 
-                        checked={newNotice.sendWhatsApp}
-                        onChange={(e) => setNewNotice({...newNotice, sendWhatsApp: e.target.checked})}
-                        className="w-5 h-5 text-emerald-600 border-emerald-300 rounded focus:ring-emerald-500 cursor-pointer"
-                      />
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-emerald-900">Broadcast via WhatsApp</span>
-                        <span className="text-xs font-medium text-emerald-700">Send an instant SMS alert to the target audience</span>
-                      </div>
-                    </label>
-                  </div>
-                )}
               </div>
 
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">

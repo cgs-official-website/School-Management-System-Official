@@ -8,6 +8,7 @@ import {
 } from '../../firebase/firestore';
 import { LuCalendarClock, LuPlus, LuCalendarCheck, LuClock, LuUsers, LuCircleCheck, LuVideo, LuMapPin, LuCircleX, LuX } from 'react-icons/lu';
 import toast from 'react-hot-toast';
+import { whatsappService } from '../../services/whatsappService';
 
 const TimePicker12Hour = ({ value, onChange, required }) => {
   let initialHour12 = '';
@@ -130,7 +131,7 @@ export default function PTMScheduler() {
 
     setCreating(true);
     try {
-      await createPTM(schoolId, {
+      const ptmPayload = {
         classId,
         teacherId: userProfile?.uid,
         studentId: student.id,
@@ -140,10 +141,14 @@ export default function PTMScheduler() {
         time: newMeeting.time,
         type: newMeeting.type,
         status: 'confirmed'
-      });
+      };
+      const ptmId = await createPTM(schoolId, ptmPayload);
       toast.success("Meeting booked successfully!");
       setShowCreateModal(false);
       setNewMeeting({ studentId: '', date: '', time: '', type: 'online' });
+      
+      // Send WhatsApp notification in the background
+      whatsappService.sendPTMNotification(schoolId, ptmId, ptmPayload);
     } catch (error) {
       toast.error("Failed to book meeting");
     } finally {
