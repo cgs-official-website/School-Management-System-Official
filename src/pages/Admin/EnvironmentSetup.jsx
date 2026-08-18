@@ -22,8 +22,7 @@ export default function EnvironmentSetup() {
     location: '',
     website: '',
     branding: {
-      logoUrl: '',
-      primaryColor: '#f59e0b' // Default amber-500
+      logoUrl: ''
     },
     academicConfig: {
       currentYear: '2026-2027',
@@ -299,7 +298,7 @@ export default function EnvironmentSetup() {
           contactPhone: data.contactPhone || '',
           location: data.location || '',
           website: data.website || '',
-          branding: data.branding || { logoUrl: '', primaryColor: '#f59e0b' },
+          branding: data.branding || { logoUrl: '' },
           academicConfig: data.academicConfig || { currentYear: '2026-2027', termType: 'Semester' }
         });
         if (data.academicConfig?.termType) {
@@ -363,7 +362,6 @@ export default function EnvironmentSetup() {
       
       // Update local profile context if branding changed
       if (formData.branding.logoUrl !== userProfile?.school?.branding?.logoUrl || 
-          formData.branding.primaryColor !== userProfile?.school?.branding?.primaryColor ||
           formData.name !== userProfile?.schoolName) {
         updateProfileData({
           schoolName: formData.name,
@@ -498,40 +496,18 @@ export default function EnvironmentSetup() {
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-all cursor-pointer"
               />
               
-              <div className="mt-6">
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Primary Brand Color</label>
-                <div className="flex items-center gap-4">
-                  <input 
-                    type="color" 
-                    value={formData.branding.primaryColor}
-                    onChange={(e) => setFormData({...formData, branding: { ...formData.branding, primaryColor: e.target.value }})}
-                    className="h-12 w-12 rounded cursor-pointer border-0 p-0"
-                  />
-                  <input 
-                    type="text" 
-                    value={formData.branding.primaryColor}
-                    onChange={(e) => setFormData({...formData, branding: { ...formData.branding, primaryColor: e.target.value }})}
-                    className="w-32 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-mono uppercase"
-                  />
-                </div>
-              </div>
             </div>
             
             <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center min-h-[200px] text-center">
               <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Preview</p>
               {formData.branding.logoUrl ? (
-                <img src={formData.branding.logoUrl} alt="School Logo" className="h-16 object-contain mb-4" onError={(e) => { e.target.src = ''; e.target.className='hidden'; }} />
+                <img src={formData.branding.logoUrl} alt="School Logo" className="h-16 object-contain" onError={(e) => { e.target.src = ''; e.target.className='hidden'; }} />
               ) : (
-                <div className="h-16 w-16 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
-                  <ImageIcon className="text-slate-400 dark:text-slate-300" size={32} />
+                <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                  <ImageIcon size={32} className="mb-2" />
+                  <span className="text-sm">No logo uploaded</span>
                 </div>
               )}
-              <div 
-                className="px-6 py-2 rounded-lg text-white font-medium shadow-sm transition-colors"
-                style={{ backgroundColor: formData.branding.primaryColor }}
-              >
-                Sample Button
-              </div>
             </div>
           </div>
         </section>
