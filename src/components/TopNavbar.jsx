@@ -150,30 +150,31 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
 
   return (
     <header className="bg-white dark:bg-slate-900 rounded-none lg:rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-16 lg:h-[4.5rem] shrink-0 flex items-center justify-between px-4 lg:px-8 z-30 relative min-w-0">
-      
-      {/* Left section: Mobile menu & Logo (if needed) */}
-      <div className={`flex items-center gap-2 sm:gap-4 flex-1 min-w-0 ${isMobileSearchOpen ? 'hidden md:flex' : 'flex'}`}>
-        <button 
-          onClick={() => navigate(-1)}
-          className="p-2 -ml-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-1 transition-colors"
-          title="Go Back"
-        >
-          <ArrowLeft size={20} />
-        </button>
-
-        {toggleSidebar && (
+      {/* Left Group: Menu/Arrow + Search */}
+      <div className="flex items-center flex-1 min-w-0 gap-2 lg:gap-4">
+        {/* Left section: Mobile menu & Logo (if needed) */}
+        <div className={`flex items-center gap-2 sm:gap-4 shrink-0 ${isMobileSearchOpen ? 'hidden md:flex' : 'flex'}`}>
           <button 
-            onClick={toggleSidebar}
-            className="lg:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
+            onClick={() => navigate(-1)}
+            className="p-2 -ml-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center gap-1 transition-colors"
+            title="Go Back"
           >
-            <Menu size={24} />
+            <ArrowLeft size={20} />
           </button>
-        )}
-      </div>
+
+          {toggleSidebar && (
+            <button 
+              onClick={toggleSidebar}
+              className="lg:hidden p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
+            >
+              <Menu size={24} />
+            </button>
+          )}
+        </div>
         
-      {/* Search Bar Wrapper */}
-      <div className={`absolute inset-0 px-4 flex items-center z-40 bg-white dark:bg-slate-900 md:relative md:inset-auto md:px-0 md:bg-transparent md:flex w-full md:w-36 lg:w-56 h-10 md:mr-4 md:z-20 ${isMobileSearchOpen ? 'flex' : 'hidden md:flex'}`}>
-        <form onSubmit={handleSearch} className="relative w-full h-10 transition-all duration-300 ease-out md:focus-within:w-72 lg:focus-within:w-96" ref={dropdownRef}>
+        {/* Search Bar Wrapper */}
+      <div className={`absolute inset-0 px-4 flex items-center z-40 bg-white dark:bg-slate-900 md:relative md:inset-auto md:px-0 md:bg-transparent md:flex md:w-64 lg:w-80 md:ml-2 lg:ml-4 h-10 md:z-20 ${isMobileSearchOpen ? 'flex' : 'hidden md:flex'}`}>
+        <form onSubmit={handleSearch} className="relative w-full h-10 transition-all duration-300 ease-out" ref={dropdownRef}>
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
             <Search size={18} className="text-slate-400 dark:text-slate-300" />
           </div>
@@ -190,17 +191,19 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
             autoFocus={isMobileSearchOpen}
           />
           {/* Close Search Mobile / Clear Search Desktop */}
-          <button
-            type="button"
-            onClick={() => {
-              setSearchQuery('');
-              setShowDropdown(false);
-              if (isMobileSearchOpen) setIsMobileSearchOpen(false);
-            }}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-          >
-            <X size={16} />
-          </button>
+          {(searchQuery.length > 0 || isMobileSearchOpen) && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setShowDropdown(false);
+                if (isMobileSearchOpen) setIsMobileSearchOpen(false);
+              }}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+            >
+              <X size={16} />
+            </button>
+          )}
           
           {/* Search Dropdown */}
           {showDropdown && searchQuery && (
@@ -238,6 +241,7 @@ export default function TopNavbar({ schoolName, schoolLogo, toggleSidebar, navIt
             </div>
           )}
         </form>
+      </div>
       </div>
 
       {/* Right section: Icons & Profile */}

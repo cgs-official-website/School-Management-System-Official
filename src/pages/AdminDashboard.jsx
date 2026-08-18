@@ -192,7 +192,7 @@ export default function AdminDashboard() {
     if (item.moduleKey === 'inventory' && schoolData.schoolType === 'College') return true;
     
     // Core modules bypass school subscription check
-    const coreKeys = ['classes', 'students', 'staff', 'links', 'billing', 'roles', 'settings', 'form-builder', 'api', 'homework', 'leaves', 'leads', 'reports', 'canteen', 'chats'];
+    const coreKeys = ['classes', 'students', 'staff', 'links', 'roles', 'settings', 'form-builder', 'api', 'homework', 'leaves', 'leads', 'reports', 'canteen', 'chats'];
     if (!coreKeys.includes(item.moduleKey) && !permittedModules.includes(item.moduleKey)) {
        return false;
     }
