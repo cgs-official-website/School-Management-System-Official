@@ -1,9 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { LuCalendarDays, LuClock, LuMapPin, LuBookOpen, LuFileDown, LuX } from 'react-icons/lu';
+import { LuCalendarDays, LuClock, LuBookOpen, LuMapPin, LuDownload, LuX, LuUser } from 'react-icons/lu';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection } from '../../firebase/firestore';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
+
+const formatTime12hr = (time24) => {
+  if (!time24) return '';
+  const [h, m] = time24.split(':');
+  let hour = parseInt(h, 10);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12 || 12;
+  return `${hour.toString().padStart(2, '0')}:${m} ${period}`;
+};
 
 export default function TeacherTimetable() {
   const { userProfile, currentUser } = useAuth();
@@ -142,7 +151,7 @@ export default function TeacherTimetable() {
             daySlots.forEach(slot => {
               newClassSchedule[day].push({
                 id: slot.id + classId,
-                time: `${slot.startTime} - ${slot.endTime}`,
+                time: `${formatTime12hr(slot.startTime)} - ${formatTime12hr(slot.endTime)}`,
                 startTime: slot.startTime,
                 subject: slot.subject,
                 class: className,
@@ -168,7 +177,7 @@ export default function TeacherTimetable() {
               if (!exists) {
                 newSubjectSchedule[day].push({
                   id: slot.id + classId,
-                  time: `${slot.startTime} - ${slot.endTime}`,
+                  time: `${formatTime12hr(slot.startTime)} - ${formatTime12hr(slot.endTime)}`,
                   startTime: slot.startTime,
                   subject: slot.subject,
                   class: className,

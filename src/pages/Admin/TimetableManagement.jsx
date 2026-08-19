@@ -11,6 +11,84 @@ import { uploadCustomDataFiles } from '../../utils/cloudinary';
 import usePermissions from '../../hooks/usePermissions';
 import { sortClassesAscending } from '../../utils/classSorting';
 
+const formatTime12hr = (time24) => {
+  if (!time24) return '';
+  const [h, m] = time24.split(':');
+  let hour = parseInt(h, 10);
+  const period = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12 || 12;
+  return `${hour.toString().padStart(2, '0')}:${m} ${period}`;
+};
+
+const TimePicker12Hour = ({ value, onChange, required }) => {
+  let initialHour12 = '';
+  let initialMinute = '';
+  let initialPeriod = 'AM';
+
+  if (value) {
+    const [h, m] = value.split(':');
+    const hour24 = parseInt(h, 10);
+    initialPeriod = hour24 >= 12 ? 'PM' : 'AM';
+    initialHour12 = (hour24 % 12 || 12).toString().padStart(2, '0');
+    initialMinute = m;
+  }
+
+  const [hour, setHour] = useState(initialHour12);
+  const [minute, setMinute] = useState(initialMinute);
+  const [period, setPeriod] = useState(initialPeriod);
+
+  const handleChange = (h, m, p) => {
+    setHour(h);
+    setMinute(m);
+    setPeriod(p);
+    
+    if (h && m) {
+      let h24 = parseInt(h, 10);
+      if (p === 'PM' && h24 !== 12) h24 += 12;
+      if (p === 'AM' && h24 === 12) h24 = 0;
+      
+      const time24 = `${h24.toString().padStart(2, '0')}:${m}`;
+      onChange(time24);
+    } else {
+      onChange(''); 
+    }
+  };
+
+  const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  const minutes = Array.from({ length: 12 }, (_, i) => (i * 5).toString().padStart(2, '0'));
+
+  return (
+    <div className="flex w-full bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 focus-within:ring-2 focus-within:ring-primary-500 overflow-hidden divide-x divide-slate-200 dark:divide-slate-700">
+      <select 
+        required={required}
+        value={hour} 
+        onChange={(e) => handleChange(e.target.value, minute, period)}
+        className="flex-1 px-3 py-2.5 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 appearance-none text-center cursor-pointer outline-none"
+      >
+        <option value="" disabled>HH</option>
+        {hours.map(h => <option key={h} value={h}>{h}</option>)}
+      </select>
+      <select 
+        required={required}
+        value={minute} 
+        onChange={(e) => handleChange(hour, e.target.value, period)}
+        className="flex-1 px-3 py-2.5 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 appearance-none text-center cursor-pointer outline-none"
+      >
+        <option value="" disabled>MM</option>
+        {minutes.map(m => <option key={m} value={m}>{m}</option>)}
+      </select>
+      <select 
+        value={period} 
+        onChange={(e) => handleChange(hour, minute, e.target.value)}
+        className="flex-1 px-3 py-2.5 bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 appearance-none text-center cursor-pointer font-bold outline-none"
+      >
+        <option value="AM">AM</option>
+        <option value="PM">PM</option>
+      </select>
+    </div>
+  );
+};
+
 export default function TimetableManagement() {
   const { userProfile } = useAuth();
   const schoolId = userProfile?.schoolId;
@@ -107,7 +185,7 @@ export default function TimetableManagement() {
 
   const handleAddSlot = (e) => {
     e.preventDefault();
-    if (!newSlot.subject || !newSlot.teacherId) return;
+    if (!newSlot.subject) return;
 
     const newSchedule = { ...schedule };
     
@@ -288,15 +366,18 @@ export default function TimetableManagement() {
                           <div key={slot.id} className="shrink-0 w-52 border border-slate-100 dark:border-slate-800 rounded-xl p-3.5 bg-slate-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-primary-200 dark:hover:border-slate-700 hover:shadow-md transition-all group">
                             <div className="text-xs font-bold text-primary-600 mb-2 flex items-center gap-1.5">
                               <Clock size={12} />
-                              {slot.startTime} - {slot.endTime}
+                              {formatTime12hr(slot.startTime)} - {formatTime12hr(slot.endTime)}
                             </div>
-                            <div className="font-bold text-slate-900 dark:text-white mb-1.5 text-sm truncate" title={slot.subject}>
-                              {slot.subject}
+                            <div className="mt-2 space-y-1.5 min-w-0">
+                            <div className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2 leading-tight truncate" title={slot.subject}>
+                              <BookOpen size={14} className="text-primary-500 shrink-0" />
+                              <span className="truncate">{slot.subject}</span>
                             </div>
-                            <div className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5 truncate bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md" title={slot.teacher}>
-                              <User size={10} className="text-slate-400 dark:text-slate-300" />
-                              {slot.teacher}
+                            <div className="text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-1.5 truncate bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md" title={slot.teacher || 'Not Assigned'}>
+                              <User size={12} className="text-slate-400 shrink-0" />
+                              {slot.teacher || 'Not Assigned'}
                             </div>
+                          </div>
                           </div>
                         ))
                       )}
@@ -356,7 +437,7 @@ export default function TimetableManagement() {
                         
                         <div className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1.5">
                           <Clock size={12} className="text-primary-500" />
-                          {slot.startTime} - {slot.endTime}
+                          {formatTime12hr(slot.startTime)} - {formatTime12hr(slot.endTime)}
                         </div>
                         
                         <div className="font-bold text-slate-900 dark:text-white mb-2 flex items-start gap-1.5 leading-tight">
@@ -366,7 +447,7 @@ export default function TimetableManagement() {
                         
                         <div className="text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-lg inline-flex items-center gap-1.5 border border-slate-100 dark:border-slate-800">
                           <User size={12} className="text-slate-400 dark:text-slate-300" />
-                          {slot.teacher}
+                          {slot.teacher || 'Not Assigned'}
                         </div>
 
                         {/* Edit and Delete Buttons (visible on hover) */}
@@ -428,20 +509,18 @@ export default function TimetableManagement() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Start Time</label>
-                    <input 
-                      type="time" required
+                    <TimePicker12Hour 
+                      required
                       value={newSlot.startTime}
-                      onChange={(e) => setNewSlot({...newSlot, startTime: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
+                      onChange={(val) => setNewSlot({...newSlot, startTime: val})}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">End Time</label>
-                    <input 
-                      type="time" required
+                    <TimePicker12Hour 
+                      required
                       value={newSlot.endTime}
-                      onChange={(e) => setNewSlot({...newSlot, endTime: e.target.value})}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900"
+                      onChange={(val) => setNewSlot({...newSlot, endTime: val})}
                     />
                   </div>
                 </div>
@@ -476,9 +555,8 @@ export default function TimetableManagement() {
                   </div>
                   
                   <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Teacher</label>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Teacher (Optional)</label>
                   <select
-                    required
                     value={newSlot.teacherId}
                     onChange={(e) => {
                       const teacher = teachers.find(t => t.id === e.target.value);
@@ -495,7 +573,7 @@ export default function TimetableManagement() {
                       <option value="">-- Select Subject First --</option>
                     ) : (
                       <>
-                        <option value="">Select Teacher...</option>
+                        <option value="">-- No Teacher Assigned --</option>
                         {(() => {
                           const selectedSubObj = subjects.find(s => s.name === newSlot.subject);
                           const allowedTeacherIds = selectedSubObj?.assignedTeacherIds || [];
