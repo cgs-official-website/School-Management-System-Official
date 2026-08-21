@@ -23,7 +23,7 @@ import ImageCropper from '../../components/ImageCropper';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import usePermissions from '../../hooks/usePermissions';
 import { sortClassesAscending } from '../../utils/classSorting';
-import { normalizeGender, isMale, isFemale, standardizeSchoolGenderData } from '../../utils/genderUtils';
+import { normalizeGender, isMale, isFemale } from '../../utils/genderUtils';
 
 export default function StudentManagement() {
   const { userProfile } = useAuth();
@@ -44,7 +44,6 @@ export default function StudentManagement() {
   const [admissionApplications, setAdmissionApplications] = useState([]);
   const [appSearchQuery, setAppSearchQuery] = useState('');
   const [appStatusFilter, setAppStatusFilter] = useState('all'); // 'all', 'Pending', 'Approved', 'Rejected'
-  const [syncingGender, setSyncingGender] = useState(false);
   const [selectedAppForReview, setSelectedAppForReview] = useState(null);
   const [reviewAppModalOpen, setReviewAppModalOpen] = useState(false);
   const [assigningAppClassId, setAssigningAppClassId] = useState('');
@@ -1225,25 +1224,6 @@ export default function StudentManagement() {
     );
   }
 
-  const handleSyncGenderData = async () => {
-    if (!schoolId) return;
-    setSyncingGender(true);
-    const toastId = toast.loading("Scanning and standardizing existing Firestore records...");
-    try {
-      const res = await standardizeSchoolGenderData(schoolId);
-      if (res.studentsUpdated > 0 || res.staffUpdated > 0) {
-        toast.success(`Standardized ${res.studentsUpdated} student(s) and ${res.staffUpdated} staff member(s) in Firestore!`, { id: toastId, duration: 5000 });
-      } else {
-        toast.success(`All ${res.totalStudents} students and ${res.totalStaff} staff members in Firestore are already up to date!`, { id: toastId, duration: 4000 });
-      }
-    } catch (err) {
-      console.error("Error standardizing gender data:", err);
-      toast.error("Failed to standardize database data: " + (err.message || err), { id: toastId });
-    } finally {
-      setSyncingGender(false);
-    }
-  };
-
   const effectiveSeatLimit = schoolData?.seatLimit || (schoolData?.plan?.toLowerCase() === 'enterprise' ? 2000 : schoolData?.plan?.toLowerCase() === 'basic' ? 100 : 500);
   const seatUsagePercent = effectiveSeatLimit > 0 ? Math.min(Math.round((totalStudents / effectiveSeatLimit) * 100), 100) : 0;
   const isSeatLimitReached = totalStudents >= effectiveSeatLimit;
@@ -1303,17 +1283,6 @@ export default function StudentManagement() {
           <p className="text-slate-500 dark:text-slate-400 mt-1">Review public admission applications, admit verified students, and manage enrollment directory.</p>
         </div>
         <div className="flex flex-wrap gap-2.5">
-          {hasEditPermission && (
-            <button 
-              onClick={handleSyncGenderData}
-              disabled={syncingGender}
-              title="Scan and standardize all existing student and staff gender values in Firestore"
-              className="px-3.5 py-2 bg-amber-50 text-amber-800 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-900/40 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2 transition-colors border border-amber-200 dark:border-amber-800/50 disabled:opacity-50"
-            >
-              <Sparkles size={16} className={syncingGender ? "animate-spin text-amber-600" : "text-amber-600 dark:text-amber-400"} />
-              {syncingGender ? "Standardizing..." : "Clean DB Gender"}
-            </button>
-          )}
           <button 
             onClick={() => {
               if (filteredStudents.length === 0) {

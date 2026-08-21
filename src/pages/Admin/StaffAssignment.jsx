@@ -17,7 +17,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import FilePreviewModal from '../../components/FilePreviewModal';
 import usePermissions from '../../hooks/usePermissions';
 import { sortClassesAscending } from '../../utils/classSorting';
-import { normalizeGender, isMale, isFemale, standardizeSchoolGenderData } from '../../utils/genderUtils';
+import { normalizeGender, isMale, isFemale } from '../../utils/genderUtils';
 
 export default function StaffAssignment() {
   const { userProfile } = useAuth();
@@ -34,7 +34,6 @@ export default function StaffAssignment() {
   const [loading, setLoading] = useState(true);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [genderFilter, setGenderFilter] = useState('all');
-  const [syncingGender, setSyncingGender] = useState(false);
 
   // Assignment Modal State
   const [assignModalOpen, setAssignModalOpen] = useState(false);
@@ -856,25 +855,6 @@ export default function StaffAssignment() {
     setCurrentPage(1);
   }, [searchQuery, roleFilter, statusFilter, staffTypeFilter, genderFilter, rowsPerPage]);
 
-  const handleSyncGenderData = async () => {
-    if (!schoolId) return;
-    setSyncingGender(true);
-    const toastId = toast.loading("Scanning and standardizing existing Firestore records...");
-    try {
-      const res = await standardizeSchoolGenderData(schoolId);
-      if (res.studentsUpdated > 0 || res.staffUpdated > 0) {
-        toast.success(`Standardized ${res.studentsUpdated} student(s) and ${res.staffUpdated} staff member(s) in Firestore!`, { id: toastId, duration: 5000 });
-      } else {
-        toast.success(`All ${res.totalStudents} students and ${res.totalStaff} staff members in Firestore are already up to date!`, { id: toastId, duration: 4000 });
-      }
-    } catch (err) {
-      console.error("Error standardizing gender data:", err);
-      toast.error("Failed to standardize database data: " + (err.message || err), { id: toastId });
-    } finally {
-      setSyncingGender(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="p-8 max-w-7xl mx-auto animate-fade-in-up">
@@ -891,17 +871,6 @@ export default function StaffAssignment() {
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your teachers, upload documents, and assign classes.</p>
         </div>
         <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
-          {hasEditPermission && (
-            <button 
-              onClick={handleSyncGenderData}
-              disabled={syncingGender}
-              title="Scan and standardize all existing student and staff gender values in Firestore"
-              className="px-3.5 py-2 bg-amber-50 text-amber-800 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-900/40 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2 transition-colors border border-amber-200 dark:border-amber-800/50 disabled:opacity-50"
-            >
-              <UserPlus size={16} className={syncingGender ? "animate-spin text-amber-600" : "text-amber-600 dark:text-amber-400"} />
-              {syncingGender ? "Standardizing..." : "Clean DB Gender"}
-            </button>
-          )}
           <button 
             onClick={() => {
               if (staff.length === 0) {
