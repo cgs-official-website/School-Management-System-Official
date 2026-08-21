@@ -17,7 +17,7 @@ export default function Attendance() {
   const [selectedSession, setSelectedSession] = useState('FN');
   const [classes, setClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState('');
-  
+
   const [students, setStudents] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [attendanceRecords, setAttendanceRecords] = useState({});
@@ -127,7 +127,7 @@ export default function Attendance() {
 
   useEffect(() => {
     if (viewMode === 'daily' || !schoolId || !selectedClassId) return;
-    
+
     setLoading(true);
     getAttendanceForClass(schoolId, selectedClassId).then(records => {
       setHistoricalRecords(records);
@@ -145,9 +145,9 @@ export default function Attendance() {
     const filteredRecords = historicalRecords.filter(record => {
       const dateString = record.date ? record.date.split('_')[0] : '';
       const recordDate = new Date(dateString);
-      
+
       if (isNaN(recordDate.getTime())) return false;
-      
+
       if (viewMode === 'weekly') {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(now.getDate() - 7);
@@ -313,7 +313,7 @@ export default function Attendance() {
         "Absence Count": f.absentCount,
         "Flagged At": f.flaggedAt ? new Date(f.flaggedAt).toLocaleDateString('en-GB') : '-'
       }));
-      
+
       const worksheet = XLSX.utils.json_to_sheet(dataToExport);
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, "Repeated Absentees");
@@ -440,8 +440,8 @@ export default function Attendance() {
     const filteredBySection = {};
 
     Object.entries(dashboardStats.byGrade || {}).forEach(([gradeId, data]) => {
-      const matches = assignedGrades.some(g => 
-        g.toLowerCase() === gradeId.toLowerCase() || 
+      const matches = assignedGrades.some(g =>
+        g.toLowerCase() === gradeId.toLowerCase() ||
         gradeId.toLowerCase().includes(g.toLowerCase())
       );
       if (matches) filteredByGrade[gradeId] = data;
@@ -449,8 +449,8 @@ export default function Attendance() {
 
     Object.entries(dashboardStats.bySection || {}).forEach(([classId, data]) => {
       const gradeId = data.gradeId || '';
-      const matches = assignedGrades.some(g => 
-        g.toLowerCase() === gradeId.toLowerCase() || 
+      const matches = assignedGrades.some(g =>
+        g.toLowerCase() === gradeId.toLowerCase() ||
         gradeId.toLowerCase().includes(g.toLowerCase())
       );
       if (matches) filteredBySection[classId] = data;
@@ -497,31 +497,28 @@ export default function Attendance() {
           <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 p-1.5 rounded-2xl border border-slate-200/60 shadow-sm min-w-max">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
-                activeTab === 'dashboard'
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${activeTab === 'dashboard'
                   ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
-              }`}
+                }`}
             >
               <DashboardIcon size={16} /> Dashboard
             </button>
             <button
               onClick={() => setActiveTab('marking')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
-                activeTab === 'marking'
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${activeTab === 'marking'
                   ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
-              }`}
+                }`}
             >
               <ClipboardIcon size={16} /> Daily Marking
             </button>
             <button
               onClick={() => setActiveTab('analytics')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
-                activeTab === 'analytics'
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${activeTab === 'analytics'
                   ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-md'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100'
-              }`}
+                }`}
             >
               <TrendIcon size={16} /> Analytics
             </button>
@@ -619,82 +616,80 @@ export default function Attendance() {
                           .filter(s => s.gradeId === gradeId)
                           .sort((a, b) => (a.section || '').toString().localeCompare((b.section || '').toString(), undefined, { numeric: true, sensitivity: 'base' }));
 
-                      return (
-                        <div key={gradeId} className="group">
-                          {/* Grade Summary Header */}
-                          <div
-                            onClick={() => toggleGrade(gradeId)}
-                            className="flex items-center justify-between px-6 py-4 hover:bg-slate-50/50 cursor-pointer transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <span className="font-bold text-slate-800 dark:text-slate-100 text-base">Grade {gradeId}</span>
-                              <span className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                                {sections.length} Sections
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-8">
-                              <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                                <span>Present: <b className="text-green-600">{gradeData.present}</b></span>
-                                <span>Absent: <b className="text-red-600">{gradeData.absent}</b></span>
-                                <span>Late: <b className="text-amber-600">{gradeData.late}</b></span>
+                        return (
+                          <div key={gradeId} className="group">
+                            {/* Grade Summary Header */}
+                            <div
+                              onClick={() => toggleGrade(gradeId)}
+                              className="flex items-center justify-between px-6 py-4 hover:bg-slate-50/50 cursor-pointer transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="font-bold text-slate-800 dark:text-slate-100 text-base">Grade {gradeId}</span>
+                                <span className="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                                  {sections.length} Sections
+                                </span>
                               </div>
-                              <span className={`text-sm font-black px-3 py-1 rounded-full border ${
-                                gradeData.percentage >= 75
-                                  ? 'bg-green-50 text-green-700 border-green-200'
-                                  : gradeData.percentage >= 50
-                                  ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                  : 'bg-red-50 text-red-700 border-red-200'
-                              }`}>
-                                {gradeData.percentage}%
-                              </span>
-                              {isExpanded ? <ChevronUp className="text-slate-400 dark:text-slate-300" size={18} /> : <ChevronDown className="text-slate-400 dark:text-slate-300" size={18} />}
+                              <div className="flex items-center gap-8">
+                                <div className="flex items-center gap-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                  <span>Present: <b className="text-green-600">{gradeData.present}</b></span>
+                                  <span>Absent: <b className="text-red-600">{gradeData.absent}</b></span>
+                                  <span>Late: <b className="text-amber-600">{gradeData.late}</b></span>
+                                </div>
+                                <span className={`text-sm font-black px-3 py-1 rounded-full border ${gradeData.percentage >= 75
+                                    ? 'bg-green-50 text-green-700 border-green-200'
+                                    : gradeData.percentage >= 50
+                                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                      : 'bg-red-50 text-red-700 border-red-200'
+                                  }`}>
+                                  {gradeData.percentage}%
+                                </span>
+                                {isExpanded ? <ChevronUp className="text-slate-400 dark:text-slate-300" size={18} /> : <ChevronDown className="text-slate-400 dark:text-slate-300" size={18} />}
+                              </div>
                             </div>
-                          </div>
 
-                          {/* Section Drilldown */}
-                          {isExpanded && (
-                            <div className="bg-slate-50/40 px-6 py-2 border-t border-slate-100 dark:border-slate-800">
-                              <table className="w-full text-left border-collapse my-2">
-                                <thead>
-                                  <tr className="text-slate-400 dark:text-slate-300 font-bold text-[10px] uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
-                                    <th className="pb-2">Section / Class</th>
-                                    <th className="pb-2">Total Students</th>
-                                    <th className="pb-2 text-green-600">Present</th>
-                                    <th className="pb-2 text-red-600">Absent</th>
-                                    <th className="pb-2 text-amber-600">Late</th>
-                                    <th className="pb-2 text-right">Percentage</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {sections.map((sectionData, sIdx) => (
-                                    <tr key={sIdx} className="border-b border-slate-100/50 last:border-0 hover:bg-slate-100/40 text-sm">
-                                      <td className="py-2.5 font-bold text-slate-700 dark:text-slate-200">{sectionData.name} - {sectionData.section}</td>
-                                      <td className="py-2.5 font-medium text-slate-500 dark:text-slate-400">{sectionData.total}</td>
-                                      <td className="py-2.5 font-semibold text-green-600">{sectionData.present}</td>
-                                      <td className="py-2.5 font-semibold text-red-600">{sectionData.absent}</td>
-                                      <td className="py-2.5 font-semibold text-amber-600">{sectionData.late}</td>
-                                      <td className="py-2.5 text-right">
-                                        <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-lg border ${
-                                          sectionData.total === 0
-                                            ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700'
-                                            : sectionData.percentage >= 75
-                                            ? 'bg-green-50 text-green-600 border-green-200'
-                                            : sectionData.percentage >= 50
-                                            ? 'bg-amber-50 text-amber-600 border-amber-200'
-                                            : 'bg-red-50 text-red-600 border-red-200'
-                                        }`}>
-                                          {sectionData.total === 0 ? 'Unmarked' : `${sectionData.percentage}%`}
-                                        </span>
-                                      </td>
+                            {/* Section Drilldown */}
+                            {isExpanded && (
+                              <div className="bg-slate-50/40 px-6 py-2 border-t border-slate-100 dark:border-slate-800">
+                                <table className="w-full text-left border-collapse my-2">
+                                  <thead>
+                                    <tr className="text-slate-400 dark:text-slate-300 font-bold text-[10px] uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                                      <th className="pb-2">Section / Class</th>
+                                      <th className="pb-2">Total Students</th>
+                                      <th className="pb-2 text-green-600">Present</th>
+                                      <th className="pb-2 text-red-600">Absent</th>
+                                      <th className="pb-2 text-amber-600">Late</th>
+                                      <th className="pb-2 text-right">Percentage</th>
                                     </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                                  </thead>
+                                  <tbody>
+                                    {sections.map((sectionData, sIdx) => (
+                                      <tr key={sIdx} className="border-b border-slate-100/50 last:border-0 hover:bg-slate-100/40 text-sm">
+                                        <td className="py-2.5 font-bold text-slate-700 dark:text-slate-200">{sectionData.name} - {sectionData.section}</td>
+                                        <td className="py-2.5 font-medium text-slate-500 dark:text-slate-400">{sectionData.total}</td>
+                                        <td className="py-2.5 font-semibold text-green-600">{sectionData.present}</td>
+                                        <td className="py-2.5 font-semibold text-red-600">{sectionData.absent}</td>
+                                        <td className="py-2.5 font-semibold text-amber-600">{sectionData.late}</td>
+                                        <td className="py-2.5 text-right">
+                                          <span className={`inline-block text-xs font-bold px-2 py-0.5 rounded-lg border ${sectionData.total === 0
+                                              ? 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                                              : sectionData.percentage >= 75
+                                                ? 'bg-green-50 text-green-600 border-green-200'
+                                                : sectionData.percentage >= 50
+                                                  ? 'bg-amber-50 text-amber-600 border-amber-200'
+                                                  : 'bg-red-50 text-red-600 border-red-200'
+                                            }`}>
+                                            {sectionData.total === 0 ? 'Unmarked' : `${sectionData.percentage}%`}
+                                          </span>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
               </div>
@@ -896,7 +891,7 @@ export default function Attendance() {
           {/* Class, Session & Date selectors */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
-              <select 
+              <select
                 value={selectedClassId}
                 onChange={(e) => setSelectedClassId(e.target.value)}
                 className="border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary-500 text-slate-700 dark:text-slate-200 font-semibold py-2.5 pl-4 pr-10 bg-white dark:bg-slate-900 shadow-sm outline-none text-sm w-full sm:w-auto"
@@ -906,7 +901,7 @@ export default function Attendance() {
                   <option key={cls.id} value={cls.id}>{cls.name} - Section {cls.section}</option>
                 ))}
               </select>
-              <select 
+              <select
                 value={viewMode}
                 onChange={(e) => setViewMode(e.target.value)}
                 className="border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary-500 text-slate-700 dark:text-slate-200 font-semibold py-2.5 pl-4 pr-10 bg-white dark:bg-slate-900 shadow-sm outline-none text-sm w-full sm:w-auto"
@@ -922,14 +917,14 @@ export default function Attendance() {
               <div className="flex flex-wrap items-center gap-3 shrink-0 w-full md:w-auto justify-end">
                 <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                   <CalendarIcon size={18} className="text-slate-400 dark:text-slate-300 ml-1" />
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
                     className="border-none focus:ring-0 text-slate-700 dark:text-slate-200 font-semibold text-sm py-0 pr-1 bg-transparent cursor-pointer outline-none"
                   />
                 </div>
-                <select 
+                <select
                   value={selectedSession}
                   onChange={(e) => setSelectedSession(e.target.value)}
                   className="border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-primary-500 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-4 bg-white dark:bg-slate-900 shadow-sm outline-none text-sm"
@@ -958,7 +953,7 @@ export default function Attendance() {
                 <span>{students.length} Students</span>
               </div>
               {viewMode === 'daily' && (
-                <button 
+                <button
                   onClick={handleSave}
                   disabled={saving || loading || students.length === 0}
                   className="px-6 py-2 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50 transition-colors flex items-center gap-2 shadow-sm"
@@ -968,10 +963,10 @@ export default function Attendance() {
                 </button>
               )}
             </div>
-            
+
             <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="Search student by name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -981,7 +976,7 @@ export default function Attendance() {
 
             {loading ? (
               <div className="p-20 flex justify-center">
-                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
               </div>
             ) : students.length === 0 ? (
               <div className="p-12 text-center text-slate-500 dark:text-slate-400">No students found in this class.</div>
@@ -1000,35 +995,34 @@ export default function Attendance() {
                     {students
                       .filter(s => `${s.firstName} ${s.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()))
                       .map((student) => (
-                      <tr key={student.id} className="border-b border-slate-50 hover:bg-slate-50/50">
-                        <td className="p-4 text-slate-600 dark:text-slate-300 font-medium pl-6">{student.rollNumber || '-'}</td>
-                        <td className="p-4 font-bold text-slate-900 dark:text-white">
-                          {student.firstName} {student.lastName}
-                        </td>
-                        <td className="p-4">
-                          <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full border ${getStatusColor(attendanceRecords[student.id])}`}>
-                            {attendanceRecords[student.id] || 'Present'}
-                          </span>
-                        </td>
-                        <td className="p-4 text-right pr-6">
-                          <div className="flex justify-end gap-2">
-                            {['Present', 'Absent', 'Late'].map(status => (
-                              <button
-                                key={status}
-                                onClick={() => handleStatusChange(student.id, status)}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
-                                  attendanceRecords[student.id] === status 
-                                    ? getStatusColor(status) 
-                                    : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-                                }`}
-                              >
-                                {status}
-                              </button>
-                            ))}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                        <tr key={student.id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                          <td className="p-4 text-slate-600 dark:text-slate-300 font-medium pl-6">{student.rollNumber || '-'}</td>
+                          <td className="p-4 font-bold text-slate-900 dark:text-white">
+                            {student.firstName} {student.lastName}
+                          </td>
+                          <td className="p-4">
+                            <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full border ${getStatusColor(attendanceRecords[student.id])}`}>
+                              {attendanceRecords[student.id] || 'Present'}
+                            </span>
+                          </td>
+                          <td className="p-4 text-right pr-6">
+                            <div className="flex justify-end gap-2">
+                              {['Present', 'Absent', 'Late'].map(status => (
+                                <button
+                                  key={status}
+                                  onClick={() => handleStatusChange(student.id, status)}
+                                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${attendanceRecords[student.id] === status
+                                      ? getStatusColor(status)
+                                      : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                    }`}
+                                >
+                                  {status}
+                                </button>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
@@ -1050,31 +1044,30 @@ export default function Attendance() {
                     {students
                       .filter(s => `${s.firstName} ${s.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()))
                       .map(student => {
-                      const stat = reportStats[student.id] || { present: 0, absent: 0, late: 0, total: 0 };
-                      const percentage = stat.total === 0 ? 100 : Math.round(((stat.present + stat.late) / stat.total) * 100);
-                      
-                      return (
-                        <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 pl-6 text-slate-600 dark:text-slate-300 font-medium">{student.rollNumber || '-'}</td>
-                          <td className="p-4">
-                            <div className="font-bold text-slate-900 dark:text-white">{student.firstName} {student.lastName}</div>
-                          </td>
-                          <td className="p-4 font-semibold text-slate-600 dark:text-slate-300">{stat.total}</td>
-                          <td className="p-4 font-semibold text-green-600">{stat.present}</td>
-                          <td className="p-4 font-semibold text-red-600">{stat.absent}</td>
-                          <td className="p-4 font-semibold text-amber-600">{stat.late}</td>
-                          <td className="p-4 pr-6 text-right">
-                            <span className={`inline-flex items-center justify-center px-3 py-1 text-xs font-bold rounded-full border ${
-                              percentage >= 75 ? 'bg-green-50 text-green-700 border-green-200' : 
-                              percentage >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' : 
-                              'bg-red-50 text-red-700 border-red-200'
-                            }`}>
-                              {percentage}%
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                        const stat = reportStats[student.id] || { present: 0, absent: 0, late: 0, total: 0 };
+                        const percentage = stat.total === 0 ? 100 : Math.round(((stat.present + stat.late) / stat.total) * 100);
+
+                        return (
+                          <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="p-4 pl-6 text-slate-600 dark:text-slate-300 font-medium">{student.rollNumber || '-'}</td>
+                            <td className="p-4">
+                              <div className="font-bold text-slate-900 dark:text-white">{student.firstName} {student.lastName}</div>
+                            </td>
+                            <td className="p-4 font-semibold text-slate-600 dark:text-slate-300">{stat.total}</td>
+                            <td className="p-4 font-semibold text-green-600">{stat.present}</td>
+                            <td className="p-4 font-semibold text-red-600">{stat.absent}</td>
+                            <td className="p-4 font-semibold text-amber-600">{stat.late}</td>
+                            <td className="p-4 pr-6 text-right">
+                              <span className={`inline-flex items-center justify-center px-3 py-1 text-xs font-bold rounded-full border ${percentage >= 75 ? 'bg-green-50 text-green-700 border-green-200' :
+                                  percentage >= 50 ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                                    'bg-red-50 text-red-700 border-red-200'
+                                }`}>
+                                {percentage}%
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>

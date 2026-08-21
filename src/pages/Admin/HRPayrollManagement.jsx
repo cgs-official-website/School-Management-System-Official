@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, X, Search, Filter, Edit, Trash2, Download, Settings, UploadCloud, Printer, FileText } from 'lucide-react';
-import { LuBriefcase, LuIndianRupee, LuCircleDollarSign } from 'react-icons/lu';
+import { LuBriefcase, LuIndianRupee, LuCircleDollarSign, LuFileDown as FileDown } from 'react-icons/lu';
 import ConfirmModal from '../../components/ConfirmModal';
+import ExportModal from '../../components/ExportModal';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToSubCollection, addSubDocument, updateSubDocument, deleteSubDocument } from '../../firebase/firestore';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -43,19 +44,36 @@ export default function HRPayrollManagement() {
     role: true,
     month: true,
     baseSalary: true,
+    pfCalculated: true,
+    esiCalculated: true,
     deductions: true,
     netPay: true,
-    status: true
+    status: true,
+    staffId: true,
+    bankAccountNumber: true,
+    bankName: true,
+    ifscCode: true,
+    panNumber: true,
+    aadharNumber: true
   });
 
   const availableFieldsList = [
     { key: 'name', label: 'Staff Name' },
-    { key: 'role', label: 'Role' },
-    { key: 'month', label: 'Month' },
-    { key: 'baseSalary', label: 'Base Salary' },
-    { key: 'deductions', label: 'Deductions' },
-    { key: 'netPay', label: 'Net Pay' },
-    { key: 'status', label: 'Status' }
+    { key: 'role', label: 'Role / Designation' },
+    { key: 'month', label: 'Payroll Month' },
+    { key: 'baseSalary', label: 'Base Salary (₹)' },
+    { key: 'pfCalculated', label: 'PF Deduction (₹)' },
+    { key: 'esiCalculated', label: 'ESI Deduction (₹)' },
+    { key: 'deductions', label: 'Total Deductions (₹)' },
+    { key: 'netPay', label: 'Net Pay (₹)' },
+    { key: 'status', label: 'Payment Status' },
+    { key: 'staffId', label: 'Staff ID' },
+    { key: 'bankAccountNumber', label: 'Bank Account No.' },
+    { key: 'bankName', label: 'Bank Name & Branch' },
+    { key: 'ifscCode', label: 'IFSC Code' },
+    { key: 'panNumber', label: 'PAN Number' },
+    { key: 'aadharNumber', label: 'Aadhaar Number' },
+    { key: 'createdAt', label: 'Record Created Date' }
   ];
 
   const handleFieldToggle = (fieldKey) => {
@@ -70,7 +88,7 @@ export default function HRPayrollManagement() {
     setSelectedFields(updated);
   };
 
-  const handleExport = () => {
+  const handleExport = (customFileName) => {
     if (payrolls.length === 0) {
       toast.error("No payroll data available to export.");
       return;
@@ -83,15 +101,26 @@ export default function HRPayrollManagement() {
     }
 
     const exportData = payrolls.map((payroll, index) => {
+      const teacher = teachers.find(t => t.id === payroll.teacherId) || {};
+      const netPay = (payroll.baseSalary || 0) - (payroll.deductions || 0);
       const row = { "S.No": index + 1 };
       
-      if (selectedFields.name) row["Staff Name"] = payroll.name || '';
-      if (selectedFields.role) row["Role"] = payroll.role || '';
-      if (selectedFields.month) row["Month"] = payroll.month || '';
-      if (selectedFields.baseSalary) row["Base Salary"] = payroll.baseSalary || 0;
-      if (selectedFields.deductions) row["Deductions"] = payroll.deductions || 0;
-      if (selectedFields.netPay) row["Net Pay"] = (payroll.baseSalary - payroll.deductions) || 0;
-      if (selectedFields.status) row["Status"] = payroll.status || 'Pending';
+      if (selectedFields.name) row["Staff Name"] = payroll.name || teacher.name || '';
+      if (selectedFields.role) row["Role / Designation"] = payroll.role || teacher.role || '';
+      if (selectedFields.month) row["Payroll Month"] = payroll.month || '';
+      if (selectedFields.baseSalary) row["Base Salary (₹)"] = payroll.baseSalary || 0;
+      if (selectedFields.pfCalculated) row["PF Deduction (₹)"] = payroll.pfCalculated || 0;
+      if (selectedFields.esiCalculated) row["ESI Deduction (₹)"] = payroll.esiCalculated || 0;
+      if (selectedFields.deductions) row["Total Deductions (₹)"] = payroll.deductions || 0;
+      if (selectedFields.netPay) row["Net Pay (₹)"] = netPay;
+      if (selectedFields.status) row["Payment Status"] = payroll.status || 'Pending';
+      if (selectedFields.staffId) row["Staff ID"] = teacher.staffId || '';
+      if (selectedFields.bankAccountNumber) row["Bank Account No."] = teacher.bankAccountNumber || teacher.accountNumber || '';
+      if (selectedFields.bankName) row["Bank Name & Branch"] = teacher.bankName ? `${teacher.bankName} ${teacher.branchName || ''}`.trim() : '';
+      if (selectedFields.ifscCode) row["IFSC Code"] = teacher.ifscCode || '';
+      if (selectedFields.panNumber) row["PAN Number"] = teacher.panNumber || '';
+      if (selectedFields.aadharNumber) row["Aadhaar Number"] = teacher.aadharNumber || '';
+      if (selectedFields.createdAt) row["Record Created Date"] = payroll.createdAt ? new Date(payroll.createdAt).toLocaleDateString('en-GB') : '';
       
       return row;
     });
@@ -100,7 +129,7 @@ export default function HRPayrollManagement() {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Payroll Report");
     
-    const rawName = exportFileName.trim() || "HR_Payroll_Report";
+    const rawName = (customFileName || exportFileName || "HR_Payroll_Report").trim();
     const finalFileName = rawName.toLowerCase().endsWith('.xlsx') ? rawName : `${rawName}.xlsx`;
     
     XLSX.writeFile(workbook, finalFileName);
@@ -400,9 +429,9 @@ export default function HRPayrollManagement() {
               setExportFileName('HR_Payroll_Report'); 
               setShowExportModal(true); 
             }}
-            className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-medium shadow-sm cursor-pointer"
+            className="flex items-center gap-2 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 px-4 py-2.5 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all font-semibold shadow-sm cursor-pointer text-sm"
           >
-            <Download size={20} /> Export Report
+            <FileDown size={18} /> Bulk Export
           </button>
           {hasCreatePermission && (
             <button 
@@ -882,98 +911,20 @@ export default function HRPayrollManagement() {
         </div>
       )}
 
-      {/* Export Modal */}
-      {showExportModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden transform transition-all flex flex-col max-h-[85vh]">
-            {/* Modal Header */}
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Export Payroll Report</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Select columns to include in the exported Excel spreadsheet</p>
-              </div>
-              <button 
-                onClick={() => setShowExportModal(false)}
-                className="p-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-400 dark:text-slate-300 hover:text-slate-600 dark:hover:text-slate-300 rounded-xl transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
-              {/* File Name Input */}
-              <div className="space-y-1.5 pb-3 border-b border-slate-100 dark:border-slate-800">
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">File Name</label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="e.g. HR_Payroll_Report"
-                    value={exportFileName}
-                    onChange={(e) => setExportFileName(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none text-sm font-semibold text-black bg-white dark:bg-slate-900"
-                  />
-                  <span className="absolute right-4 top-2.5 text-xs text-slate-400 dark:text-slate-300 font-bold font-mono select-none">.xlsx</span>
-                </div>
-              </div>
-
-              {/* Select All / Deselect All Controls */}
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleSelectAll(true)}
-                  className="px-3 py-1.5 text-xs font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-                >
-                  Select All
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleSelectAll(false)}
-                  className="px-3 py-1.5 text-xs font-bold bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors"
-                >
-                  Deselect All
-                </button>
-              </div>
-
-              {/* Checkbox Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {availableFieldsList.map(field => (
-                  <label 
-                    key={field.key}
-                    className="flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors text-black font-semibold text-sm"
-                  >
-                    <input 
-                      type="checkbox"
-                      checked={selectedFields[field.key]}
-                      onChange={() => handleFieldToggle(field.key)}
-                      className="rounded text-primary-600 focus:ring-primary-500 h-4.5 w-4.5 border-slate-300 dark:border-slate-600"
-                    />
-                    <span>{field.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
-              <button 
-                type="button"
-                onClick={() => setShowExportModal(false)}
-                className="px-5 py-2.5 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-150 rounded-xl transition-colors"
-              >
-                Cancel
-              </button>
-              <button 
-                type="button"
-                onClick={handleExport}
-                className="w-full sm:w-auto px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-semibold hover:bg-primary-700 shadow-sm transition-colors active:scale-[0.98]"
-              >
-                Export Excel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Reusable Export Modal */}
+      <ExportModal 
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        title="Bulk Export Payroll Report"
+        subtitle="Select columns and customize file name to export staff payroll data to Excel"
+        defaultFileName={exportFileName || "HR_Payroll_Report"}
+        availableFields={availableFieldsList}
+        selectedFields={selectedFields}
+        onToggleField={handleFieldToggle}
+        onSelectAll={handleSelectAll}
+        onExport={handleExport}
+        exportButtonText="Export Excel"
+      />
 
       <ConfirmModal 
         isOpen={confirmModalState.isOpen}
