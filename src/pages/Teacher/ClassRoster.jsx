@@ -7,6 +7,7 @@ import { LuUsers as Users, LuSearch as Search, LuGraduationCap as GraduationCap,
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { isMale, isFemale, normalizeGender } from '../../utils/genderUtils';
 
 export default function ClassRoster() {
   const { userProfile, currentUser } = useAuth();
@@ -176,8 +177,8 @@ export default function ClassRoster() {
 
   // Calculate Stats
   const totalStudents = students.length;
-  const boysCount = students.filter(s => s.gender === 'Male' || s.gender === 'Boy').length;
-  const girlsCount = students.filter(s => s.gender === 'Female' || s.gender === 'Girl').length;
+  const boysCount = students.filter(s => isMale(s.gender)).length;
+  const girlsCount = students.filter(s => isFemale(s.gender)).length;
   let presentCount = 0;
   let absentCount = 0;
   students.forEach(student => {
@@ -357,7 +358,7 @@ export default function ClassRoster() {
                       {student.admissionNumber}
                     </td>
                     <td className="p-4 text-slate-600 dark:text-slate-300">
-                      {student.gender || '—'}
+                      {normalizeGender(student.gender, '—')}
                     </td>
                     <td className="p-4 text-slate-600 dark:text-slate-300">
                       <div className="flex items-center gap-2">

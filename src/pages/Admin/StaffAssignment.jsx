@@ -17,6 +17,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import FilePreviewModal from '../../components/FilePreviewModal';
 import usePermissions from '../../hooks/usePermissions';
 import { sortClassesAscending } from '../../utils/classSorting';
+import { normalizeGender, isMale, isFemale, standardizeSchoolGenderData } from '../../utils/genderUtils';
 
 export default function StaffAssignment() {
   const { userProfile } = useAuth();
@@ -32,6 +33,8 @@ export default function StaffAssignment() {
   const [schoolName, setSchoolName] = useState('');
   const [loading, setLoading] = useState(true);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [genderFilter, setGenderFilter] = useState('all');
+  const [syncingGender, setSyncingGender] = useState(false);
 
   // Assignment Modal State
   const [assignModalOpen, setAssignModalOpen] = useState(false);
@@ -379,7 +382,7 @@ export default function StaffAssignment() {
                 lastName,
                 name:                     `${firstName} ${lastName}`.trim(),
                 dob:                      getField(row, 'date of birth', 'dob', 'birth date'),
-                gender:                   getField(row, 'gender', 'sex'),
+                gender:                   normalizeGender(getField(row, 'gender', 'sex', 'staff gender', 'staff_gender'), 'Male'),
                 nationality:              getField(row, 'nationality'),
                 maritalStatus:            getField(row, 'marital status', 'marital_status'),
                 bloodGroup:               getField(row, 'blood group', 'bloodgroup', 'blood_group'),
@@ -821,8 +824,9 @@ export default function StaffAssignment() {
     const matchesRole = roleFilter === 'all' || 
                          (member.roles || [member.role || 'Staffs']).includes(roleFilter);
     const matchesStatus = statusFilter === 'all' || (member.status || 'Active') === statusFilter;
+    const matchesGender = genderFilter === 'all' || normalizeGender(member.gender, '') === genderFilter;
     
-    if (!(matchesSearch && matchesRole && matchesStatus)) return false;
+    if (!(matchesSearch && matchesRole && matchesStatus && matchesGender)) return false;
 
     if (staffTypeFilter === 'teaching') {
       return member.staff_type === 'teaching';
@@ -835,6 +839,8 @@ export default function StaffAssignment() {
   // Metrics
   const totalStaff = staff.length;
   const activeStaff = staff.filter(s => (s.status || 'Active') === 'Active').length;
+  const maleStaff = staff.filter(s => isMale(s.gender)).length;
+  const femaleStaff = staff.filter(s => isFemale(s.gender)).length;
   const teachingRoles = ['Correspondent', 'Principal', 'Vice Principal', 'Subject Wise Head', 'Class Incharge', 'Staffs'];
   const teachingStaff = staff.filter(s => {
     const rolesList = s.roles || [s.role || 'Staffs'];
@@ -848,7 +854,26 @@ export default function StaffAssignment() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, roleFilter, statusFilter, staffTypeFilter, rowsPerPage]);
+  }, [searchQuery, roleFilter, statusFilter, staffTypeFilter, genderFilter, rowsPerPage]);
+
+  const handleSyncGenderData = async () => {
+    if (!schoolId) return;
+    setSyncingGender(true);
+    const toastId = toast.loading("Scanning and standardizing existing Firestore records...");
+    try {
+      const res = await standardizeSchoolGenderData(schoolId);
+      if (res.studentsUpdated > 0 || res.staffUpdated > 0) {
+        toast.success(`Standardized ${res.studentsUpdated} student(s) and ${res.staffUpdated} staff member(s) in Firestore!`, { id: toastId, duration: 5000 });
+      } else {
+        toast.success(`All ${res.totalStudents} students and ${res.totalStaff} staff members in Firestore are already up to date!`, { id: toastId, duration: 4000 });
+      }
+    } catch (err) {
+      console.error("Error standardizing gender data:", err);
+      toast.error("Failed to standardize database data: " + (err.message || err), { id: toastId });
+    } finally {
+      setSyncingGender(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -866,6 +891,17 @@ export default function StaffAssignment() {
           <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your teachers, upload documents, and assign classes.</p>
         </div>
         <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
+          {hasEditPermission && (
+            <button 
+              onClick={handleSyncGenderData}
+              disabled={syncingGender}
+              title="Scan and standardize all existing student and staff gender values in Firestore"
+              className="px-3.5 py-2 bg-amber-50 text-amber-800 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-900/40 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2 transition-colors border border-amber-200 dark:border-amber-800/50 disabled:opacity-50"
+            >
+              <UserPlus size={16} className={syncingGender ? "animate-spin text-amber-600" : "text-amber-600 dark:text-amber-400"} />
+              {syncingGender ? "Standardizing..." : "Clean DB Gender"}
+            </button>
+          )}
           <button 
             onClick={() => {
               if (staff.length === 0) {
@@ -907,7 +943,7 @@ export default function StaffAssignment() {
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-fade-in-up">
         {/* Metrics Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30">
           <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Users size={20} /></div>
             <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Staff</p><p className="text-xl font-bold text-slate-900 dark:text-white">{totalStaff}</p></div>
@@ -918,10 +954,18 @@ export default function StaffAssignment() {
           </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><UserPlus size={20} /></div>
-            <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Teachers</p><p className="text-xl font-bold text-slate-900 dark:text-white">{teachingStaff}</p></div>
+            <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Male Staff</p><p className="text-xl font-bold text-slate-900 dark:text-white">{maleStaff}</p></div>
           </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
             <div className="p-3 bg-pink-50 text-pink-600 rounded-xl"><UserPlus size={20} /></div>
+            <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Female Staff</p><p className="text-xl font-bold text-slate-900 dark:text-white">{femaleStaff}</p></div>
+          </div>
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
+            <div className="p-3 bg-amber-50 text-amber-600 rounded-xl"><UserPlus size={20} /></div>
+            <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Teachers</p><p className="text-xl font-bold text-slate-900 dark:text-white">{teachingStaff}</p></div>
+          </div>
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex items-center gap-3">
+            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl"><UserPlus size={20} /></div>
             <div><p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Non-Teaching</p><p className="text-xl font-bold text-slate-900 dark:text-white">{nonTeachingStaff}</p></div>
           </div>
         </div>
@@ -969,6 +1013,16 @@ export default function StaffAssignment() {
               <option value="all">All Status</option>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
+            </select>
+            <select 
+              value={genderFilter}
+              onChange={(e) => setGenderFilter(e.target.value)}
+              className="px-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option value="all">All Genders</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
             </select>
 
             {/* Filter by Staff Type — inline in filter bar */}
@@ -1536,7 +1590,7 @@ export default function StaffAssignment() {
                     <div>
                       <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Gender</label>
                       <select
-                        value={newStaff.gender}
+                        value={normalizeGender(newStaff.gender, 'Male')}
                         onChange={(e) => setNewStaff({ ...newStaff, gender: e.target.value })}
                         className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 text-sm"
                       >
@@ -2171,8 +2225,8 @@ export default function StaffAssignment() {
                         ))}
                         <div>
                           <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Gender</label>
-                          <select value={editStaffData.gender || 'Male'} onChange={e => setEditStaffData({...editStaffData, gender: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                            {['Male','Female','Other'].map(g => <option key={g}>{g}</option>)}
+                          <select value={normalizeGender(editStaffData.gender, 'Male')} onChange={e => setEditStaffData({...editStaffData, gender: e.target.value})} className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+                            {['Male','Female','Other'].map(g => <option key={g} value={g}>{g}</option>)}
                           </select>
                         </div>
                         <div>
@@ -2480,7 +2534,7 @@ export default function StaffAssignment() {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Gender</label>
-                      <p className="text-slate-900 dark:text-white font-semibold">{selectedStaffToView.gender || '—'}</p>
+                      <p className="text-slate-900 dark:text-white font-semibold">{normalizeGender(selectedStaffToView.gender, '—')}</p>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Nationality</label>

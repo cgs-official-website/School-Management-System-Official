@@ -23,8 +23,9 @@ import {
   LuSparkles as Sparkles,
   LuIdCard as IdCard,
   LuCheck as Check,
-  LuUnlink as UnlinkIcon
+  LuChevronRight as ChevronRight
 } from 'react-icons/lu';
+import { normalizeGender } from '../../utils/genderUtils';
 import toast from 'react-hot-toast';
 
 export default function MyChildren() {
@@ -783,7 +784,7 @@ export default function MyChildren() {
                       Gender
                     </label>
                     <select 
-                      value={manualFormData.gender}
+                      value={normalizeGender(manualFormData.gender, 'Male')}
                       onChange={(e) => setManualFormData({ ...manualFormData, gender: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm font-semibold"
                     >

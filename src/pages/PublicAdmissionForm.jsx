@@ -20,6 +20,7 @@ import {
 import Captcha from '../components/Captcha';
 import toast from 'react-hot-toast';
 import { sortClassesAscending } from '../utils/classSorting';
+import { normalizeGender } from '../utils/genderUtils';
 
 export default function PublicAdmissionForm() {
   const { schoolId } = useParams();
@@ -496,7 +497,7 @@ export default function PublicAdmissionForm() {
                 </label>
                 <select
                   name="gender"
-                  value={formData.gender}
+                  value={normalizeGender(formData.gender, 'Male')}
                   onChange={handleChange}
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 >

@@ -5,6 +5,7 @@ import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/fire
 import { addSubDocument } from '../../firebase/firestore';
 import toast from 'react-hot-toast';
 import { LuUser, LuMapPin, LuBriefcase, LuCreditCard, LuSave, LuBookOpen, LuShieldCheck } from 'react-icons/lu';
+import { normalizeGender } from '../../utils/genderUtils';
 
 export default function ProfileSetup() {
   const { currentUser, userProfile } = useAuth();
@@ -117,7 +118,7 @@ export default function ProfileSetup() {
             ...prev,
             dob: data.dob || '',
             bloodGroup: data.bloodGroup || '',
-            gender: data.gender || 'Male',
+            gender: normalizeGender(data.gender, 'Male'),
             nationality: data.nationality || '',
             maritalStatus: data.maritalStatus || 'Single',
             fatherGuardianName: data.fatherGuardianName || data.fatherName || '',
@@ -227,7 +228,7 @@ export default function ProfileSetup() {
             </div>
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Gender</label>
-              <select name="gender" value={formData.gender} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm bg-white dark:bg-slate-900">
+              <select name="gender" value={normalizeGender(formData.gender, 'Male')} onChange={handleChange} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm bg-white dark:bg-slate-900">
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>

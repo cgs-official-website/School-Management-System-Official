@@ -23,6 +23,7 @@ import ImageCropper from '../../components/ImageCropper';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import usePermissions from '../../hooks/usePermissions';
 import { sortClassesAscending } from '../../utils/classSorting';
+import { normalizeGender, isMale, isFemale, standardizeSchoolGenderData } from '../../utils/genderUtils';
 
 export default function StudentManagement() {
   const { userProfile } = useAuth();
@@ -43,6 +44,7 @@ export default function StudentManagement() {
   const [admissionApplications, setAdmissionApplications] = useState([]);
   const [appSearchQuery, setAppSearchQuery] = useState('');
   const [appStatusFilter, setAppStatusFilter] = useState('all'); // 'all', 'Pending', 'Approved', 'Rejected'
+  const [syncingGender, setSyncingGender] = useState(false);
   const [selectedAppForReview, setSelectedAppForReview] = useState(null);
   const [reviewAppModalOpen, setReviewAppModalOpen] = useState(false);
   const [assigningAppClassId, setAssigningAppClassId] = useState('');
@@ -685,7 +687,7 @@ export default function StudentManagement() {
                     admissionNumber: admissionNumber,
                     dob: (row['date of birth'] || row['dob'])?.toString() || '',
                     age: row['age']?.toString() || '',
-                    gender: row['gender']?.toString() || 'Male',
+                    gender: normalizeGender(row['gender'] || row['sex'] || row['student gender'] || row['student_gender'] || row['gender (male/female)'] || row['gender (boy/girl)'], 'Male'),
                     bloodGroup: row['blood group']?.toString() || '',
                     nationality: row['nationality']?.toString() || '',
                     religion: row['religion']?.toString() || '',
@@ -1121,7 +1123,7 @@ export default function StudentManagement() {
     const q = searchQuery.trim().toLowerCase();
     
     const matchesClass = classFilter === 'all' || student.classId === classFilter;
-    const matchesGender = genderFilter === 'all' || student.gender === genderFilter;
+    const matchesGender = genderFilter === 'all' || normalizeGender(student.gender, '') === genderFilter;
     if (!matchesClass || !matchesGender) return false;
 
     if (!q) return true;
@@ -1171,8 +1173,8 @@ export default function StudentManagement() {
   // Enrolled Metrics
   const totalStudents = students.length;
   const activeStudents = students.filter(s => s.status === 'Active').length;
-  const maleStudents = students.filter(s => s.gender === 'Male').length;
-  const femaleStudents = students.filter(s => s.gender === 'Female').length;
+  const maleStudents = students.filter(s => isMale(s.gender)).length;
+  const femaleStudents = students.filter(s => isFemale(s.gender)).length;
 
   // Applications Metrics & Filtering
   const pendingAppsCount = admissionApplications.filter(a => (a.status || 'Pending') === 'Pending').length;
@@ -1222,6 +1224,25 @@ export default function StudentManagement() {
       </div>
     );
   }
+
+  const handleSyncGenderData = async () => {
+    if (!schoolId) return;
+    setSyncingGender(true);
+    const toastId = toast.loading("Scanning and standardizing existing Firestore records...");
+    try {
+      const res = await standardizeSchoolGenderData(schoolId);
+      if (res.studentsUpdated > 0 || res.staffUpdated > 0) {
+        toast.success(`Standardized ${res.studentsUpdated} student(s) and ${res.staffUpdated} staff member(s) in Firestore!`, { id: toastId, duration: 5000 });
+      } else {
+        toast.success(`All ${res.totalStudents} students and ${res.totalStaff} staff members in Firestore are already up to date!`, { id: toastId, duration: 4000 });
+      }
+    } catch (err) {
+      console.error("Error standardizing gender data:", err);
+      toast.error("Failed to standardize database data: " + (err.message || err), { id: toastId });
+    } finally {
+      setSyncingGender(false);
+    }
+  };
 
   const effectiveSeatLimit = schoolData?.seatLimit || (schoolData?.plan?.toLowerCase() === 'enterprise' ? 2000 : schoolData?.plan?.toLowerCase() === 'basic' ? 100 : 500);
   const seatUsagePercent = effectiveSeatLimit > 0 ? Math.min(Math.round((totalStudents / effectiveSeatLimit) * 100), 100) : 0;
@@ -1282,6 +1303,17 @@ export default function StudentManagement() {
           <p className="text-slate-500 dark:text-slate-400 mt-1">Review public admission applications, admit verified students, and manage enrollment directory.</p>
         </div>
         <div className="flex flex-wrap gap-2.5">
+          {hasEditPermission && (
+            <button 
+              onClick={handleSyncGenderData}
+              disabled={syncingGender}
+              title="Scan and standardize all existing student and staff gender values in Firestore"
+              className="px-3.5 py-2 bg-amber-50 text-amber-800 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-300 dark:hover:bg-amber-900/40 rounded-xl text-sm font-semibold shadow-sm flex items-center gap-2 transition-colors border border-amber-200 dark:border-amber-800/50 disabled:opacity-50"
+            >
+              <Sparkles size={16} className={syncingGender ? "animate-spin text-amber-600" : "text-amber-600 dark:text-amber-400"} />
+              {syncingGender ? "Standardizing..." : "Clean DB Gender"}
+            </button>
+          )}
           <button 
             onClick={() => {
               if (filteredStudents.length === 0) {
@@ -1459,7 +1491,7 @@ export default function StudentManagement() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Gender *</label>
-                  <select value={formData.gender} onChange={(e) => setFormData({...formData, gender: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900">
+                  <select value={normalizeGender(formData.gender, 'Male')} onChange={(e) => setFormData({...formData, gender: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900">
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
@@ -2120,7 +2152,8 @@ export default function StudentManagement() {
                   <button
                     onClick={() => {
                       const ws_data = [
-                        ['Full Name', 'Admission Number', 'Date of Birth', 'Gender', 'Blood Group', 'Nationality', 'Religion', 'Aadhar Number', 'Home Address', 'Parent/Guardian Name', 'Parent Phone', 'Parent Email', 'Parent Occupation', 'Emergency Contact', 'Previous School']
+                        ['Full Name', 'Admission Number', 'Date of Birth', 'Gender', 'Blood Group', 'Nationality', 'Religion', 'Aadhar Number', 'Home Address', 'Parent/Guardian Name', 'Parent Phone', 'Parent Email', 'Parent Occupation', 'Emergency Contact', 'Previous School'],
+                        ['Rahul Sharma', 'ADM1001', '2012-04-15', 'Male', 'O+', 'Indian', 'Hindu', '1234-5678-9012', '123 Park Street', 'Anil Sharma', '9876543210', 'parent@example.com', 'Business', '9876543210', 'St. Xavier School']
                       ];
                       const ws = XLSX.utils.aoa_to_sheet(ws_data);
                       const wb = XLSX.utils.book_new();
@@ -2256,7 +2289,7 @@ export default function StudentManagement() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Gender</label>
-                        <p className="text-slate-950 font-semibold">{selectedStudentToView.gender || '—'}</p>
+                        <p className="text-slate-950 font-semibold">{normalizeGender(selectedStudentToView.gender, '—')}</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider mb-1">Blood Group</label>
@@ -2643,7 +2676,7 @@ export default function StudentManagement() {
                       <div>
                         <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Gender</label>
                         <select
-                          value={editStudentData.gender || 'Male'}
+                          value={normalizeGender(editStudentData.gender, 'Male')}
                           onChange={e => handleEditFieldChange('gender', e.target.value)}
                           className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
                         >
