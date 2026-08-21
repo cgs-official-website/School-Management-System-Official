@@ -211,14 +211,25 @@ export const findStudentByAdmission = async (schoolId, admissionNumber, dob) => 
 export const linkStudentToParent = async (parentId, studentId, classId, studentName) => {
   try {
     const userRef = doc(db, "users", parentId);
-    
-    // First, let's fetch the existing doc to handle the case where linkedStudents doesn't exist yet, 
-    // though arrayUnion usually handles this fine, it's safer.
-    await updateDoc(userRef, {
-      linkedStudentId: studentId,
-      linkedClassId: classId,
-      linkedStudents: arrayUnion({ studentId, classId, name: studentName || 'Student' }),
-      updatedAt: new Date().toISOString()
+    await runTransaction(db, async (transaction) => {
+      const userDoc = await transaction.get(userRef);
+      if (!userDoc.exists()) return;
+      
+      const data = userDoc.data();
+      const currentLinked = Array.isArray(data.linkedStudents) ? data.linkedStudents : [];
+      const filtered = currentLinked.filter(s => s.studentId !== studentId);
+      filtered.push({
+        studentId,
+        classId,
+        name: studentName || 'Student'
+      });
+
+      transaction.update(userRef, {
+        linkedStudentId: studentId,
+        linkedClassId: classId,
+        linkedStudents: filtered,
+        updatedAt: new Date().toISOString()
+      });
     });
   } catch (error) {
     console.error("Error linking student:", error);
