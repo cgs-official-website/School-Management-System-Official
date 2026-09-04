@@ -24,6 +24,7 @@ import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import usePermissions from '../../hooks/usePermissions';
 import { sortClassesAscending } from '../../utils/classSorting';
 import { normalizeGender, isMale, isFemale } from '../../utils/genderUtils';
+import { validateName, validateDateOfBirth, validateBloodGroup, validateAadhaarNumber, validatePhone, validateEmail, getTodayDateString } from '../../utils/validationUtils';
 
 export default function StudentManagement() {
   const { userProfile } = useAuth();
@@ -77,6 +78,7 @@ export default function StudentManagement() {
     previousSchool: '', previousRecords: '', subjectsChosen: '', busRoute: '',
     tuitionFee: '', hostelFee: '', bookFee: '', otherFee: '', totalFee: ''
   });
+  const [addErrors, setAddErrors] = useState({});
   const [customData, setCustomData] = useState({});
   const [formSchema, setFormSchema] = useState([]);
   const [photoFile, setPhotoFile] = useState(null);
@@ -469,17 +471,39 @@ export default function StudentManagement() {
       return;
     }
 
+    // Validation: Name, DOB, Blood Group, Aadhaar, Phone, Email, and Admission Number
+    const firstNameError = validateName(formData.firstName, 'First name');
+    const lastNameError = validateName(formData.lastName, 'Last name');
+    const dobError = validateDateOfBirth(formData.dob, true);
+    const bloodGroupError = validateBloodGroup(formData.bloodGroup, false);
+    const aadhaarError = validateAadhaarNumber(formData.aadharNumber, false);
+    const parentPhoneError = validatePhone(formData.parentPhone, false);
+    const parentEmailError = validateEmail(formData.parentEmail, false);
+
+    let admissionNumberError = null;
     if (!formData.admissionNumber?.trim()) {
-      toast.error("Admission number is required.");
-      return;
+      admissionNumberError = "Admission number is required";
+    } else {
+      const isDuplicate = students.some(
+        s => s.admissionNumber?.toLowerCase() === formData.admissionNumber.trim().toLowerCase()
+      );
+      if (isDuplicate) {
+        admissionNumberError = `Student with Admission Number ${formData.admissionNumber} already exists.`;
+      }
     }
 
-    const isDuplicate = students.some(
-      s => s.admissionNumber?.toLowerCase() === formData.admissionNumber.trim().toLowerCase()
-    );
-
-    if (isDuplicate) {
-      toast.error(`Student with Admission Number ${formData.admissionNumber} already exists.`);
+    if (firstNameError || lastNameError || dobError || bloodGroupError || aadhaarError || parentPhoneError || parentEmailError || admissionNumberError) {
+      const errors = {};
+      if (firstNameError) errors.firstName = firstNameError;
+      if (lastNameError) errors.lastName = lastNameError;
+      if (dobError) errors.dob = dobError;
+      if (bloodGroupError) errors.bloodGroup = bloodGroupError;
+      if (aadhaarError) errors.aadharNumber = aadhaarError;
+      if (parentPhoneError) errors.parentPhone = parentPhoneError;
+      if (parentEmailError) errors.parentEmail = parentEmailError;
+      if (admissionNumberError) errors.admissionNumber = admissionNumberError;
+      setAddErrors(prev => ({ ...prev, ...errors }));
+      toast.error(firstNameError || lastNameError || dobError || bloodGroupError || aadhaarError || parentPhoneError || parentEmailError || admissionNumberError);
       return;
     }
 
@@ -498,6 +522,10 @@ export default function StudentManagement() {
 
       await addSubDocument(schoolId, 'students', {
         ...formData,
+        parentPhone: (formData.parentPhone || '').trim(),
+        parentEmail: (formData.parentEmail || '').trim(),
+        bloodGroup: formData.bloodGroup ? formData.bloodGroup.trim().toUpperCase() : '',
+        aadharNumber: (formData.aadharNumber || '').trim(),
         customData: uploadedCustomData || {},
         photoUrl,
         createdAt: new Date().toISOString()
@@ -519,6 +547,7 @@ export default function StudentManagement() {
         previousSchool: '', previousRecords: '', subjectsChosen: '', busRoute: '',
         tuitionFee: '', hostelFee: '', bookFee: '', otherFee: '', totalFee: ''
       });
+      setAddErrors({});
       setCustomData({});
       setPhotoFile(null);
       setShowForm(false);
@@ -809,6 +838,13 @@ export default function StudentManagement() {
   // Handle field change in Edit Mode
   const handleEditFieldChange = (field, value) => {
     setEditStudentData(prev => ({ ...prev, [field]: value }));
+    if (editErrors[field]) {
+      setEditErrors(prev => {
+        const updated = { ...prev };
+        delete updated[field];
+        return updated;
+      });
+    }
   };
 
   // Handle fee fields change and calculate total dynamically in Edit Mode
@@ -898,8 +934,11 @@ export default function StudentManagement() {
   // Validate fields in edit student form
   const validateEditStudent = () => {
     const errors = {};
-    if (!editStudentData.firstName?.trim()) errors.firstName = "First name is required";
-    if (!editStudentData.lastName?.trim()) errors.lastName = "Last name is required";
+    const firstNameError = validateName(editStudentData.firstName, 'First name');
+    if (firstNameError) errors.firstName = firstNameError;
+
+    const lastNameError = validateName(editStudentData.lastName, 'Last name');
+    if (lastNameError) errors.lastName = lastNameError;
     
     if (!editStudentData.admissionNumber?.trim()) {
       errors.admissionNumber = "Admission number is required";
@@ -916,8 +955,9 @@ export default function StudentManagement() {
     if (editStudentData.studentEmail?.trim() && !emailRegex.test(editStudentData.studentEmail)) {
       errors.studentEmail = "Invalid email format";
     }
-    if (editStudentData.parentEmail?.trim() && !emailRegex.test(editStudentData.parentEmail)) {
-      errors.parentEmail = "Invalid email format";
+    const parentEmailError = validateEmail(editStudentData.parentEmail, false);
+    if (parentEmailError) {
+      errors.parentEmail = parentEmailError;
     }
     if (editStudentData.motherEmail?.trim() && !emailRegex.test(editStudentData.motherEmail)) {
       errors.motherEmail = "Invalid email format";
@@ -927,8 +967,9 @@ export default function StudentManagement() {
     if (editStudentData.studentPhone?.trim() && !phoneRegex.test(editStudentData.studentPhone)) {
       errors.studentPhone = "Mobile number must be 10 digits";
     }
-    if (editStudentData.parentPhone?.trim() && !phoneRegex.test(editStudentData.parentPhone)) {
-      errors.parentPhone = "Mobile number must be 10 digits";
+    const parentPhoneError = validatePhone(editStudentData.parentPhone, false);
+    if (parentPhoneError) {
+      errors.parentPhone = parentPhoneError;
     }
     if (editStudentData.motherPhone?.trim() && !phoneRegex.test(editStudentData.motherPhone)) {
       errors.motherPhone = "Mobile number must be 10 digits";
@@ -937,12 +978,19 @@ export default function StudentManagement() {
       errors.guardianPhone = "Mobile number must be 10 digits";
     }
 
-    if (editStudentData.aadharNumber?.trim() && !/^\d{12}$/.test(editStudentData.aadharNumber)) {
-      errors.aadharNumber = "Aadhaar number must be 12 digits";
+    const aadhaarError = validateAadhaarNumber(editStudentData.aadharNumber, false);
+    if (aadhaarError) {
+      errors.aadharNumber = aadhaarError;
     }
 
-    if (editStudentData.dob && new Date(editStudentData.dob) > new Date()) {
-      errors.dob = "Date of Birth cannot be in the future";
+    const dobError = validateDateOfBirth(editStudentData.dob, false);
+    if (dobError) {
+      errors.dob = dobError;
+    }
+
+    const bloodGroupError = validateBloodGroup(editStudentData.bloodGroup, false);
+    if (bloodGroupError) {
+      errors.bloodGroup = bloodGroupError;
     }
 
     if (editStudentData.rollNumber?.trim() && editStudentData.classId) {
@@ -984,6 +1032,10 @@ export default function StudentManagement() {
       ];
       for (const f of fieldsToSave) {
         cleanedData[f] = (editStudentData[f] || '').toString().trim();
+      }
+
+      if (cleanedData.bloodGroup) {
+        cleanedData.bloodGroup = cleanedData.bloodGroup.toUpperCase();
       }
 
       if (cleanedData.dob) {
@@ -1341,6 +1393,7 @@ export default function StudentManagement() {
                       type="button"
                       onClick={() => {
                         setShowForm(true);
+                        setAddErrors({});
                         setNewAdmissionDropdownOpen(false);
                       }}
                       className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-2 transition-colors"
@@ -1443,16 +1496,83 @@ export default function StudentManagement() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">First Name *</label>
-                  <input type="text" required value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
+                  <label htmlFor="add-student-firstName" className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">First Name *</label>
+                  <input 
+                    type="text" 
+                    id="add-student-firstName"
+                    name="firstName"
+                    required 
+                    value={formData.firstName} 
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, firstName: e.target.value }));
+                      if (addErrors.firstName) {
+                        setAddErrors(prev => {
+                          const updated = { ...prev };
+                          delete updated.firstName;
+                          return updated;
+                        });
+                      }
+                    }} 
+                    className={`w-full px-4 py-2.5 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${addErrors.firstName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`} 
+                  />
+                  {addErrors.firstName && (
+                    <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="error-firstName">
+                      {addErrors.firstName}
+                    </span>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Last Name *</label>
-                  <input type="text" required value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
+                  <label htmlFor="add-student-lastName" className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Last Name *</label>
+                  <input 
+                    type="text" 
+                    id="add-student-lastName"
+                    name="lastName"
+                    required 
+                    value={formData.lastName} 
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, lastName: e.target.value }));
+                      if (addErrors.lastName) {
+                        setAddErrors(prev => {
+                          const updated = { ...prev };
+                          delete updated.lastName;
+                          return updated;
+                        });
+                      }
+                    }} 
+                    className={`w-full px-4 py-2.5 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${addErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`} 
+                  />
+                  {addErrors.lastName && (
+                    <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="error-lastName">
+                      {addErrors.lastName}
+                    </span>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Date of Birth *</label>
-                  <input type="date" required value={formData.dob} onChange={(e) => setFormData({...formData, dob: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
+                  <label htmlFor="add-student-dob" className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Date of Birth *</label>
+                  <input 
+                    type="date" 
+                    id="add-student-dob"
+                    name="dob"
+                    max={getTodayDateString()}
+                    required 
+                    value={formData.dob} 
+                    onChange={(e) => {
+                      setFormData(prev => ({ ...prev, dob: e.target.value }));
+                      if (addErrors.dob) {
+                        setAddErrors(prev => {
+                          const updated = { ...prev };
+                          delete updated.dob;
+                          return updated;
+                        });
+                      }
+                    }} 
+                    className={`w-full px-4 py-2.5 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${addErrors.dob ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`} 
+                  />
+                  {addErrors.dob && (
+                    <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="error-dob">
+                      {addErrors.dob}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Age</label>
@@ -1468,7 +1588,28 @@ export default function StudentManagement() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Blood Group</label>
-                  <input type="text" value={formData.bloodGroup} onChange={(e) => setFormData({...formData, bloodGroup: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" placeholder="e.g. O+" />
+                  <input
+                    type="text"
+                    id="add-student-bloodGroup"
+                    value={formData.bloodGroup}
+                    onChange={(e) => {
+                      setFormData({...formData, bloodGroup: e.target.value});
+                      if (addErrors.bloodGroup) {
+                        setAddErrors(prev => {
+                          const updated = { ...prev };
+                          delete updated.bloodGroup;
+                          return updated;
+                        });
+                      }
+                    }}
+                    className={`w-full px-4 py-2.5 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${addErrors.bloodGroup ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                    placeholder="e.g. O+"
+                  />
+                  {addErrors.bloodGroup && (
+                    <span className="text-xs text-red-500 font-semibold mt-1 block" data-testid="error-bloodGroup">
+                      {addErrors.bloodGroup}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Nationality</label>
@@ -1484,7 +1625,28 @@ export default function StudentManagement() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Aadhar Number</label>
-                  <input type="text" value={formData.aadharNumber} onChange={(e) => setFormData({...formData, aadharNumber: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" placeholder="12-digit number" />
+                  <input
+                    type="text"
+                    id="add-student-aadhaar"
+                    value={formData.aadharNumber}
+                    onChange={(e) => {
+                      setFormData({...formData, aadharNumber: e.target.value});
+                      if (addErrors.aadharNumber) {
+                        setAddErrors(prev => {
+                          const updated = { ...prev };
+                          delete updated.aadharNumber;
+                          return updated;
+                        });
+                      }
+                    }}
+                    className={`w-full px-4 py-2.5 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${addErrors.aadharNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                    placeholder="12-digit number"
+                  />
+                  {addErrors.aadharNumber && (
+                    <span className="text-xs text-red-500 font-semibold mt-1 block" data-testid="error-aadhaar">
+                      {addErrors.aadharNumber}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -1502,11 +1664,52 @@ export default function StudentManagement() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Parent Email *</label>
-                  <input type="email" required value={formData.parentEmail} onChange={(e) => setFormData({...formData, parentEmail: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
+                  <input
+                    type="email"
+                    id="add-student-parentEmail"
+                    required
+                    value={formData.parentEmail}
+                    onChange={(e) => {
+                      setFormData({...formData, parentEmail: e.target.value});
+                      if (addErrors.parentEmail) {
+                        setAddErrors(prev => {
+                          const updated = { ...prev };
+                          delete updated.parentEmail;
+                          return updated;
+                        });
+                      }
+                    }}
+                    className={`w-full px-4 py-2.5 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${addErrors.parentEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                  />
+                  {addErrors.parentEmail && (
+                    <span className="text-xs text-red-500 font-semibold mt-1 block" data-testid="error-parentEmail">
+                      {addErrors.parentEmail}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Parent Phone Number</label>
-                  <input type="text" value={formData.parentPhone} onChange={(e) => setFormData({...formData, parentPhone: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900" />
+                  <input
+                    type="text"
+                    id="add-student-parentPhone"
+                    value={formData.parentPhone}
+                    onChange={(e) => {
+                      setFormData({...formData, parentPhone: e.target.value});
+                      if (addErrors.parentPhone) {
+                        setAddErrors(prev => {
+                          const updated = { ...prev };
+                          delete updated.parentPhone;
+                          return updated;
+                        });
+                      }
+                    }}
+                    className={`w-full px-4 py-2.5 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${addErrors.parentPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                  />
+                  {addErrors.parentPhone && (
+                    <span className="text-xs text-red-500 font-semibold mt-1 block" data-testid="error-parentPhone">
+                      {addErrors.parentPhone}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Parent Occupation</label>
@@ -1539,7 +1742,29 @@ export default function StudentManagement() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Admission Number *</label>
-                  <input type="text" required value={formData.admissionNumber} onChange={(e) => setFormData({...formData, admissionNumber: e.target.value})} className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 uppercase font-mono" placeholder="e.g. ADM-001" />
+                  <input
+                    type="text"
+                    id="add-student-admissionNumber"
+                    required
+                    value={formData.admissionNumber}
+                    onChange={(e) => {
+                      setFormData({...formData, admissionNumber: e.target.value});
+                      if (addErrors.admissionNumber) {
+                        setAddErrors(prev => {
+                          const updated = { ...prev };
+                          delete updated.admissionNumber;
+                          return updated;
+                        });
+                      }
+                    }}
+                    className={`w-full px-4 py-2.5 rounded-xl border bg-white dark:bg-slate-900 uppercase font-mono focus:ring-2 focus:ring-primary-500 ${addErrors.admissionNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
+                    placeholder="e.g. ADM-001"
+                  />
+                  {addErrors.admissionNumber && (
+                    <span className="text-xs text-red-500 font-semibold mt-1 block" data-testid="error-admissionNumber">
+                      {addErrors.admissionNumber}
+                    </span>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Previous School Name</label>
@@ -1603,7 +1828,7 @@ export default function StudentManagement() {
 
             <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
               <button 
-                type="button" onClick={() => setShowForm(false)}
+                type="button" onClick={() => { setShowForm(false); setAddErrors({}); }}
                 className="px-6 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors"
               >
                 Cancel
@@ -2594,14 +2819,16 @@ export default function StudentManagement() {
                         )}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">First Name *</label>
+                        <label htmlFor="edit-student-firstName" className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">First Name *</label>
                         <input
                           type="text"
+                          id="edit-student-firstName"
+                          name="firstName"
                           value={editStudentData.firstName || ''}
                           onChange={e => handleEditFieldChange('firstName', e.target.value)}
                           className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.firstName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
-                        {editErrors.firstName && <span className="text-red-500 text-xs mt-1 block">{editErrors.firstName}</span>}
+                        {editErrors.firstName && <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="edit-error-firstName">{editErrors.firstName}</span>}
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Middle Name</label>
@@ -2613,34 +2840,40 @@ export default function StudentManagement() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Last Name *</label>
+                        <label htmlFor="edit-student-lastName" className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Last Name *</label>
                         <input
                           type="text"
+                          id="edit-student-lastName"
+                          name="lastName"
                           value={editStudentData.lastName || ''}
                           onChange={e => handleEditFieldChange('lastName', e.target.value)}
                           className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.lastName ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
-                        {editErrors.lastName && <span className="text-red-500 text-xs mt-1 block">{editErrors.lastName}</span>}
+                        {editErrors.lastName && <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="edit-error-lastName">{editErrors.lastName}</span>}
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Admission Number *</label>
                         <input
                           type="text"
+                          id="edit-student-admissionNumber"
                           value={editStudentData.admissionNumber || ''}
                           onChange={e => handleEditFieldChange('admissionNumber', e.target.value)}
                           className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.admissionNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
-                        {editErrors.admissionNumber && <span className="text-red-500 text-xs mt-1 block">{editErrors.admissionNumber}</span>}
+                        {editErrors.admissionNumber && <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="edit-error-admissionNumber">{editErrors.admissionNumber}</span>}
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Date of Birth</label>
+                        <label htmlFor="edit-student-dob" className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Date of Birth</label>
                         <input
                           type="date"
+                          id="edit-student-dob"
+                          name="dob"
+                          max={getTodayDateString()}
                           value={editStudentData.dob || ''}
                           onChange={e => handleEditFieldChange('dob', e.target.value)}
                           className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.dob ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
-                        {editErrors.dob && <span className="text-red-500 text-xs mt-1 block">{editErrors.dob}</span>}
+                        {editErrors.dob && <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="edit-error-dob">{editErrors.dob}</span>}
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Gender</label>
@@ -2658,11 +2891,17 @@ export default function StudentManagement() {
                         <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Blood Group</label>
                         <input
                           type="text"
+                          id="edit-student-bloodGroup"
                           value={editStudentData.bloodGroup || ''}
                           onChange={e => handleEditFieldChange('bloodGroup', e.target.value)}
                           placeholder="e.g. O+, A-"
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500"
+                          className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.bloodGroup ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
+                        {editErrors.bloodGroup && (
+                          <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="edit-error-bloodGroup">
+                            {editErrors.bloodGroup}
+                          </span>
+                        )}
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Nationality</label>
@@ -2695,11 +2934,16 @@ export default function StudentManagement() {
                         <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Aadhaar Number</label>
                         <input
                           type="text"
+                          id="edit-student-aadhaar"
                           value={editStudentData.aadharNumber || ''}
                           onChange={e => handleEditFieldChange('aadharNumber', e.target.value)}
                           className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.aadharNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                         />
-                        {editErrors.aadharNumber && <span className="text-red-500 text-xs mt-1 block">{editErrors.aadharNumber}</span>}
+                        {editErrors.aadharNumber && (
+                          <span className="text-red-500 text-xs mt-1 block" data-testid="edit-error-aadhaar">
+                            {editErrors.aadharNumber}
+                          </span>
+                        )}
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Student Phone</label>
@@ -2793,21 +3037,23 @@ export default function StudentManagement() {
                           <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Father's Phone</label>
                           <input
                             type="text"
+                            id="edit-student-parentPhone"
                             value={editStudentData.parentPhone || ''}
                             onChange={e => handleEditFieldChange('parentPhone', e.target.value)}
                             className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.parentPhone ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                           />
-                          {editErrors.parentPhone && <span className="text-red-500 text-xs mt-1 block">{editErrors.parentPhone}</span>}
+                          {editErrors.parentPhone && <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="edit-error-parentPhone">{editErrors.parentPhone}</span>}
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Father's Email</label>
                           <input
                             type="email"
+                            id="edit-student-parentEmail"
                             value={editStudentData.parentEmail || ''}
                             onChange={e => handleEditFieldChange('parentEmail', e.target.value)}
                             className={`w-full px-3 py-2 rounded-xl border bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${editErrors.parentEmail ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'}`}
                           />
-                          {editErrors.parentEmail && <span className="text-red-500 text-xs mt-1 block">{editErrors.parentEmail}</span>}
+                          {editErrors.parentEmail && <span className="text-red-500 text-xs mt-1 block font-medium" data-testid="edit-error-parentEmail">{editErrors.parentEmail}</span>}
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider mb-1">Occupation</label>

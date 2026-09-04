@@ -35,6 +35,7 @@ import toast from 'react-hot-toast';
 import CustomFieldsRenderer from '../../components/CustomFieldsRenderer';
 import { uploadCustomDataFiles } from '../../utils/cloudinary';
 import usePermissions from '../../hooks/usePermissions';
+import { validateVehicleRegistrationNumber } from '../../utils/validationUtils';
 
 export default function TransportManagement() {
   const { userProfile } = useAuth();
@@ -86,6 +87,7 @@ export default function TransportManagement() {
 
   // Vehicle Form State
   const [savingVehicle, setSavingVehicle] = useState(false);
+  const [vehicleErrors, setVehicleErrors] = useState({});
   const [newVehicle, setNewVehicle] = useState({
     vehicleName: '',
     vehicleModel: '',
@@ -355,6 +357,14 @@ export default function TransportManagement() {
       return;
     }
 
+    // Vehicle Registration Number format validation
+    const regError = validateVehicleRegistrationNumber(newVehicle.registrationNumber, true);
+    if (regError) {
+      setVehicleErrors(prev => ({ ...prev, registrationNumber: regError }));
+      toast.error(regError);
+      return;
+    }
+
     // Capacity validation
     const parsedCapacity = parseInt(newVehicle.seatingCapacity, 10);
     if (isNaN(parsedCapacity) || parsedCapacity <= 0) {
@@ -368,7 +378,9 @@ export default function TransportManagement() {
       v => v.id !== newVehicle.id && (v.registrationNumber || '').trim().toUpperCase() === regNo
     );
     if (isDuplicate) {
-      toast.error(`Vehicle Registration Number "${regNo}" already exists in the system.`);
+      const dupError = `Vehicle Registration Number "${regNo}" already exists in the system.`;
+      setVehicleErrors(prev => ({ ...prev, registrationNumber: dupError }));
+      toast.error(dupError);
       return;
     }
 
@@ -392,6 +404,7 @@ export default function TransportManagement() {
         });
         toast.success("Vehicle registered successfully!");
       }
+      setVehicleErrors({});
       setShowVehicleModal(false);
     } catch (err) {
       console.error(err);
@@ -473,6 +486,7 @@ export default function TransportManagement() {
                     pollutionCertificateExpiryDate: '',
                     status: 'Active'
                   });
+                  setVehicleErrors({});
                   setShowVehicleModal(true);
                 }}
                 className="w-full sm:w-auto px-4 py-2.5 bg-primary-600 text-white rounded-xl font-semibold shadow-sm flex items-center justify-center gap-2 hover:bg-primary-700 transition-colors"
@@ -778,7 +792,7 @@ export default function TransportManagement() {
                               </button>
                               {hasEditPermission && (
                                 <button 
-                                  onClick={() => { setNewVehicle(vehicle); setShowVehicleModal(true); }}
+                                  onClick={() => { setNewVehicle(vehicle); setVehicleErrors({}); setShowVehicleModal(true); }}
                                   className="p-1.5 text-slate-400 dark:text-slate-300 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-slate-800 rounded-lg transition-colors"
                                   title="Edit Vehicle"
                                 >
@@ -932,7 +946,7 @@ export default function TransportManagement() {
               <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bus className="text-primary-600" /> {newVehicle.id ? 'Edit Vehicle Details' : 'Register School Vehicle'}
               </h2>
-              <button onClick={() => setShowVehicleModal(false)} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
+              <button onClick={() => { setVehicleErrors({}); setShowVehicleModal(false); }} className="p-2 text-slate-400 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-full transition-colors">
                 <X size={20} />
               </button>
             </div>
@@ -967,12 +981,26 @@ export default function TransportManagement() {
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Registration Number (Unique) *</label>
                     <input 
-                      type="text" required
+                      type="text"
+                      id="vehicle-registration-number"
+                      required
                       value={newVehicle.registrationNumber}
-                      onChange={(e) => setNewVehicle({...newVehicle, registrationNumber: e.target.value})}
+                      onChange={(e) => {
+                        setNewVehicle({...newVehicle, registrationNumber: e.target.value});
+                        if (vehicleErrors.registrationNumber) {
+                          setVehicleErrors(prev => ({ ...prev, registrationNumber: '' }));
+                        }
+                      }}
                       placeholder="e.g. MH-12-PQ-4567"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-primary-500 bg-white dark:bg-slate-900 font-mono uppercase"
+                      className={`w-full px-4 py-2.5 rounded-xl border font-mono uppercase bg-white dark:bg-slate-900 focus:ring-2 focus:ring-primary-500 ${
+                        vehicleErrors.registrationNumber ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'
+                      }`}
                     />
+                    {vehicleErrors.registrationNumber && (
+                      <span className="text-xs text-red-500 font-semibold mt-1 block" data-testid="error-registrationNumber">
+                        {vehicleErrors.registrationNumber}
+                      </span>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Seating Capacity *</label>
@@ -1082,7 +1110,7 @@ export default function TransportManagement() {
               <div className="p-6 bg-slate-50 dark:bg-slate-800 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3 shrink-0">
                 <button 
                   type="button"
-                  onClick={() => setShowVehicleModal(false)}
+                  onClick={() => { setVehicleErrors({}); setShowVehicleModal(false); }}
                   className="px-5 py-2.5 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-200 dark:hover:bg-slate-600 rounded-xl transition-colors"
                 >
                   Cancel
